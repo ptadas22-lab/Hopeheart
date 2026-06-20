@@ -752,18 +752,63 @@ export default function ListenerMatchScreen({
                         </p>
                       </div>
 
-                      <button
-                        onClick={() => {
-                          if (listener.targetPath) {
-                            onNavigateTo(listener.targetPath);
-                          } else {
-                            startChatFlow(listener);
-                          }
-                        }}
-                        className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-[#FCFAF5] font-display font-extrabold rounded-xl text-[12.5px] cursor-pointer transition-colors active:scale-98"
-                      >
-                        {listener.actionText}
-                      </button>
+                      {listener.targetPath ? (
+                        <button
+                          onClick={() => onNavigateTo(listener.targetPath!)}
+                          className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-[#FCFAF5] font-display font-extrabold rounded-xl text-[12.5px] cursor-pointer transition-colors active:scale-98"
+                        >
+                          {listener.actionText}
+                        </button>
+                      ) : (
+                        <div className="flex flex-wrap justify-between items-center pt-3 border-t border-[#FAF7F0] gap-3">
+                          {/* Communication Actions */}
+                          <div className="flex items-center gap-2">
+                            {/* Chat Button (Enabled) */}
+                            <button
+                              onClick={() => startChatFlow(listener)}
+                              className="px-3.5 py-2.5 bg-[#FFF2EA] hover:bg-[#FFE0CD] text-[#FF7527] rounded-xl flex items-center justify-center gap-1.5 font-display font-extrabold text-[12px] cursor-pointer transition-all active:scale-95 hover:scale-105"
+                              title="Start safe text chat"
+                            >
+                              <span>💬</span> Chat
+                            </button>
+
+                            {/* Call Button (Locked) */}
+                            <div className="relative group">
+                              <button
+                                disabled
+                                className="px-3.5 py-2.5 bg-[#FCFBF8] text-gray-400 border border-gray-150 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-[12px] cursor-not-allowed opacity-80"
+                              >
+                                <span>📞</span> Call 🔒
+                              </button>
+                              {/* Custom Tooltip */}
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-[#1E1E1A] text-white text-[9.5px] px-2.5 py-1.5 rounded-lg w-44 text-center leading-normal shadow-md font-sans z-30 select-none pointer-events-none">
+                                Unlocks after 10 meaningful messages
+                              </div>
+                            </div>
+
+                            {/* Video Button (Locked) */}
+                            <div className="relative group">
+                              <button
+                                disabled
+                                className="px-3.5 py-2.5 bg-[#FCFBF8] text-gray-400 border border-gray-150 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-[12px] cursor-not-allowed opacity-80"
+                              >
+                                <span>🎥</span> Video 🔒
+                              </button>
+                              {/* Custom Tooltip */}
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-[#1E1E1A] text-white text-[9.5px] px-2.5 py-1.5 rounded-lg w-44 text-center leading-normal shadow-md font-sans z-30 select-none pointer-events-none">
+                                Unlocks only when both users agree
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Helper text */}
+                          <div className="text-right">
+                            <span className="text-[11px] font-extrabold text-gray-400 flex items-center gap-1">
+                              🛡️ Trust builds gradually
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </motion.div>
