@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import Mascot from './Mascot';
 import { MoodConfig } from '../types';
@@ -7,8 +6,6 @@ import { MascotFace } from './Logo';
 interface DashboardScreenProps {
   userName: string;
   selectedMood: MoodConfig;
-  moodConfigs: MoodConfig[];
-  onMoodSelected: (moodId: string) => void;
   onNavigateTo: (screenId: string) => void;
   todayQuote: string;
   onRefreshQuote: () => void;
@@ -17,24 +14,10 @@ interface DashboardScreenProps {
 export default function DashboardScreen({
   userName,
   selectedMood,
-  moodConfigs,
-  onMoodSelected,
   onNavigateTo,
   todayQuote,
   onRefreshQuote,
 }: DashboardScreenProps) {
-  const [showAllMoods, setShowAllMoods] = useState<boolean>(false);
-  const [localSelectedMoodId, setLocalSelectedMoodId] = useState<string>(selectedMood.id);
-
-  useEffect(() => {
-    setLocalSelectedMoodId(selectedMood.id);
-  }, [selectedMood.id]);
-
-  const visibleMoods = showAllMoods ? moodConfigs : moodConfigs.slice(0, 4);
-
-  const handleUpdateMood = () => {
-    onMoodSelected(localSelectedMoodId);
-  };
   return (
     <div className="flex flex-col min-h-full bg-[#FAF8F3] overflow-y-auto font-sans select-none scrollbar-none w-full">
       {/* Upper Brand / User bar (Always full-width but padded internally) */}
@@ -81,64 +64,6 @@ export default function DashboardScreen({
               <p className="text-[13px] text-gray-500 font-semibold leading-relaxed mt-2 italic">
                 "{selectedMood.tagline}"
               </p>
-            </div>
-
-            {/* Today's Check-In Widget */}
-            <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider">
-                  🧡 TODAY'S CHECK-IN
-                </span>
-                <span className="text-[12px] text-gray-400 font-semibold">
-                  Active: {selectedMood.emoji} {selectedMood.label}
-                </span>
-              </div>
-
-              {/* Mood Grid */}
-              <div className="grid grid-cols-2 gap-2">
-                {visibleMoods.map((mood) => {
-                  const isSelected = mood.id === selectedMood.id;
-                  const isLocallySelected = localSelectedMoodId === mood.id;
-                  return (
-                    <button
-                      key={mood.id}
-                      onClick={() => setLocalSelectedMoodId(mood.id)}
-                      className={`p-2.5 flex items-center gap-2 rounded-xl border text-left transition-all text-[13px] font-semibold cursor-pointer ${
-                        isSelected 
-                          ? 'bg-[#FFF2EA] border-[#FF7527] text-gray-800 shadow-2xs' 
-                          : isLocallySelected 
-                            ? 'bg-amber-50/50 border-amber-300 text-gray-800'
-                            : 'bg-[#FCFBF8] border-gray-100 hover:bg-gray-50 text-gray-600'
-                      }`}
-                    >
-                      <span>{mood.emoji}</span>
-                      <span>{mood.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* See More & Update Action row */}
-              <div className="flex items-center justify-between pt-1">
-                <button
-                  onClick={() => setShowAllMoods(!showAllMoods)}
-                  className="text-[11.5px] font-display font-extrabold text-gray-500 hover:text-[#FF7527] cursor-pointer transition-colors"
-                >
-                  {showAllMoods ? "Show Less" : "See More..."}
-                </button>
-                
-                <button
-                  onClick={handleUpdateMood}
-                  disabled={localSelectedMoodId === selectedMood.id}
-                  className={`px-4 py-2 rounded-xl text-[12px] font-display font-bold transition-all ${
-                    localSelectedMoodId !== selectedMood.id
-                      ? 'bg-[#1E1E1A] hover:bg-black text-white cursor-pointer shadow-xs'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  Update Mood
-                </button>
-              </div>
             </div>
 
             {/* Mascot Companion interactive Card */}

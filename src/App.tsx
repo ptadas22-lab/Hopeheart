@@ -18,6 +18,7 @@ import NotificationsScreen from './components/NotificationsScreen';
 import AboutScreen from './components/AboutScreen';
 import ModerationAlertScreen from './components/ModerationAlertScreen';
 import { MascotSitting, BrandWordmark } from './components/Logo';
+import HopeBuddyWidget from './components/HopeBuddyWidget';
 
 const MOOD_CONFIGS: MoodConfig[] = [
   { id: 'calm', label: 'Calm', emoji: '😊', color: 'text-emerald-500', accentBg: '#EADFC9', bgLight: 'bg-[#F2FAF6]', buddyExpression: 'calm', tagline: 'My heart is resting. I feel balanced and safe.' },
@@ -124,8 +125,6 @@ export default function App() {
           <DashboardScreen 
             userName={userName}
             selectedMood={selectedMood}
-            moodConfigs={MOOD_CONFIGS}
-            onMoodSelected={setSelectedMoodId}
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
             todayQuote={todayQuote}
             onRefreshQuote={handleRefreshQuote}
@@ -227,7 +226,6 @@ export default function App() {
 
   // Nav highlighting helper states
   const isHomeActive = currentScreen === ScreenId.Home;
-  const isHeartCheckActive = currentScreen === ScreenId.SupportNeed || currentScreen === ScreenId.Promise;
   const isSupportActive = currentScreen === ScreenId.SupportRooms || currentScreen === ScreenId.SafeListener || currentScreen === ScreenId.SafeChat || currentScreen === ScreenId.RoomDetail || currentScreen === ScreenId.ShareSafely || currentScreen === ScreenId.MomentShare || currentScreen === ScreenId.NearbyAccess || currentScreen === ScreenId.NearbyResults || currentScreen === ScreenId.CommunityDetail || currentScreen === ScreenId.MeetSafely;
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
   const isSafetyActive = currentScreen === ScreenId.AISafety;
@@ -266,14 +264,6 @@ export default function App() {
                 }`}
               >
                 <span>🏡</span> Home
-              </button>
-              <button
-                onClick={() => setCurrentScreen(ScreenId.HeartCheck)}
-                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isHeartCheckActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <span>💖</span> Daily Check-In
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.SafeListener)}
@@ -357,24 +347,7 @@ export default function App() {
               )}
             </button>
 
-            {/* Tab 2: Heart Check */}
-            <button
-              onClick={() => setCurrentScreen(ScreenId.HeartCheck)}
-              className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isHeartCheckActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <span className="text-[17px] mb-0.5 select-none leading-none">💖</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Daily Check-In</span>
-              {isHeartCheckActive && (
-                <motion.div 
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
-                />
-              )}
-            </button>
- 
-            {/* Tab 3: Support */}
+            {/* Tab 2: Support */}
             <button
               onClick={() => setCurrentScreen(ScreenId.SafeListener)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
@@ -457,6 +430,15 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showNavChannels && (
+        <HopeBuddyWidget 
+          selectedMood={selectedMood}
+          moodConfigs={MOOD_CONFIGS}
+          onMoodSelected={setSelectedMoodId}
+          onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+        />
+      )}
 
     </div>
   );
