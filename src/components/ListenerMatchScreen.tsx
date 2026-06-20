@@ -19,6 +19,12 @@ interface Listener {
   iconBg: string;
   actionText: string;
   targetPath?: string;
+  gender?: string;
+  profession?: string;
+  listeningStyle?: string;
+  rating?: string;
+  sessions?: string;
+  languages?: string;
 }
 
 const LISTENERS_DATA: Record<string, Listener[]> = {
@@ -31,7 +37,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Emotional support',
       boundary: 'No prescriptions or diagnosis',
       iconBg: 'bg-orange-100 text-orange-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Caregiver',
+      listeningStyle: 'Calm listener',
+      rating: '⭐ 4.8',
+      sessions: '120 listens',
+      languages: 'English • Hindi'
     },
     {
       name: 'Voice78',
@@ -41,7 +53,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Kind companionship',
       boundary: 'No prescriptions or diagnosis',
       iconBg: 'bg-blue-100 text-blue-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Working Professional',
+      listeningStyle: 'Practical listener',
+      rating: '⭐ 4.6',
+      sessions: '86 listens',
+      languages: 'English • Kannada'
     },
     {
       name: 'Hope88',
@@ -51,7 +69,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Warm listening',
       boundary: 'No prescriptions or diagnosis',
       iconBg: 'bg-emerald-100 text-emerald-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Student',
+      listeningStyle: 'Warm listener',
+      rating: '⭐ 4.9',
+      sessions: '140 listens',
+      languages: 'English • Hindi • Kannada'
     }
   ],
   'I feel anxious': [
@@ -63,7 +87,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Anxiety grounding',
       boundary: 'No clinical treatment advice',
       iconBg: 'bg-amber-100 text-amber-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Educator',
+      listeningStyle: 'Calm listener',
+      rating: '⭐ 4.7',
+      sessions: '95 listens',
+      languages: 'English • Hindi'
     },
     {
       name: 'CalmBuddy',
@@ -73,7 +103,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Calming presence',
       boundary: 'No clinical treatment advice',
       iconBg: 'bg-emerald-100 text-emerald-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Yoga Guide',
+      listeningStyle: 'Gentle listener',
+      rating: '⭐ 4.8',
+      sessions: '110 listens',
+      languages: 'English • Kannada'
     },
     {
       name: 'RestingMind',
@@ -83,7 +119,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Quiet listening',
       boundary: 'No clinical treatment advice',
       iconBg: 'bg-purple-100 text-purple-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Artist',
+      listeningStyle: 'Calm listener',
+      rating: '⭐ 4.9',
+      sessions: '72 listens',
+      languages: 'English • Hindi • Kannada'
     }
   ],
   'I feel lonely': [
@@ -95,7 +137,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Kind companionship',
       boundary: 'No clinical assessments',
       iconBg: 'bg-[#FFF2EA] text-[#FF7527]',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Social Worker',
+      listeningStyle: 'Warm listener',
+      rating: '⭐ 4.8',
+      sessions: '130 listens',
+      languages: 'English • Hindi'
     },
     {
       name: 'Friendship99',
@@ -105,7 +153,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Friendly listening',
       boundary: 'No clinical assessments',
       iconBg: 'bg-indigo-100 text-indigo-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Technical Support',
+      listeningStyle: 'Warm listener',
+      rating: '⭐ 4.7',
+      sessions: '68 listens',
+      languages: 'English • Kannada'
     },
     {
       name: 'KindHeart',
@@ -115,7 +169,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Cozy conversation',
       boundary: 'No clinical assessments',
       iconBg: 'bg-teal-100 text-teal-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Psychology Student',
+      listeningStyle: 'Warm listener',
+      rating: '⭐ 4.9',
+      sessions: '105 listens',
+      languages: 'English • Hindi • Kannada'
     }
   ],
   'I feel hurt': [
@@ -127,7 +187,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Healing listening',
       boundary: 'No medical guidance',
       iconBg: 'bg-red-100 text-red-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Caregiver',
+      listeningStyle: 'Quiet listener',
+      rating: '⭐ 4.9',
+      sessions: '150 listens',
+      languages: 'English • Hindi'
     },
     {
       name: 'TenderEar',
@@ -137,7 +203,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Empathetic listening',
       boundary: 'No medical guidance',
       iconBg: 'bg-orange-100 text-orange-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Nurse Practitioner',
+      listeningStyle: 'Patient listener',
+      rating: '⭐ 4.8',
+      sessions: '92 listens',
+      languages: 'English • Kannada'
     },
     {
       name: 'GentleSoul',
@@ -147,7 +219,13 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Patient support',
       boundary: 'No medical guidance',
       iconBg: 'bg-rose-100 text-rose-700',
-      actionText: 'Start Safe Chat'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Community Host',
+      listeningStyle: 'Gentle listener',
+      rating: '⭐ 4.9',
+      sessions: '115 listens',
+      languages: 'English • Hindi • Kannada'
     }
   ],
   'I want professional help': [
@@ -646,6 +724,28 @@ export default function ListenerMatchScreen({
                           <p><span className="text-gray-400 font-medium">Focus:</span> {listener.supportType}</p>
                           <p><span className="text-gray-400 font-medium">Limit:</span> {listener.boundary}</p>
                         </div>
+
+                        {/* Compact Trust details grid */}
+                        {listener.rating && (
+                          <div className="grid grid-cols-2 gap-2.5 text-[10.5px] font-semibold text-gray-500 bg-[#FCFAF5] rounded-xl border border-gray-100 p-3">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="shrink-0 select-none">👤</span> 
+                              <span className="truncate">{listener.gender} • {listener.profession}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 justify-end text-right min-w-0">
+                              <span className="shrink-0 select-none">{listener.rating}</span> 
+                              <span className="text-gray-400 truncate">({listener.sessions})</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="shrink-0 select-none">🧠</span> 
+                              <span className="truncate">{listener.listeningStyle}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 justify-end text-right min-w-0">
+                              <span className="shrink-0 select-none">🗣️</span> 
+                              <span className="truncate" title={listener.languages}>{listener.languages}</span>
+                            </div>
+                          </div>
+                        )}
 
                         <p className="text-[12.5px] text-gray-500 font-medium italic leading-relaxed">
                           "{listener.bio}"
