@@ -1,0 +1,6 @@
+{
+  "name": "HopeHeart",
+  "description": "A trust-first emotional healthcare mobile UI draft. Feel heard. Find support. Reach care.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
