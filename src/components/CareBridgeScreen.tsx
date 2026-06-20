@@ -4,6 +4,7 @@ import { DoctorQuestion } from '../types';
 
 interface CareBridgeScreenProps {
   onBack: () => void;
+  onNavigateTo: (screenId: string) => void;
   savedQuestions: DoctorQuestion[];
   onAddQuestion: (text: string) => void;
   onDeleteQuestion: (id: string) => void;
@@ -11,113 +12,252 @@ interface CareBridgeScreenProps {
 
 type SubScreen = 'suggestions' | 'questions';
 
-interface Resource {
+interface SupportCategory {
+  id: string;
   name: string;
-  category: '🧠 Mental Wellness' | '🩺 Medical Specialists' | '🌱 Long-Term Support';
-  description: string;
-  boundary: string;
-  badge: string;
-  link: string;
-  mode: string;
+  emoji: string;
+  tagline: string;
+  bestFor: string[];
+  availableSupport: {
+    title: string;
+    description: string;
+    actionText: string;
+    targetPath: string;
+  }[];
+  externalResources: {
+    name: string;
+    description: string;
+    link: string;
+    badge: string;
+    boundary: string;
+    mode: string;
+  }[];
 }
 
-const RESOURCES_DATA: Resource[] = [
-  // 🧠 Mental Wellness
+const SUPPORT_CATEGORIES: SupportCategory[] = [
   {
-    name: 'Talkspace Therapy',
-    category: '🧠 Mental Wellness',
-    description: 'Online therapy platform connecting you with licensed therapists for text, audio, and video support.',
-    boundary: 'External resource • Subscription options',
-    badge: 'Online Support',
-    link: 'https://www.talkspace.com',
-    mode: 'Text & Video Chat'
+    id: 'anxiety',
+    name: 'Anxiety Support',
+    emoji: '🧠',
+    tagline: 'Manage racing thoughts, stress, and anxiety in safe peer spaces.',
+    bestFor: ['Overthinking', 'Panic', 'Social anxiety', 'Stress management'],
+    availableSupport: [
+      {
+        title: '🤝 Anxiety Peer Listeners',
+        description: 'Talk 1-on-1 with volunteers who listen without judgment and help you slow down.',
+        actionText: 'Find Listener →',
+        targetPath: 'safe-listener'
+      },
+      {
+        title: '🎪 Anxiety Support Circles',
+        description: 'Join group chat rooms centered on stress and overthinking support.',
+        actionText: 'Join Circle →',
+        targetPath: 'support-rooms'
+      },
+      {
+        title: '🧡 HopeBuddy Grounding',
+        description: 'Open HopeBuddy to do a quick 4-second breathing pause exercise.',
+        actionText: 'Open HopeBuddy →',
+        targetPath: 'home'
+      }
+    ],
+    externalResources: [
+      {
+        name: 'Crisis Text Line',
+        description: 'Free, 24/7 confidential text support for panic and anxiety. Text HOME to 741741.',
+        link: 'https://www.crisistextline.org',
+        badge: 'Immediate Help',
+        boundary: 'External Helpline • 100% Free',
+        mode: 'Text Support'
+      },
+      {
+        name: 'BetterHelp Therapy',
+        description: 'Matches you with licensed professional counselors specializing in anxiety.',
+        link: 'https://www.betterhelp.com',
+        badge: 'Professional Therapy',
+        boundary: 'External Resource • Paid Directory',
+        mode: 'Online Therapy'
+      },
+      {
+        name: 'NAMI Anxiety Guide',
+        description: 'Educational resources, guides on panic attacks, and family help guides.',
+        link: 'https://www.nami.org',
+        badge: 'Resource Finder',
+        boundary: 'External Directory • Free Info',
+        mode: 'Directories & Guides'
+      }
+    ]
   },
   {
-    name: 'Crisis Text Line',
-    category: '🧠 Mental Wellness',
-    description: 'Free, 24/7, confidential text support for people in crisis. Text HOME to 741741.',
-    boundary: 'External resource • 100% Free',
-    badge: 'Immediate Help',
-    link: 'https://www.crisistextline.org',
-    mode: 'Text Support'
+    id: 'parkinsons',
+    name: "Parkinson's Support",
+    emoji: '🧓',
+    tagline: 'Emotional comfort and caregiver support for movement challenges.',
+    bestFor: ['Daily emotional support', 'Caregiver support', 'Movement challenges'],
+    availableSupport: [
+      {
+        title: '🤝 Caregiver Listeners',
+        description: 'Connect with understanding peers who know the daily path of caregiver support.',
+        actionText: 'Find Listener →',
+        targetPath: 'safe-listener'
+      },
+      {
+        title: '🎪 Parkinson\'s Circles',
+        description: 'Join rooms where families share somatic tremor tips and emotional wins.',
+        actionText: 'Join Circle →',
+        targetPath: 'support-rooms'
+      },
+      {
+        title: '🧡 HopeBuddy Pacing',
+        description: 'Check in on daily energy pacing levels with your companion.',
+        actionText: 'Open HopeBuddy →',
+        targetPath: 'home'
+      }
+    ],
+    externalResources: [
+      {
+        name: "Parkinson's Foundation Line",
+        description: 'Call 1-800-4PD-INFO for free resources, clinical directory finders, and local guidance.',
+        link: 'https://www.parkinson.org',
+        badge: 'National Helpline',
+        boundary: 'External Helpline • 100% Free',
+        mode: 'Phone Support'
+      },
+      {
+        name: 'Family Caregiver Alliance',
+        description: 'Offers caregiver checklists, online classes, and regional advocacy groups.',
+        link: 'https://www.caregiver.org',
+        badge: 'Caregiver Support',
+        boundary: 'External Directory • Free Help',
+        mode: 'Toolkits & Groups'
+      },
+      {
+        name: 'Davis Phinney Foundation',
+        description: 'Resources and tools focused on living active, healthy daily lives with Parkinson\'s.',
+        link: 'https://www.davisphinneyfoundation.org',
+        badge: 'Living Tools',
+        boundary: 'External Resource • Free Info',
+        mode: 'Action Guides'
+      }
+    ]
   },
   {
-    name: 'BetterHelp Online',
-    category: '🧠 Mental Wellness',
-    description: 'Professional online therapy platform matching you with credentialed, experienced counselors.',
-    boundary: 'External resource • Subscription options',
-    badge: 'Professional Therapy',
-    link: 'https://www.betterhelp.com',
-    mode: 'Virtual Sessions'
-  },
-
-  // 🩺 Medical Specialists
-  {
-    name: 'General Practitioner Directory',
-    category: '🩺 Medical Specialists',
-    description: 'Search engines to find local verified general medical practitioners for physical health check-ups and advice.',
-    boundary: 'External resource • Insurance eligible',
-    badge: 'Clinic Finder',
-    link: 'https://www.zocdoc.com',
-    mode: 'Clinic Appointments'
-  },
-  {
-    name: 'Clinical Psychiatry Registry',
-    category: '🩺 Medical Specialists',
-    description: 'External directories of psychiatrists for clinical diagnostic medical evaluations and prescription oversight.',
-    boundary: 'External resource • Clinic consultations',
-    badge: 'Medication Care',
-    link: 'https://www.psychologytoday.com',
-    mode: 'In-person / Online'
-  },
-  {
-    name: 'Neurological Somatic Directory',
-    category: '🩺 Medical Specialists',
-    description: 'Specialized clinical directories to search for motor coordination, motor assessment, or somatic tremor specialists.',
-    boundary: 'External resource • Medical evaluation',
-    badge: 'Specialist Search',
-    link: 'https://www.neurology.org',
-    mode: 'Clinic Visits'
-  },
-
-  // 🌱 Long-Term Support
-  {
-    name: 'NAMI Peer Networks',
-    category: '🌱 Long-Term Support',
-    description: 'National Alliance on Mental Illness support directories offering free peer groups, advocacy, and education.',
-    boundary: 'External resource • 100% Free',
-    badge: 'Grassroots Community',
-    link: 'https://www.nami.org',
-    mode: 'Community Groups'
-  },
-  {
-    name: 'Support Groups Central',
-    category: '🌱 Long-Term Support',
-    description: 'Virtual peer support groups facilitated by trained leaders for anxiety, depression, recovery, and wellness.',
-    boundary: 'External resource • Free & low cost',
-    badge: 'Facilitated Sharing',
-    link: 'https://www.supportgroupscentral.com',
-    mode: 'Video Groups'
+    id: 'hallucinations',
+    name: 'Hallucination Support',
+    emoji: '👀',
+    tagline: 'Non-judgmental grounding, confusion assistance, and safety tips.',
+    bestFor: ['Visual hallucinations', 'Confusion', 'Fear management', 'Caregiver awareness'],
+    availableSupport: [
+      {
+        title: '🤝 Grounding Companions',
+        description: 'Talk to peer volunteers trained in quiet reality validation and soothing presence.',
+        actionText: 'Find Listener →',
+        targetPath: 'safe-listener'
+      },
+      {
+        title: '🎪 Quiet Sharing Circles',
+        description: 'Slow-paced rooms for talking through confusion, visual shifts, or fears.',
+        actionText: 'Join Circle →',
+        targetPath: 'support-rooms'
+      },
+      {
+        title: '🧡 HopeBuddy Reassurance',
+        description: 'Interactive reality-grounding scripts when feeling confused or disoriented.',
+        actionText: 'Open HopeBuddy →',
+        targetPath: 'home'
+      }
+    ],
+    externalResources: [
+      {
+        name: 'Lewy Body Dementia Line',
+        description: 'Call 800-539-9767 for specialized counseling on hallucinations and confusion.',
+        link: 'https://www.lbda.org',
+        badge: 'Support Line',
+        boundary: 'External Support • Free Info',
+        mode: 'Helpline Call'
+      },
+      {
+        name: 'Mental Health America Guide',
+        description: 'Resource guides explaining visual hallucinations and sensory shifts.',
+        link: 'https://www.mhanational.org',
+        badge: 'Guides & Articles',
+        boundary: 'External Resource • Free Info',
+        mode: 'Educational Guides'
+      },
+      {
+        name: 'Geriatric Psychiatry Finder',
+        description: 'Search directory for licensed medical professionals in cognitive changes.',
+        link: 'https://www.psychologytoday.com',
+        badge: 'Specialist Finder',
+        boundary: 'External Directory • Insurance',
+        mode: 'Medical Directory'
+      }
+    ]
   },
   {
-    name: 'Caregiver Support Alliance',
-    category: '🌱 Long-Term Support',
-    description: 'Resources, checklists, and support networks for individuals caring for family members with chronic medical needs.',
-    boundary: 'External resource • 100% Free',
-    badge: 'Caregiver Support',
-    link: 'https://www.familycaregiver.org',
-    mode: 'Intake Resources'
+    id: 'emotional-recovery',
+    name: 'Emotional Recovery',
+    emoji: '🌱',
+    tagline: 'Rebuild after burnout, grief, loneliness, and life transitions.',
+    bestFor: ['Loneliness', 'Burnout', 'Grief and life changes'],
+    availableSupport: [
+      {
+        title: '🤝 Grief Support Listeners',
+        description: 'Connect with listeners who hold a gentle, comforting space for grief.',
+        actionText: 'Find Listener →',
+        targetPath: 'safe-listener'
+      },
+      {
+        title: '🎪 Burnout & Loss Circles',
+        description: 'Weekly sharing circles for mutual recovery during life transitions.',
+        actionText: 'Join Circle →',
+        targetPath: 'support-rooms'
+      },
+      {
+        title: '🧡 HopeBuddy Rest Check',
+        description: 'Empathetic guidance that celebrates tiny wins and self-care recovery checks.',
+        actionText: 'Open HopeBuddy →',
+        targetPath: 'home'
+      }
+    ],
+    externalResources: [
+      {
+        name: 'GriefShare Network',
+        description: 'Search directory for local recovery groups facilitated by professionals.',
+        link: 'https://www.griefshare.org',
+        badge: 'Recovery Directory',
+        boundary: 'External Registry • Search Free',
+        mode: 'Local Groups'
+      },
+      {
+        name: 'Burnout Recovery Guide',
+        description: 'Self-assessments, stress reduction worksheets, and counselor directories.',
+        link: 'https://www.mhanational.org',
+        badge: 'Burnout Info',
+        boundary: 'External Resource • Free Guides',
+        mode: 'Worksheets & Tips'
+      },
+      {
+        name: 'Crisis Response Line',
+        description: 'Text HOME to 741741 to instantly talk about heavy burnout or grief.',
+        link: 'https://www.crisistextline.org',
+        badge: '24/7 Helpline',
+        boundary: 'External Helpline • 100% Free',
+        mode: 'Text / Call Line'
+      }
+    ]
   }
 ];
 
 export default function CareBridgeScreen({
   onBack,
+  onNavigateTo,
   savedQuestions,
   onAddQuestion,
   onDeleteQuestion,
 }: CareBridgeScreenProps) {
   const [subScreen, setSubScreen] = useState<SubScreen>('suggestions');
-  const [filterType, setFilterType] = useState<'🧠 Mental Wellness' | '🩺 Medical Specialists' | '🌱 Long-Term Support'>('🧠 Mental Wellness');
+  const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
   const [questionInput, setQuestionInput] = useState<string>('');
 
   const handleAddQuestion = (e: FormEvent) => {
@@ -127,19 +267,19 @@ export default function CareBridgeScreen({
     setQuestionInput('');
   };
 
-  const handleOpenResource = (resource: Resource) => {
+  const handleOpenResource = (resource: { name: string; link: string }) => {
     alert(`You are now leaving HopeHeart to visit ${resource.name}. Keep supporting yourself safely!`);
   };
 
   const exampleQuestions = [
-    'Why do I feel anxious often?',
-    'What should I do when panic starts?',
-    'Do I need therapy?',
-    'Should I meet a specialist?',
-    'What support options are right for me?'
+    'How do I talk about visual confusion episodes?',
+    'What daily exercises help support tremor cycles?',
+    'What should I do when overthinking turns into panic?',
+    'Are there local support groups for caregivers near me?',
+    'How do I identify burnout triggers before they scale?'
   ];
 
-  const filteredResources = RESOURCES_DATA.filter(res => res.category === filterType);
+  const activeCategory = SUPPORT_CATEGORIES.find(cat => cat.id === activeCategoryId) || SUPPORT_CATEGORIES[0];
 
   return (
     <div className="flex flex-col min-h-full bg-[#FCFAF5] font-sans select-none scrollbar-none w-full">
@@ -162,7 +302,7 @@ export default function CareBridgeScreen({
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
           {subScreen === 'suggestions' && 'Professional Resources'}
-          {subScreen === 'questions' && 'Doctor Question List'}
+          {subScreen === 'questions' && 'Professional Question List'}
         </span>
         <button 
           onClick={() => setSubScreen('questions')}
@@ -197,10 +337,9 @@ export default function CareBridgeScreen({
                     Professional Resources
                   </h2>
                   <p className="text-[13px] md:text-[14px] text-gray-600 leading-relaxed font-medium">
-                    Sometimes emotional support is not enough. HopeHeart can help you discover external professional resources when you feel ready.
-                  </p>
-                  <p className="text-[11.5px] text-gray-400 italic">
-                    HopeHeart does not diagnose you. These are resource directories, not medical decisions.
+                    Sometimes emotional support is not enough.
+                    <br />
+                    HopeHeart can help you discover external professional resources when you feel ready.
                   </p>
                 </div>
                 <div className="shrink-0 flex items-center justify-end">
@@ -213,68 +352,170 @@ export default function CareBridgeScreen({
                 </div>
               </div>
 
-              {/* Resource Filter Categories */}
+              {/* Condition-based Category Selectors */}
               <div className="space-y-2.5">
                 <label className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                  Select Resource Category
+                  Select Support Category
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {(['🧠 Mental Wellness', '🩺 Medical Specialists', '🌱 Long-Term Support'] as const).map((type) => (
+                  {SUPPORT_CATEGORIES.map((cat) => (
                     <button
-                      key={type}
-                      onClick={() => setFilterType(type)}
+                      key={cat.id}
+                      onClick={() => setActiveCategoryId(cat.id)}
                       className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] ${
-                        filterType === type 
+                        activeCategoryId === cat.id 
                           ? 'bg-[#1E1E1A] text-white shadow-xs' 
                           : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      {type}
+                      {cat.emoji} {cat.name}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Resources Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {filteredResources.map((res, idx) => (
-                  <motion.div
-                    key={res.name}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="bg-white border border-[#EDE9DE] rounded-3xl p-5 hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
-                          {res.badge}
-                        </span>
-                        <span className="text-[11px] font-semibold text-gray-400">
-                          {res.mode}
-                        </span>
-                      </div>
-                      <h4 className="font-display font-extrabold text-gray-800 text-[16px] leading-tight">
-                        {res.name}
-                      </h4>
-                      <p className="text-[12.5px] text-gray-500 font-medium leading-relaxed">
-                        {res.description}
+              {/* Dynamic Category Card */}
+              <motion.div
+                key={activeCategory.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 space-y-6 shadow-xs"
+              >
+                {/* Header info */}
+                <div className="border-b border-gray-100 pb-5 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl p-2.5 rounded-2xl bg-[#FCFAF5] border border-gray-150 shadow-inner">
+                      {activeCategory.emoji}
+                    </span>
+                    <div>
+                      <h3 className="font-display font-black text-[#2B1D12] text-[20px]">
+                        {activeCategory.name}
+                      </h3>
+                      <p className="text-[12.5px] text-gray-500 font-semibold italic">
+                        {activeCategory.tagline}
                       </p>
                     </div>
+                  </div>
 
-                    <div className="space-y-3.5">
-                      <div className="text-[11px] bg-[#FCFAF5] rounded-xl border border-gray-100 p-2.5 font-semibold text-gray-500">
-                        {res.boundary}
-                      </div>
-                      <button
-                        onClick={() => handleOpenResource(res)}
-                        className="w-full py-2.5 bg-[#FAF8F5] border border-gray-200 hover:bg-[#FF7527] hover:text-white transition-all text-gray-700 font-display font-extrabold text-[12.5px] rounded-xl cursor-pointer"
-                      >
-                        Open Resource →
-                      </button>
+                  {/* BEST FOR */}
+                  <div className="pt-2">
+                    <span className="text-[10px] font-mono font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">
+                      Best For
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {activeCategory.bestFor.map((item, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-[#FCFAF5] border border-gray-150 rounded-lg text-gray-650 font-semibold text-[11.5px]"
+                        >
+                          {item}
+                        </span>
+                      ))}
                     </div>
-                  </motion.div>
-                ))}
+                  </div>
+                </div>
+
+                {/* AVAILABLE SUPPORT (HOPEHEART) */}
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-display font-black text-gray-800 text-[15px] flex items-center gap-1.5">
+                      🧡 Available Support on HopeHeart
+                    </h4>
+                    <p className="text-[11px] text-gray-400 font-medium">
+                      Empathetic peer-to-peer assistance and companion check-ins within our community boundaries.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {activeCategory.availableSupport.map((support, idx) => (
+                      <div 
+                        key={idx}
+                        className="bg-[#FCFAF5] border border-gray-150 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:shadow-2xs transition-shadow"
+                      >
+                        <div className="space-y-1">
+                          <h5 className="font-display font-bold text-[13.5px] text-gray-800">
+                            {support.title}
+                          </h5>
+                          <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                            {support.description}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => onNavigateTo(support.targetPath)}
+                          className="w-full py-1.5 bg-white border border-gray-200 hover:border-[#FF7527]/45 hover:text-[#FF7527] transition-all text-gray-600 font-display font-bold text-[11px] rounded-lg cursor-pointer text-center"
+                        >
+                          {support.actionText}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* EXTERNAL PROFESSIONAL RESOURCES */}
+                <div className="space-y-3 pt-2">
+                  <div>
+                    <h4 className="font-display font-black text-emerald-800 text-[15px] flex items-center gap-1.5">
+                      🩺 External Professional Resources
+                    </h4>
+                    <p className="text-[11px] text-gray-400 font-medium">
+                      Verified directories, specialized helplines, and clinical consultation channels.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {activeCategory.externalResources.map((res, idx) => (
+                      <div 
+                        key={idx}
+                        className="bg-white border border-[#EDE9DE] rounded-2xl p-4.5 flex flex-col justify-between space-y-4 hover:shadow-2xs transition-shadow"
+                      >
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
+                              {res.badge}
+                            </span>
+                            <span className="text-[10px] font-semibold text-gray-400">
+                              {res.mode}
+                            </span>
+                          </div>
+                          <h5 className="font-display font-black text-gray-800 text-[14px]">
+                            {res.name}
+                          </h5>
+                          <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                            {res.description}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-100 p-2 font-semibold text-gray-400">
+                            {res.boundary}
+                          </div>
+                          <button
+                            onClick={() => handleOpenResource(res)}
+                            className="w-full py-2 bg-[#FAF8F5] border border-gray-200 hover:bg-[#FF7527] hover:text-white transition-all text-gray-700 font-display font-extrabold text-[12px] rounded-xl cursor-pointer"
+                          >
+                            Open Resource →
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Safe Boundary Reminders Box */}
+              <div className="bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg">🛡️</span>
+                  <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
+                    Safe Boundary Reminders
+                  </span>
+                </div>
+                <ul className="text-[12px] text-gray-600 space-y-1.5 font-semibold list-disc list-inside px-1">
+                  <li>HopeHeart must not diagnose conditions.</li>
+                  <li>HopeHeart must not provide medication advice.</li>
+                  <li>HopeHeart only provides peer emotional support, communities, and external resources.</li>
+                </ul>
               </div>
 
               {/* Core Creed Card */}
@@ -299,10 +540,10 @@ export default function CareBridgeScreen({
             >
               <div className="space-y-1.5 text-center md:text-left">
                 <h3 className="font-display font-black text-gray-800 text-[20px] md:text-[22px] tracking-tight leading-none">
-                  Save Questions for Doctor
+                  Professional Question List
                 </h3>
                 <p className="text-[13px] text-gray-500 font-semibold">
-                  Write down what you want to ask during your upcoming general practitioner appointment. We keep it ready for you!
+                  Write down what you want to ask during your upcoming general practitioner or specialist appointment. We keep it ready for you!
                 </p>
               </div>
 
@@ -312,7 +553,7 @@ export default function CareBridgeScreen({
                   type="text"
                   value={questionInput}
                   onChange={(e) => setQuestionInput(e.target.value)}
-                  placeholder="Ask about symptoms, pills, dosage, or anxiety triggers..."
+                  placeholder="Ask about symptoms, daily grounding exercises, tremors, or stress..."
                   className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 text-[13px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                 />
                 <button
@@ -342,7 +583,7 @@ export default function CareBridgeScreen({
                 </div>
               </div>
 
-              {/* Active Questions Container */}
+              {/* Active Questions Checklist */}
               <div className="space-y-2">
                 <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-wider block">
                   Your Active Saved Questions Checklist ({savedQuestions.length})
@@ -352,7 +593,7 @@ export default function CareBridgeScreen({
                     <div className="text-center py-8 bg-[#FCFAF5] border border-dashed border-[#ECE6D9] rounded-2xl">
                       <span className="text-[28px]">📜</span>
                       <p className="text-[12px] text-gray-500 font-semibold mt-2">
-                        Your clinical clipboard is empty. Save questions above!
+                        Your professional checklist is empty. Save questions above!
                       </p>
                     </div>
                   ) : (
@@ -392,7 +633,7 @@ export default function CareBridgeScreen({
 
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] p-4 rounded-2xl">
                 <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
-                  💡 <strong>Tip:</strong> Keep this list open on your phone screen when talking face-to-face with your physician so that no important bodily symptoms are left unaddressed!
+                  💡 <strong>Tip:</strong> Keep this list open on your screen when talking face-to-face with your physician or therapist so that no important concerns are left unaddressed!
                 </p>
               </div>
 

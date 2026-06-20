@@ -184,6 +184,7 @@ export default function App() {
         return (
           <CareBridgeScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
             savedQuestions={savedQuestions}
             onAddQuestion={handleAddQuestion}
             onDeleteQuestion={handleDeleteQuestion}
