@@ -254,7 +254,7 @@ export default function App() {
         Uses full-width on mobile viewports.
         Caps on tablet configurations, and handles spacious bento column grids for laptop displays.
       */}
-      <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[720px] sm:h-[800px] bg-[#FCFAF5] rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
+      <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[640px] sm:h-[min(780px,88vh)] bg-[#FCFAF5] rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
         
         {/* TOP Tablet / Laptop header and navigation bar */}
         {showNavChannels && (

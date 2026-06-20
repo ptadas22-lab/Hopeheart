@@ -8,17 +8,17 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] justify-between p-5 md:p-8 font-sans select-none w-full">
+    <div className="flex flex-col justify-center items-center min-h-full bg-[#FCFAF5] p-5 md:p-8 font-sans select-none w-full my-auto">
       
       {/* Brand logo at the very top (always visible & centered/aligned on mobile) */}
-      <div className="block md:hidden text-center mb-2 shrink-0">
+      <div className="block md:hidden text-center mb-4 shrink-0 w-full">
         <PrimaryLogo className="scale-90 mx-auto" />
         <div className="mt-2 text-center">
           <BrandDivider />
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center py-2 md:py-6">
+      <div className="flex items-center justify-center py-2 md:py-4 w-full">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 items-center max-w-5xl mx-auto w-full">
           
           {/* LEFT COLUMN: Main copy & interaction (Always displays first on desktop, and spans 7 cols) */}
