@@ -37,7 +37,7 @@ interface SupportCategory {
 const SUPPORT_CATEGORIES: SupportCategory[] = [
   {
     id: 'anxiety',
-    name: 'Anxiety Support',
+    name: 'Anxiety',
     emoji: '🧠',
     tagline: 'Manage racing thoughts, stress, and anxiety in safe peer spaces.',
     bestFor: ['Overthinking', 'Panic', 'Social anxiety', 'Stress management'],
@@ -90,7 +90,7 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
   },
   {
     id: 'parkinsons',
-    name: "Parkinson's Support",
+    name: "Parkinson's",
     emoji: '🧓',
     tagline: 'Emotional comfort and caregiver support for movement challenges.',
     bestFor: ['Daily emotional support', 'Caregiver support', 'Movement challenges'],
@@ -143,7 +143,7 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
   },
   {
     id: 'hallucinations',
-    name: 'Hallucination Support',
+    name: 'Hallucinations',
     emoji: '👀',
     tagline: 'Non-judgmental grounding, confusion assistance, and safety tips.',
     bestFor: ['Visual hallucinations', 'Confusion', 'Fear management', 'Caregiver awareness'],
@@ -496,6 +496,84 @@ function EmotionalRecoveryIllustration() {
   );
 }
 
+// 5. Contextual HopeBuddy animation inside the hero section
+function HeroMascot({ activeCategoryId }: { activeCategoryId: string }) {
+  const isAnxious = activeCategoryId === 'anxiety';
+  const isParkinsons = activeCategoryId === 'parkinsons';
+  const isHallucinations = activeCategoryId === 'hallucinations';
+  const isRecovery = activeCategoryId === 'emotional-recovery';
+  
+  return (
+    <div className="w-28 h-28 bg-white/70 border border-[#E9E4D9] rounded-full shadow-inner flex items-center justify-center p-2.5 relative overflow-visible select-none">
+      {/* Soft halo behind mascot */}
+      <motion.div 
+        className="absolute inset-0 rounded-full bg-orange-50/40"
+        animate={{ scale: [1, 1.08, 1] }}
+        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+      />
+      <svg width="76" height="76" viewBox="0 0 150 150" className="overflow-visible relative z-10">
+        <motion.g
+          animate={{ y: [0, -4, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          style={{ transformOrigin: "75px 110px" }}
+        >
+          {/* Hump Ears */}
+          <path d="M 40 28 C 36 12, 60 12, 66 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          <path d="M 110 28 C 114 12, 90 12, 84 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          
+          {/* Rounded Bean Body */}
+          <rect x="24" y="26" width="102" height="86" rx="36" fill="#ffa552" stroke="#2B1D12" strokeWidth="4" />
+          <rect x="26" y="28" width="98" height="82" rx="34" fill="#ffa552" />
+          
+          {/* Eyes depending on category */}
+          {isAnxious && (
+            <>
+              {/* Closed peaceful eyes */}
+              <path d="M 48 62 Q 54 57 60 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M 90 62 Q 96 57 102 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+            </>
+          )}
+          
+          {(isParkinsons || isHallucinations) && (
+            <>
+              {/* Happy eyes */}
+              <path d="M 46 64 A 6 6 0 0 1 58 64" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M 92 64 A 6 6 0 0 1 104 64" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+            </>
+          )}
+          
+          {isRecovery && (
+            <>
+              {/* Sparkle open eyes */}
+              <circle cx="53" cy="62" r="7.5" fill="#2B1D12" />
+              <circle cx="97" cy="62" r="7.5" fill="#2B1D12" />
+              <circle cx="51" cy="59" r="2.5" fill="white" />
+              <circle cx="95" cy="59" r="2.5" fill="white" />
+            </>
+          )}
+          
+          {/* Smile */}
+          <path d="M 69 75 Q 75 79 81 75" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          
+          {/* Cheeks */}
+          <circle cx="42" cy="71" r="5.5" fill="#FFA5A5" opacity="0.8" />
+          <circle cx="108" cy="71" r="5.5" fill="#FFA5A5" opacity="0.8" />
+          
+          {/* Waving Arm */}
+          <motion.path 
+            d="M 126 80 Q 140 56 142 46" 
+            fill="none" stroke="#EA713E" strokeWidth="8" strokeLinecap="round"
+            animate={{ rotate: [0, 15, -10, 15, 0] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+            style={{ transformOrigin: "126px 80px" }}
+          />
+          <path d="M 23 82 Q 13 88 20 95" fill="none" stroke="#EA713E" strokeWidth="7.5" strokeLinecap="round" />
+        </motion.g>
+      </svg>
+    </div>
+  );
+}
+
 export default function CareBridgeScreen({
   onBack,
   onNavigateTo,
@@ -574,33 +652,31 @@ export default function CareBridgeScreen({
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
-              {/* Hero Header */}
-              <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/20 border border-emerald-100/70 rounded-3xl p-5 md:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="space-y-2 md:max-w-2xl">
+              {/* 1. Redesigned Hero Header Section */}
+              <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/20 border border-emerald-100/70 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-3 md:max-w-2xl">
                   <div className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold tracking-widest px-2.5 py-0.5 rounded-full uppercase">
                     🧑‍⚕️ Verified External Resources
                   </div>
-                  <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[26px] leading-snug">
-                    Professional Resources
+                  <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[26px] leading-tight">
+                    🧡 What kind of support do you need today?
                   </h2>
-                  <p className="text-[13px] md:text-[14px] text-gray-600 leading-relaxed font-medium">
-                    Sometimes emotional support is not enough.
-                    <br />
-                    HopeHeart can help you discover external professional resources when you feel ready.
-                  </p>
-                </div>
-                <div className="shrink-0 flex items-center justify-end">
-                  <div className="bg-white border border-emerald-100 rounded-3xl p-4 shadow-inner flex flex-col items-center justify-center text-center w-36">
-                    <span className="text-[28px] mb-1">🛡️</span>
-                    <span className="text-[9.5px] uppercase tracking-wider font-mono font-black text-[#FF7527] leading-tight">
-                      Safe Resource Verification
-                    </span>
+                  <div className="text-[12.5px] md:text-[13.5px] text-gray-650 leading-relaxed font-semibold space-y-1.5">
+                    <p className="text-[#FF7527] font-extrabold uppercase font-mono tracking-wider text-[11.5px]">
+                      Anxiety • Parkinson's • Hallucinations • Emotional Recovery
+                    </p>
+                    <p className="text-gray-500 font-medium leading-relaxed">
+                      HopeHeart helps you find the right space without overwhelming you.
+                    </p>
                   </div>
+                </div>
+                <div className="shrink-0 flex items-center justify-center md:justify-end">
+                  <HeroMascot activeCategoryId={activeCategoryId} />
                 </div>
               </div>
 
-              {/* Condition-based Category Selectors */}
-              <div className="space-y-2.5">
+              {/* 2. Category switcher directly below the hero section */}
+              <div className="space-y-2.5 bg-white border border-[#EDE9DE] p-4.5 rounded-[24px] shadow-xs">
                 <label className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
                   Select Support Category
                 </label>
@@ -609,156 +685,159 @@ export default function CareBridgeScreen({
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategoryId(cat.id)}
-                      className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] ${
+                      className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] flex items-center gap-1.5 ${
                         activeCategoryId === cat.id 
                           ? 'bg-[#1E1E1A] text-white shadow-xs' 
-                          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                          : 'bg-[#FCFAF5] text-gray-600 border border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      {cat.emoji} {cat.name}
+                      <span>{cat.emoji}</span> <span>{cat.name}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Dynamic Category Card */}
-              <motion.div
-                key={activeCategory.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 space-y-6 shadow-xs"
-              >
-                {/* Header info */}
-                <div className="border-b border-gray-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl p-2.5 rounded-2xl bg-[#FCFAF5] border border-gray-150 shadow-inner">
-                        {activeCategory.emoji}
-                      </span>
-                      <div>
-                        <h3 className="font-display font-black text-[#2B1D12] text-[20px]">
-                          {activeCategory.name}
-                        </h3>
-                        <p className="text-[12.5px] text-gray-500 font-semibold italic">
-                          {activeCategory.tagline}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* BEST FOR */}
-                    <div className="pt-2">
-                      <span className="text-[10px] font-mono font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">
-                        Best For
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {activeCategory.bestFor.map((item, index) => (
-                          <span 
-                            key={index}
-                            className="px-3 py-1 bg-[#FCFAF5] border border-gray-150 rounded-lg text-gray-650 font-semibold text-[11.5px]"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Contextual Mascot Illustration */}
-                  <div className="shrink-0 flex items-center justify-center">
-                    {activeCategory.id === 'anxiety' && <AnxietyIllustration />}
-                    {activeCategory.id === 'parkinsons' && <ParkinsonsIllustration />}
-                    {activeCategory.id === 'hallucinations' && <HallucinationIllustration />}
-                    {activeCategory.id === 'emotional-recovery' && <EmotionalRecoveryIllustration />}
-                  </div>
-                </div>
-
-                {/* AVAILABLE SUPPORT (HOPEHEART) */}
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="font-display font-black text-gray-800 text-[15px] flex items-center gap-1.5">
-                      🧡 Available Support on HopeHeart
-                    </h4>
-                    <p className="text-[11px] text-gray-400 font-medium">
-                      Empathetic peer-to-peer assistance and companion check-ins within our community boundaries.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {activeCategory.availableSupport.map((support, idx) => (
-                      <div 
-                        key={idx}
-                        className="bg-[#FCFAF5] border border-gray-150 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:shadow-2xs transition-shadow"
-                      >
-                        <div className="space-y-1">
-                          <h5 className="font-display font-bold text-[13.5px] text-gray-800">
-                            {support.title}
-                          </h5>
-                          <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                            {support.description}
+              {/* 3. Dynamic Category Details and Cards Area */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeCategory.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.18 }}
+                  className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 space-y-6 shadow-xs"
+                >
+                  {/* Header info */}
+                  <div className="border-b border-gray-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="space-y-3 flex-1">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl p-2.5 rounded-2xl bg-[#FCFAF5] border border-gray-150 shadow-inner">
+                          {activeCategory.emoji}
+                        </span>
+                        <div>
+                          <h3 className="font-display font-black text-[#2B1D12] text-[20px]">
+                            {activeCategory.name} Support
+                          </h3>
+                          <p className="text-[12.5px] text-gray-500 font-semibold italic">
+                            {activeCategory.tagline}
                           </p>
                         </div>
-                        <button
-                          onClick={() => onNavigateTo(support.targetPath)}
-                          className="w-full py-1.5 bg-white border border-gray-200 hover:border-[#FF7527]/45 hover:text-[#FF7527] transition-all text-gray-600 font-display font-bold text-[11px] rounded-lg cursor-pointer text-center"
+                      </div>
+
+                      {/* BEST FOR */}
+                      <div className="pt-2">
+                        <span className="text-[10px] font-mono font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">
+                          Best For
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {activeCategory.bestFor.map((item, index) => (
+                            <span 
+                              key={index}
+                              className="px-3 py-1 bg-[#FCFAF5] border border-gray-150 rounded-lg text-gray-650 font-semibold text-[11.5px]"
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Contextual Mascot Illustration */}
+                    <div className="shrink-0 flex items-center justify-center">
+                      {activeCategory.id === 'anxiety' && <AnxietyIllustration />}
+                      {activeCategory.id === 'parkinsons' && <ParkinsonsIllustration />}
+                      {activeCategory.id === 'hallucinations' && <HallucinationIllustration />}
+                      {activeCategory.id === 'emotional-recovery' && <EmotionalRecoveryIllustration />}
+                    </div>
+                  </div>
+
+                  {/* AVAILABLE SUPPORT (HOPEHEART) */}
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-display font-black text-gray-800 text-[15px] flex items-center gap-1.5">
+                        🧡 Available Support on HopeHeart
+                      </h4>
+                      <p className="text-[11px] text-gray-400 font-medium">
+                        Empathetic peer-to-peer assistance and companion check-ins within our community boundaries.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {activeCategory.availableSupport.map((support, idx) => (
+                        <div 
+                          key={idx}
+                          className="bg-[#FCFAF5] border border-gray-150 rounded-2xl p-4 flex flex-col justify-between space-y-3 hover:shadow-2xs transition-shadow"
                         >
-                          {support.actionText}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* EXTERNAL PROFESSIONAL RESOURCES */}
-                <div className="space-y-3 pt-2">
-                  <div>
-                    <h4 className="font-display font-black text-emerald-800 text-[15px] flex items-center gap-1.5">
-                      🩺 External Professional Resources
-                    </h4>
-                    <p className="text-[11px] text-gray-400 font-medium">
-                      Verified directories, specialized helplines, and clinical consultation channels.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {activeCategory.externalResources.map((res, idx) => (
-                      <div 
-                        key={idx}
-                        className="bg-white border border-[#EDE9DE] rounded-2xl p-4.5 flex flex-col justify-between space-y-4 hover:shadow-2xs transition-shadow"
-                      >
-                        <div className="space-y-2.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
-                              {res.badge}
-                            </span>
-                            <span className="text-[10px] font-semibold text-gray-400">
-                              {res.mode}
-                            </span>
-                          </div>
-                          <h5 className="font-display font-black text-gray-800 text-[14px]">
-                            {res.name}
-                          </h5>
-                          <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                            {res.description}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-100 p-2 font-semibold text-gray-400">
-                            {res.boundary}
+                          <div className="space-y-1">
+                            <h5 className="font-display font-bold text-[13.5px] text-gray-800">
+                              {support.title}
+                            </h5>
+                            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                              {support.description}
+                            </p>
                           </div>
                           <button
-                            onClick={() => handleOpenResource(res)}
-                            className="w-full py-2 bg-[#FAF8F5] border border-gray-200 hover:bg-[#FF7527] hover:text-white transition-all text-gray-700 font-display font-extrabold text-[12px] rounded-xl cursor-pointer"
+                            onClick={() => onNavigateTo(support.targetPath)}
+                            className="w-full py-1.5 bg-white border border-gray-200 hover:border-[#FF7527]/45 hover:text-[#FF7527] transition-all text-gray-600 font-display font-bold text-[11px] rounded-lg cursor-pointer text-center"
                           >
-                            Open Resource →
+                            {support.actionText}
                           </button>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+
+                  {/* 4. Renamed: External Professional Resources -> Trusted External Resources */}
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <h4 className="font-display font-black text-emerald-800 text-[15px] flex items-center gap-1.5">
+                        🌍 Trusted External Resources
+                      </h4>
+                      <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                        These are external organizations verified by HopeHeart.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {activeCategory.externalResources.map((res, idx) => (
+                        <div 
+                          key={idx}
+                          className="bg-white border border-[#EDE9DE] rounded-2xl p-4.5 flex flex-col justify-between space-y-4 hover:shadow-2xs transition-shadow"
+                        >
+                          <div className="space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
+                                {res.badge}
+                              </span>
+                              <span className="text-[10px] font-semibold text-gray-400">
+                                {res.mode}
+                              </span>
+                            </div>
+                            <h5 className="font-display font-black text-gray-800 text-[14px]">
+                              {res.name}
+                            </h5>
+                            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                              {res.description}
+                            </p>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-100 p-2 font-semibold text-gray-400">
+                              {res.boundary}
+                            </div>
+                            <button
+                              onClick={() => handleOpenResource(res)}
+                              className="w-full py-2 bg-[#FAF8F5] border border-gray-200 hover:bg-[#FF7527] hover:text-white transition-all text-gray-700 font-display font-extrabold text-[12px] rounded-xl cursor-pointer"
+                            >
+                              Open Resource →
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
               {/* Safe Boundary Reminders Box */}
               <div className="bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs">
