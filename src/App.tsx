@@ -46,7 +46,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>(ScreenId.Welcome);
   const [selectedMoodId, setSelectedMoodId] = useState<string>('calm');
   const [userName, setUserName] = useState<string>('Voice47');
-  const [todayQuote, setTodayQuote] = useState<string>(EN_DIARY_WISDOM[3]);
+  const [todayQuote, setTodayQuote] = useState<string>("Rest is productive too. You're allowed to slow down.");
   const [savedQuestions, setSavedQuestions] = useState<DoctorQuestion[]>([
     { id: 'q-1', text: 'Can medication dosage adjust on an empty stomach?', createdAt: 'Just now' },
     { id: 'q-2', text: 'Daily morning tremor checking checklist', createdAt: 'Just now' }
@@ -286,7 +286,7 @@ export default function App() {
                   isHeartCheckActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>💖</span> Check-in
+                <span>💖</span> Daily Check-In
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.SafeListener)}
@@ -294,7 +294,7 @@ export default function App() {
                   isSupportActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🤝</span> Support Circles
+                <span>🤝</span> Community
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.DoctorSuggestions)}
@@ -310,7 +310,7 @@ export default function App() {
                   isSafetyActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🛡️</span> AI Safety
+                <span>🛡️</span> Safety
               </button>
             </nav>
 
@@ -378,7 +378,7 @@ export default function App() {
               }`}
             >
               <span className="text-[17px] mb-0.5 select-none leading-none">💖</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Check-in</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Daily Check-In</span>
               {isHeartCheckActive && (
                 <motion.div 
                   layoutId="activeTabIndicator"
@@ -386,7 +386,7 @@ export default function App() {
                 />
               )}
             </button>
-
+ 
             {/* Tab 3: Support */}
             <button
               onClick={() => setCurrentScreen(ScreenId.SafeListener)}
@@ -395,7 +395,7 @@ export default function App() {
               }`}
             >
               <span className="text-[17px] mb-0.5 select-none leading-none">🤝</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Support</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Community</span>
               {isSupportActive && (
                 <motion.div 
                   layoutId="activeTabIndicator"
@@ -403,7 +403,7 @@ export default function App() {
                 />
               )}
             </button>
-
+ 
             {/* Tab 4: Care */}
             <button
               onClick={() => setCurrentScreen(ScreenId.DoctorSuggestions)}
@@ -412,7 +412,7 @@ export default function App() {
               }`}
             >
               <span className="text-[17px] mb-0.5 select-none leading-none">🩺</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Care</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Care Bridge</span>
               {isCareActive && (
                 <motion.div 
                   layoutId="activeTabIndicator"
@@ -420,7 +420,7 @@ export default function App() {
                 />
               )}
             </button>
-
+ 
             {/* Tab 5: Safety */}
             <button
               onClick={() => setCurrentScreen(ScreenId.AISafety)}
@@ -437,7 +437,7 @@ export default function App() {
                 />
               )}
             </button>
-
+ 
           </nav>
         )}
 

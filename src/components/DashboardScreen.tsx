@@ -59,9 +59,9 @@ export default function DashboardScreen({
           <div className="md:col-span-5 space-y-5">
             {/* Greeting HUD Message */}
             <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs">
-              <div className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider mb-1">CURRENT HEART STATE</div>
+              <div className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider mb-1">CURRENT FEELING</div>
               <h1 className="font-display font-black text-gray-800 text-[22px] md:text-[24px] leading-tight">
-                Your heart feels <span className="text-[#FF7527]">{selectedMood.label}</span> today.
+                You're feeling <span className="text-[#FF7527]">{selectedMood.label}</span> today.
               </h1>
               <p className="text-[13px] text-gray-500 font-semibold leading-relaxed mt-2 italic">
                 "{selectedMood.tagline}"
@@ -69,16 +69,16 @@ export default function DashboardScreen({
             </div>
 
             {/* Mascot Companion interactive Card */}
-            <div className="bg-[#FFFDF9] border border-[#EDE9DE] rounded-3xl p-6 shadow-sm text-center flex flex-col items-center space-y-4">
-              <div className="p-3 rounded-2xl bg-[#FCFBF8] border border-gray-100 shadow-inner">
-                <Mascot expression={selectedMood.buddyExpression} size={150} />
+            <div className="bg-[#FFFDF9] border border-[#EDE9DE] rounded-3xl p-5 shadow-sm text-center flex flex-col items-center space-y-3.5">
+              <div className="p-2.5 rounded-2xl bg-[#FCFBF8] border border-gray-100 shadow-inner">
+                <Mascot expression={selectedMood.buddyExpression} size={120} />
               </div>
               <div className="space-y-1">
-                <h4 className="font-display font-bold text-gray-800 text-[15px]">
-                  HopeHeart Mascot
+                <h4 className="font-display font-bold text-gray-800 text-[14.5px]">
+                  HopeBuddy
                 </h4>
-                <p className="text-[12px] text-gray-500 font-medium">
-                  Your emotional state alters the counselor companion's avatar.
+                <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
+                  HopeBuddy changes gently based on your mood and check-ins.
                 </p>
               </div>
               <button
@@ -86,7 +86,7 @@ export default function DashboardScreen({
                 id="btn-update-mood-left"
                 className="w-full py-3 hover:bg-[#FF7527] hover:text-white border border-[#FF7527] text-[#FF7527] rounded-xl text-[13px] font-display font-bold transition-all cursor-pointer bg-white"
               >
-                Change Today's Feeling
+                Update Check-In
               </button>
             </div>
           </div>
@@ -104,10 +104,12 @@ export default function DashboardScreen({
             </div>
 
             {/* Companion Search Hero banner */}
-            <button
+            <motion.button
               onClick={() => onNavigateTo('trusted-listener')}
               id="dahsboard-card-listener"
-              className="w-full relative overflow-hidden bg-gradient-to-r from-[#FF7527] to-[#FFA14E] text-white p-6 rounded-3xl shadow-[0_8px_20px_rgba(255,117,39,0.22)] active:scale-[0.99] transition-all text-left group cursor-pointer"
+              whileHover={{ scale: 1.01, y: -2 }}
+              whileTap={{ scale: 0.99 }}
+              className="w-full relative overflow-hidden bg-gradient-to-r from-[#FF7527] to-[#FFA14E] text-white p-6 rounded-3xl shadow-[0_8px_20px_rgba(255,117,39,0.22)] transition-all text-left group cursor-pointer block"
             >
               <div className="absolute right-2 top-2 opacity-15 text-white select-none pointer-events-none">
                 <svg className="w-24 h-24 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 24 24">
@@ -122,7 +124,7 @@ export default function DashboardScreen({
                 Find a Trusted Listener
               </h3>
               <p className="text-[13.5px] text-white/95 font-medium mt-2 leading-relaxed">
-                Talk to someone safe when your heart feels heavy. No judgment. No pressure.
+                Connect with someone who is ready to listen without judgement.
               </p>
               <div className="mt-5 flex items-center gap-1 text-[13px] font-bold text-white uppercase font-mono tracking-wider bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-xl w-fit transition-all">
                 Find Listener
@@ -130,15 +132,17 @@ export default function DashboardScreen({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </div>
-            </button>
+            </motion.button>
 
             {/* Split cards for professional and rooms */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Card 1: Join Support Room */}
-              <button
+              <motion.button
                 onClick={() => onNavigateTo('support-rooms')}
                 id="dashboard-card-rooms"
-                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all active:scale-[0.98] cursor-pointer"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[20px] mb-3 shadow-inner">
                   🎪
@@ -149,24 +153,26 @@ export default function DashboardScreen({
                 <p className="text-[11.5px] text-gray-500 font-medium mt-1 leading-relaxed">
                   Hop into quiet, focused sharing spaces with kindred spirits.
                 </p>
-              </button>
+              </motion.button>
 
               {/* Card 2: Care Bridge Pro */}
-              <button
+              <motion.button
                 onClick={() => onNavigateTo('care-bridge')}
                 id="dashboard-card-pro"
-                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all active:scale-[0.98] cursor-pointer"
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[20px] mb-3 shadow-inner">
                   🩺
                 </div>
                 <h4 className="font-display font-extrabold text-gray-800 text-[15px] leading-tight">
-                  Talk to Professional
+                  Professional Resources
                 </h4>
                 <p className="text-[11.5px] text-gray-500 font-medium mt-1 leading-relaxed">
-                  Medical & therapy guidance from certified clinicians.
+                  Find verified external support when needed.
                 </p>
-              </button>
+              </motion.button>
             </div>
 
             {/* Daily Wisdom card */}
