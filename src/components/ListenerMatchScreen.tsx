@@ -9,26 +9,183 @@ interface ListenerMatchScreenProps {
   onOpenCrisisScreen?: () => void; // Trigger for Screen 22
 }
 
-const CONSTANT_LISTENERS = [
-  { 
-    name: 'Voice123', 
-    bio: 'Ready to listen without judgment. Share your heavy thoughts here safely.',
-    status: 'Available for support',
-    supportType: 'Emotional listening',
-    boundary: 'No prescriptions or diagnosis',
-    bg: 'bg-orange-100', 
-    text: 'text-orange-850'
-  },
-  { 
-    name: 'Voice78', 
-    bio: 'Care ally. Offering cozy conversations and support loops.',
-    status: 'Available for support',
-    supportType: 'Kind companionship',
-    boundary: 'No prescriptions or diagnosis',
-    bg: 'bg-blue-100', 
-    text: 'text-blue-800' 
-  },
-];
+interface Listener {
+  name: string;
+  role: string;
+  bio: string;
+  status: 'available' | 'soon';
+  supportType: string;
+  boundary: string;
+  iconBg: string;
+  actionText: string;
+  targetPath?: string;
+}
+
+const LISTENERS_DATA: Record<string, Listener[]> = {
+  'I need someone to listen': [
+    {
+      name: 'Voice123',
+      role: 'Safe Listener',
+      bio: 'Ready to listen without judgment. Share your heavy thoughts here safely.',
+      status: 'available',
+      supportType: 'Emotional support',
+      boundary: 'No prescriptions or diagnosis',
+      iconBg: 'bg-orange-100 text-orange-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'Voice78',
+      role: 'Safe Listener',
+      bio: 'Offering cozy conversations and gentle support loops.',
+      status: 'available',
+      supportType: 'Kind companionship',
+      boundary: 'No prescriptions or diagnosis',
+      iconBg: 'bg-blue-100 text-blue-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'Hope88',
+      role: 'Safe Listener',
+      bio: 'Here to support you with an open mind and heart.',
+      status: 'soon',
+      supportType: 'Warm listening',
+      boundary: 'No prescriptions or diagnosis',
+      iconBg: 'bg-emerald-100 text-emerald-700',
+      actionText: 'Start Safe Chat'
+    }
+  ],
+  'I feel anxious': [
+    {
+      name: 'Peace47',
+      role: 'Calm Listener',
+      bio: 'Helps you slow down and talk through anxious moments.',
+      status: 'available',
+      supportType: 'Anxiety grounding',
+      boundary: 'No clinical treatment advice',
+      iconBg: 'bg-amber-100 text-amber-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'CalmBuddy',
+      role: 'Calm Listener',
+      bio: 'Dedicated to gentle breathing exercises and slow, peaceful talk.',
+      status: 'soon',
+      supportType: 'Calming presence',
+      boundary: 'No clinical treatment advice',
+      iconBg: 'bg-emerald-100 text-emerald-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'RestingMind',
+      role: 'Calm Listener',
+      bio: 'Here to help you ground yourself when life feels too loud.',
+      status: 'available',
+      supportType: 'Quiet listening',
+      boundary: 'No clinical treatment advice',
+      iconBg: 'bg-purple-100 text-purple-700',
+      actionText: 'Start Safe Chat'
+    }
+  ],
+  'I feel lonely': [
+    {
+      name: 'Warm28',
+      role: 'Companion Listener',
+      bio: 'Available for gentle conversation and emotional support.',
+      status: 'available',
+      supportType: 'Kind companionship',
+      boundary: 'No clinical assessments',
+      iconBg: 'bg-[#FFF2EA] text-[#FF7527]',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'Friendship99',
+      role: 'Companion Listener',
+      bio: "Let's share a virtual warm tea and chat about anything on your mind.",
+      status: 'available',
+      supportType: 'Friendly listening',
+      boundary: 'No clinical assessments',
+      iconBg: 'bg-indigo-100 text-indigo-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'KindHeart',
+      role: 'Companion Listener',
+      bio: 'A friendly presence for quiet or talkative evenings.',
+      status: 'soon',
+      supportType: 'Cozy conversation',
+      boundary: 'No clinical assessments',
+      iconBg: 'bg-teal-100 text-teal-700',
+      actionText: 'Start Safe Chat'
+    }
+  ],
+  'I feel hurt': [
+    {
+      name: 'Heal56',
+      role: 'Care Listener',
+      bio: 'Here to listen while you process difficult feelings.',
+      status: 'available',
+      supportType: 'Healing listening',
+      boundary: 'No medical guidance',
+      iconBg: 'bg-red-100 text-red-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'TenderEar',
+      role: 'Care Listener',
+      bio: 'A soft space for heavy hearts and recovery thoughts.',
+      status: 'soon',
+      supportType: 'Empathetic listening',
+      boundary: 'No medical guidance',
+      iconBg: 'bg-orange-100 text-orange-700',
+      actionText: 'Start Safe Chat'
+    },
+    {
+      name: 'GentleSoul',
+      role: 'Care Listener',
+      bio: 'Supporting you through raw, emotional, or confusing times.',
+      status: 'available',
+      supportType: 'Patient support',
+      boundary: 'No medical guidance',
+      iconBg: 'bg-rose-100 text-rose-700',
+      actionText: 'Start Safe Chat'
+    }
+  ],
+  'I want professional help': [
+    {
+      name: 'Care Bridge',
+      role: 'Professional Hub',
+      bio: 'Find external professional resources and helplines.',
+      status: 'available',
+      supportType: 'Resource navigation',
+      boundary: 'External links only',
+      iconBg: 'bg-emerald-100 text-emerald-700',
+      actionText: 'Open Care Bridge',
+      targetPath: 'doctor-suggestions'
+    },
+    {
+      name: 'External Directory',
+      role: 'Professional Directory',
+      bio: 'Connect with verified clinics and mental health professionals.',
+      status: 'available',
+      supportType: 'Provider directory',
+      boundary: 'External links only',
+      iconBg: 'bg-blue-100 text-blue-700',
+      actionText: 'Open Care Bridge',
+      targetPath: 'doctor-suggestions'
+    },
+    {
+      name: 'Crisis Support Line',
+      role: 'Immediate Hotline',
+      bio: 'Instant access to free, confidential crisis resources.',
+      status: 'available',
+      supportType: 'Urgent helpline list',
+      boundary: 'External lines only',
+      iconBg: 'bg-red-100 text-red-700',
+      actionText: 'Open Care Bridge',
+      targetPath: 'doctor-suggestions'
+    }
+  ]
+};
 
 export default function ListenerMatchScreen({ 
   onBack, 
@@ -38,7 +195,7 @@ export default function ListenerMatchScreen({
 }: ListenerMatchScreenProps) {
   const [selectedFeeling, setSelectedFeeling] = useState<string>('I need someone to listen');
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [activeListener, setActiveListener] = useState<typeof CONSTANT_LISTENERS[0] | null>(null);
+  const [activeListener, setActiveListener] = useState<Listener | null>(null);
   const [isChatActive, setIsChatActive] = useState<boolean>(false);
   
   // Chat messaging state
@@ -55,12 +212,21 @@ export default function ListenerMatchScreen({
     'I want professional help'
   ];
 
-  // Intercept the therapist suggestion selection
+  // Run initial search loading animation on mount
+  useEffect(() => {
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      setIsSearching(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleFeelingSelect = (feeling: string) => {
     setSelectedFeeling(feeling);
-    if (feeling === 'I want professional help') {
-      onNavigateTo('doctor-suggestions');
-    }
+    setIsSearching(true);
+    setTimeout(() => {
+      setIsSearching(false);
+    }, 600);
   };
 
   // Scroll chat messages to bottom
@@ -68,21 +234,8 @@ export default function ListenerMatchScreen({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages]);
 
-  const handleStartSearch = () => {
-    setIsSearching(true);
-    setActiveListener(null);
-    setIsChatActive(false);
-
-    setTimeout(() => {
-      setIsSearching(false);
-      // Ensure Voice123 is shown as requested in specifications
-      const preferred = CONSTANT_LISTENERS.find(l => l.name === 'Voice123') || CONSTANT_LISTENERS[0];
-      setActiveListener(preferred);
-    }, 1500);
-  };
-
-  const startChatFlow = () => {
-    if (!activeListener) return;
+  const startChatFlow = (listener: Listener) => {
+    setActiveListener(listener);
     setIsChatActive(true);
     setChatMessages([
       {
@@ -95,8 +248,8 @@ export default function ListenerMatchScreen({
       {
         id: '2',
         sender: 'listener',
-        senderName: activeListener.name,
-        content: `Hello my friend, I am Voice123. I am here to offer you a supportive, listening ear. How is your heart doing today?`,
+        senderName: listener.name,
+        content: `Hello my friend, I am ${listener.name}. I am here to offer you a supportive, listening ear. How is your heart doing today?`,
         timestamp: 'Just now'
       }
     ]);
@@ -104,7 +257,7 @@ export default function ListenerMatchScreen({
 
   // Safe checks for unallowed health words
   const handleCheckAndSend = (textToSend: string) => {
-    if (!textToSend.trim()) return;
+    if (!textToSend.trim() || !activeListener) return;
 
     const lower = textToSend.toLowerCase();
     const unsafeKeywords = [
@@ -145,13 +298,13 @@ export default function ListenerMatchScreen({
 
     // Simulated reply trigger
     setTimeout(() => {
-      let comfort = "I understand. I am here for you. Thank you for sharing your feeling with me.";
+      let comfort = "I understand. I am here for you. Thank you for sharing your feelings with me.";
       if (lower.includes('heavy') || lower.includes('sad')) {
-        comfort = "Hearing that life feels heavy carries so much weight. Take all the time you need. I am here listening.";
+        comfort = `Hearing that life feels heavy carries so much weight. Take all the time you need. I am here listening.`;
       } else if (lower.includes('lonely') || lower.includes('alone')) {
-        comfort = "We are connected here today, my friend. You do not have to carry this alone.";
+        comfort = `We are connected here today, my friend. You do not have to carry this alone.`;
       } else if (lower.includes('thank')) {
-        comfort = "You are so welcome. It is an honor to be a safe listener for you tonight.";
+        comfort = `You are so welcome. It is an honor to be a safe listener for you today.`;
       }
       
       setChatMessages(prev => [
@@ -159,7 +312,7 @@ export default function ListenerMatchScreen({
         {
           id: (Date.now() + 1).toString(),
           sender: 'listener',
-          senderName: 'Voice123',
+          senderName: activeListener.name,
           content: comfort,
           timestamp: 'Just now'
         }
@@ -199,6 +352,8 @@ export default function ListenerMatchScreen({
     "Thank you for being here."
   ];
 
+  const currentListeners = LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen'];
+
   return (
     <div className="flex flex-col min-h-full bg-[#FCFAF5] font-sans select-none w-full">
       {/* Header bar */}
@@ -213,7 +368,7 @@ export default function ListenerMatchScreen({
           </svg>
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px]">
-          {isChatActive ? 'Chat with Voice123' : 'Safe Listener Match'}
+          {isChatActive && activeListener ? `Chat with ${activeListener.name}` : 'Safe Listener Match'}
         </span>
         <span className="text-[20px] select-none">💬</span>
       </div>
@@ -344,14 +499,14 @@ export default function ListenerMatchScreen({
             </div>
             
             <div className="text-[10px] text-center text-gray-400 font-semibold italic mt-1">
-              Type keywords like " Xanax, cure, prescription, dosage " to trigger community safety block simulation!
+              Type keywords like " Xanax, cure, prescription, dosage " to trigger safety block simulation!
             </div>
           </div>
 
         </div>
       ) : (
         /* SCREEN 6: SAFE PEER LISTENER SCREEN */
-        <div className="flex-1 p-4 md:p-6 lg:p-8 max-w-4xl mx-auto w-full space-y-6">
+        <div className="flex-1 p-4 md:p-6 lg:p-8 max-w-5xl mx-auto w-full space-y-8 overflow-y-auto">
           <div className="space-y-1 text-center md:text-left">
             <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[24px]">
               Find someone safe to share with
@@ -362,8 +517,8 @@ export default function ListenerMatchScreen({
           </div>
 
           {/* Feeling Filters selection */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+          <div className="space-y-2.5">
+            <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
               1. Choose a focus prompt category
             </span>
             <div className="flex flex-wrap gap-2">
@@ -386,101 +541,149 @@ export default function ListenerMatchScreen({
             </div>
           </div>
 
-          {/* Matchmaking trigger Button */}
-          <div className="pt-2">
-            <button
-              onClick={handleStartSearch}
-              disabled={isSearching}
-              className="w-full py-4 bg-[#FF7527] hover:bg-[#E55D13] font-display font-black text-white text-[15px] sm:text-[16px] rounded-2xl shadow-[0_4px_14px_rgba(255,117,39,0.2)] disabled:bg-gray-300 disabled:shadow-none transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
+          {/* Matched listeners grid */}
+          <div className="space-y-3">
+            <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+              2. Matched Safe Spaces & Listeners
+            </span>
+
+            <AnimatePresence mode="wait">
               {isSearching ? (
-                <>
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M12 2a10 10 0 00-10 10h2a8 8 0 018-8V2z" />
-                  </svg>
-                  Matching with a Kind Heart...
-                </>
+                <motion.div
+                  key="searching-prompt"
+                  initial={{ opacity: 0, scale: 0.99 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="bg-[#FEFAF0] border border-[#F3E2C4] rounded-3xl p-6 text-center space-y-3 py-14"
+                >
+                  <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full bg-orange-100 animate-ping absolute opacity-45" />
+                    <span className="text-[28px] z-10 select-none">🧩</span>
+                  </div>
+                  <h4 className="font-display font-black text-gray-800 text-[16px]">
+                    Matching with supportive spaces...
+                  </h4>
+                  <p className="text-[12.5px] text-gray-500 font-semibold px-6 max-w-sm mx-auto">
+                    Finding peer listeners or resource paths suited to your needs. Your identity remains 100% anonymous.
+                  </p>
+                </motion.div>
               ) : (
-                <>
-                  Connect with a Safe Listener
-                  <svg className="w-5 h-5 stroke-current cursor-pointer" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
-                  </svg>
-                </>
+                <motion.div
+                  key="results-grid"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                >
+                  {currentListeners.map((listener, idx) => (
+                    <motion.div
+                      key={listener.name}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-[16.5px] ${listener.iconBg}`}>
+                              {listener.name.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="font-display font-black text-[#2B1D12] text-[14.5px] leading-tight">
+                                {listener.name}
+                              </h4>
+                              <span className="text-[11px] font-semibold text-gray-400 block mt-0.5">
+                                {listener.role}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 py-0.5">
+                          <span className="text-[11.5px] font-bold text-gray-700">
+                            {listener.status === 'available' ? '🟢 Available now' : '🟡 Usually replies soon'}
+                          </span>
+                        </div>
+
+                        <div className="text-[11.5px] bg-[#FCFAF5] rounded-xl border border-gray-100 p-3 space-y-1 font-semibold text-gray-600">
+                          <p><span className="text-gray-400 font-medium">Focus:</span> {listener.supportType}</p>
+                          <p><span className="text-gray-400 font-medium">Limit:</span> {listener.boundary}</p>
+                        </div>
+
+                        <p className="text-[12.5px] text-gray-500 font-medium italic leading-relaxed">
+                          "{listener.bio}"
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          if (listener.targetPath) {
+                            onNavigateTo(listener.targetPath);
+                          } else {
+                            startChatFlow(listener);
+                          }
+                        }}
+                        className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-[#FCFAF5] font-display font-extrabold rounded-xl text-[12.5px] cursor-pointer transition-colors active:scale-98"
+                      >
+                        {listener.actionText}
+                      </button>
+                    </motion.div>
+                  ))}
+                </motion.div>
               )}
-            </button>
+            </AnimatePresence>
           </div>
 
-          {/* Matching results */}
-          <AnimatePresence mode="wait">
-            {isSearching && (
-              <motion.div
-                key="searching-prompt"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="bg-[#FEFAF0] border-2 border-dashed border-[#F3E2C4] rounded-3xl p-6 text-center space-y-3 py-10"
-              >
-                <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-orange-100 animate-ping absolute opacity-45" />
-                  <span className="text-[28px] z-10 select-none">🧩</span>
+          {/* How Safe Listening Works Section */}
+          <div className="bg-white border border-[#EDE9DE] rounded-3xl p-6 sm:p-8 space-y-6">
+            <div className="text-center md:text-left space-y-1">
+              <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
+                How safe listening works
+              </h3>
+              <p className="text-[12px] text-gray-500 font-semibold">
+                HopeHeart is built to protect your anonymity and emotional safety.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center font-display font-black text-[16px] text-[#FF7527]">
+                  1
                 </div>
-                <h4 className="font-display font-black text-gray-800 text-[16px]">
-                  HopeHeart AI Search Platform Active
+                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
+                  Share comfort, stay secure
                 </h4>
-                <p className="text-[12.5px] text-gray-500 font-semibold px-6 max-w-sm mx-auto">
-                  Connecting you with peer listeners who share a similar focus theme. Your identity is 100% hidden.
+                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
+                  Share only what you feel comfortable sharing. Your personal details are never shared.
                 </p>
-              </motion.div>
-            )}
+              </div>
 
-            {!isSearching && activeListener && (
-              <motion.div
-                key="listener-card"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-[#EDE9DE] rounded-3xl p-6 shadow-xs space-y-4 max-w-md mx-auto"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center font-display font-black text-[18px]">
-                      H
-                    </div>
-                    <div>
-                      <h4 className="font-display font-black text-[#2B1D12] text-[16.5px]">
-                        Safe Listener: {activeListener.name}
-                      </h4>
-                      <span className="text-xs font-semibold text-green-600 block">
-                        ● {activeListener.status}
-                      </span>
-                    </div>
-                  </div>
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center font-display font-black text-[16px] text-blue-600">
+                  2
                 </div>
+                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
+                  Emotional peer support
+                </h4>
+                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
+                  Listeners offer emotional support, not medical advice, clinical treatment, or prescriptions.
+                </p>
+              </div>
 
-                {/* Listener Specs */}
-                <div className="text-[12px] bg-[#FCFAF5] rounded-2xl border border-gray-100 p-4 space-y-1.5 font-semibold text-gray-600">
-                  <p><strong>Support type:</strong> {activeListener.supportType}</p>
-                  <p><strong>Boundary restriction:</strong> {activeListener.boundary}</p>
-                  <p className="italic text-gray-500 font-normal pt-1.5">"{activeListener.bio}"</p>
+              <div className="space-y-2.5">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center font-display font-black text-[16px] text-emerald-600">
+                  3
                 </div>
-
-                <button
-                  onClick={startChatFlow}
-                  id="btn-start-chat-matched"
-                  className="w-full py-3 bg-[#1e1e1a] hover:bg-black text-[#FCFAF5] font-display font-extrabold rounded-2xl text-[14px] cursor-pointer transition-colors"
-                >
-                  Start Safe Chat
-                </button>
-
-                <div className="text-center">
-                  <p className="text-[11.5px] text-gray-400 font-semibold">
-                    Support only. Listeners are here to support, not to treat.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
+                  AI-powered guardrails
+                </h4>
+                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
+                  AI safety helps detect harmful or unsafe conversations to keep this a compassionate space.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
