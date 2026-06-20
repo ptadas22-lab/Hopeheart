@@ -22,52 +22,43 @@ export default function HopeBuddyWidget({
   onMoodSelected,
   onNavigateTo,
 }: HopeBuddyWidgetProps) {
-  const [isMinimized, setIsMinimized] = useState<boolean>(false);
-  const [step, setStep] = useState<'mood-select' | 'chat'>('mood-select');
+  const [isMinimized, setIsMinimized] = useState<boolean>(true);
+  const [step, setStep] = useState<'mood-select' | 'support-options' | 'chat'>('mood-select');
+  const [tempMoodId, setTempMoodId] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Sync scroll to bottom
+  // Sync scroll to bottom in chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleMoodSelect = (moodId: string) => {
-    onMoodSelected(moodId);
-    setStep('chat');
-    
-    const selectedMoodObj = moodConfigs.find(m => m.id === moodId) || selectedMood;
-    
-    let introMsg = '';
-    switch (moodId) {
-      case 'calm':
-        introMsg = "I'm glad today feels peaceful. I'm right here if you want to reflect or share anything on your mind.";
-        break;
-      case 'anxious':
-        introMsg = "I noticed you're feeling anxious today. It's okay to slow down. You don't have to carry everything alone. Let's take a deep breath together.";
-        break;
-      case 'sad':
-        introMsg = "I noticed you're feeling sad today. It's completely okay to feel down; healing takes its own time. What's on your mind?";
-        break;
-      case 'tired':
-        introMsg = "I noticed you're feeling tired today. Rest is productive too. Take all the time you need, I'm right here beside you.";
-        break;
-      case 'hurt':
-        introMsg = "I noticed you're feeling hurt today. Your feelings are completely valid. Please take gentle care of yourself. How can I support you?";
-        break;
-      case 'lonely':
-        introMsg = "I noticed you're feeling lonely today. Someone is ready to listen when you're ready to share. I'm right here with you.";
-        break;
-      default:
-        introMsg = `I noticed you're feeling ${selectedMoodObj.label.toLowerCase()} today. I'm here to support you. What's on your mind?`;
-    }
+  // On mount, auto-open the popup after 1 second
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMinimized(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
-    setMessages([
-      { sender: 'user', text: `I'm feeling ${selectedMoodObj.label}` },
-      { sender: 'buddy', text: introMsg }
-    ]);
+  const handleMoodSelect = (moodId: string) => {
+    setTempMoodId(moodId);
+  };
+
+  const handleContinue = () => {
+    if (!tempMoodId) return;
+    
+    // Save selection globally and in localStorage
+    onMoodSelected(tempMoodId);
+    
+    // Move to next step (support options)
+    setStep('support-options');
+  };
+
+  const handleSkip = () => {
+    setIsMinimized(true);
   };
 
   const generateResponse = (userText: string, moodId: string): string => {
@@ -95,7 +86,7 @@ export default function HopeBuddyWidget({
       return "You're so welcome! Knowing I can bring even a tiny bit of warmth to your day makes me very happy.";
     }
     if (text.includes('help') || text.includes('hurt') || text.includes('pain') || text.includes('sick')) {
-      return "I hear you, and I want to support you. While I can offer companionship, remember that for professional health support, our Care Bridge resources are always ready to assist.";
+      return "I hear you, and I want to support you. While I can offer companionship, remember that for professional resources, our Care Bridge section is always ready to assist.";
     }
 
     switch (moodId) {
@@ -134,6 +125,34 @@ export default function HopeBuddyWidget({
     }
   };
 
+  const startHopeBuddyConversation = () => {
+    const selectedMoodObj = moodConfigs.find(m => m.id === selectedMood.id) || selectedMood;
+    
+    let introMsg = '';
+    switch (selectedMood.id) {
+      case 'calm':
+        introMsg = "I'm glad today feels peaceful. I'm right here if you want to reflect or share anything on your mind.";
+        break;
+      case 'anxious':
+        introMsg = "I noticed you're feeling anxious today. It's okay to slow down. You don't have to carry everything alone. Let's take a deep breath together.";
+        break;
+      case 'sad':
+        introMsg = "I noticed you're feeling sad today. It's completely okay to feel down; healing takes its own time. What's on your mind?";
+        break;
+      case 'tired':
+        introMsg = "I noticed you're feeling tired today. Rest is productive too. Take all the time you need, I'm right here beside you.";
+        break;
+      default:
+        introMsg = `I noticed you're feeling ${selectedMoodObj.label.toLowerCase()} today. I'm here to support you. What's on your mind?`;
+    }
+
+    setMessages([
+      { sender: 'user', text: `I'm feeling ${selectedMoodObj.label}` },
+      { sender: 'buddy', text: introMsg }
+    ]);
+    setStep('chat');
+  };
+
   const onboardingMoods = moodConfigs.filter(m => 
     m.id === 'calm' || m.id === 'sad' || m.id === 'anxious' || m.id === 'tired'
   );
@@ -146,21 +165,21 @@ export default function HopeBuddyWidget({
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', damping: 20 }}
+            transition={{ type: 'spring', damping: 22, stiffness: 200 }}
             className="w-[320px] max-w-[calc(100vw-40px)] sm:w-[350px] bg-white border border-[#EDE9DE] rounded-[28px] shadow-[0_12px_32px_rgba(43,29,18,0.12)] p-4 flex flex-col gap-3 relative select-none"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-2 border-b border-[#FAF7F0]">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[13px] font-display font-black text-gray-800">HopeBuddy</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[13.5px] font-display font-black text-gray-800">HopeBuddy 👋</span>
               </div>
               <button 
                 onClick={() => setIsMinimized(true)}
                 className="w-7 h-7 flex items-center justify-center bg-[#FCFAF5] border border-gray-100 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-pointer active:scale-95 transition-all"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -169,32 +188,98 @@ export default function HopeBuddyWidget({
             {step === 'mood-select' && (
               <div className="py-2 space-y-4">
                 <div className="space-y-1 text-center">
-                  <h4 className="font-display font-extrabold text-[#2B1D12] text-[15px]">
-                    How are you feeling today?
-                  </h4>
-                  <p className="text-[11.5px] text-gray-400 font-semibold">
-                    Let's check in to begin.
+                  <p className="text-[13.5px] text-gray-700 font-semibold leading-relaxed">
+                    "Welcome back. How are you feeling today?"
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  {onboardingMoods.map((mood) => (
-                    <motion.button
-                      key={mood.id}
-                      onClick={() => handleMoodSelect(mood.id)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="p-3 bg-[#FCFBF8] border border-gray-100 hover:border-[#FF7527]/30 hover:bg-white rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all min-h-[72px]"
-                    >
-                      <span className="text-[22px]">{mood.emoji}</span>
-                      <span className="text-[12px] font-bold text-gray-700">{mood.label}</span>
-                    </motion.button>
-                  ))}
+                  {onboardingMoods.map((mood) => {
+                    const isSelected = tempMoodId === mood.id;
+                    return (
+                      <motion.button
+                        key={mood.id}
+                        onClick={() => handleMoodSelect(mood.id)}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-3 border rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all min-h-[72px] ${
+                          isSelected 
+                            ? 'border-[#FF7527] bg-[#FFF2EA] text-gray-800 shadow-2xs' 
+                            : 'bg-[#FCFBF8] border-gray-100 hover:border-[#FF7527]/30 hover:bg-white text-gray-600'
+                        }`}
+                      >
+                        <span className="text-[22px]">{mood.emoji}</span>
+                        <span className="text-[12px] font-bold">{mood.label}</span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                {/* Skip and Continue Actions */}
+                <div className="flex gap-2 pt-2 border-t border-[#FAF7F0]">
+                  <button
+                    onClick={handleSkip}
+                    className="flex-1 py-2 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl text-[12px] font-semibold cursor-pointer transition-all active:scale-95"
+                  >
+                    Skip
+                  </button>
+                  <button
+                    onClick={handleContinue}
+                    disabled={!tempMoodId}
+                    className={`flex-1 py-2 rounded-xl text-[12px] font-bold transition-all ${
+                      tempMoodId 
+                        ? 'bg-[#1E1E1A] hover:bg-black text-white cursor-pointer shadow-xs active:scale-95' 
+                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    Continue
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Conversation */}
+            {/* Step 2: Support Options */}
+            {step === 'support-options' && (
+              <div className="py-2 space-y-4">
+                <div className="space-y-2 text-center">
+                  <div className="w-11 h-11 rounded-full bg-[#FAF7F0] border border-gray-100 flex items-center justify-center mx-auto mb-1 overflow-hidden">
+                    <MascotSitting size={34} />
+                  </div>
+                  <p className="text-[13px] font-semibold text-gray-700 leading-relaxed px-2">
+                    "Thanks for sharing. I’m here with you. Would you like to talk or find support?"
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-2 pt-1">
+                  <button
+                    onClick={startHopeBuddyConversation}
+                    className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
+                  >
+                    💬 Talk with HopeBuddy
+                  </button>
+                  <button
+                    onClick={() => handleAction('safe-listener')}
+                    className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95"
+                  >
+                    👂 Find a Listener
+                  </button>
+                  <button
+                    onClick={() => handleAction('support-rooms')}
+                    className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95"
+                  >
+                    🧡 Join Community
+                  </button>
+                  <button
+                    onClick={() => setIsMinimized(true)}
+                    className="w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl text-[12px] font-semibold cursor-pointer transition-all active:scale-95"
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Chat */}
             {step === 'chat' && (
               <div className="flex flex-col gap-3">
                 {/* Scrollable message history */}
@@ -249,7 +334,7 @@ export default function HopeBuddyWidget({
                     ✍️ Share your thoughts
                   </button>
                   <button
-                    onClick={() => handleAction('close')}
+                    onClick={() => setIsMinimized(true)}
                     className="px-3 py-1.5 bg-[#FAF7F0] hover:bg-gray-100 border border-[#ECE6D9] rounded-full text-[11px] font-extrabold text-gray-500 cursor-pointer transition-all flex items-center gap-1"
                   >
                     🤝 Talk later
@@ -283,9 +368,18 @@ export default function HopeBuddyWidget({
       {/* Floating Trigger circular button */}
       <motion.button
         onClick={() => setIsMinimized(!isMinimized)}
+        initial={{ opacity: 0, y: 80, scale: 0.5 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ 
+          type: 'spring', 
+          stiffness: 150, 
+          damping: 12, 
+          mass: 1.1,
+          delay: 0.2 
+        }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg transition-all cursor-pointer overflow-hidden border border-gray-800"
+        className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg cursor-pointer overflow-hidden border border-gray-800"
         title="Chat with HopeBuddy"
       >
         <Mascot expression={selectedMood.buddyExpression} size={48} className="scale-[1.1] translate-y-1.5" />

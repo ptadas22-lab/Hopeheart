@@ -44,7 +44,14 @@ const EN_DIARY_WISDOM = [
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>(ScreenId.Welcome);
-  const [selectedMoodId, setSelectedMoodId] = useState<string>('calm');
+  const [selectedMoodId, setSelectedMoodId] = useState<string>(() => {
+    return localStorage.getItem('hopeheart_mood') || 'calm';
+  });
+
+  const handleMoodSelected = (moodId: string) => {
+    setSelectedMoodId(moodId);
+    localStorage.setItem('hopeheart_mood', moodId);
+  };
   const [userName, setUserName] = useState<string>('Voice47');
   const [todayQuote, setTodayQuote] = useState<string>("Rest is productive too. You're allowed to slow down.");
   const [savedQuestions, setSavedQuestions] = useState<DoctorQuestion[]>([
@@ -435,7 +442,7 @@ export default function App() {
         <HopeBuddyWidget 
           selectedMood={selectedMood}
           moodConfigs={MOOD_CONFIGS}
-          onMoodSelected={setSelectedMoodId}
+          onMoodSelected={handleMoodSelected}
           onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
         />
       )}
