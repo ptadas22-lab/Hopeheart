@@ -29,6 +29,24 @@ export default function HopeBuddyWidget({
   const [inputText, setInputText] = useState<string>('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  // Position offsets relative to bottom-right
+  const [position, setPosition] = useState(() => {
+    const saved = localStorage.getItem('hopebuddy_position_offset');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.right === 'number' && typeof parsed.bottom === 'number') {
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    return { right: 20, bottom: 20 };
+  });
+
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ mouseX: 0, mouseY: 0, posRight: 0, posBottom: 0 });
 
   // Sync scroll to bottom in chat
   useEffect(() => {
@@ -41,6 +59,74 @@ export default function HopeBuddyWidget({
       setIsMinimized(false);
     }, 1000);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Handle pointer down for drag start (works for both mouse and touch)
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('.drag-handle')) return;
+
+    e.preventDefault();
+    setIsDragging(true);
+    dragStart.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      posRight: position.right,
+      posBottom: position.bottom,
+    };
+    
+    target.setPointerCapture(e.pointerId);
+  };
+
+  // Handle pointer move for drag tracking
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+
+    const dx = e.clientX - dragStart.current.mouseX;
+    const dy = e.clientY - dragStart.current.mouseY;
+
+    const popupWidth = popupRef.current?.offsetWidth || 350;
+    const popupHeight = popupRef.current?.offsetHeight || 400;
+
+    const maxRight = window.innerWidth - popupWidth - 20;
+    const maxBottom = window.innerHeight - popupHeight - 20;
+
+    const newRight = Math.max(20, Math.min(maxRight, dragStart.current.posRight - dx));
+    const newBottom = Math.max(20, Math.min(maxBottom, dragStart.current.posBottom - dy));
+
+    setPosition({ right: newRight, bottom: newBottom });
+  };
+
+  // Handle pointer up for drag end
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const target = e.target as HTMLElement;
+    try {
+      target.releasePointerCapture(e.pointerId);
+    } catch (err) {}
+
+    localStorage.setItem('hopebuddy_position_offset', JSON.stringify(position));
+  };
+
+  // Handle window resizing to keep the popup within viewport bounds
+  useEffect(() => {
+    const handleResize = () => {
+      const popupWidth = popupRef.current?.offsetWidth || 350;
+      const popupHeight = popupRef.current?.offsetHeight || 400;
+
+      const maxRight = window.innerWidth - popupWidth - 20;
+      const maxBottom = window.innerHeight - popupHeight - 20;
+
+      setPosition(prev => ({
+        right: Math.max(20, Math.min(maxRight, prev.right)),
+        bottom: Math.max(20, Math.min(maxBottom, prev.bottom)),
+      }));
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleMoodSelect = (moodId: string) => {
@@ -162,18 +248,34 @@ export default function HopeBuddyWidget({
       <AnimatePresence>
         {!isMinimized && (
           <motion.div
+            ref={popupRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 22, stiffness: 200 }}
-            className="w-[320px] max-w-[calc(100vw-40px)] sm:w-[350px] bg-white border border-[#EDE9DE] rounded-[28px] shadow-[0_12px_32px_rgba(43,29,18,0.12)] p-4 flex flex-col gap-3 relative select-none"
+            style={{
+              position: 'fixed',
+              right: position.right,
+              bottom: position.bottom,
+              touchAction: 'none', // Prevents body scrolling while touch-dragging
+            }}
+            className="w-[320px] max-w-[calc(100vw-40px)] sm:w-[350px] bg-white border border-[#EDE9DE] rounded-[28px] shadow-[0_12px_32px_rgba(43,29,18,0.12)] p-4 flex flex-col gap-3 select-none z-50"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-2 border-b border-[#FAF7F0]">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[13.5px] font-display font-black text-gray-800">HopeBuddy 👋</span>
+                <span className="text-[13px] font-display font-black text-gray-800">HopeBuddy 👋</span>
               </div>
+
+              {/* Drag Handle */}
+              <div className="drag-handle flex items-center gap-1 px-2.5 py-1 bg-[#FCFAF5] border border-[#ECE6D9]/70 rounded-full text-[10.5px] font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-grab active:cursor-grabbing transition-all select-none">
+                <span className="text-gray-300 font-extrabold">⋮⋮</span> Drag me
+              </div>
+
               <button 
                 onClick={() => setIsMinimized(true)}
                 className="w-7 h-7 flex items-center justify-center bg-[#FCFAF5] border border-gray-100 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-pointer active:scale-95 transition-all"
