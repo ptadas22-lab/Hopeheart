@@ -5,7 +5,6 @@ import { ScreenId, MoodConfig, DoctorQuestion } from './types';
 // Importing all modular screen components
 import WelcomeScreen from './components/WelcomeScreen';
 import CommunityPromiseScreen from './components/CommunityPromiseScreen';
-import HeartCheckScreen from './components/HeartCheckScreen';
 import SupportNeedScreen from './components/SupportNeedScreen';
 import DashboardScreen from './components/DashboardScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
@@ -108,27 +107,14 @@ export default function App() {
       case ScreenId.Promise:
         return (
           <CommunityPromiseScreen 
-            onAccept={() => setCurrentScreen(ScreenId.HeartCheck)}
-          />
-        );
-
-      case ScreenId.HeartCheck:
-        return (
-          <HeartCheckScreen 
-            moodConfigs={MOOD_CONFIGS}
-            initialSelected={selectedMoodId}
-            onBack={() => setCurrentScreen(ScreenId.Welcome)}
-            onMoodSelected={(moodId) => {
-              setSelectedMoodId(moodId);
-              setCurrentScreen(ScreenId.SupportNeed);
-            }}
+            onAccept={() => setCurrentScreen(ScreenId.SupportNeed)}
           />
         );
 
       case ScreenId.SupportNeed:
         return (
           <SupportNeedScreen 
-            onBack={() => setCurrentScreen(ScreenId.HeartCheck)}
+            onBack={() => setCurrentScreen(ScreenId.Welcome)}
             onSelectOption={handleSupportNeedOption}
           />
         );
@@ -138,8 +124,9 @@ export default function App() {
           <DashboardScreen 
             userName={userName}
             selectedMood={selectedMood}
+            moodConfigs={MOOD_CONFIGS}
+            onMoodSelected={setSelectedMoodId}
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
-            onTriggerCheck={() => setCurrentScreen(ScreenId.HeartCheck)}
             todayQuote={todayQuote}
             onRefreshQuote={handleRefreshQuote}
           />
@@ -240,13 +227,13 @@ export default function App() {
 
   // Nav highlighting helper states
   const isHomeActive = currentScreen === ScreenId.Home;
-  const isHeartCheckActive = currentScreen === ScreenId.HeartCheck || currentScreen === ScreenId.SupportNeed || currentScreen === ScreenId.Promise;
+  const isHeartCheckActive = currentScreen === ScreenId.SupportNeed || currentScreen === ScreenId.Promise;
   const isSupportActive = currentScreen === ScreenId.SupportRooms || currentScreen === ScreenId.SafeListener || currentScreen === ScreenId.SafeChat || currentScreen === ScreenId.RoomDetail || currentScreen === ScreenId.ShareSafely || currentScreen === ScreenId.MomentShare || currentScreen === ScreenId.NearbyAccess || currentScreen === ScreenId.NearbyResults || currentScreen === ScreenId.CommunityDetail || currentScreen === ScreenId.MeetSafely;
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
   const isSafetyActive = currentScreen === ScreenId.AISafety;
-
+ 
   // Bottom & Top Navigation is visible when the user advances past Welcome screen
-  const showNavChannels = currentScreen !== ScreenId.Welcome && currentScreen !== ScreenId.Promise && currentScreen !== ScreenId.HeartCheck && currentScreen !== ScreenId.SupportNeed;
+  const showNavChannels = currentScreen !== ScreenId.Welcome && currentScreen !== ScreenId.Promise && currentScreen !== ScreenId.SupportNeed;
 
   return (
     <div className="min-h-screen w-full bg-[#FCFAF5] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">
