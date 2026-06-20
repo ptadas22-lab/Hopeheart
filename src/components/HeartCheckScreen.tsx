@@ -24,6 +24,29 @@ export default function HeartCheckScreen({
     onMoodSelected(selectedMoodId);
   };
 
+  const getMascotMessage = (moodId: string): string => {
+    switch (moodId) {
+      case 'calm':
+        return "I'm glad today feels peaceful.";
+      case 'anxious':
+        return "It's okay to slow down. You don't have to carry everything alone.";
+      case 'lonely':
+        return "Someone is ready to listen when you're ready to share.";
+      case 'sad':
+        return "It's okay to feel down. Healing takes its own time.";
+      case 'hurt':
+        return "Your feelings are valid. Take gentle care of yourself today.";
+      case 'need-support':
+        return "Reaching out is a sign of strength. We're here for you.";
+      case 'hopeful':
+        return "Cherish this warmth. Bright steps are ahead.";
+      case 'tired':
+        return "Rest is productive too. Be gentle with your energy.";
+      default:
+        return currentMoodObj.tagline;
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-full bg-[#FCFAF5] p-5 font-sans select-none justify-between">
       {/* Header bar */}
@@ -37,7 +60,7 @@ export default function HeartCheckScreen({
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
         </button>
-        <span className="font-display font-bold text-gray-800 text-[17px]">Heart Check</span>
+        <span className="font-display font-bold text-gray-800 text-[17px]">Daily Check-In</span>
         <div className="w-11 h-11" /> {/* Spacer */}
       </div>
 
@@ -54,11 +77,11 @@ export default function HeartCheckScreen({
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                How is your heart today?
+                How are you feeling today?
               </motion.h2>
 
               <p className="text-[14px] md:text-[15px] text-gray-500 font-medium">
-                Select an emotion below to update your HopeHeart buddy.
+                Choose the feeling that best matches your current mood.
               </p>
             </div>
 
@@ -88,7 +111,7 @@ export default function HeartCheckScreen({
                   transition={{ duration: 0.25 }}
                   className="text-[14px] font-semibold italic text-gray-700 leading-relaxed text-center"
                 >
-                  "{currentMoodObj.tagline}"
+                  "{getMascotMessage(currentMoodObj.id)}"
                 </motion.p>
               </AnimatePresence>
             </div>
@@ -102,10 +125,13 @@ export default function HeartCheckScreen({
               {moodConfigs.map((mood) => {
                 const isSelected = mood.id === selectedMoodId;
                 return (
-                  <button
+                  <motion.button
                     key={mood.id}
                     id={`mood-card-${mood.id}`}
                     onClick={() => setSelectedMoodId(mood.id)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
                     className="py-3 px-4 flex items-center gap-3 rounded-2xl border text-left transition-all min-h-[52px] select-none cursor-pointer"
                     style={{
                       borderColor: isSelected ? '#FF7527' : '#EEE9DD',
@@ -127,7 +153,7 @@ export default function HeartCheckScreen({
                         </svg>
                       </motion.div>
                     )}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -139,15 +165,12 @@ export default function HeartCheckScreen({
                 id="btn-confirm-heartcheck"
                 className="w-full py-4 bg-[#1E1E1A] hover:bg-black text-[15px] hover:scale-[1.01] active:scale-[0.99] font-display font-bold rounded-2xl text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
               >
-                Save & Open Dashboard
-                <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
+                Continue →
               </button>
 
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] py-3.5 px-4 rounded-xl text-center">
                 <p className="text-[12px] text-gray-500 font-semibold leading-normal">
-                  Support only. No prescriptions or diagnosis.
+                  HopeHeart is a support space, not a medical service.
                 </p>
               </div>
             </div>
