@@ -46,7 +46,7 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
     {
       name: 'Hope88',
       role: 'Safe Listener',
-      bio: 'Here to support you with an open mind and heart.',
+      bio: 'Here to support you with an open mind and warm presence.',
       status: 'soon',
       supportType: 'Warm listening',
       boundary: 'No prescriptions or diagnosis',
@@ -132,7 +132,7 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
     {
       name: 'TenderEar',
       role: 'Care Listener',
-      bio: 'A soft space for heavy hearts and recovery thoughts.',
+      bio: 'A soft space for difficult days and recovery thoughts.',
       status: 'soon',
       supportType: 'Empathetic listening',
       boundary: 'No medical guidance',
@@ -249,7 +249,7 @@ export default function ListenerMatchScreen({
         id: '2',
         sender: 'listener',
         senderName: listener.name,
-        content: `Hello my friend, I am ${listener.name}. I am here to offer you a supportive, listening ear. How is your heart doing today?`,
+        content: `Hi 👋 I'm ${listener.name}.\n\nI'm another HopeHeart member volunteering as a listener today.\n\nTake your time. What would you like to share?`,
         timestamp: 'Just now'
       }
     ]);
@@ -345,11 +345,9 @@ export default function ListenerMatchScreen({
   };
 
   const suggestedReplies = [
-    "I feel heavy today.",
-    "I need someone to listen.",
-    "I do not need advice right now.",
-    "Can you just hear me for a moment?",
-    "Thank you for being here."
+    "🌱 I had a difficult day",
+    "😔 I'm feeling overwhelmed",
+    "🧡 I just need someone to listen"
   ];
 
   const currentListeners = LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen'];
@@ -375,11 +373,46 @@ export default function ListenerMatchScreen({
 
       {isChatActive && activeListener ? (
         /* SCREEN 7: SAFE CHAT CLIENT SCREEN */
-        <div className="flex-1 flex flex-col justify-between h-[calc(100vh-140px)] md:h-[650px] bg-[#F7F4EC] relative overflow-hidden">
+        <div className="flex-1 flex flex-col justify-between h-[calc(100vh-140px)] md:h-[650px] bg-[#F7F4EC] relative overflow-hidden w-full max-w-4xl mx-auto border-x border-[#EDE9DE]">
           
           {/* Safety Banner */}
-          <div className="bg-amber-50 border-b border-amber-100 p-3.5 text-center text-amber-800 text-[11.5px] font-semibold leading-relaxed shrink-0">
+          <div className="bg-amber-50 border-b border-amber-100 p-3.5 text-center text-amber-800 text-[11px] font-semibold leading-relaxed shrink-0">
             🛡️ <strong>Safety Banner:</strong> Share feelings only. Do not share prescriptions, dosage, diagnosis, or treatment advice. Community users are peer listeners, not clinical professionals.
+          </div>
+
+          {/* Listener Profile Card & Status Badges */}
+          <div className="bg-white border-b border-[#E9E4D9] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-[16px] ${activeListener.iconBg}`}>
+                {activeListener.name.charAt(0)}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] font-black text-gray-800 flex items-center gap-1.5">
+                    <span className="text-green-500">●</span> {activeListener.name}
+                  </span>
+                  <span className="text-[10px] font-bold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
+                    ⭐ Community trusted
+                  </span>
+                </div>
+                <div className="text-[11.5px] text-gray-500 font-semibold space-x-2 mt-0.5">
+                  <span>⏱️ Listening for: 18 mins</span>
+                  <span>•</span>
+                  <span>💬 Style: {activeListener.role}</span>
+                  <span>•</span>
+                  <span>🌐 Speaks: English • Hindi</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-1.5">
+              <span className="px-2.5 py-1 bg-[#FCFAF5] border border-gray-200 text-gray-600 rounded-full text-[10.5px] font-extrabold flex items-center gap-1">
+                🔒 Anonymous Chat
+              </span>
+              <span className="px-2.5 py-1 bg-[#FCFAF5] border border-gray-200 text-gray-600 rounded-full text-[10.5px] font-extrabold flex items-center gap-1">
+                🛡️ AI Protected
+              </span>
+            </div>
           </div>
 
           {/* Chat message logs */}
@@ -420,11 +453,14 @@ export default function ListenerMatchScreen({
                   <span className="text-[10px] text-gray-400 font-mono tracking-widest font-extrabold mb-1 px-1.5 uppercase">
                     {msg.senderName}
                   </span>
-                  <div className={`p-3.5 max-w-[85%] rounded-2xl text-[13px] leading-relaxed shadow-xs font-semibold ${
-                    isMe 
-                      ? 'bg-[#1E1E1A] text-white rounded-br-none' 
-                      : 'bg-white text-gray-800 border border-[#E9E4D9] rounded-bl-none'
-                  }`}>
+                  <div 
+                    className={`p-3.5 max-w-[85%] rounded-2xl text-[13px] leading-relaxed shadow-xs font-semibold ${
+                      isMe 
+                        ? 'bg-[#1E1E1A] text-white rounded-br-none' 
+                        : 'bg-white text-gray-800 border border-[#E9E4D9] rounded-bl-none'
+                    }`}
+                    style={{ whiteSpace: 'pre-line' }}
+                  >
                     {msg.content}
                   </div>
                 </div>
@@ -443,9 +479,9 @@ export default function ListenerMatchScreen({
                 <button
                   key={idx}
                   onClick={() => handleSuggestedMessageClick(reply)}
-                  className="bg-white hover:bg-[#FFF2EA] border border-[#ECE6D9] text-[#2B1D12] hover:text-[#FF7527] text-[11px] font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer text-left"
+                  className="bg-white hover:bg-[#FFF2EA] border border-[#ECE6D9] text-[#2B1D12] hover:text-[#FF7527] text-[12.5px] font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer text-left active:scale-95"
                 >
-                  💬 {reply}
+                  {reply}
                 </button>
               ))}
             </div>
@@ -458,7 +494,7 @@ export default function ListenerMatchScreen({
                 type="text"
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Write what your heart wants to say..."
+                placeholder="Share what's on your mind..."
                 className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-[13px] font-semibold bg-[#FCFCFA] focus:outline-none focus:ring-1 focus:ring-[#FF7527]"
               />
               <button
