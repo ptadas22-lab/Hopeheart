@@ -27,13 +27,14 @@ export default function HopeBuddyWidget({
   const [tempMoodId, setTempMoodId] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Position offsets relative to bottom-right
+  // Position offsets of the mascot bubble relative to bottom-right
   const [position, setPosition] = useState(() => {
-    const saved = localStorage.getItem('hopebuddy_position_offset');
+    const saved = localStorage.getItem('hopebuddy_bubble_position');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -47,11 +48,21 @@ export default function HopeBuddyWidget({
 
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ mouseX: 0, mouseY: 0, posRight: 0, posBottom: 0 });
+  const dragDistance = useRef(0);
 
   // Sync scroll to bottom in chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Track viewport changes for mobile layout checks
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // On mount, auto-open the popup after 1 second
   useEffect(() => {
@@ -61,35 +72,34 @@ export default function HopeBuddyWidget({
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle pointer down for drag start (works for both mouse and touch)
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('.drag-handle')) return;
-
+  // Handle pointer down on the mascot circular trigger
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsDragging(true);
+    dragDistance.current = 0;
     dragStart.current = {
       mouseX: e.clientX,
       mouseY: e.clientY,
       posRight: position.right,
       posBottom: position.bottom,
     };
-    
-    target.setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
 
-  // Handle pointer move for drag tracking
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  // Handle pointer move for bubble position update
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!isDragging) return;
 
     const dx = e.clientX - dragStart.current.mouseX;
     const dy = e.clientY - dragStart.current.mouseY;
 
-    const popupWidth = popupRef.current?.offsetWidth || 350;
-    const popupHeight = popupRef.current?.offsetHeight || 400;
+    // Track total distance to differentiate taps from actual drags
+    dragDistance.current = Math.sqrt(dx * dx + dy * dy);
 
-    const maxRight = window.innerWidth - popupWidth - 20;
-    const maxBottom = window.innerHeight - popupHeight - 20;
+    // Mascot trigger bubble size is 56px (w-14 h-14)
+    const bubbleSize = 56;
+    const maxRight = window.innerWidth - bubbleSize - 20;
+    const maxBottom = window.innerHeight - bubbleSize - 20;
 
     const newRight = Math.max(20, Math.min(maxRight, dragStart.current.posRight - dx));
     const newBottom = Math.max(20, Math.min(maxBottom, dragStart.current.posBottom - dy));
@@ -97,27 +107,29 @@ export default function HopeBuddyWidget({
     setPosition({ right: newRight, bottom: newBottom });
   };
 
-  // Handle pointer up for drag end
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  // Handle pointer up to end drag and capture clicks
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!isDragging) return;
     setIsDragging(false);
-    
-    const target = e.target as HTMLElement;
+
     try {
-      target.releasePointerCapture(e.pointerId);
+      e.currentTarget.releasePointerCapture(e.pointerId);
     } catch (err) {}
 
-    localStorage.setItem('hopebuddy_position_offset', JSON.stringify(position));
+    localStorage.setItem('hopebuddy_bubble_position', JSON.stringify(position));
+
+    // If pointer moved less than 6px, treat as click/tap to toggle popup
+    if (dragDistance.current < 6) {
+      setIsMinimized(prev => !prev);
+    }
   };
 
-  // Handle window resizing to keep the popup within viewport bounds
+  // Handle window resizing constraints on bubble position
   useEffect(() => {
     const handleResize = () => {
-      const popupWidth = popupRef.current?.offsetWidth || 350;
-      const popupHeight = popupRef.current?.offsetHeight || 400;
-
-      const maxRight = window.innerWidth - popupWidth - 20;
-      const maxBottom = window.innerHeight - popupHeight - 20;
+      const bubbleSize = 56;
+      const maxRight = window.innerWidth - bubbleSize - 20;
+      const maxBottom = window.innerHeight - bubbleSize - 20;
 
       setPosition(prev => ({
         right: Math.max(20, Math.min(maxRight, prev.right)),
@@ -243,39 +255,49 @@ export default function HopeBuddyWidget({
     m.id === 'calm' || m.id === 'sad' || m.id === 'anxious' || m.id === 'tired'
   );
 
+  // Position styles for the popup card
+  const popupWidth = isMobile ? window.innerWidth : 350;
+  const popupHeight = 400; // estimated max height boundary
+
+  const desktopPopupRight = Math.min(window.innerWidth - popupWidth - 20, position.right);
+  const desktopPopupBottom = Math.min(window.innerHeight - popupHeight - 20, position.bottom + 68);
+
+  const popupStyle = isMobile ? {
+    position: 'fixed' as const,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    zIndex: 50,
+  } : {
+    position: 'fixed' as const,
+    right: desktopPopupRight,
+    bottom: desktopPopupBottom,
+    width: 350,
+    zIndex: 50,
+  };
+
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3 font-sans">
+    <>
       <AnimatePresence>
         {!isMinimized && (
           <motion.div
             ref={popupRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: isMobile ? 100 : 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', damping: 22, stiffness: 200 }}
-            style={{
-              position: 'fixed',
-              right: position.right,
-              bottom: position.bottom,
-              touchAction: 'none', // Prevents body scrolling while touch-dragging
-            }}
-            className="w-[320px] max-w-[calc(100vw-40px)] sm:w-[350px] bg-white border border-[#EDE9DE] rounded-[28px] shadow-[0_12px_32px_rgba(43,29,18,0.12)] p-4 flex flex-col gap-3 select-none z-50"
+            exit={{ opacity: 0, scale: 0.95, y: isMobile ? 100 : 15 }}
+            transition={{ type: 'spring', damping: 24, stiffness: 220 }}
+            style={popupStyle}
+            className={`bg-white border border-[#EDE9DE] p-4 flex flex-col gap-3 shadow-[0_12px_32px_rgba(43,29,18,0.12)] select-none ${
+              isMobile ? 'rounded-t-[28px] rounded-b-none border-b-0' : 'rounded-[28px]'
+            }`}
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-2 border-b border-[#FAF7F0]">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[13px] font-display font-black text-gray-800">HopeBuddy 👋</span>
+                <span className="text-[13.5px] font-display font-black text-gray-800">HopeBuddy 👋</span>
               </div>
-
-              {/* Drag Handle */}
-              <div className="drag-handle flex items-center gap-1 px-2.5 py-1 bg-[#FCFAF5] border border-[#ECE6D9]/70 rounded-full text-[10.5px] font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-grab active:cursor-grabbing transition-all select-none">
-                <span className="text-gray-300 font-extrabold">⋮⋮</span> Drag me
-              </div>
-
               <button 
                 onClick={() => setIsMinimized(true)}
                 className="w-7 h-7 flex items-center justify-center bg-[#FCFAF5] border border-gray-100 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-50 cursor-pointer active:scale-95 transition-all"
@@ -467,9 +489,11 @@ export default function HopeBuddyWidget({
         )}
       </AnimatePresence>
 
-      {/* Floating Trigger circular button */}
+      {/* Floating Mascot circular button trigger (The ONLY draggable element) */}
       <motion.button
-        onClick={() => setIsMinimized(!isMinimized)}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
         initial={{ opacity: 0, y: 80, scale: 0.5 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ 
@@ -481,11 +505,17 @@ export default function HopeBuddyWidget({
         }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg cursor-pointer overflow-hidden border border-gray-800"
+        style={{
+          position: 'fixed',
+          right: position.right,
+          bottom: position.bottom,
+          touchAction: 'none', // Prevents touch scrolling gestures on drag
+        }}
+        className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing overflow-hidden border border-gray-800 z-40"
         title="Chat with HopeBuddy"
       >
         <Mascot expression={selectedMood.buddyExpression} size={48} className="scale-[1.1] translate-y-1.5" />
       </motion.button>
-    </div>
+    </>
   );
 }
