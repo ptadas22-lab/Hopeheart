@@ -8,23 +8,37 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
-    <div className="flex flex-col justify-center items-center min-h-full bg-[#FCFAF5] p-5 md:p-8 font-sans select-none w-full my-auto">
+    <div className="flex flex-col justify-center items-center min-h-full bg-[#FCFAF5] p-5 sm:p-6 md:p-8 font-sans select-none w-full my-auto space-y-5 md:space-y-6">
       
-      {/* Brand logo at the very top (always visible & centered/aligned on mobile) */}
-      <div className="block md:hidden text-center mb-4 shrink-0 w-full">
+      {/* Onboarding Progress Indicator - Top Center */}
+      <div className="w-full max-w-md text-center flex flex-col items-center gap-1 select-none">
+        <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
+          Step 1 of 3
+        </span>
+        <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
+          <span className="text-[#FF7527] font-black">Welcome</span>
+          <span>→</span>
+          <span>Login</span>
+          <span>→</span>
+          <span>Profile</span>
+        </div>
+      </div>
+
+      {/* Brand logo at the top for mobile */}
+      <div className="block md:hidden text-center mb-1 shrink-0 w-full">
         <PrimaryLogo className="scale-90 mx-auto" />
         <div className="mt-2 text-center">
           <BrandDivider />
         </div>
       </div>
 
-      <div className="flex items-center justify-center py-2 md:py-4 w-full">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 items-center max-w-5xl mx-auto w-full">
+      <div className="flex items-center justify-center w-full max-w-5xl">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-12 items-center w-full">
           
-          {/* LEFT COLUMN: Main copy & interaction (Always displays first on desktop, and spans 7 cols) */}
-          <div className="md:col-span-7 flex flex-col space-y-4 md:space-y-6 text-center md:text-left justify-center">
+          {/* LEFT COLUMN: Main copy & interaction */}
+          <div className="md:col-span-7 flex flex-col space-y-4 md:space-y-5 text-center md:text-left justify-center">
             
-            {/* Desktop Brand Logo (hidden on mobile) */}
+            {/* Desktop Brand Logo */}
             <div className="hidden md:block">
               <PrimaryLogo />
               <div className="mt-3">
@@ -32,7 +46,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               </div>
             </div>
 
-            {/* Mascot on mobile: displayed in-between logo and message, compact size (hidden on desktop) */}
+            {/* Mascot on mobile */}
             <div className="flex md:hidden items-center justify-center py-1">
               <div className="bg-white border border-[#EDE9DE] rounded-2xl p-3 shadow-xs flex items-center gap-4 max-w-sm w-full">
                 <MascotSitting size={64} />
@@ -48,7 +62,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             </div>
 
             <div className="space-y-2">
-              <p className="text-[14px] sm:text-[15px] md:text-[17px] text-gray-600 font-semibold leading-relaxed">
+              <p className="text-[14px] sm:text-[15px] md:text-[17px] text-gray-650 font-semibold leading-relaxed">
                 Tell us how you're feeling today. We'll help you find support that feels right for you.
               </p>
             </div>
@@ -67,19 +81,19 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
               {/* Trust Chips */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 py-0.5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-650 shadow-xs">
                   <span>🔒</span> Private
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-650 shadow-xs">
                   <span>🤝</span> Trust First
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-650 shadow-xs">
                   <span>🧡</span> No Judgement
                 </span>
               </div>
 
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] py-3 px-4 rounded-xl text-center md:text-left shadow-xs">
-                <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-normal">
                   HopeHeart provides emotional support only. It does not replace professional medical care.
                 </p>
               </div>
@@ -87,7 +101,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
           </div>
 
-          {/* RIGHT COLUMN: Soft responsive desktop mascot card (hidden on mobile, spans 5 cols) */}
+          {/* RIGHT COLUMN: Desktop mascot card */}
           <div className="hidden md:flex md:col-span-5 items-center justify-center">
             <motion.div
               className="bg-white hover:bg-[#FFFDF9] border border-[#EDE9DE] rounded-3xl p-6 shadow-sm flex flex-col items-center w-full max-w-[290px] transition-all border-dashed"
@@ -108,21 +122,6 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </div>
 
         </div>
-
-        {/* Onboarding Progress Indicator */}
-        <div className="w-full max-w-md mx-auto mt-6 pt-4 border-t border-[#EDE9DE]/65 flex flex-col items-center gap-1 select-none">
-          <span className="text-[9.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
-            Step 1 of 3
-          </span>
-          <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
-            <span className="text-[#FF7527] font-black">Welcome</span>
-            <span>→</span>
-            <span>Login</span>
-            <span>→</span>
-            <span>Profile</span>
-          </div>
-        </div>
-
       </div>
 
     </div>
