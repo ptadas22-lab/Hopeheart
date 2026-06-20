@@ -38,10 +38,10 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                 <MascotSitting size={64} />
                 <div className="text-left">
                   <span className="text-[10px] font-mono font-bold text-[#FF7527] uppercase tracking-wider">
-                    Your Mascot Companion
+                    HopeBuddy
                   </span>
                   <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed mt-0.5">
-                    Ready to navigate your emotional feelings.
+                    Meet HopeBuddy. A small companion that checks in with you, celebrates progress, and reminds you that you're never alone.
                   </p>
                 </div>
               </div>
@@ -49,7 +49,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
             <div className="space-y-2">
               <p className="text-[14px] sm:text-[15px] md:text-[17px] text-gray-600 font-semibold leading-relaxed">
-                When life feels heavy, find someone safe to share with.
+                Tell us how you're feeling today. We'll help you find support that feels right for you.
               </p>
             </div>
 
@@ -59,15 +59,28 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                 id="btn-start-heart-check"
                 className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] active:scale-[0.98] transition-all text-white font-display font-bold text-[16px] sm:text-[17px] rounded-2xl shadow-[0_4px_14px_rgba(255,117,39,0.22)] flex items-center justify-center gap-2 cursor-pointer"
               >
-                Start Heart Check
+                Begin Check-In
                 <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </button>
 
+              {/* Trust Chips */}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 py-0.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                  <span>🔒</span> Private
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                  <span>🤝</span> Trust First
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#EDE9DE] rounded-full text-[12px] font-semibold text-gray-600 shadow-xs">
+                  <span>🧡</span> No Judgement
+                </span>
+              </div>
+
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] py-3 px-4 rounded-xl text-center md:text-left shadow-xs">
                 <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
-                  Support only. No prescriptions or diagnosis.
+                  HopeHeart provides emotional support only. It does not replace professional medical care.
                 </p>
               </div>
             </div>
@@ -85,10 +98,10 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               <Mascot expression="calm" size={130} />
               <div className="mt-5 text-center space-y-1">
                 <span className="text-[11px] font-mono font-bold text-[#FF7527] uppercase tracking-wider">
-                  HopeHeart Buddy
+                  HopeBuddy
                 </span>
                 <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
-                  Our mascot reflects your mood state nicely.
+                  Meet HopeBuddy. A small companion that checks in with you, celebrates progress, and reminds you that you're never alone.
                 </p>
               </div>
             </motion.div>

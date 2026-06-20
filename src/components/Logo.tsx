@@ -245,7 +245,7 @@ export function PrimaryLogo({ className = '' }: { className?: string }) {
       <div className="flex flex-col items-center md:items-start space-y-1">
         <BrandWordmark size="text-[34px]" />
         <p className="text-[14px] md:text-[15px] text-gray-500 font-semibold tracking-normal">
-          Feel heard. Find support. Reach care.
+          You're not alone. Find a safe space to share, connect, and feel supported.
         </p>
       </div>
     </div>
