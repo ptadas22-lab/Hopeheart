@@ -4,8 +4,8 @@ import { ScreenId, MoodConfig, DoctorQuestion } from './types';
 
 // Importing all modular screen components
 import WelcomeScreen from './components/WelcomeScreen';
-import CommunityPromiseScreen from './components/CommunityPromiseScreen';
-import SupportNeedScreen from './components/SupportNeedScreen';
+import LoginScreen from './components/LoginScreen';
+import ProfileSetupScreen from './components/ProfileSetupScreen';
 import DashboardScreen from './components/DashboardScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
 import SupportRoomsScreen from './components/SupportRoomsScreen';
@@ -85,45 +85,34 @@ export default function App() {
 
   const selectedMood = MOOD_CONFIGS.find(m => m.id === selectedMoodId) || MOOD_CONFIGS[0];
 
-  // Intercept the Support Needs response options and route correctly
-  const handleSupportNeedOption = (optionId: string) => {
-    if (optionId === 'safe-listener') {
-      setCurrentScreen(ScreenId.SafeListener);
-    } else if (optionId === 'support-rooms') {
-      setCurrentScreen(ScreenId.SupportRooms);
-    } else if (optionId === 'nearby-access') {
-      setCurrentScreen(ScreenId.NearbyAccess);
-    } else if (optionId === 'share-safely') {
-      setCurrentScreen(ScreenId.ShareSafely);
-    } else if (optionId === 'doctor-suggestions') {
-      setCurrentScreen(ScreenId.DoctorSuggestions);
-    } else if (optionId === 'crisis') {
-      setOverlayType('crisis');
-    }
-  };
-
   // Router for current screens
   const renderActiveScreen = () => {
     switch (currentScreen) {
       case ScreenId.Welcome:
         return (
           <WelcomeScreen 
-            onStart={() => setCurrentScreen(ScreenId.Promise)}
+            onStart={() => setCurrentScreen(ScreenId.Login)}
           />
         );
 
-      case ScreenId.Promise:
+      case ScreenId.Login:
         return (
-          <CommunityPromiseScreen 
-            onAccept={() => setCurrentScreen(ScreenId.SupportNeed)}
+          <LoginScreen 
+            onLoginSuccess={(nick) => {
+              setUserName(nick);
+              setCurrentScreen(ScreenId.ProfileSetup);
+            }}
           />
         );
 
-      case ScreenId.SupportNeed:
+      case ScreenId.ProfileSetup:
         return (
-          <SupportNeedScreen 
-            onBack={() => setCurrentScreen(ScreenId.Welcome)}
-            onSelectOption={handleSupportNeedOption}
+          <ProfileSetupScreen 
+            initialNickname={userName}
+            onComplete={(details) => {
+              setUserName(details.nickname);
+              setCurrentScreen(ScreenId.Home);
+            }}
           />
         );
 
@@ -228,7 +217,7 @@ export default function App() {
         );
 
       default:
-        return <WelcomeScreen onStart={() => setCurrentScreen(ScreenId.Promise)} />;
+        return <WelcomeScreen onStart={() => setCurrentScreen(ScreenId.Login)} />;
     }
   };
 
@@ -238,8 +227,8 @@ export default function App() {
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
   const isSafetyActive = currentScreen === ScreenId.AISafety;
  
-  // Bottom & Top Navigation is visible when the user advances past Welcome screen
-  const showNavChannels = currentScreen !== ScreenId.Welcome && currentScreen !== ScreenId.Promise && currentScreen !== ScreenId.SupportNeed;
+  // Bottom & Top Navigation is visible when the user advances past Welcome, Login, and ProfileSetup screens
+  const showNavChannels = currentScreen !== ScreenId.Welcome && currentScreen !== ScreenId.Login && currentScreen !== ScreenId.ProfileSetup;
 
   return (
     <div className="min-h-screen w-full bg-[#FCFAF5] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">

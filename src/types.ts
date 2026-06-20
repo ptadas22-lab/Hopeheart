@@ -1,8 +1,7 @@
 export enum ScreenId {
   Welcome = 'welcome',
-  Promise = 'promise',
-  HeartCheck = 'heart-check',
-  SupportNeed = 'support-need',
+  Login = 'login',
+  ProfileSetup = 'profile-setup',
   Home = 'home',
   SafeListener = 'safe-listener',
   SafeChat = 'safe-chat',

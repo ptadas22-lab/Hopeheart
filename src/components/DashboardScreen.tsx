@@ -15,12 +15,10 @@ export default function DashboardScreen({
   userName,
   selectedMood,
   onNavigateTo,
-  todayQuote,
-  onRefreshQuote,
 }: DashboardScreenProps) {
   return (
-    <div className="flex flex-col min-h-full bg-[#FAF8F3] overflow-y-auto font-sans select-none scrollbar-none w-full">
-      {/* Upper Brand / User bar (Always full-width but padded internally) */}
+    <div className="flex flex-col min-h-full bg-[#FCFAF5] overflow-y-auto font-sans select-none scrollbar-none w-full">
+      {/* Upper Brand / User bar */}
       <div className="pt-4 pb-3 px-5 flex items-center justify-between border-b border-[#EFEBE0] bg-white sticky top-0 z-10 shadow-xs">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -30,170 +28,109 @@ export default function DashboardScreen({
             <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
           </div>
           <div>
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] text-[#FF7527] font-extrabold uppercase font-mono tracking-wider">User Status</span>
-            </div>
+            <span className="text-[10px] text-[#FF7527] font-extrabold uppercase font-mono tracking-wider block leading-none mb-0.5">User Status</span>
             <h3 className="font-display font-extrabold text-[#2B1D12] text-[16px] leading-tight">
               Hi, {userName} 🌟
             </h3>
           </div>
         </div>
-
-        {/* Info button */}
-        <button
-          onClick={() => onNavigateTo('ai-safety')}
-          id="btn-nav-safety"
-          className="px-4 py-2 rounded-full border border-orange-100 bg-orange-50 hover:bg-orange-100/50 transition-all text-orange-700 font-display font-bold text-[11.5px] flex items-center gap-1.5 cursor-pointer"
-        >
-          🛡️ AI Protected
-        </button>
       </div>
 
-      {/* Main Responsive Layout Wrapper */}
-      <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+      {/* Main Layout Grid */}
+      <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
           
-          {/* LEFT COLUMN: User state & Mascot companion card (Spans 5 cols on md) */}
-          <div className="md:col-span-5 space-y-5">
-            {/* Greeting HUD Message */}
-            <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs">
-              <div className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider mb-1">CURRENT FEELING</div>
-              <h1 className="font-display font-black text-gray-800 text-[22px] md:text-[24px] leading-tight">
+          {/* Component 1: 🧡 HopeBuddy Check-In Card */}
+          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🧡</span>
+                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider uppercase">
+                  HopeBuddy Companion
+                </span>
+              </div>
+              <h2 className="font-display font-black text-gray-800 text-[20px] md:text-[22px] leading-tight">
                 You're feeling <span className="text-[#FF7527]">{selectedMood.label}</span> today.
-              </h1>
-              <p className="text-[13px] text-gray-500 font-semibold leading-relaxed mt-2 italic">
+              </h2>
+              <p className="text-[12.5px] text-gray-500 font-semibold italic leading-relaxed">
                 "{selectedMood.tagline}"
               </p>
             </div>
 
-            {/* Mascot Companion interactive Card */}
-            <div className="bg-[#FFFDF9] border border-[#EDE9DE] rounded-3xl p-5 shadow-sm text-center flex flex-col items-center space-y-3.5">
-              <div className="p-2.5 rounded-2xl bg-[#FCFBF8] border border-gray-100 shadow-inner">
+            <div className="py-2 flex items-center justify-center">
+              <div className="p-3 bg-[#FFFDF9] border border-dashed border-[#EDE9DE] rounded-2xl shadow-inner">
                 <Mascot expression={selectedMood.buddyExpression} size={120} />
               </div>
-              <div className="space-y-1">
-                <h4 className="font-display font-bold text-gray-800 text-[14.5px]">
-                  HopeBuddy
-                </h4>
-                <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
-                  HopeBuddy changes gently based on your mood and check-ins.
-                </p>
-              </div>
             </div>
+
+            <p className="text-[11.5px] text-center text-gray-400 font-medium leading-normal">
+              HopeBuddy changes gently based on your mood check-ins.
+            </p>
           </div>
 
-          {/* RIGHT COLUMN: Interactive Support Options (Spans 7 cols on md) */}
-          <div className="md:col-span-7 space-y-5">
-            {/* Quick Title header */}
-            <div className="pb-1 hidden md:block">
-              <h2 className="font-display font-black text-[20px] text-[#2B1D12]">
-                Support & Connection
-              </h2>
-              <p className="text-[13px] text-gray-500 mt-1">
-                Warm support is closer than you think. Find help in your own way.
-              </p>
-            </div>
-
-            {/* Companion Search Hero banner */}
+          {/* Components 2, 3, 4: Support Navigation Cards Grid */}
+          <div className="flex flex-col justify-between gap-4">
+            
+            {/* Component 2: 🤝 Community Card */}
             <motion.button
               onClick={() => onNavigateTo('safe-listener')}
-              id="dahsboard-card-listener"
-              whileHover={{ scale: 1.01, y: -2 }}
+              whileHover={{ scale: 1.01, y: -1 }}
               whileTap={{ scale: 0.99 }}
-              className="w-full relative overflow-hidden bg-gradient-to-r from-[#FF7527] to-[#FFA14E] text-white p-6 rounded-3xl shadow-[0_8px_20px_rgba(255,117,39,0.22)] transition-all text-left group cursor-pointer block"
+              className="flex-1 p-5 bg-white border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer shadow-3xs flex items-start gap-4"
             >
-              <div className="absolute right-2 top-2 opacity-15 text-white select-none pointer-events-none">
-                <svg className="w-24 h-24 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.109A11.386 11.386 0 0012 20c-1.11 0-2.18-.157-3.18-.453A11.411 11.411 0 003 19.128v-.109c0-1.113.285-2.16.786-3.07M15 19.128v.109a11.386 11.386 0 003-3.07M9 19.128v-.003c0-1.113.285-2.16.786-3.07M9 19.128v.109A11.386 11.386 0 0112 20c1.11 0 2.18-.157 3.18-.453M9 19.128v.109a11.386 11.386 0 01-3-3.07" />
-                </svg>
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[22px] shrink-0 shadow-inner">
+                🤝
               </div>
-              
-              <span className="inline-block px-2.5 py-1 bg-white/20 rounded-full font-mono text-[10px] uppercase tracking-wide font-extrabold mb-3">
-                Community Supported
-              </span>
-              <h3 className="font-display font-black text-[22px] tracking-tight leading-tight">
-                Find a Trusted Listener
-              </h3>
-              <p className="text-[13.5px] text-white/95 font-medium mt-2 leading-relaxed">
-                Connect with someone who is ready to listen without judgement.
-              </p>
-              <div className="mt-5 flex items-center gap-1 text-[13px] font-bold text-white uppercase font-mono tracking-wider bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-xl w-fit transition-all">
-                Find Listener
-                <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+              <div className="space-y-1">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Community Support
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Talk anonymously 1-on-1 with a trusted listener, or join group circles.
+                </p>
               </div>
             </motion.button>
 
-            {/* Split cards for professional and rooms */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Card 1: Join Support Room */}
-              <motion.button
-                onClick={() => onNavigateTo('support-rooms')}
-                id="dashboard-card-rooms"
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[20px] mb-3 shadow-inner">
-                  🎪
-                </div>
-                <h4 className="font-display font-extrabold text-gray-800 text-[15px] leading-tight">
-                  Join Support Room
-                </h4>
-                <p className="text-[11.5px] text-gray-500 font-medium mt-1 leading-relaxed">
-                  Hop into quiet, focused sharing spaces with kindred spirits.
-                </p>
-              </motion.button>
-
-              {/* Card 2: Care Bridge Pro */}
-              <motion.button
-                onClick={() => onNavigateTo('doctor-suggestions')}
-                id="dashboard-card-pro"
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="p-5 bg-white hover:bg-[#FAF7F0] border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[20px] mb-3 shadow-inner">
-                  🩺
-                </div>
-                <h4 className="font-display font-extrabold text-gray-800 text-[15px] leading-tight">
-                  Professional Resources
-                </h4>
-                <p className="text-[11.5px] text-gray-500 font-medium mt-1 leading-relaxed">
-                  Find verified external support when needed.
-                </p>
-              </motion.button>
-            </div>
-
-            {/* Daily Wisdom card */}
-            <div className="bg-[#FEFAF0] border-2 border-dashed border-[#F3E2C4] p-5 rounded-3xl relative overflow-hidden shadow-sm">
-              <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#F7EACD]/90">
-                <span className="text-[11px] font-mono font-extrabold text-amber-700 uppercase tracking-widest flex items-center gap-1.5">
-                  ✨ Today's Hope
-                </span>
-                <button
-                  onClick={onRefreshQuote}
-                  title="Refresh Wisdom"
-                  className="p-1.5 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer text-amber-700"
-                >
-                  <svg className="w-3.5 h-3.5 stroke-current cursor-pointer" fill="none" strokeWidth="3" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                  </svg>
-                </button>
+            {/* Component 3: 🌍 Resources Card */}
+            <motion.button
+              onClick={() => onNavigateTo('doctor-suggestions')}
+              whileHover={{ scale: 1.01, y: -1 }}
+              whileTap={{ scale: 0.99 }}
+              className="flex-1 p-5 bg-white border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer shadow-3xs flex items-start gap-4"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[22px] shrink-0 shadow-inner">
+                🌍
               </div>
-              <p className="text-[13.5px] text-gray-700 font-semibold italic leading-relaxed text-center py-1 select-all">
-                "{todayQuote}"
-              </p>
-              <div className="text-center text-[10px] text-gray-400 font-medium uppercase tracking-widest pt-2.5">
-                Tap the button to reveal another message of warmth
+              <div className="space-y-1">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Trusted Resources
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Discover verified external help lines, specialists, and save questions.
+                </p>
               </div>
-            </div>
+            </motion.button>
 
-            {/* Safety Trust Badge */}
-            <div className="bg-white py-4 px-5 rounded-2xl border border-orange-100/70 text-center text-[12.5px] text-[#FF7527] font-bold leading-relaxed shadow-xs">
-              Community supports. AI protects. Professionals provide care.
-            </div>
+            {/* Component 4: 🛡️ Safety Card */}
+            <motion.button
+              onClick={() => onNavigateTo('ai-safety')}
+              whileHover={{ scale: 1.01, y: -1 }}
+              whileTap={{ scale: 0.99 }}
+              className="flex-1 p-5 bg-white border border-[#EDE9DE] rounded-3xl text-left transition-all cursor-pointer shadow-3xs flex items-start gap-4"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center text-[22px] shrink-0 shadow-inner">
+                🛡️
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Safety Guardrails
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Learn about anonymous rules, AI moderation protection, and community boundaries.
+                </p>
+              </div>
+            </motion.button>
+
           </div>
 
         </div>
@@ -201,5 +138,3 @@ export default function DashboardScreen({
     </div>
   );
 }
-
-export { DashboardScreen };

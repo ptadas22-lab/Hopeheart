@@ -59,7 +59,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                 id="btn-start-heart-check"
                 className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] active:scale-[0.98] transition-all text-white font-display font-bold text-[16px] sm:text-[17px] rounded-2xl shadow-[0_4px_14px_rgba(255,117,39,0.22)] flex items-center justify-center gap-2 cursor-pointer"
               >
-                Begin Check-In
+                Get Started
                 <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
@@ -108,6 +108,21 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </div>
 
         </div>
+
+        {/* Onboarding Progress Indicator */}
+        <div className="w-full max-w-md mx-auto mt-6 pt-4 border-t border-[#EDE9DE]/65 flex flex-col items-center gap-1 select-none">
+          <span className="text-[9.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
+            Step 1 of 3
+          </span>
+          <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
+            <span className="text-[#FF7527] font-black">Welcome</span>
+            <span>→</span>
+            <span>Login</span>
+            <span>→</span>
+            <span>Profile</span>
+          </div>
+        </div>
+
       </div>
 
     </div>
