@@ -27,7 +27,7 @@ export default function NearbyCommunityScreen({ onBack }: NearbyCommunityScreenP
       'Listen to others without interrupting or judging',
       'Join support discussions',
       'Attend public meetups if available',
-      'Ask for professional care suggestions'
+      'Ask for professional resources'
     ],
     cannotDo: [
       'Give medical drug prescriptions',
@@ -265,7 +265,7 @@ export default function NearbyCommunityScreen({ onBack }: NearbyCommunityScreenP
                               'Listen to others without interrupting or judging',
                               'Join support discussions',
                               'Attend public meetups if available',
-                              'Ask for professional care suggestions'
+                              'Ask for professional resources'
                             ],
                             cannotDo: [
                               'Give medical drug prescriptions',

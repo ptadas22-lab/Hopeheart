@@ -184,7 +184,7 @@ export default function HopeBuddyWidget({
       return "You're so welcome! Knowing I can bring even a tiny bit of warmth to your day makes me very happy.";
     }
     if (text.includes('help') || text.includes('hurt') || text.includes('pain') || text.includes('sick')) {
-      return "I hear you, and I want to support you. While I can offer companionship, remember that for professional resources, our Care Bridge section is always ready to assist.";
+      return "I hear you, and I want to support you. While I can offer companionship, remember that for professional resources, our Resources section is always ready to assist.";
     }
 
     switch (moodId) {

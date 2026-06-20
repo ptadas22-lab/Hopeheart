@@ -62,7 +62,7 @@ export default function ModerationAlertScreen({ type, onNavigateTo, onClose }: M
                 }}
                 className="w-full py-3 bg-white hover:bg-gray-50 border border-emerald-200 text-emerald-800 font-display font-bold text-[13px] rounded-xl text-center cursor-pointer"
               >
-                Find Licensed Clinicians
+                Open Professional Resources
               </button>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function ModerationAlertScreen({ type, onNavigateTo, onClose }: M
                 }}
                 className="w-full py-3 bg-[#FCFAF5] hover:bg-white text-gray-700 border border-gray-200 rounded-xl text-[13px] font-display font-bold text-center cursor-pointer"
               >
-                Consult Clinical Clinicians
+                Open Professional Resources
               </button>
             </div>
           </div>

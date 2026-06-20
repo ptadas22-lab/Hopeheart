@@ -230,14 +230,14 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
   ],
   'I want professional help': [
     {
-      name: 'Care Bridge',
+      name: 'Professional Resources',
       role: 'Professional Hub',
       bio: 'Find external professional resources and helplines.',
       status: 'available',
       supportType: 'Resource navigation',
       boundary: 'External links only',
       iconBg: 'bg-emerald-100 text-emerald-700',
-      actionText: 'Open Care Bridge',
+      actionText: 'Open Resources',
       targetPath: 'doctor-suggestions'
     },
     {
@@ -248,7 +248,7 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Provider directory',
       boundary: 'External links only',
       iconBg: 'bg-blue-100 text-blue-700',
-      actionText: 'Open Care Bridge',
+      actionText: 'Open Resources',
       targetPath: 'doctor-suggestions'
     },
     {
@@ -259,7 +259,7 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       supportType: 'Urgent helpline list',
       boundary: 'External lines only',
       iconBg: 'bg-red-100 text-red-700',
-      actionText: 'Open Care Bridge',
+      actionText: 'Open Resources',
       targetPath: 'doctor-suggestions'
     }
   ]
@@ -518,7 +518,7 @@ export default function ListenerMatchScreen({
                         onClick={() => onNavigateTo('doctor-suggestions')}
                         className="px-3 py-1 bg-white border border-red-200 text-red-700 rounded-lg text-[10px] font-mono uppercase tracking-wider font-bold cursor-pointer"
                       >
-                        Find Clinicians
+                        Find Resources
                       </button>
                     </div>
                   </div>

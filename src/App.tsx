@@ -286,7 +286,7 @@ export default function App() {
                   isCareActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🩺</span> Care Bridge
+                <span>🩺</span> Resources
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.AISafety)}
@@ -379,7 +379,7 @@ export default function App() {
               }`}
             >
               <span className="text-[17px] mb-0.5 select-none leading-none">🩺</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Care Bridge</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Resources</span>
               {isCareActive && (
                 <motion.div 
                   layoutId="activeTabIndicator"

@@ -120,7 +120,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
         {/* CTA to check Care Bridge screen */}
         <div className="bg-[#FAF8F3] border border-gray-100 p-4 rounded-xl text-center">
           <p className="text-[11px] text-gray-500 leading-normal font-semibold">
-            Remember: <span className="text-gray-800">Only verified clinicians hold prescribing licenses.</span> Always use Care Bridge for professional support pathways.
+            Remember: <span className="text-gray-800">Only verified clinicians hold prescribing licenses.</span> Always use Professional Resources for professional support pathways.
           </p>
         </div>
 

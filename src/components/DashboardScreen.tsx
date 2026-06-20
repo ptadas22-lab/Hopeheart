@@ -41,7 +41,7 @@ export default function DashboardScreen({
 
         {/* Info button */}
         <button
-          onClick={() => onNavigateTo('safety')}
+          onClick={() => onNavigateTo('ai-safety')}
           id="btn-nav-safety"
           className="px-4 py-2 rounded-full border border-orange-100 bg-orange-50 hover:bg-orange-100/50 transition-all text-orange-700 font-display font-bold text-[11.5px] flex items-center gap-1.5 cursor-pointer"
         >
@@ -96,7 +96,7 @@ export default function DashboardScreen({
 
             {/* Companion Search Hero banner */}
             <motion.button
-              onClick={() => onNavigateTo('trusted-listener')}
+              onClick={() => onNavigateTo('safe-listener')}
               id="dahsboard-card-listener"
               whileHover={{ scale: 1.01, y: -2 }}
               whileTap={{ scale: 0.99 }}
@@ -148,7 +148,7 @@ export default function DashboardScreen({
 
               {/* Card 2: Care Bridge Pro */}
               <motion.button
-                onClick={() => onNavigateTo('care-bridge')}
+                onClick={() => onNavigateTo('doctor-suggestions')}
                 id="dashboard-card-pro"
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
@@ -192,7 +192,7 @@ export default function DashboardScreen({
 
             {/* Safety Trust Badge */}
             <div className="bg-white py-4 px-5 rounded-2xl border border-orange-100/70 text-center text-[12.5px] text-[#FF7527] font-bold leading-relaxed shadow-xs">
-              Community supports. AI protects. Doctors treat.
+              Community supports. AI protects. Professionals provide care.
             </div>
           </div>
 

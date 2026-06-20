@@ -103,7 +103,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName }:
               {/* Utility List Menu */}
               <div className="bg-white border border-[#EDE9DE] rounded-3xl p-4 divide-y divide-gray-100 shadow-xs">
                 {[
-                  { label: 'Care Logs', detail: 'View history of doctor suggestion notes and saved questions.', action: () => alert("Redirecting to Care logs... Select Care on the bottom menu to view verified practitioners.") },
+                  { label: 'Resource Logs', detail: 'View history of saved questions for professionals.', action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") },
                   { label: 'Account Info', detail: 'Review security key tokens, backup codes, and active platforms.', action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") },
                   { label: 'Security & Safety Toggles', detail: 'Adjust real-time AI moderation sensitivity levels.', action: () => setSubStage('privacy') },
                 ].map((item, id) => (

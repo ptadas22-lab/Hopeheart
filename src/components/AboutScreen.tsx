@@ -67,7 +67,7 @@ export default function AboutScreen({ onBack, onAcceptDisclaimer }: AboutScreenP
                 <div className="bg-[#FFF2EA] border border-orange-100 rounded-2xl p-4.5 text-center">
                   <span className="text-[10px] font-mono font-extrabold text-[#FF7527] block tracking-widest mb-1">THE TRIPLE DECREE</span>
                   <p className="font-display font-black text-gray-800 text-[15.5px]">
-                    Community supports. AI protects. Doctors treat.
+                    Community supports. AI protects. Professionals provide care.
                   </p>
                 </div>
               </div>
