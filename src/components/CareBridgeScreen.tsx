@@ -249,6 +249,253 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
   }
 ];
 
+// Contextual Mascot Animation 1: Anxiety
+function AnxietyIllustration() {
+  return (
+    <div className="flex flex-col items-center justify-center p-2.5 bg-[#FCFAF5] rounded-2xl border border-gray-150/60 shadow-inner w-36 h-36">
+      <svg width="86" height="76" viewBox="0 0 150 150" className="overflow-visible">
+        {/* Breathing halo ring */}
+        <motion.circle 
+          cx="75" cy="72" r="52" 
+          fill="none" stroke="#FF7527" strokeWidth="4" opacity="0.3"
+          animate={{ scale: [0.75, 1.25, 0.75], opacity: [0.25, 0.65, 0.25] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        />
+        {/* Body doing breathing motion */}
+        <motion.g
+          animate={{ scale: [0.93, 1.05, 0.93], y: [0, -3, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          style={{ transformOrigin: "75px 110px" }}
+        >
+          {/* Feet */}
+          <rect x="52" y="112" width="16" height="8" rx="3" fill="#FED25A" stroke="#2B1D12" strokeWidth="2.5" />
+          <rect x="82" y="112" width="16" height="8" rx="3" fill="#FED25A" stroke="#2B1D12" strokeWidth="2.5" />
+          
+          {/* Hump Ears */}
+          <path d="M 40 28 C 36 12, 60 12, 66 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          <path d="M 110 28 C 114 12, 90 12, 84 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          
+          {/* Rounded Bean Body */}
+          <rect x="24" y="26" width="102" height="86" rx="36" fill="#ffa552" stroke="#2B1D12" strokeWidth="4" />
+          <rect x="26" y="28" width="98" height="82" rx="34" fill="#ffa552" />
+          
+          {/* Closed peaceful eyes */}
+          <path d="M 48 62 Q 54 57 60 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M 90 62 Q 96 57 102 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          
+          {/* Pink Cheeks */}
+          <circle cx="42" cy="70" r="6" fill="#FFA5A5" opacity="0.8" />
+          <circle cx="108" cy="70" r="6" fill="#FFA5A5" opacity="0.8" />
+          
+          {/* Peaceful small mouth */}
+          <path d="M 70 74 Q 75 77 80 74" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          
+          {/* Yoga pose arms: resting outward */}
+          <path d="M 23 85 C 10 90 15 99 28 95" fill="none" stroke="#EA713E" strokeWidth="8" strokeLinecap="round" />
+          <path d="M 127 85 C 140 90 135 99 122 95" fill="none" stroke="#EA713E" strokeWidth="8" strokeLinecap="round" />
+        </motion.g>
+      </svg>
+      <span className="text-[9px] font-bold text-gray-500 mt-1 italic text-center leading-none select-none">
+        "Breathe with me for a moment."
+      </span>
+    </div>
+  );
+}
+
+// Contextual Mascot Animation 2: Parkinson's
+function ParkinsonsIllustration() {
+  return (
+    <div className="flex flex-col items-center justify-center p-2.5 bg-[#FCFAF5] rounded-2xl border border-gray-150/60 shadow-inner w-36 h-36">
+      <svg width="96" height="76" viewBox="0 0 180 150" className="overflow-visible">
+        {/* Swaying Support group */}
+        <motion.g
+          animate={{ rotate: [-2, 2, -2], y: [0, -1.5, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          style={{ transformOrigin: "90px 125px" }}
+        >
+          {/* Buddy 1 (Supportive Orange) */}
+          <g transform="translate(15, 12)">
+            {/* Hump Ears */}
+            <path d="M 33 42 C 30 30, 48 30, 52 40 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
+            <path d="M 77 42 C 80 30, 62 30, 58 40 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
+            {/* Body */}
+            <rect x="25" y="40" width="60" height="70" rx="20" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" />
+            <rect x="27" y="42" width="56" height="66" rx="18" fill="#ffa552" />
+            {/* Comfortable Curved Eyes */}
+            <path d="M 40 68 A 4 4 0 0 1 48 68" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M 62 68 A 4 4 0 0 1 70 68" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Smile */}
+            <path d="M 51 76 Q 55 79 59 76" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Supportive Arm hugging the other buddy */}
+            <path d="M 80 80 Q 95 80 102 85" fill="none" stroke="#EA713E" strokeWidth="6.5" strokeLinecap="round" />
+          </g>
+
+          {/* Buddy 2 (Smaller Gray/Somatic Buddy with walking cane) */}
+          <g transform="translate(85, 26)">
+            {/* Walking Cane */}
+            <path d="M 22 75 L 14 104" stroke="#8A6E58" strokeWidth="3.5" strokeLinecap="round" />
+            <path d="M 22 75 Q 25 71 21 68 Q 16 68 18 72" fill="none" stroke="#8A6E58" strokeWidth="3.5" strokeLinecap="round" />
+
+            {/* Body */}
+            <rect x="25" y="30" width="50" height="55" rx="16" fill="#dddbd0" stroke="#2B1D12" strokeWidth="3" />
+            <rect x="27" y="32" width="46" height="51" rx="14" fill="#dddbd0" />
+            {/* Comfort eyes */}
+            <path d="M 38 52 A 3 3 0 0 1 44 52" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M 56 52 A 3 3 0 0 1 62 52" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
+            {/* Small smile */}
+            <path d="M 46 60 Q 50 62 54 60" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            {/* Arm holding cane */}
+            <path d="M 27 60 Q 20 68 22 75" fill="none" stroke="#BAAE9C" strokeWidth="5.5" strokeLinecap="round" />
+          </g>
+        </motion.g>
+      </svg>
+      <span className="text-[8.5px] font-bold text-gray-500 mt-1 italic text-center leading-tight select-none">
+        "You don't have to navigate this journey alone."
+      </span>
+    </div>
+  );
+}
+
+// Contextual Mascot Animation 3: Hallucination
+function HallucinationIllustration() {
+  return (
+    <div className="flex flex-col items-center justify-center p-2.5 bg-[#FCFAF5] rounded-2xl border border-gray-150/60 shadow-inner w-36 h-36">
+      <svg width="86" height="76" viewBox="0 0 150 150" className="overflow-visible">
+        {/* Blinking Buddy holding a lantern */}
+        <motion.g
+          animate={{ y: [0, -2.5, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          style={{ transformOrigin: "75px 110px" }}
+        >
+          {/* Hump Ears */}
+          <path d="M 40 28 C 36 12, 60 12, 66 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          <path d="M 110 28 C 114 12, 90 12, 84 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          {/* Body */}
+          <rect x="24" y="26" width="102" height="86" rx="36" fill="#ffa552" stroke="#2B1D12" strokeWidth="4" />
+          <rect x="26" y="28" width="98" height="82" rx="34" fill="#ffa552" />
+
+          {/* Eyes with periodic blink animation */}
+          <g>
+            <motion.ellipse 
+              cx="53" cy="62" rx="8.5" ry="8.5" fill="#2B1D12"
+              animate={{ scaleY: [1, 1, 0, 1, 1, 1] }}
+              transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+              style={{ transformOrigin: "53px 62px" }}
+            />
+            <motion.ellipse 
+              cx="97" cy="62" rx="8.5" ry="8.5" fill="#2B1D12"
+              animate={{ scaleY: [1, 1, 0, 1, 1, 1] }}
+              transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+              style={{ transformOrigin: "97px 62px" }}
+            />
+            {/* Shines */}
+            <circle cx="55" cy="59" r="3" fill="white" />
+            <circle cx="99" cy="59" r="3" fill="white" />
+          </g>
+
+          {/* Smile */}
+          <path d="M 69 75 Q 75 78 81 75" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+
+          {/* Arm holding lantern */}
+          <path d="M 126 80 C 135 88 138 96 138 102" fill="none" stroke="#EA713E" strokeWidth="7.5" strokeLinecap="round" />
+
+          {/* Glowing Lantern */}
+          <g transform="translate(132, 95)">
+            {/* Light Cone beam */}
+            <motion.polygon 
+              points="-32,32 25,62 55,62 -5,32" 
+              fill="#FFF200" opacity="0.16"
+              animate={{ opacity: [0.12, 0.2, 0.12] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            />
+            {/* Lantern frame */}
+            <rect x="-8" y="10" width="14" height="20" rx="3" fill="#FFAE00" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="-1" cy="20" r="4.5" fill="#FFFDBF" />
+            <motion.circle 
+              cx="-1" cy="20" r="3" fill="#FFF200"
+              animate={{ scale: [1, 1.25, 1], opacity: [0.75, 1, 0.75] }}
+              transition={{ repeat: Infinity, duration: 1.2 }}
+            />
+            <line x1="-1" y1="4" x2="-1" y2="10" stroke="#2B1D12" strokeWidth="2.2" />
+          </g>
+        </motion.g>
+      </svg>
+      <span className="text-[8.5px] font-bold text-gray-500 mt-1 italic text-center leading-tight select-none">
+        "Let's bring clarity to confusing moments."
+      </span>
+    </div>
+  );
+}
+
+// Contextual Mascot Animation 4: Emotional Recovery
+function EmotionalRecoveryIllustration() {
+  return (
+    <div className="flex flex-col items-center justify-center p-2.5 bg-[#FCFAF5] rounded-2xl border border-gray-150/60 shadow-inner w-36 h-36">
+      <svg width="96" height="76" viewBox="0 0 160 150" className="overflow-visible">
+        {/* Watering plant buddy */}
+        <motion.g
+          animate={{ y: [0, -2, 0] }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          style={{ transformOrigin: "70px 110px" }}
+        >
+          {/* Hump Ears */}
+          <path d="M 35 28 C 31 12, 55 12, 61 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          <path d="M 105 28 C 109 12, 85 12, 79 26 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="3.5" strokeLinejoin="round" />
+          {/* Body */}
+          <rect x="19" y="26" width="102" height="86" rx="36" fill="#ffa552" stroke="#2B1D12" strokeWidth="4" />
+          <rect x="21" y="28" width="98" height="82" rx="34" fill="#ffa552" />
+
+          {/* Peaceful closed curved eyes */}
+          <path d="M 43 62 A 5 5 0 0 1 55 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          <path d="M 85 62 A 5 5 0 0 1 97 62" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Smile */}
+          <path d="M 64 73 Q 70 76 76 73" fill="none" stroke="#2B1D12" strokeWidth="3.5" strokeLinecap="round" />
+
+          {/* Arm holding watering can */}
+          <path d="M 120 78 Q 130 74 135 80" fill="none" stroke="#EA713E" strokeWidth="7" strokeLinecap="round" />
+
+          {/* Watering can (tilted) */}
+          <g transform="translate(130, 75) rotate(15)">
+            <rect x="0" y="0" width="15" height="12" rx="2" fill="#BAAE9C" stroke="#2B1D12" strokeWidth="2" />
+            <path d="M 15 6 L 22 2" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M -5 6 Q -10 6 -8 2 Q -6 -2 0 1" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+          </g>
+
+          {/* Water droplets */}
+          <g transform="translate(150, 85)">
+            <motion.circle cx="0" cy="5" r="1.5" fill="#4AA0E6" animate={{ y: [0, 15, 0], opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }} />
+            <motion.circle cx="3" cy="10" r="1.5" fill="#4AA0E6" animate={{ y: [-5, 10, -5], opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.4, ease: "linear" }} />
+            <motion.circle cx="-3" cy="8" r="1.5" fill="#4AA0E6" animate={{ y: [-2, 13, -2], opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.8, ease: "linear" }} />
+          </g>
+        </motion.g>
+
+        {/* Plant and Pot in bottom right */}
+        <g transform="translate(140, 105)">
+          {/* Pot */}
+          <polygon points="0,15 16,15 13,30 3,30" fill="#D3A27F" stroke="#2B1D12" strokeWidth="2.2" />
+          {/* Plant Stem */}
+          <path d="M 8,15 L 8,0" stroke="#7BA655" strokeWidth="3" strokeLinecap="round" />
+          
+          {/* Leaves with growing scale animation */}
+          <motion.g
+            animate={{ scale: [0.85, 1.15, 0.85] }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            style={{ transformOrigin: "8px 15px" }}
+          >
+            {/* Leaf 1 */}
+            <path d="M 8,5 Q 0,0 2,-4 Q 6,-3 8,5" fill="#90C467" stroke="#2B1D12" strokeWidth="1.5" />
+            {/* Leaf 2 */}
+            <path d="M 8,8 Q 16,3 14,-1 Q 10,0 8,8" fill="#90C467" stroke="#2B1D12" strokeWidth="1.5" />
+          </motion.g>
+        </g>
+      </svg>
+      <span className="text-[9px] font-bold text-gray-500 mt-1 italic text-center leading-none select-none">
+        "Small steps count too."
+      </span>
+    </div>
+  );
+}
+
 export default function CareBridgeScreen({
   onBack,
   onNavigateTo,
@@ -383,36 +630,46 @@ export default function CareBridgeScreen({
                 className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 space-y-6 shadow-xs"
               >
                 {/* Header info */}
-                <div className="border-b border-gray-100 pb-5 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl p-2.5 rounded-2xl bg-[#FCFAF5] border border-gray-150 shadow-inner">
-                      {activeCategory.emoji}
-                    </span>
-                    <div>
-                      <h3 className="font-display font-black text-[#2B1D12] text-[20px]">
-                        {activeCategory.name}
-                      </h3>
-                      <p className="text-[12.5px] text-gray-500 font-semibold italic">
-                        {activeCategory.tagline}
-                      </p>
+                <div className="border-b border-gray-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl p-2.5 rounded-2xl bg-[#FCFAF5] border border-gray-150 shadow-inner">
+                        {activeCategory.emoji}
+                      </span>
+                      <div>
+                        <h3 className="font-display font-black text-[#2B1D12] text-[20px]">
+                          {activeCategory.name}
+                        </h3>
+                        <p className="text-[12.5px] text-gray-500 font-semibold italic">
+                          {activeCategory.tagline}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* BEST FOR */}
+                    <div className="pt-2">
+                      <span className="text-[10px] font-mono font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">
+                        Best For
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {activeCategory.bestFor.map((item, index) => (
+                          <span 
+                            key={index}
+                            className="px-3 py-1 bg-[#FCFAF5] border border-gray-150 rounded-lg text-gray-650 font-semibold text-[11.5px]"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  {/* BEST FOR */}
-                  <div className="pt-2">
-                    <span className="text-[10px] font-mono font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">
-                      Best For
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {activeCategory.bestFor.map((item, index) => (
-                        <span 
-                          key={index}
-                          className="px-3 py-1 bg-[#FCFAF5] border border-gray-150 rounded-lg text-gray-650 font-semibold text-[11.5px]"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
+                  {/* Contextual Mascot Illustration */}
+                  <div className="shrink-0 flex items-center justify-center">
+                    {activeCategory.id === 'anxiety' && <AnxietyIllustration />}
+                    {activeCategory.id === 'parkinsons' && <ParkinsonsIllustration />}
+                    {activeCategory.id === 'hallucinations' && <HallucinationIllustration />}
+                    {activeCategory.id === 'emotional-recovery' && <EmotionalRecoveryIllustration />}
                   </div>
                 </div>
 
