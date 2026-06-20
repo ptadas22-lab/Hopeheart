@@ -566,6 +566,7 @@ export default function CareBridgeScreen({
 }: CareBridgeScreenProps) {
   const [subScreen, setSubScreen] = useState<SubScreen>('suggestions');
   const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
+  const [selectedSymptomId, setSelectedSymptomId] = useState<string>('overthinking');
   const [questionInput, setQuestionInput] = useState<string>('');
 
   const handleAddQuestion = (e: FormEvent) => {
@@ -658,6 +659,61 @@ export default function CareBridgeScreen({
                 </div>
               </div>
 
+              {/* Onboarding Assistant / Tell Us What's Happening */}
+              <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-4">
+                <div className="space-y-1">
+                  <h3 className="text-[16px] font-display font-black text-gray-850 flex items-center gap-1.5">
+                    🫶 Tell us what's happening
+                  </h3>
+                  <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
+                    "You don't need to know the right category. Start with what you're experiencing."
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {[
+                    { id: 'overthinking', label: 'Overthinking', emoji: '😰', catId: 'anxiety' },
+                    { id: 'lonely', label: 'Feeling Lonely', emoji: '😔', catId: 'emotional-recovery' },
+                    { id: 'exhausted', label: 'Feeling Exhausted', emoji: '😴', catId: 'emotional-recovery' },
+                    { id: 'parkinsons', label: "Supporting Someone With Parkinson's", emoji: '🧓', catId: 'parkinsons' },
+                    { id: 'confusing', label: 'Confusing Experiences', emoji: '👀', catId: 'hallucinations' }
+                  ].map((btn) => {
+                    const isSelected = selectedSymptomId === btn.id;
+                    return (
+                      <motion.button
+                        key={btn.id}
+                        onClick={() => {
+                          setSelectedSymptomId(btn.id);
+                          setActiveCategoryId(btn.catId);
+                        }}
+                        whileHover={{ scale: 1.02, y: -0.5 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-4 rounded-2xl border text-left flex items-center gap-3.5 transition-all cursor-pointer ${
+                          isSelected 
+                            ? 'bg-[#FFF2EA] border-[#FF7527] shadow-2xs ring-1 ring-[#FF7527]/10' 
+                            : 'bg-[#FCFAF5] border-gray-200 hover:bg-[#FAF6EE] hover:border-gray-300'
+                        }`}
+                      >
+                        <span className="text-xl p-1 bg-white rounded-lg shadow-2xs shrink-0">{btn.emoji}</span>
+                        <div className="space-y-0.5">
+                          <span className="text-[12.5px] font-display font-black text-gray-800 block leading-tight">
+                            {btn.label}
+                          </span>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+                
+                {/* 214 people supporting banner */}
+                <div className="pt-2 border-t border-gray-50 flex items-center">
+                  <div className="inline-flex items-center gap-2 bg-[#F2FAF6] border border-green-200/60 px-4 py-2 rounded-full text-green-800 text-[11.5px] font-bold shadow-2xs">
+                    <span className="text-[12px]">🟢</span>
+                    <span>214 people are supporting each other right now</span>
+                  </div>
+                </div>
+              </div>
+
               {/* 2. Category switcher directly below the hero section */}
               <div className="space-y-3.5 bg-white border border-[#EDE9DE] p-5 rounded-[28px] shadow-xs">
                 <div className="space-y-1">
@@ -668,20 +724,43 @@ export default function CareBridgeScreen({
                     Choose the journey that feels closest to your current experience.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2 pt-0.5">
+                <div className="flex flex-wrap gap-2.5 pt-0.5">
                   {SUPPORT_CATEGORIES.map((cat) => (
                     <motion.button
                       key={cat.id}
-                      onClick={() => setActiveCategoryId(cat.id)}
+                      onClick={() => {
+                        setActiveCategoryId(cat.id);
+                        // Auto-highlight corresponding symptom button
+                        if (cat.id === 'anxiety') {
+                          setSelectedSymptomId('overthinking');
+                        } else if (cat.id === 'parkinsons') {
+                          setSelectedSymptomId('parkinsons');
+                        } else if (cat.id === 'hallucinations') {
+                          setSelectedSymptomId('confusing');
+                        } else if (cat.id === 'emotional-recovery') {
+                          if (selectedSymptomId !== 'lonely' && selectedSymptomId !== 'exhausted') {
+                            setSelectedSymptomId('lonely');
+                          }
+                        }
+                      }}
                       whileHover={{ scale: 1.02, y: -0.5 }}
                       whileTap={{ scale: 0.98 }}
-                      className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] flex items-center gap-1.5 ${
+                      className={`px-4.5 py-3 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] flex items-center gap-2.5 ${
                         activeCategoryId === cat.id 
                           ? 'bg-[#1E1E1A] text-white shadow-xs' 
                           : 'bg-[#FCFAF5] text-gray-600 border border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      <span>{cat.emoji}</span> <span>{cat.name}</span>
+                      <span className="text-lg">{cat.emoji}</span>
+                      <div className="text-left leading-tight">
+                        <span className="block">{cat.name}</span>
+                        <span className={`block text-[9.5px] ${activeCategoryId === cat.id ? 'text-orange-200' : 'text-gray-400'} font-mono font-medium mt-0.5`}>
+                          {cat.id === 'anxiety' && '→ 24 active circles'}
+                          {cat.id === 'parkinsons' && '→ 18 caregiver groups'}
+                          {cat.id === 'hallucinations' && '→ 8 safe spaces'}
+                          {cat.id === 'emotional-recovery' && '→ 36 communities'}
+                        </span>
+                      </div>
                     </motion.button>
                   ))}
                 </div>
