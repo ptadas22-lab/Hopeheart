@@ -98,7 +98,7 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
   },
   {
     id: 'parkinsons',
-    name: "Parkinson's",
+    name: "Living with Parkinson's",
     emoji: '🧓',
     tagline: 'Emotional comfort and caregiver support for movement challenges.',
     bestFor: ['Daily emotional support', 'Caregiver support', 'Movement challenges'],
@@ -659,15 +659,22 @@ export default function CareBridgeScreen({
               </div>
 
               {/* 2. Category switcher directly below the hero section */}
-              <div className="space-y-2.5 bg-white border border-[#EDE9DE] p-4.5 rounded-[24px] shadow-xs">
-                <label className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                  Select Support Category
-                </label>
-                <div className="flex flex-wrap gap-2">
+              <div className="space-y-3.5 bg-white border border-[#EDE9DE] p-5 rounded-[28px] shadow-xs">
+                <div className="space-y-1">
+                  <h4 className="text-[14px] font-display font-black text-gray-850 flex items-center gap-1.5">
+                    🧭 What are you navigating today?
+                  </h4>
+                  <p className="text-[12px] text-gray-500 font-semibold block leading-tight">
+                    Choose the journey that feels closest to your current experience.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-0.5">
                   {SUPPORT_CATEGORIES.map((cat) => (
-                    <button
+                    <motion.button
                       key={cat.id}
                       onClick={() => setActiveCategoryId(cat.id)}
+                      whileHover={{ scale: 1.02, y: -0.5 }}
+                      whileTap={{ scale: 0.98 }}
                       className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] flex items-center gap-1.5 ${
                         activeCategoryId === cat.id 
                           ? 'bg-[#1E1E1A] text-white shadow-xs' 
@@ -675,7 +682,7 @@ export default function CareBridgeScreen({
                       }`}
                     >
                       <span>{cat.emoji}</span> <span>{cat.name}</span>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
