@@ -913,6 +913,84 @@ export default function CareBridgeScreen({
                 </motion.div>
               </AnimatePresence>
 
+              {/* Today at HopeHeart & Visual Journey Indicator */}
+              <div className="bg-[#FEFAF3] border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-6">
+                <div className="space-y-1">
+                  <h3 className="text-[16px] font-display font-black text-gray-850 flex items-center gap-1.5">
+                    🧡 Today at HopeHeart
+                  </h3>
+                  <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
+                    Real support happening right now. You are sharing this space with understanding peers.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2.5 justify-center">
+                  {[
+                    { label: 'checked in today', count: '214', emoji: '🟢', bg: 'bg-green-50/70 border-green-100/60 text-green-800' },
+                    { label: 'discussing anxiety', count: '34', emoji: '🧠', bg: 'bg-[#FFF2EA] border-[#FFE3D1] text-[#FF7527]' },
+                    { label: "supporting Parkinson's caregivers", count: '12', emoji: '🧓', bg: 'bg-amber-50/70 border-amber-100/60 text-amber-800' },
+                    { label: 'exploring hallucination support', count: '6', emoji: '👀', bg: 'bg-blue-50/70 border-blue-100/60 text-blue-800' },
+                    { label: 'celebrating small wins', count: '18', emoji: '🌱', bg: 'bg-emerald-50/70 border-emerald-100/60 text-emerald-800' }
+                  ].map((act, index) => (
+                    <div 
+                      key={index} 
+                      className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-[12.5px] font-bold shadow-2xs hover:scale-[1.01] transition-transform ${act.bg}`}
+                    >
+                      <span>{act.emoji}</span>
+                      <span><strong>{act.count}</strong> {act.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Visual Journey Indicator */}
+                <div className="pt-5 border-t border-[#EDE9DE] space-y-3">
+                  <div className="text-center">
+                    <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                      Your Supportive Journey Map
+                    </span>
+                    <p className="text-[11px] text-gray-400 font-semibold mt-0.5">
+                      HopeHeart guides you step-by-step from reflection to continuous safety. Click any step to visit.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 py-1">
+                    {[
+                      { name: 'Check-In', emoji: '🧡', targetPath: 'home' },
+                      { name: 'Community', emoji: '🤝', targetPath: 'support-rooms' },
+                      { name: 'Resources', emoji: '🌍', targetPath: 'doctor-suggestions' },
+                      { name: 'Safety', emoji: '🛡️', targetPath: 'ai-safety' }
+                    ].map((step, idx, arr) => {
+                      const isCurrent = step.targetPath === 'doctor-suggestions';
+                      return (
+                        <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
+                          <motion.button
+                            onClick={() => {
+                              if (!isCurrent) onNavigateTo(step.targetPath);
+                            }}
+                            whileHover={isCurrent ? {} : { scale: 1.03, y: -0.5 }}
+                            whileTap={isCurrent ? {} : { scale: 0.98 }}
+                            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-display font-bold transition-all ${
+                              isCurrent 
+                                ? 'bg-[#1E1E1A] text-white border-[#1E1E1A] shadow-xs' 
+                                : 'bg-white text-gray-650 border-[#EDE9DE] hover:bg-[#FCFAF5] hover:border-gray-300 cursor-pointer'
+                            }`}
+                          >
+                            <span>{step.emoji}</span>
+                            <span>{step.name}</span>
+                          </motion.button>
+
+                          {idx < arr.length - 1 && (
+                            <span className="text-gray-300 font-bold select-none">
+                              →
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
               {/* Safe Boundary Reminders Box */}
               <div className="bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs">
                 <div className="flex items-center gap-1.5">
