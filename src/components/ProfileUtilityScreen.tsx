@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface ProfileUtilityScreenProps {
   onBack: () => void;
   userName: string;
   onChangeName: (newName: string) => void;
+  initialSubStage?: 'profile' | 'privacy';
 }
 
-export default function ProfileUtilityScreen({ onBack, userName, onChangeName }: ProfileUtilityScreenProps) {
-  const [subStage, setSubStage] = useState<'profile' | 'privacy'>('profile');
+export default function ProfileUtilityScreen({ onBack, userName, onChangeName, initialSubStage }: ProfileUtilityScreenProps) {
+  const [subStage, setSubStage] = useState<'profile' | 'privacy'>(initialSubStage || 'profile');
   const [anonNameInput, setAnonNameInput] = useState<string>(userName);
+
+  useEffect(() => {
+    if (initialSubStage) {
+      setSubStage(initialSubStage);
+    }
+  }, [initialSubStage]);
   
   // Toggle states
   const [showHeartStatus, setShowHeartStatus] = useState<boolean>(true);

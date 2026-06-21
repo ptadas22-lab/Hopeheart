@@ -22,7 +22,7 @@ import { MascotSitting, BrandWordmark } from './components/Logo';
 import HopeBuddyWidget from './components/HopeBuddyWidget';
 
 const MOOD_CONFIGS: MoodConfig[] = [
-  { id: 'calm', label: 'Calm', emoji: '😊', color: 'text-emerald-500', accentBg: '#EADFC9', bgLight: 'bg-[#F2FAF6]', buddyExpression: 'calm', tagline: 'My heart is resting. I feel balanced and safe.' },
+  { id: 'calm', label: 'Calm', emoji: '😊', color: 'text-emerald-500', accentBg: '#EADFC9', bgLight: 'bg-[#F2FAF6]', buddyExpression: 'calm', tagline: 'You’re allowed to slow down. I’m here with you.' },
   { id: 'sad', label: 'Sad', emoji: '😔', color: 'text-blue-600', accentBg: '#E8F1FC', bgLight: 'bg-[#F4F8FD]', buddyExpression: 'lonely', tagline: 'A gray cloud passes over. I let myself feel it.' },
   { id: 'anxious', label: 'Anxious', emoji: '😰', color: 'text-amber-500', accentBg: '#FEFAF0', bgLight: 'bg-[#FFFDF4]', buddyExpression: 'anxious', tagline: 'Racing chest, heavy breath. I am letting it pass.' },
   { id: 'hurt', label: 'Hurt', emoji: '💔', color: 'text-orange-500', accentBg: '#FFF2EA', bgLight: 'bg-[#FCFAF8]', buddyExpression: 'hurt', tagline: 'A heavy crack in my shell. Tender, but healing.' },
@@ -132,6 +132,7 @@ export default function App() {
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
             todayQuote={todayQuote}
             onRefreshQuote={handleRefreshQuote}
+            onMoodSelected={handleMoodSelected}
           />
         );
 
@@ -202,6 +203,7 @@ export default function App() {
             onBack={() => setCurrentScreen(ScreenId.Home)}
             userName={userName}
             onChangeName={(newName) => setUserName(newName)}
+            initialSubStage={currentScreen === ScreenId.PrivacySettings ? 'privacy' : 'profile'}
           />
         );
 
@@ -252,19 +254,19 @@ export default function App() {
       */}
       <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[640px] sm:h-[min(780px,88vh)] bg-[#FCFAF5] rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
         
-        {/* TOP Tablet / Laptop header and navigation bar */}
+        {/* TOP Header and Navigation Bar */}
         {showNavChannels && (
-          <header className="hidden sm:flex h-[68px] shrink-0 bg-white border-b border-[#ECE6D9] items-center justify-between px-6 z-30 select-none">
+          <header className="flex h-[64px] sm:h-[68px] shrink-0 bg-white border-b border-[#ECE6D9] items-center justify-between px-4 sm:px-6 z-30 select-none">
             <div className="flex items-center gap-2.5">
-              <MascotSitting size={38} className="shrink-0" />
+              <MascotSitting size={36} className="shrink-0" />
               <div>
-                <BrandWordmark size="text-[18px]" />
-                <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block leading-none mt-0.5">Safe Emotional Hub</span>
+                <BrandWordmark size="text-[16px] sm:text-[18px]" />
+                <span className="text-[9px] sm:text-[10px] font-mono font-bold text-gray-400 uppercase tracking-widest block leading-none mt-0.5">Safe Emotional Hub</span>
               </div>
             </div>
 
             {/* Desktop Navigation Paths */}
-            <nav className="flex items-center gap-1">
+            <nav className="hidden sm:flex items-center gap-1">
               <button
                 onClick={() => setCurrentScreen(ScreenId.Home)}
                 className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
@@ -314,24 +316,51 @@ export default function App() {
               >
                 👤
               </button>
+              <button 
+                onClick={() => setCurrentScreen(ScreenId.PrivacySettings)}
+                className="w-10 h-10 rounded-full border border-gray-100 hover:bg-gray-50 flex items-center justify-center text-[18px] cursor-pointer"
+                title="Privacy & Safety Settings"
+              >
+                ⚙️
+              </button>
             </div>
           </header>
         )}
 
         {/* Core viewport hosting active layouts */}
         <div className="flex-1 overflow-y-auto relative flex flex-col bg-[#FCFAF5]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentScreen}
-              initial={{ opacity: 0, scale: 0.99, y: 3 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.99, y: -3 }}
-              transition={{ duration: 0.15 }}
-              className="h-full w-full flex-1 flex flex-col"
-            >
-              {renderActiveScreen()}
-            </motion.div>
-          </AnimatePresence>
+          <div className="flex-1 flex flex-col w-full">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentScreen}
+                initial={{ opacity: 0, scale: 0.99, y: 3 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.99, y: -3 }}
+                transition={{ duration: 0.15 }}
+                className="w-full flex-1 flex flex-col"
+              >
+                {renderActiveScreen()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Footer - visible when onboarding is complete */}
+          {showNavChannels && (
+            <footer className="w-full bg-white sm:bg-[#FAF8F5] border-t border-[#ECE6D9] py-5 px-5 text-center mt-auto shrink-0 select-none">
+              <div className="max-w-4xl mx-auto space-y-2">
+                <div className="flex flex-wrap justify-center gap-x-3 gap-y-1.5 text-[12px] font-bold text-gray-500">
+                  <button onClick={() => alert("Terms & Conditions:\n\n1. HopeHeart is strictly for peer-to-peer emotional support.\n2. Do not share or ask for prescriptions, medical diagnoses, or clinical advice.\n3. Be kind, empathetic, and respectful.\n4. AI monitoring keeps this space safe and anonymous.")} className="hover:underline hover:text-[#FF7527] cursor-pointer">Terms & Conditions</button>
+                  <span className="hidden sm:inline">•</span>
+                  <button onClick={() => alert("Privacy Policy:\n\nHopeHeart is built with privacy-first standards. Your profile data and chat history are saved offline on your device inside secure local storage. No identification details or chat logs are sent to external databases.")} className="hover:underline hover:text-[#FF7527] cursor-pointer">Privacy Policy</button>
+                  <span className="hidden sm:inline">•</span>
+                  <button onClick={() => alert("Emotional Support Disclaimer:\n\nHopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.")} className="hover:underline hover:text-[#FF7527] cursor-pointer">Emotional Support Disclaimer</button>
+                </div>
+                <p className="text-[11px] text-gray-400 font-semibold leading-relaxed max-w-2xl mx-auto">
+                  HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.
+                </p>
+              </div>
+            </footer>
+          )}
         </div>
 
         {/* MOBILE Safe Bottom Touch 5-Tab Navigation Bar - only on screens under 640px */}
