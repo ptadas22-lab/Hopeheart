@@ -6,6 +6,7 @@ export enum ScreenId {
   Home = 'home',
   SafeListener = 'safe-listener',
   SafeChat = 'safe-chat',
+  HopeBuddyChat = 'hopebuddy-chat',
   SupportRooms = 'support-rooms',
   RoomDetail = 'room-detail',
   ShareSafely = 'share-safely',

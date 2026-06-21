@@ -8,6 +8,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
 import ProfileSetupScreen from './components/ProfileSetupScreen';
 import DashboardScreen from './components/DashboardScreen';
+import HopeBuddyChatScreen from './components/HopeBuddyChatScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
 import SupportRoomsScreen from './components/SupportRoomsScreen';
 import ShareSafelyScreen from './components/ShareSafelyScreen';
@@ -133,6 +134,16 @@ export default function App() {
             todayQuote={todayQuote}
             onRefreshQuote={handleRefreshQuote}
             onMoodSelected={handleMoodSelected}
+          />
+        );
+
+      case ScreenId.HopeBuddyChat:
+        return (
+          <HopeBuddyChatScreen 
+            onBack={() => setCurrentScreen(ScreenId.Home)}
+            userName={userName}
+            selectedMood={selectedMood}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
           />
         );
 
@@ -468,7 +479,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {showNavChannels && (
+      {showNavChannels && currentScreen !== ScreenId.HopeBuddyChat && (
         <HopeBuddyWidget 
           selectedMood={selectedMood}
           moodConfigs={MOOD_CONFIGS}
