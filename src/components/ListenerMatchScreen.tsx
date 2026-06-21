@@ -18,252 +18,329 @@ interface Listener {
   boundary: string;
   iconBg: string;
   actionText: string;
-  targetPath?: string;
-  gender?: string;
-  profession?: string;
-  listeningStyle?: string;
-  rating?: string;
-  sessions?: string;
-  languages?: string;
+  gender: string;
+  profession: string;
+  listeningStyle: string;
+  rating: string;
+  sessions: string;
+  languages: string;
+  matchedReason: string;
 }
 
+// Warm anonymous listener profiles mapped to categories
 const LISTENERS_DATA: Record<string, Listener[]> = {
   'I need someone to listen': [
     {
-      name: 'Voice123',
-      role: 'Safe Listener',
-      bio: 'Ready to listen without judgment. Share your heavy thoughts here safely.',
+      name: 'Priya',
+      role: 'Anonymous Listener',
+      bio: 'Here to hold space for you. Share your day or just speak your mind. I am ready to hear you.',
       status: 'available',
-      supportType: 'Emotional support',
-      boundary: 'No prescriptions or diagnosis',
-      iconBg: 'bg-orange-100 text-orange-700',
-      actionText: 'Start Safe Chat',
-      gender: 'Female',
-      profession: 'Caregiver',
-      listeningStyle: 'Calm listener',
-      rating: '⭐ 4.8',
-      sessions: '120 listens',
-      languages: 'English • Hindi'
-    },
-    {
-      name: 'Voice78',
-      role: 'Safe Listener',
-      bio: 'Offering cozy conversations and gentle support loops.',
-      status: 'available',
-      supportType: 'Kind companionship',
-      boundary: 'No prescriptions or diagnosis',
-      iconBg: 'bg-blue-100 text-blue-700',
-      actionText: 'Start Safe Chat',
-      gender: 'Male',
-      profession: 'Working Professional',
-      listeningStyle: 'Practical listener',
-      rating: '⭐ 4.6',
-      sessions: '86 listens',
-      languages: 'English • Kannada'
-    },
-    {
-      name: 'Hope88',
-      role: 'Safe Listener',
-      bio: 'Here to support you with an open mind and warm presence.',
-      status: 'soon',
-      supportType: 'Warm listening',
-      boundary: 'No prescriptions or diagnosis',
+      supportType: 'Active listening',
+      boundary: 'No clinical assessments',
       iconBg: 'bg-emerald-100 text-emerald-700',
       actionText: 'Start Safe Chat',
       gender: 'Female',
-      profession: 'Student',
+      profession: 'Working Professional',
       listeningStyle: 'Warm listener',
-      rating: '⭐ 4.9',
+      rating: '97%',
       sessions: '140 listens',
-      languages: 'English • Hindi • Kannada'
+      languages: 'English • Hindi • Kannada',
+      matchedReason: "You selected 'I need someone to listen' and Priya is known for active, warm conversations."
+    },
+    {
+      name: 'Aarav',
+      role: 'Anonymous Listener',
+      bio: 'Here to listen quietly and support you with a gentle, patient space. Share what feels safe.',
+      status: 'available',
+      supportType: 'Quiet support',
+      boundary: 'No prescriptions',
+      iconBg: 'bg-teal-100 text-teal-700',
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Student',
+      listeningStyle: 'Gentle listener',
+      rating: '96%',
+      sessions: '110 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I need someone to listen' and Aarav focuses on quiet, patient space."
+    },
+    {
+      name: 'Leo',
+      role: 'Anonymous Listener',
+      bio: 'Offering a quiet, comforting presence. A warm cup of tea for your heavy thoughts today.',
+      status: 'available',
+      supportType: 'Quiet companionship',
+      boundary: 'No diagnosis or treatment',
+      iconBg: 'bg-blue-100 text-blue-700',
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Caregiver',
+      listeningStyle: 'Gentle listener',
+      rating: '95%',
+      sessions: '85 listens',
+      languages: 'English • Spanish',
+      matchedReason: "You selected 'I need someone to listen' and Leo is matched for his supportive quiet presence."
     }
   ],
   'I feel anxious': [
     {
-      name: 'Peace47',
-      role: 'Calm Listener',
-      bio: 'Helps you slow down and talk through anxious moments.',
+      name: 'Maya',
+      role: 'Anonymous Listener',
+      bio: 'Providing gentle grounding support and slow conversations during racing moments.',
       status: 'available',
+      supportType: 'Calming presence',
+      boundary: 'No medical advice',
+      iconBg: 'bg-orange-100 text-orange-700',
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Student',
+      listeningStyle: 'Calm listener',
+      rating: '98%',
+      sessions: '120 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I feel anxious' and Maya is known for calm, slow conversations."
+    },
+    {
+      name: 'Nisha',
+      role: 'Anonymous Listener',
+      bio: 'Let’s take it one minute at a time. Slow breathing and quiet space. I am here for you.',
+      status: 'soon',
       supportType: 'Anxiety grounding',
-      boundary: 'No clinical treatment advice',
+      boundary: 'No clinical advice',
       iconBg: 'bg-amber-100 text-amber-700',
       actionText: 'Start Safe Chat',
       gender: 'Female',
-      profession: 'Educator',
+      profession: 'Caregiver',
       listeningStyle: 'Calm listener',
-      rating: '⭐ 4.7',
+      rating: '99%',
       sessions: '95 listens',
-      languages: 'English • Hindi'
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I feel anxious' and Nisha excels at supporting people dealing with high anxiety."
     },
     {
-      name: 'CalmBuddy',
-      role: 'Calm Listener',
-      bio: 'Dedicated to gentle breathing exercises and slow, peaceful talk.',
-      status: 'soon',
-      supportType: 'Calming presence',
-      boundary: 'No clinical treatment advice',
-      iconBg: 'bg-emerald-100 text-emerald-700',
+      name: 'Leo',
+      role: 'Anonymous Listener',
+      bio: 'A soft, patient presence when everything feels too fast. You can set the pace.',
+      status: 'available',
+      supportType: 'Quiet support',
+      boundary: 'No diagnosis or treatment',
+      iconBg: 'bg-blue-100 text-blue-700',
       actionText: 'Start Safe Chat',
       gender: 'Male',
-      profession: 'Yoga Guide',
+      profession: 'Caregiver',
       listeningStyle: 'Gentle listener',
-      rating: '⭐ 4.8',
-      sessions: '110 listens',
-      languages: 'English • Kannada'
-    },
-    {
-      name: 'RestingMind',
-      role: 'Calm Listener',
-      bio: 'Here to help you ground yourself when life feels too loud.',
-      status: 'available',
-      supportType: 'Quiet listening',
-      boundary: 'No clinical treatment advice',
-      iconBg: 'bg-purple-100 text-purple-700',
-      actionText: 'Start Safe Chat',
-      gender: 'Female',
-      profession: 'Artist',
-      listeningStyle: 'Calm listener',
-      rating: '⭐ 4.9',
-      sessions: '72 listens',
-      languages: 'English • Hindi • Kannada'
+      rating: '95%',
+      sessions: '85 listens',
+      languages: 'English • Spanish',
+      matchedReason: "You selected 'I feel anxious' and Leo is known for grounding, slow-paced support."
     }
   ],
   'I feel lonely': [
     {
-      name: 'Warm28',
-      role: 'Companion Listener',
-      bio: 'Available for gentle conversation and emotional support.',
+      name: 'Priya',
+      role: 'Anonymous Listener',
+      bio: 'Companionship for quiet evenings. Let’s share a comfortable talk. You are not alone.',
       status: 'available',
-      supportType: 'Kind companionship',
+      supportType: 'Active listening',
       boundary: 'No clinical assessments',
-      iconBg: 'bg-[#FFF2EA] text-[#FF7527]',
+      iconBg: 'bg-emerald-100 text-emerald-700',
       actionText: 'Start Safe Chat',
       gender: 'Female',
-      profession: 'Social Worker',
+      profession: 'Working Professional',
       listeningStyle: 'Warm listener',
-      rating: '⭐ 4.8',
-      sessions: '130 listens',
-      languages: 'English • Hindi'
+      rating: '97%',
+      sessions: '140 listens',
+      languages: 'English • Hindi • Kannada',
+      matchedReason: "You selected 'I feel lonely' and Priya is matched for her warm, friendly presence."
     },
     {
-      name: 'Friendship99',
-      role: 'Companion Listener',
-      bio: "Let's share a virtual warm tea and chat about anything on your mind.",
+      name: 'Kabir',
+      role: 'Anonymous Listener',
+      bio: 'Let’s connect and talk about life, art, or anything else you love. I am here to share a chat.',
       status: 'available',
-      supportType: 'Friendly listening',
+      supportType: 'Friendly company',
       boundary: 'No clinical assessments',
       iconBg: 'bg-indigo-100 text-indigo-700',
       actionText: 'Start Safe Chat',
       gender: 'Male',
-      profession: 'Technical Support',
-      listeningStyle: 'Warm listener',
-      rating: '⭐ 4.7',
-      sessions: '68 listens',
-      languages: 'English • Kannada'
+      profession: 'Artist',
+      listeningStyle: 'Patient listener',
+      rating: '97%',
+      sessions: '72 listens',
+      languages: 'English • Hindi • Urdu',
+      matchedReason: "You selected 'I feel lonely' and Kabir offers patient, comfortable peer companionship."
     },
     {
-      name: 'KindHeart',
-      role: 'Companion Listener',
-      bio: 'A friendly presence for quiet or talkative evenings.',
-      status: 'soon',
-      supportType: 'Cozy conversation',
-      boundary: 'No clinical assessments',
+      name: 'Aarav',
+      role: 'Anonymous Listener',
+      bio: 'Here to chat, share a laugh, or just listen quietly. Let’s keep each other company.',
+      status: 'available',
+      supportType: 'Cozy companionship',
+      boundary: 'No prescriptions',
       iconBg: 'bg-teal-100 text-teal-700',
       actionText: 'Start Safe Chat',
-      gender: 'Female',
-      profession: 'Psychology Student',
-      listeningStyle: 'Warm listener',
-      rating: '⭐ 4.9',
-      sessions: '105 listens',
-      languages: 'English • Hindi • Kannada'
+      gender: 'Male',
+      profession: 'Student',
+      listeningStyle: 'Gentle listener',
+      rating: '96%',
+      sessions: '110 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I feel lonely' and Aarav is matched for his friendly, approachable style."
     }
   ],
   'I feel hurt': [
     {
-      name: 'Heal56',
-      role: 'Care Listener',
-      bio: 'Here to listen while you process difficult feelings.',
-      status: 'available',
-      supportType: 'Healing listening',
-      boundary: 'No medical guidance',
-      iconBg: 'bg-red-100 text-red-700',
+      name: 'Nisha',
+      role: 'Anonymous Listener',
+      bio: 'A gentle space to process raw, heavy feelings without judgment. Take all the time you need.',
+      status: 'soon',
+      supportType: 'Anxiety grounding',
+      boundary: 'No clinical advice',
+      iconBg: 'bg-amber-100 text-amber-700',
       actionText: 'Start Safe Chat',
       gender: 'Female',
       profession: 'Caregiver',
-      listeningStyle: 'Quiet listener',
-      rating: '⭐ 4.9',
-      sessions: '150 listens',
-      languages: 'English • Hindi'
+      listeningStyle: 'Calm listener',
+      rating: '99%',
+      sessions: '95 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I feel hurt' and Nisha is highly experienced in holding space on raw days."
     },
     {
-      name: 'TenderEar',
-      role: 'Care Listener',
-      bio: 'A soft space for difficult days and recovery thoughts.',
-      status: 'soon',
-      supportType: 'Empathetic listening',
-      boundary: 'No medical guidance',
+      name: 'Maya',
+      role: 'Anonymous Listener',
+      bio: 'Healing thoughts and soft, quiet support. Share what feels safe to talk through.',
+      status: 'available',
+      supportType: 'Kind presence',
+      boundary: 'No medical advice',
       iconBg: 'bg-orange-100 text-orange-700',
       actionText: 'Start Safe Chat',
-      gender: 'Male',
-      profession: 'Nurse Practitioner',
-      listeningStyle: 'Patient listener',
-      rating: '⭐ 4.8',
-      sessions: '92 listens',
-      languages: 'English • Kannada'
+      gender: 'Female',
+      profession: 'Student',
+      listeningStyle: 'Calm listener',
+      rating: '98%',
+      sessions: '120 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I feel hurt' and Maya is known for slow, healing, and patient talks."
     },
     {
-      name: 'GentleSoul',
-      role: 'Care Listener',
-      bio: 'Supporting you through raw, emotional, or confusing times.',
+      name: 'Leo',
+      role: 'Anonymous Listener',
+      bio: 'A safe harbor when life throws painful challenges your way. I am here to stand beside you.',
       status: 'available',
-      supportType: 'Patient support',
-      boundary: 'No medical guidance',
-      iconBg: 'bg-rose-100 text-rose-700',
+      supportType: 'Quiet support',
+      boundary: 'No diagnosis or treatment',
+      iconBg: 'bg-blue-100 text-blue-700',
       actionText: 'Start Safe Chat',
-      gender: 'Female',
-      profession: 'Community Host',
+      gender: 'Male',
+      profession: 'Caregiver',
       listeningStyle: 'Gentle listener',
-      rating: '⭐ 4.9',
-      sessions: '115 listens',
-      languages: 'English • Hindi • Kannada'
+      rating: '95%',
+      sessions: '85 listens',
+      languages: 'English • Spanish',
+      matchedReason: "You selected 'I feel hurt' and Leo brings strong peer support strengths from caregiving."
     }
   ],
-  'I want professional help': [
+  'I want guidance, not advice': [
     {
-      name: 'Professional Resources',
-      role: 'Professional Hub',
-      bio: 'Find external professional resources and helplines.',
+      name: 'Kabir',
+      role: 'Anonymous Listener',
+      bio: 'Helping you explore your thoughts and options, not telling you what to do. You make your path.',
       status: 'available',
-      supportType: 'Resource navigation',
-      boundary: 'External links only',
+      supportType: 'Cozy company',
+      boundary: 'No medical advice',
+      iconBg: 'bg-indigo-100 text-indigo-700',
+      actionText: 'Start Safe Chat',
+      gender: 'Male',
+      profession: 'Artist',
+      listeningStyle: 'Patient listener',
+      rating: '97%',
+      sessions: '72 listens',
+      languages: 'English • Hindi • Urdu',
+      matchedReason: "You selected 'I want guidance, not advice' and Kabir offers soft, reflective guidance."
+    },
+    {
+      name: 'Nisha',
+      role: 'Anonymous Listener',
+      bio: 'Offering reflective listening to help you map out your next steps and find clarity.',
+      status: 'soon',
+      supportType: 'Anxiety grounding',
+      boundary: 'No clinical advice',
+      iconBg: 'bg-amber-100 text-amber-700',
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Caregiver',
+      listeningStyle: 'Calm listener',
+      rating: '99%',
+      sessions: '95 listens',
+      languages: 'English • Hindi',
+      matchedReason: "You selected 'I want guidance, not advice' and Nisha helps you map reflections gently."
+    },
+    {
+      name: 'Priya',
+      role: 'Anonymous Listener',
+      bio: 'A sounding board for your decisions, keeping you secure and grounded as you navigate today.',
+      status: 'available',
+      supportType: 'Active listening',
+      boundary: 'No clinical assessments',
       iconBg: 'bg-emerald-100 text-emerald-700',
-      actionText: 'Open Resources',
-      targetPath: 'doctor-suggestions'
-    },
-    {
-      name: 'External Directory',
-      role: 'Professional Directory',
-      bio: 'Connect with verified clinics and mental health professionals.',
-      status: 'available',
-      supportType: 'Provider directory',
-      boundary: 'External links only',
-      iconBg: 'bg-blue-100 text-blue-700',
-      actionText: 'Open Resources',
-      targetPath: 'doctor-suggestions'
-    },
-    {
-      name: 'Crisis Support Line',
-      role: 'Immediate Hotline',
-      bio: 'Instant access to free, confidential crisis resources.',
-      status: 'available',
-      supportType: 'Urgent helpline list',
-      boundary: 'External lines only',
-      iconBg: 'bg-red-100 text-red-700',
-      actionText: 'Open Resources',
-      targetPath: 'doctor-suggestions'
+      actionText: 'Start Safe Chat',
+      gender: 'Female',
+      profession: 'Working Professional',
+      listeningStyle: 'Warm listener',
+      rating: '97%',
+      sessions: '140 listens',
+      languages: 'English • Hindi • Kannada',
+      matchedReason: "You selected 'I want guidance, not advice' and Priya is matched as a secure sounding board."
     }
   ]
 };
+
+// Style-aligned vector avatar component for anonymous listeners
+function ListenerAvatar({ name, gender }: { name: string; gender: string }) {
+  const isFemale = gender.toLowerCase() === 'female';
+  
+  const bgColors: Record<string, string> = {
+    Maya: '#FFF2EA',
+    Leo: '#EBF5FF',
+    Priya: '#EAF7F0',
+    Aarav: '#FFF8EE',
+    Nisha: '#FAF5FF',
+    Kabir: '#F0F4FF'
+  };
+  const strokeColors: Record<string, string> = {
+    Maya: '#FF7527',
+    Leo: '#3B82F6',
+    Priya: '#10B981',
+    Aarav: '#F59E0B',
+    Nisha: '#8B5CF6',
+    Kabir: '#6366F1'
+  };
+  
+  const bgColor = bgColors[name] || '#F3F4F6';
+  const strokeColor = strokeColors[name] || '#9CA3AF';
+
+  return (
+    <svg className="w-12 h-12 rounded-2xl shrink-0" viewBox="0 0 100 100" fill="none">
+      <rect width="100" height="100" rx="24" fill={bgColor} />
+      {/* Head */}
+      <circle cx="50" cy="46" r="18" fill="#E08C5E" />
+      {/* Hair */}
+      {isFemale ? (
+        <path d="M26 46c0-14 10-24 24-24s24 10 24 24c0 4-2 7-4 9H30c-2-2-4-5-4-9z" fill="#4A3B32" />
+      ) : (
+        <path d="M30 40c0-10 8-18 20-18s20 8 20 18c0 1-2 2-3 2H33c-1 0-3-1-3-2z" fill="#332A24" />
+      )}
+      {/* Calming eyes */}
+      <path d="M40 46q4 -2 8 0" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M52 46q4 -2 8 0" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Gentle smile */}
+      <path d="M46 54q4 2 8 0" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+      {/* Torso/Shoulders */}
+      <path d="M22 84c0-12 12-18 28-18s28 6 28 18H22z" fill={strokeColor} fillOpacity="0.8" />
+    </svg>
+  );
+}
 
 export default function ListenerMatchScreen({ 
   onBack, 
@@ -275,6 +352,7 @@ export default function ListenerMatchScreen({
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activeListener, setActiveListener] = useState<Listener | null>(null);
   const [isChatActive, setIsChatActive] = useState<boolean>(false);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   
   // Chat messaging state
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -287,7 +365,7 @@ export default function ListenerMatchScreen({
     'I feel anxious',
     'I feel lonely',
     'I feel hurt',
-    'I want professional help'
+    'I want guidance, not advice'
   ];
 
   // Run initial search loading animation on mount
@@ -301,6 +379,7 @@ export default function ListenerMatchScreen({
 
   const handleFeelingSelect = (feeling: string) => {
     setSelectedFeeling(feeling);
+    setActiveFilter(null); // Clear filter on category switch
     setIsSearching(true);
     setTimeout(() => {
       setIsSearching(false);
@@ -428,7 +507,21 @@ export default function ListenerMatchScreen({
     "🧡 I just need someone to listen"
   ];
 
+  // Resolve active category listeners and filter them
   const currentListeners = LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen'];
+  const filteredListeners = currentListeners.filter(listener => {
+    if (!activeFilter) return true;
+    if (activeFilter === 'Available now') return listener.status === 'available';
+    if (activeFilter === 'Same language') return listener.languages.includes('English');
+    if (activeFilter === 'Calm listener') return listener.listeningStyle.toLowerCase().includes('calm');
+    if (activeFilter === 'Student') return listener.profession.toLowerCase().includes('student');
+    if (activeFilter === 'Caregiver') return listener.profession.toLowerCase().includes('caregiver');
+    if (activeFilter === 'High trust score') {
+      const score = parseFloat(listener.rating.replace('%', ''));
+      return score >= 97;
+    }
+    return true;
+  });
 
   return (
     <div className="flex flex-col min-h-full bg-[#FCFAF5] font-sans select-none w-full">
@@ -444,7 +537,7 @@ export default function ListenerMatchScreen({
           </svg>
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px]">
-          {isChatActive && activeListener ? `Chat with ${activeListener.name}` : 'Safe Listener Match'}
+          {isChatActive && activeListener ? `Chat with ${activeListener.name}` : 'Safe Space Community'}
         </span>
         <span className="text-[20px] select-none">💬</span>
       </div>
@@ -461,9 +554,7 @@ export default function ListenerMatchScreen({
           {/* Listener Profile Card & Status Badges */}
           <div className="bg-white border-b border-[#E9E4D9] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-[16px] ${activeListener.iconBg}`}>
-                {activeListener.name.charAt(0)}
-              </div>
+              <ListenerAvatar name={activeListener.name} gender={activeListener.gender} />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-black text-gray-800 flex items-center gap-1.5">
@@ -478,7 +569,7 @@ export default function ListenerMatchScreen({
                   <span>•</span>
                   <span>💬 Style: {activeListener.role}</span>
                   <span>•</span>
-                  <span>🌐 Speaks: English • Hindi</span>
+                  <span>🌐 Speaks: {activeListener.languages}</span>
                 </div>
               </div>
             </div>
@@ -547,7 +638,7 @@ export default function ListenerMatchScreen({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Click Suggested Messages (Above the input fold) */}
+          {/* Quick Click Suggested Messages */}
           <div className="p-2.5 bg-[#FAF7F0] border-t border-[#EDE9DE] shrink-0">
             <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block mb-1.5 px-1">
               Tap a safe message to send instantly
@@ -583,7 +674,7 @@ export default function ListenerMatchScreen({
               </button>
             </form>
 
-            {/* Quick Actions Buttons Row: Send, Voice Note, Report, End Chat */}
+            {/* Quick Actions Buttons Row */}
             <div className="flex justify-between items-center gap-1.5 pt-1">
               <button
                 onClick={toggleVoiceRecordSimulator}
@@ -625,15 +716,15 @@ export default function ListenerMatchScreen({
             <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[24px]">
               Safe Space Community
             </h2>
-            <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
-              Peer listeners are here to support, not diagnose or treat.
+            <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+              Find someone who matches your current emotional need, language, and listening preference.
             </p>
           </div>
 
           {/* Feeling Filters selection */}
-          <div className="space-y-2.5">
-            <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-              1. Choose a focus prompt category
+          <div className="space-y-3">
+            <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+              What kind of support do you need right now?
             </span>
             <div className="flex flex-wrap gap-2">
               {feelingOptions.map((option) => {
@@ -642,10 +733,11 @@ export default function ListenerMatchScreen({
                   <button
                     key={option}
                     onClick={() => handleFeelingSelect(option)}
-                    className={`px-4 py-3 rounded-2xl text-[12.5px] font-display font-extrabold border transition-all cursor-pointer ${
+                    type="button"
+                    className={`px-4 py-2.5 rounded-2xl text-[12px] font-display font-extrabold border transition-all cursor-pointer ${
                       isSel 
                         ? 'bg-[#FFF2EA] border-[#FF7527] text-[#FF7527] shadow-xs' 
-                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                        : 'bg-white border-gray-200 text-gray-750 hover:bg-gray-50'
                     }`}
                   >
                     {option}
@@ -656,10 +748,40 @@ export default function ListenerMatchScreen({
           </div>
 
           {/* Matched listeners grid */}
-          <div className="space-y-3">
-            <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-              2. Matched Safe Spaces & Listeners
-            </span>
+          <div className="space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#EDE9DE] pb-2">
+              <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block shrink-0">
+                Matched Peer Listeners
+              </span>
+              
+              {/* Filter Chips list */}
+              <div className="flex flex-wrap gap-1.5 pt-0.5">
+                {[
+                  'Available now',
+                  'Same language',
+                  'Calm listener',
+                  'Student',
+                  'Caregiver',
+                  'High trust score'
+                ].map((filter) => {
+                  const isAct = activeFilter === filter;
+                  return (
+                    <button
+                      key={filter}
+                      onClick={() => setActiveFilter(prev => prev === filter ? null : filter)}
+                      type="button"
+                      className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border transition-all cursor-pointer ${
+                        isAct
+                          ? 'bg-[#1E1E1A] border-[#1E1E1A] text-white shadow-3xs'
+                          : 'bg-white border-gray-200 text-gray-550 hover:bg-gray-50'
+                      }`}
+                    >
+                      {filter}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             <AnimatePresence mode="wait">
               {isSearching ? (
@@ -687,133 +809,144 @@ export default function ListenerMatchScreen({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
-                  {currentListeners.map((listener, idx) => (
-                    <motion.div
-                      key={listener.name}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-[16.5px] ${listener.iconBg}`}>
-                              {listener.name.charAt(0)}
-                            </div>
-                            <div>
-                              <h4 className="font-display font-black text-[#2B1D12] text-[14.5px] leading-tight">
+                  {filteredListeners.length === 0 ? (
+                    <div className="col-span-full py-16 text-center space-y-2 bg-white border border-[#EDE9DE] rounded-[32px] p-6 shadow-3xs">
+                      <span className="text-3xl block">🔍</span>
+                      <h4 className="font-display font-black text-gray-800 text-[16px]">
+                        No active listeners match this filter
+                      </h4>
+                      <p className="text-[12px] text-gray-400 font-semibold max-w-xs mx-auto">
+                        Try selecting another filter chip or changing your support need category.
+                      </p>
+                    </div>
+                  ) : (
+                    filteredListeners.map((listener, idx) => (
+                      <motion.div
+                        key={listener.name}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
+                      >
+                        <div className="space-y-4">
+                          {/* Header: Avatar, Name, and Anonymous Listener label */}
+                          <div className="flex items-center gap-3">
+                            <ListenerAvatar name={listener.name} gender={listener.gender} />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-display font-black text-[#2B1D12] text-[16px] leading-tight truncate">
                                 {listener.name}
                               </h4>
-                              <span className="text-[11px] font-semibold text-gray-400 block mt-0.5">
-                                {listener.role}
-                              </span>
+                              <p className="text-[11px] font-bold text-[#FF7527] bg-[#FFF2EA] px-2 py-0.5 rounded-full inline-block mt-0.5 border border-[#FFE4D6]">
+                                Anonymous Listener
+                              </p>
                             </div>
+                          </div>
+
+                          {/* Profile Details */}
+                          <div className="space-y-1.5 text-[12.5px] font-semibold text-gray-600 pl-1">
+                            <p className="flex items-center gap-2">
+                              <span className="text-gray-400 text-[14px]">👤</span>
+                              <span>{listener.gender} • {listener.profession}</span>
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <span className="text-gray-400 text-[14px]">🧠</span>
+                              <span>{listener.listeningStyle}</span>
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <span className="text-gray-400 text-[14px]">🗣️</span>
+                              <span>{listener.languages}</span>
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <span>{listener.status === 'available' ? '🟢 Available now' : '⏳ Available soon'}</span>
+                            </p>
+                          </div>
+
+                          {/* Trust Score & Listens */}
+                          <div className="bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-3 flex justify-between items-center text-[12.5px] font-semibold text-gray-700">
+                            <div className="flex items-center gap-1">
+                              <span>🛡️ Trust Score:</span>
+                              <span className="font-black text-gray-800">{listener.rating}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span>🤝 {listener.sessions}</span>
+                            </div>
+                          </div>
+
+                          {/* Match reason card */}
+                          <div className="bg-[#FFFDF9] border border-dashed border-[#FFE4D6] rounded-2xl p-3.5 space-y-1">
+                            <p className="text-[11.5px] text-[#E55D13] font-bold uppercase tracking-wider">Matched because:</p>
+                            <p className="text-[12.5px] text-gray-600 italic font-semibold leading-relaxed">
+                              "{listener.matchedReason}"
+                            </p>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1.5 py-0.5">
-                          <span className="text-[11.5px] font-bold text-gray-700">
-                            {listener.status === 'available' ? '🟢 Available now' : '🟡 Usually replies soon'}
-                          </span>
-                        </div>
-
-                        <div className="text-[11.5px] bg-[#FCFAF5] rounded-xl border border-gray-100 p-3 space-y-1 font-semibold text-gray-600">
-                          <p><span className="text-gray-400 font-medium">Focus:</span> {listener.supportType}</p>
-                          <p><span className="text-gray-400 font-medium">Limit:</span> {listener.boundary}</p>
-                        </div>
-
-                        {/* Compact Trust details grid */}
-                        {listener.rating && (
-                          <div className="grid grid-cols-2 gap-2.5 text-[10.5px] font-semibold text-gray-500 bg-[#FCFAF5] rounded-xl border border-gray-100 p-3">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="shrink-0 select-none">👤</span> 
-                              <span className="truncate">{listener.gender} • {listener.profession}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 justify-end text-right min-w-0">
-                              <span className="shrink-0 select-none">{listener.rating}</span> 
-                              <span className="text-gray-400 truncate">({listener.sessions})</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="shrink-0 select-none">🧠</span> 
-                              <span className="truncate">{listener.listeningStyle}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 justify-end text-right min-w-0">
-                              <span className="shrink-0 select-none">🗣️</span> 
-                              <span className="truncate" title={listener.languages}>{listener.languages}</span>
-                            </div>
-                          </div>
-                        )}
-
-                        <p className="text-[12.5px] text-gray-500 font-medium italic leading-relaxed">
-                          "{listener.bio}"
-                        </p>
-                      </div>
-
-                      {listener.targetPath ? (
-                        <button
-                          onClick={() => onNavigateTo(listener.targetPath!)}
-                          className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-[#FCFAF5] font-display font-extrabold rounded-xl text-[12.5px] cursor-pointer transition-colors active:scale-98"
-                        >
-                          {listener.actionText}
-                        </button>
-                      ) : (
-                        <div className="flex flex-wrap justify-between items-center pt-3 border-t border-[#FAF7F0] gap-3">
-                          {/* Communication Actions */}
-                          <div className="flex items-center gap-2">
-                            {/* Chat Button (Enabled) */}
+                        {/* Action buttons row */}
+                        <div className="pt-3 border-t border-gray-100 space-y-2">
+                          <div className="grid grid-cols-3 gap-1.5">
                             <button
                               onClick={() => startChatFlow(listener)}
-                              className="px-3.5 py-2.5 bg-[#FFF2EA] hover:bg-[#FFE0CD] text-[#FF7527] rounded-xl flex items-center justify-center gap-1.5 font-display font-extrabold text-[12px] cursor-pointer transition-all active:scale-95 hover:scale-105"
-                              title="Start safe text chat"
+                              type="button"
+                              className="py-2 px-1 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[11px] font-bold cursor-pointer transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs"
                             >
                               <span>💬</span> Chat
                             </button>
-
-                            {/* Call Button (Locked) */}
-                            <div className="relative group">
-                              <button
-                                disabled
-                                className="px-3.5 py-2.5 bg-[#FCFBF8] text-gray-400 border border-gray-150 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-[12px] cursor-not-allowed opacity-80"
-                              >
-                                <span>📞</span> Call 🔒
-                              </button>
-                              {/* Custom Tooltip */}
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-[#1E1E1A] text-white text-[9.5px] px-2.5 py-1.5 rounded-lg w-44 text-center leading-normal shadow-md font-sans z-30 select-none pointer-events-none">
-                                Unlocks after 10 meaningful messages
-                              </div>
-                            </div>
-
-                            {/* Video Button (Locked) */}
-                            <div className="relative group">
-                              <button
-                                disabled
-                                className="px-3.5 py-2.5 bg-[#FCFBF8] text-gray-400 border border-gray-150 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-[12px] cursor-not-allowed opacity-80"
-                              >
-                                <span>🎥</span> Video 🔒
-                              </button>
-                              {/* Custom Tooltip */}
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-[#1E1E1A] text-white text-[9.5px] px-2.5 py-1.5 rounded-lg w-44 text-center leading-normal shadow-md font-sans z-30 select-none pointer-events-none">
-                                Unlocks only when both users agree
-                              </div>
-                            </div>
+                            <button
+                              disabled
+                              type="button"
+                              className="py-2 px-1 bg-gray-50 border border-gray-205 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[11px] font-bold cursor-not-allowed"
+                              title="Call unlocked after trust is built"
+                            >
+                              <span>📞</span> Call locked
+                            </button>
+                            <button
+                              disabled
+                              type="button"
+                              className="py-2 px-1 bg-gray-50 border border-gray-205 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[11px] font-bold cursor-not-allowed"
+                              title="Video unlocked after trust is built"
+                            >
+                              <span>🎥</span> Video locked
+                            </button>
                           </div>
-
-                          {/* Helper text */}
-                          <div className="text-right">
-                            <span className="text-[11px] font-extrabold text-gray-400 flex items-center gap-1">
-                              🛡️ Trust builds gradually
-                            </span>
-                          </div>
+                          <p className="text-[10.5px] text-gray-400 text-center font-semibold mt-1">
+                            Call and video unlock after trust is built.
+                          </p>
                         </div>
-                      )}
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    ))
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+
+          {/* How Matching Works Section */}
+          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 sm:p-8 space-y-5">
+            <div className="text-center md:text-left space-y-1">
+              <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
+                How matching works
+              </h3>
+              <p className="text-[12px] text-gray-500 font-semibold">
+                HopeHeart connects you with the most compatible volunteer peer listeners.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-[12.5px] font-semibold text-gray-555 leading-relaxed">
+              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
+                <span className="text-xl block mb-1">🎯</span>
+                <p className="text-[12.5px] text-[#2B1D12] font-bold">1. We match based on your selected support need.</p>
+              </div>
+              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
+                <span className="text-xl block mb-1">🌍</span>
+                <p className="text-[12.5px] text-[#2B1D12] font-bold">2. You can choose by language, style, and availability.</p>
+              </div>
+              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
+                <span className="text-xl block mb-1">🛡️</span>
+                <p className="text-[12.5px] text-[#2B1D12] font-bold">3. Listeners offer emotional support only, not medical advice.</p>
+              </div>
+            </div>
           </div>
 
           {/* How Safe Listening Works Section */}
@@ -860,15 +993,14 @@ export default function ListenerMatchScreen({
                   AI-powered guardrails
                 </h4>
                 <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
-                  AI safety helps detect harmful or unsafe conversations to keep this a compassionate space.
+                  Our system screens active chats to protect both of you from inappropriate advice or harassment.
                 </p>
               </div>
             </div>
           </div>
+
         </div>
       )}
-
     </div>
   );
 }
-export { ListenerMatchScreen };
