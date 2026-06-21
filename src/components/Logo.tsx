@@ -214,10 +214,9 @@ export function MascotSitting({ size = 110, className = '' }: { size?: number; c
   );
 }
 
-// Brand wordmark with specific Friendly curves and a lovely orange heart in the "o"
-export function BrandWordmark({ size = 'text-[24px]', color = 'text-[#2B1D12]' }: { size?: string; color?: string }) {
+export function BrandWordmark({ size = 'text-[24px]', color = 'text-[#2B1D12]', className = '' }: { size?: string; color?: string; className?: string }) {
   return (
-    <span className={`font-sans font-extrabold tracking-tight select-none flex items-center ${size} ${color}`}>
+    <span className={`font-heading font-extrabold tracking-tight select-none flex items-center ${size} ${color} ${className}`}>
       <span>H</span>
       <span className="inline-flex items-center justify-center mx-[1.5px] transform translate-y-[2px]">
         {/* Cute heart replacing 'o' */}
