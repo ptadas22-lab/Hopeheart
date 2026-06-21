@@ -25,6 +25,8 @@ interface Listener {
   sessions: string;
   languages: string;
   matchedReason: string;
+  distance?: string;
+  interests?: string[];
 }
 
 // Warm anonymous listener profiles mapped to categories
@@ -45,7 +47,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '97%',
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
-      matchedReason: "You selected 'I need someone to listen' and Priya is known for active, warm conversations."
+      matchedReason: "You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.",
+      distance: 'Around 4 km away',
+      interests: ['Yoga', 'Meditation', 'Quiet walks']
     },
     {
       name: 'Aarav',
@@ -62,7 +66,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '96%',
       sessions: '110 listens',
       languages: 'English • Hindi',
-      matchedReason: "You selected 'I need someone to listen' and Aarav focuses on quiet, patient space."
+      matchedReason: "You both selected active listening, English, and quiet reading as a shared interest.",
+      distance: 'Around 7 km away',
+      interests: ['Cycling', 'Reading', 'Gaming']
     },
     {
       name: 'Leo',
@@ -79,7 +85,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '95%',
       sessions: '85 listens',
       languages: 'English • Spanish',
-      matchedReason: "You selected 'I need someone to listen' and Leo is matched for his supportive quiet presence."
+      matchedReason: "You both selected patient presence, English/Spanish, and nature walks as an interest.",
+      distance: 'Around 10 km away',
+      interests: ['Nature Walks', 'Cooking', 'Gardening']
     }
   ],
   'I feel anxious': [
@@ -97,8 +105,10 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       listeningStyle: 'Calm listener',
       rating: '98%',
       sessions: '120 listens',
-      languages: 'English • Hindi',
-      matchedReason: "You selected 'I feel anxious' and Maya is known for calm, slow conversations."
+      languages: 'English • Hindi • Kannada',
+      matchedReason: "You both selected emotional support, Kannada/Hindi, and walking as an interest.",
+      distance: 'Around 5 km away',
+      interests: ['Music', 'Walking', 'Coffee Chats']
     },
     {
       name: 'Nisha',
@@ -115,7 +125,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '99%',
       sessions: '95 listens',
       languages: 'English • Hindi',
-      matchedReason: "You selected 'I feel anxious' and Nisha excels at supporting people dealing with high anxiety."
+      matchedReason: "You both selected grounding conversations, English, and writing/journaling interests.",
+      distance: 'Around 3 km away',
+      interests: ['Tea brewing', 'Journaling', 'Poetry']
     },
     {
       name: 'Leo',
@@ -132,7 +144,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '95%',
       sessions: '85 listens',
       languages: 'English • Spanish',
-      matchedReason: "You selected 'I feel anxious' and Leo is known for grounding, slow-paced support."
+      matchedReason: "You both selected patient presence, English/Spanish, and nature walks as an interest.",
+      distance: 'Around 10 km away',
+      interests: ['Nature Walks', 'Cooking', 'Gardening']
     }
   ],
   'I feel lonely': [
@@ -151,7 +165,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '97%',
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
-      matchedReason: "You selected 'I feel lonely' and Priya is matched for her warm, friendly presence."
+      matchedReason: "You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.",
+      distance: 'Around 4 km away',
+      interests: ['Yoga', 'Meditation', 'Quiet walks']
     },
     {
       name: 'Kabir',
@@ -168,7 +184,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '97%',
       sessions: '72 listens',
       languages: 'English • Hindi • Urdu',
-      matchedReason: "You selected 'I feel lonely' and Kabir offers patient, comfortable peer companionship."
+      matchedReason: "You both selected patient companionship, Hindi/Urdu, and music as a shared interest.",
+      distance: 'Around 6 km away',
+      interests: ['Painting', 'Music', 'Coffee Chats']
     },
     {
       name: 'Aarav',
@@ -185,7 +203,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '96%',
       sessions: '110 listens',
       languages: 'English • Hindi',
-      matchedReason: "You selected 'I feel lonely' and Aarav is matched for his friendly, approachable style."
+      matchedReason: "You both selected active listening, English, and quiet reading as a shared interest.",
+      distance: 'Around 7 km away',
+      interests: ['Cycling', 'Reading', 'Gaming']
     }
   ],
   'I feel hurt': [
@@ -204,7 +224,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '99%',
       sessions: '95 listens',
       languages: 'English • Hindi',
-      matchedReason: "You selected 'I feel hurt' and Nisha is highly experienced in holding space on raw days."
+      matchedReason: "You both selected grounding conversations, English, and writing/journaling interests.",
+      distance: 'Around 3 km away',
+      interests: ['Tea brewing', 'Journaling', 'Poetry']
     },
     {
       name: 'Maya',
@@ -220,8 +242,10 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       listeningStyle: 'Calm listener',
       rating: '98%',
       sessions: '120 listens',
-      languages: 'English • Hindi',
-      matchedReason: "You selected 'I feel hurt' and Maya is known for slow, healing, and patient talks."
+      languages: 'English • Hindi • Kannada',
+      matchedReason: "You both selected emotional support, Kannada/Hindi, and walking as an interest.",
+      distance: 'Around 5 km away',
+      interests: ['Music', 'Walking', 'Coffee Chats']
     },
     {
       name: 'Leo',
@@ -238,7 +262,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '95%',
       sessions: '85 listens',
       languages: 'English • Spanish',
-      matchedReason: "You selected 'I feel hurt' and Leo brings strong peer support strengths from caregiving."
+      matchedReason: "You both selected patient presence, English/Spanish, and nature walks as an interest.",
+      distance: 'Around 10 km away',
+      interests: ['Nature Walks', 'Cooking', 'Gardening']
     }
   ],
   'I want guidance, not advice': [
@@ -257,7 +283,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '97%',
       sessions: '72 listens',
       languages: 'English • Hindi • Urdu',
-      matchedReason: "You selected 'I want guidance, not advice' and Kabir offers soft, reflective guidance."
+      matchedReason: "You both selected patient companionship, Hindi/Urdu, and music as a shared interest.",
+      distance: 'Around 6 km away',
+      interests: ['Painting', 'Music', 'Coffee Chats']
     },
     {
       name: 'Nisha',
@@ -274,7 +302,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '99%',
       sessions: '95 listens',
       languages: 'English • Hindi',
-      matchedReason: "You selected 'I want guidance, not advice' and Nisha helps you map reflections gently."
+      matchedReason: "You both selected grounding conversations, English, and writing/journaling interests.",
+      distance: 'Around 3 km away',
+      interests: ['Tea brewing', 'Journaling', 'Poetry']
     },
     {
       name: 'Priya',
@@ -291,7 +321,9 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       rating: '97%',
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
-      matchedReason: "You selected 'I want guidance, not advice' and Priya is matched as a secure sounding board."
+      matchedReason: "You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.",
+      distance: 'Around 4 km away',
+      interests: ['Yoga', 'Meditation', 'Quiet walks']
     }
   ]
 };
@@ -353,6 +385,10 @@ export default function ListenerMatchScreen({
   const [activeListener, setActiveListener] = useState<Listener | null>(null);
   const [isChatActive, setIsChatActive] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(() => {
+    const saved = localStorage.getItem('hopeheart_location_permission');
+    return saved === 'true' ? true : saved === 'false' ? false : null;
+  });
   
   // Chat messaging state
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -511,10 +547,18 @@ export default function ListenerMatchScreen({
   const currentListeners = LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen'];
   const filteredListeners = currentListeners.filter(listener => {
     if (!activeFilter) return true;
+    if (activeFilter === 'Nearby') {
+      if (hasLocationPermission !== true) {
+        alert("Please enable 'Nearby Support Match' location matching to filter by nearby listeners.");
+        setActiveFilter(null);
+        return true;
+      }
+      return !!listener.distance;
+    }
+    if (activeFilter === 'Same interest') return !!listener.interests;
+    if (activeFilter === 'Same language') return listener.languages.includes('English') || listener.languages.includes('Hindi');
     if (activeFilter === 'Available now') return listener.status === 'available';
-    if (activeFilter === 'Same language') return listener.languages.includes('English');
     if (activeFilter === 'Calm listener') return listener.listeningStyle.toLowerCase().includes('calm');
-    if (activeFilter === 'Student') return listener.profession.toLowerCase().includes('student');
     if (activeFilter === 'Caregiver') return listener.profession.toLowerCase().includes('caregiver');
     if (activeFilter === 'High trust score') {
       const score = parseFloat(listener.rating.replace('%', ''));
@@ -747,6 +791,76 @@ export default function ListenerMatchScreen({
             </div>
           </div>
 
+          {/* Nearby Support Match Section */}
+          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 space-y-4">
+            <div className="space-y-1">
+              <h3 className="font-display font-black text-[#2B1D12] text-[15px] flex items-center gap-2">
+                <span>📍</span> Nearby Support Match
+              </h3>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                Find people with similar interests, support needs, and preferred language near your area.
+              </p>
+            </div>
+
+            {hasLocationPermission !== true && (
+              <div className="bg-[#FFFDF9] border border-dashed border-[#FFE4D6] rounded-2xl p-4.5 space-y-3">
+                <div className="space-y-1.5">
+                  <h4 className="font-display font-black text-gray-800 text-[13.5px] flex items-center gap-1.5">
+                    📍 Nearby Support
+                  </h4>
+                  <p className="text-[12px] text-gray-600 font-semibold leading-relaxed">
+                    HopeHeart can use your approximate location to show nearby peer listeners and support circles.
+                  </p>
+                  <p className="text-[10.5px] text-gray-400 font-semibold italic">
+                    🛡️ We never show your exact location to others.
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setHasLocationPermission(true);
+                      localStorage.setItem('hopeheart_location_permission', 'true');
+                    }}
+                    type="button"
+                    className="px-4 py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12px] font-black cursor-pointer transition-all active:scale-95 shadow-xs"
+                  >
+                    Use Approximate Location
+                  </button>
+                  <button
+                    onClick={() => {
+                      setHasLocationPermission(false);
+                      localStorage.setItem('hopeheart_location_permission', 'false');
+                    }}
+                    type="button"
+                    className="px-4 py-2 bg-gray-50 border border-gray-205 text-gray-600 rounded-xl text-[12px] font-bold cursor-pointer hover:bg-gray-100 transition-all"
+                  >
+                    Not Now
+                  </button>
+                </div>
+              </div>
+            )}
+            {hasLocationPermission === true && (
+              <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-600 text-[14px]">🟢</span>
+                  <p className="text-[12px] font-bold text-emerald-800">
+                    Approximate location matching enabled. Showing nearby members & circles.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setHasLocationPermission(false);
+                    localStorage.setItem('hopeheart_location_permission', 'false');
+                  }}
+                  type="button"
+                  className="text-[11px] font-bold text-gray-400 hover:text-gray-650 underline cursor-pointer"
+                >
+                  Disable
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Matched listeners grid */}
           <div className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#EDE9DE] pb-2">
@@ -757,10 +871,11 @@ export default function ListenerMatchScreen({
               {/* Filter Chips list */}
               <div className="flex flex-wrap gap-1.5 pt-0.5">
                 {[
-                  'Available now',
+                  'Nearby',
+                  'Same interest',
                   'Same language',
+                  'Available now',
                   'Calm listener',
-                  'Student',
                   'Caregiver',
                   'High trust score'
                 ].map((filter) => {
@@ -773,7 +888,7 @@ export default function ListenerMatchScreen({
                       className={`px-2.5 py-1 rounded-full text-[10.5px] font-bold border transition-all cursor-pointer ${
                         isAct
                           ? 'bg-[#1E1E1A] border-[#1E1E1A] text-white shadow-3xs'
-                          : 'bg-white border-gray-200 text-gray-550 hover:bg-gray-50'
+                          : 'bg-white border-gray-200 text-gray-555 hover:bg-gray-50'
                       }`}
                     >
                       {filter}
@@ -861,6 +976,22 @@ export default function ListenerMatchScreen({
                             <p className="flex items-center gap-2">
                               <span>{listener.status === 'available' ? '🟢 Available now' : '⏳ Available soon'}</span>
                             </p>
+
+                            {/* Optional Location Distance */}
+                            {hasLocationPermission === true && listener.distance && (
+                              <p className="flex items-center gap-2 text-[#FF7527] font-bold">
+                                <span className="text-[14px]">📍</span>
+                                <span>{listener.distance}</span>
+                              </p>
+                            )}
+
+                            {/* Shared interests */}
+                            {listener.interests && (
+                              <p className="flex items-center gap-2 text-[#2B1D12] font-extrabold mt-1">
+                                <span className="text-[14px]">🎵</span>
+                                <span>{listener.interests.join(' • ')}</span>
+                              </p>
+                            )}
                           </div>
 
                           {/* Trust Score & Listens */}
@@ -921,6 +1052,80 @@ export default function ListenerMatchScreen({
               )}
             </AnimatePresence>
           </div>
+
+          {/* Nearby Support Circles Section */}
+          {hasLocationPermission === true && (
+            <div className="space-y-4">
+              <div className="border-b border-[#EDE9DE] pb-2">
+                <h3 className="font-display font-black text-[#2B1D12] text-[16px] flex items-center gap-2">
+                  <span>👥</span> Nearby Support Circles
+                </h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Support circles meet online with optional local in-person check-ins.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 space-y-3.5 shadow-3xs hover:shadow-xs transition-all">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-display font-black text-[#2B1D12] text-[15px]">
+                        Anxiety Support Circle
+                      </h4>
+                      <p className="text-[11.5px] text-gray-450 font-bold mt-0.5">
+                        Online + nearby optional
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-0.5 bg-[#FFF2EA] text-[#FF7527] border border-[#FFE4D6] rounded-full text-[10px] font-extrabold uppercase shrink-0">
+                      Active
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-600 bg-[#FCFAF5] rounded-xl p-2.5">
+                    <span className="flex items-center gap-1">📍 Around 3 km away</span>
+                    <span className="flex items-center gap-1">👥 12 members</span>
+                  </div>
+
+                  <button
+                    onClick={() => alert("Joined Anxiety Support Circle. You will be notified of the next session.")}
+                    type="button"
+                    className="w-full py-2 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12px] font-bold transition-all cursor-pointer text-center"
+                  >
+                    Request to Join Circle
+                  </button>
+                </div>
+
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 space-y-3.5 shadow-3xs hover:shadow-xs transition-all">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-display font-black text-[#2B1D12] text-[15px]">
+                        Caregiver Support Circle
+                      </h4>
+                      <p className="text-[11.5px] text-[#E55D13] font-bold mt-0.5">
+                        Private group
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-0.5 bg-gray-50 text-gray-500 border border-gray-200 rounded-full text-[10px] font-extrabold uppercase shrink-0">
+                      Private
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-600 bg-[#FCFAF5] rounded-xl p-2.5">
+                    <span className="flex items-center gap-1">📍 Around 6 km away</span>
+                    <span className="flex items-center gap-1">👥 8 members</span>
+                  </div>
+
+                  <button
+                    onClick={() => alert("Request sent to the Caregiver Support Circle organizer. Privacy verification required.")}
+                    type="button"
+                    className="w-full py-2 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12px] font-bold transition-all cursor-pointer text-center"
+                  >
+                    Request to Join Circle
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* How Safe Matching Works Section */}
           <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-[24px] p-4 sm:p-5 space-y-3 mt-2">
