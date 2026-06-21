@@ -245,21 +245,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           </div>
         </div>
 
-        {/* Onboarding Progress Indicator */}
-        <div className="w-full max-w-md mx-auto mt-6 pt-4 border-t border-[#EDE9DE]/65 flex flex-col items-center gap-1 select-none">
-          <span className="text-[9.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
-            Step 2 of 4
-          </span>
-          <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
-            <span>Welcome</span>
-            <span>→</span>
-            <span className="text-[#FF7527] font-black">Login</span>
-            <span>→</span>
-            <span>Profile</span>
-            <span>→</span>
-            <span>Intro</span>
-          </div>
-        </div>
+
 
       </div>
     </div>
