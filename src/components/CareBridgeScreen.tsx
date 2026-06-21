@@ -645,6 +645,9 @@ export default function CareBridgeScreen({
                   <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[26px] leading-tight">
                     🧡 What kind of support do you need today?
                   </h2>
+                  <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
+                    Choose what you are navigating today.
+                  </p>
                   <div className="text-[12.5px] md:text-[13.5px] text-gray-650 leading-relaxed font-semibold space-y-1.5">
                     <p className="text-[#FF7527] font-extrabold uppercase font-mono tracking-wider text-[11.5px]">
                       Anxiety • Parkinson's • Hallucinations • Emotional Recovery

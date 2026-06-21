@@ -247,7 +247,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { title: '🚨 Local emergency number', desc: 'Call your regional emergency hotline immediately (e.g. 911, 112, 999).' },
+                    { title: '🚨 Local emergency number', desc: 'Call your local emergency number immediately.' },
                     { title: '🏥 Nearby hospital / emergency care', desc: 'Go to the nearest hospital or urgent care clinic for direct physical evaluation.' },
                     { title: '👨‍👩‍👧 Trusted family contact', desc: 'Reach out to a family member, local caregiver, or trusted neighbor right away.' },
                     { title: '🌍 Verified crisis helpline directory', desc: 'Consult local public directories for verified state-supported emotional hotlines.' }

@@ -125,7 +125,7 @@ export default function ProfileSetupScreen({ initialNickname, onComplete }: Prof
             <label className="text-[12px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
               Who are you?
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {roles.map(role => {
                 const isSelected = selectedRole === role.id;
                 return (

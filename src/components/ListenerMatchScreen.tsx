@@ -623,10 +623,10 @@ export default function ListenerMatchScreen({
         <div className="flex-1 p-4 md:p-6 lg:p-8 max-w-5xl mx-auto w-full space-y-8 overflow-y-auto">
           <div className="space-y-1 text-center md:text-left">
             <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[24px]">
-              Find someone safe to share with
+              Safe Space Community
             </h2>
             <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
-              You do not need to explain everything. Start with one feeling.
+              Peer listeners are here to support, not diagnose or treat.
             </p>
           </div>
 

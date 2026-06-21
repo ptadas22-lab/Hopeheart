@@ -8,7 +8,7 @@ interface IntroductionScreenProps {
 
 export default function IntroductionScreen({ userName, onEnter }: IntroductionScreenProps) {
   const features = [
-    { emoji: '🧡', title: 'Meet HopeBuddy', desc: 'A small companion that checks in with you, celebrates progress, and reminds you that you\'re never alone.' },
+    { emoji: '🧡', title: 'Meet HopeBuddy', desc: 'Your emotional companion that checks in with you, celebrates progress, and reminds you that you\'re never alone.' },
     { emoji: '🤝', title: 'Connect safely', desc: 'Talk anonymously 1-on-1 with a trusted listener, or join group circles.' },
     { emoji: '🌍', title: 'Explore resources', desc: 'Discover verified external helplines, specialists, and care guides.' },
     { emoji: '🛡️', title: 'Stay protected', desc: 'Feel safe with anonymous boundaries and automatic AI moderation.' }

@@ -57,7 +57,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                     HopeBuddy
                   </span>
                   <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed mt-0.5">
-                    Meet HopeBuddy. A small companion that checks in with you, celebrates progress, and reminds you that you're never alone.
+                    Meet HopeBuddy. Your emotional companion that checks in with you, celebrates progress, and reminds you that you're never alone.
                   </p>
                 </div>
               </div>
@@ -117,7 +117,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                   HopeBuddy
                 </span>
                 <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
-                  Meet HopeBuddy. A small companion that checks in with you, celebrates progress, and reminds you that you're never alone.
+                  Meet HopeBuddy. Your emotional companion that checks in with you, celebrates progress, and reminds you that you're never alone.
                 </p>
               </div>
             </motion.div>
