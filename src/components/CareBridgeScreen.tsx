@@ -407,6 +407,185 @@ function getResourceIcon(illustration: string): string {
   }
 }
 
+function StoryBookIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <rect x="4" y="6" width="56" height="36" rx="4" fill="#FEFAF0" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 32 6 L 32 42" stroke="#2B1D12" strokeWidth="1.8" strokeDasharray="2 2" />
+      <line x1="10" y1="14" x2="26" y2="14" stroke="#FF7527" strokeWidth="2" strokeLinecap="round" />
+      <line x1="10" y1="22" x2="24" y2="22" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="10" y1="28" x2="20" y2="28" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="38" y1="16" x2="54" y2="16" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="38" y1="24" x2="50" y2="24" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CaregiverIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <circle cx="20" cy="18" r="6" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 10 38 C 10 28, 30 28, 30 38" fill="#7BA655" stroke="#2B1D12" strokeWidth="1.8" />
+      <circle cx="42" cy="15" r="5" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 34 38 C 34 30, 50 30, 50 38" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 24 24 Q 30 21, 36 24" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SavedFolderIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <path d="M 6 40 L 6 12 C 6 10, 8 8, 10 8 L 22 8 L 26 14 L 54 14 C 56 14, 58 16, 58 18 L 58 40 C 58 42, 56 44, 54 44 L 10 44 C 8 44, 6 42, 6 40 Z" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 32 24 C 32 24, 28 20, 26 22 C 24 24, 28 28, 32 30 C 36 28, 40 24, 38 22 C 36 20, 32 24, 32 24 Z" fill="#FF7527" stroke="#2B1D12" strokeWidth="1" />
+    </svg>
+  );
+}
+
+function DirectoryIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <rect x="6" y="8" width="52" height="32" rx="4" fill="#EBF5FF" stroke="#2B1D12" strokeWidth="1.8" />
+      <circle cx="20" cy="20" r="4" fill="#3B82F6" stroke="#2B1D12" strokeWidth="1.5" />
+      <circle cx="44" cy="28" r="4" fill="#10B981" stroke="#2B1D12" strokeWidth="1.5" />
+      <path d="M 20 20 L 44 28" stroke="#2B1D12" strokeWidth="1.5" strokeDasharray="3 3" />
+      <path d="M 32 16 L 30 28" stroke="#2B1D12" strokeWidth="1.5" />
+      <circle cx="31" cy="22" r="3" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function EduGuidesIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <rect x="12" y="8" width="36" height="34" rx="3" fill="#FCFAF5" stroke="#2B1D12" strokeWidth="1.8" />
+      <rect x="18" y="4" width="36" height="34" rx="3" fill="#FFF" stroke="#2B1D12" strokeWidth="1.8" />
+      <line x1="26" y1="12" x2="44" y2="12" stroke="#7BA655" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="26" y1="20" x2="40" y2="20" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="26" y1="26" x2="36" y2="26" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function EmergencyIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      {/* Base circle background */}
+      <circle cx="24" cy="28" r="14" fill="#FDF2F2" stroke="#2B1D12" strokeWidth="1.8" />
+      
+      {/* Phone receiver */}
+      <path d="M 18 28 C 20 22, 28 22, 30 28" fill="none" stroke="#DC2626" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="15" y="24" width="6" height="8" rx="2.2" fill="#DC2626" stroke="#2B1D12" strokeWidth="1.2" />
+      <rect x="27" y="24" width="6" height="8" rx="2.2" fill="#DC2626" stroke="#2B1D12" strokeWidth="1.2" />
+
+      {/* Speech bubble */}
+      <path d="M 36 10 H 52 C 54 10, 56 12, 56 14 C 56 17, 54 19, 52 19 H 44 L 40 23 V 19 C 38 19, 36 17, 36 14 C 36 12, 38 10, 36 10 Z" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="1.5" strokeLinejoin="round" />
+      
+      {/* Speech bubble helper lines/dots */}
+      <circle cx="41" cy="14" r="1" fill="#FF7527" />
+      <circle cx="45" cy="14" r="1" fill="#FF7527" />
+      <circle cx="49" cy="14" r="1" fill="#FF7527" />
+    </svg>
+  );
+}
+
+function HandshakeIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <circle cx="32" cy="24" r="18" fill="#FFF2EA" />
+      <path d="M 22 26 Q 26 20 32 24 Q 38 28 42 22" stroke="#FF7527" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      <path d="M 24 24 Q 28 28 34 24 Q 40 20 42 24" stroke="#FF7527" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CirclesIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <circle cx="32" cy="24" r="16" fill="none" stroke="#2B1D12" strokeWidth="1.5" strokeDasharray="3 3" />
+      <circle cx="32" cy="8" r="4.5" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.2" />
+      <circle cx="18" cy="28" r="4.5" fill="#7BA655" stroke="#2B1D12" strokeWidth="1.2" />
+      <circle cx="46" cy="28" r="4.5" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function QuestionListIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <rect x="20" y="8" width="24" height="32" rx="3" fill="#FCFAF5" stroke="#2B1D12" strokeWidth="1.8" />
+      <rect x="26" y="4" width="12" height="6" rx="1.5" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.5" />
+      <line x1="26" y1="16" x2="38" y2="16" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="26" y1="24" x2="38" y2="24" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="26" y1="32" x2="34" y2="32" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CrisisPhoneIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <circle cx="32" cy="24" r="18" fill="#F4FAF6" />
+      <path d="M 22,28 C 24,20, 34,12, 42,20" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+      <rect x="18" y="22" width="8" height="10" rx="2" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.2" />
+      <rect x="38" y="14" width="8" height="10" rx="2" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+function TherapyIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <circle cx="32" cy="24" r="18" fill="#EBF5FF" />
+      <path d="M 24 24 Q 32 18, 40 24" fill="none" stroke="#7BA655" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="3.5" fill="#2B1D12" />
+      <circle cx="40" cy="24" r="3.5" fill="#2B1D12" />
+    </svg>
+  );
+}
+
+function GuideFolderIcon() {
+  return (
+    <svg viewBox="0 0 64 48" className="w-12 h-10 select-none opacity-85">
+      <rect x="10" y="12" width="44" height="28" rx="3" fill="#FCFAF5" stroke="#2B1D12" strokeWidth="1.8" />
+      <path d="M 10 16 L 24 16 L 28 22 L 54 22 L 54 40 L 10 40 Z" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function getResourceIconComponent(illustration: string) {
+  switch (illustration) {
+    case 'crisis-phone': return <CrisisPhoneIcon />;
+    case 'therapy-professional': return <TherapyIcon />;
+    case 'guide-folder': return <GuideFolderIcon />;
+    case 'parkinsons-support': return <CaregiverIcon />;
+    case 'hallucination-grounding': return <SavedFolderIcon />;
+    case 'emotional-recovery': return <EduGuidesIcon />;
+    default: return <GuideFolderIcon />;
+  }
+}
+
+const ANONYMOUS_STORIES = [
+  {
+    title: "Finding my grounding",
+    category: "Anxiety",
+    story: "During a severe anxiety episode last week, my thoughts were racing. I checked in and started active listening with Priya. Having someone comfort me without diagnostic advice allowed my nervous system to slow down step-by-step. Sharing without judgment is a quiet victory.",
+    author: "Anonymous Peer"
+  },
+  {
+    title: "A caregiver's quiet pause",
+    category: "Caregiving",
+    story: "Caring for a spouse with daily Parkinson's tremors takes immense emotional energy. I felt so lonely and exhausted. Joining the caregiver Corner room helped me connect with others who understand the exact weight of this role. We share coping wins daily.",
+    author: "Anonymous Member"
+  },
+  {
+    title: "Grounding through confusion",
+    category: "Hallucinations",
+    story: "When I experience visual shifts and confusing episodes, fear escalates quickly. The quiet companion grounding in the community helped me focus on reality-grounding details. It's safe to slow down, and I am learning to trust my space again.",
+    author: "Anonymous Friend"
+  }
+];
+
 
 // 5. Contextual HopeBuddy animation inside the hero section
 function HeroMascot({ activeCategoryId }: { activeCategoryId: string }) {
@@ -566,6 +745,7 @@ export default function CareBridgeScreen({
   const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
   const [selectedSymptomId, setSelectedSymptomId] = useState<string>('overthinking');
   const [questionInput, setQuestionInput] = useState<string>('');
+  const [viewingStories, setViewingStories] = useState<boolean>(false);
 
   const handleAddQuestion = (e: FormEvent) => {
     e.preventDefault();
@@ -838,42 +1018,94 @@ export default function CareBridgeScreen({
                     </div>
 
                     {/* Card grid for compact Available Support */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {[
-                        ...activeCategory.availableSupport,
+                        // 1. Peer Listener (from activeCategory)
+                        {
+                          title: activeCategory.availableSupport[0].title,
+                          description: activeCategory.availableSupport[0].description,
+                          actionText: activeCategory.availableSupport[0].actionText,
+                          targetPath: activeCategory.availableSupport[0].targetPath,
+                          icon: <HandshakeIcon />
+                        },
+                        // 2. Support Circle (from activeCategory)
+                        {
+                          title: activeCategory.availableSupport[1].title,
+                          description: activeCategory.availableSupport[1].description,
+                          actionText: activeCategory.availableSupport[1].actionText,
+                          targetPath: activeCategory.availableSupport[1].targetPath,
+                          icon: <CirclesIcon />
+                        },
+                        // 3. Question List
                         {
                           title: '📋 Question List',
                           description: 'Save and manage questions to ask your doctor or specialist.',
                           actionText: 'Open Checklist →',
-                          targetPath: 'questions_checklist'
+                          targetPath: 'questions_checklist',
+                          icon: <QuestionListIcon />
+                        },
+                        // 4. Personal Stories
+                        {
+                          title: '📖 Personal Stories',
+                          description: 'Read anonymous shared experiences from people who went through similar emotions.',
+                          actionText: 'Read Stories →',
+                          targetPath: 'personal_stories',
+                          icon: <StoryBookIcon />
+                        },
+                        // 5. Caregiver Guides
+                        {
+                          title: '👨‍👩‍👧 Caregiver Guides',
+                          description: 'Helpful emotional support guides for family members, friends, and caregivers.',
+                          actionText: 'View Guides →',
+                          targetPath: 'caregiver_guides',
+                          icon: <CaregiverIcon />
+                        },
+                        // 6. Saved Resources
+                        {
+                          title: '🔖 Saved Resources',
+                          description: 'Keep useful questions, stories, guides, and external resources in one private place.',
+                          actionText: 'View Saved →',
+                          targetPath: 'saved_resources',
+                          icon: <SavedFolderIcon />
                         }
                       ].map((support, idx) => {
-                        const isQuestionList = support.targetPath === 'questions_checklist';
                         return (
                           <div 
                             key={idx}
-                            className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between hover:shadow-2xs transition-all"
+                            className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 hover:shadow-2xs transition-all"
                           >
-                            <div className="space-y-1.5 mb-3">
-                              <h5 className="font-display font-black text-[14px] text-gray-800 flex items-center gap-1.5 leading-tight">
-                                {support.title}
-                              </h5>
-                              <p className="text-[11.5px] text-gray-505 font-semibold leading-relaxed">
-                                {support.description}
-                              </p>
+                            <div className="flex-1 flex flex-col justify-between space-y-3">
+                              <div className="space-y-1.5">
+                                <h5 className="font-display font-black text-[14px] text-gray-800 flex items-center gap-1.5 leading-tight">
+                                  {support.title}
+                                </h5>
+                                <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                                  {support.description}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  if (support.targetPath === 'questions_checklist') {
+                                    setSubScreen('questions');
+                                  } else if (support.targetPath === 'personal_stories') {
+                                    setViewingStories(true);
+                                  } else if (support.targetPath === 'caregiver_guides') {
+                                    alert("Opening HopeHeart Caregiver Guides: Checklists, communication tips, and emotional grounding tools for families.");
+                                  } else if (support.targetPath === 'saved_resources') {
+                                    alert("Saved Resources Checklist: 3 peer conversation bookmarks, 1 grounding guide, and 2 emergency directories saved securely.");
+                                  } else {
+                                    onNavigateTo(support.targetPath);
+                                  }
+                                }}
+                                className="w-full py-2 bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EDE9DE] hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center"
+                              >
+                                {support.actionText}
+                              </button>
                             </div>
-                            <button
-                              onClick={() => {
-                                if (isQuestionList) {
-                                  setSubScreen('questions');
-                                } else {
-                                  onNavigateTo(support.targetPath);
-                                }
-                              }}
-                              className="w-full py-2 bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EDE9DE] hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center"
-                            >
-                              {support.actionText}
-                            </button>
+                            
+                            <div className="w-14 shrink-0 flex items-center justify-center border-l border-gray-100 pl-2 self-center">
+                              {support.icon}
+                            </div>
                           </div>
                         );
                       })}
@@ -892,36 +1124,97 @@ export default function CareBridgeScreen({
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {activeCategory.externalResources.map((res, idx) => (
+                      {[
+                        ...activeCategory.externalResources.map(res => ({
+                          name: res.name,
+                          badge: res.badge,
+                          mode: res.mode,
+                          description: res.description,
+                          boundary: res.boundary,
+                          actionText: 'Open Resource →',
+                          targetLink: res.link,
+                          icon: getResourceIconComponent(res.illustration),
+                          note: null
+                        })),
+                        // Card 4
+                        {
+                          name: 'Professional Directory',
+                          badge: 'Directory',
+                          mode: 'Search Finder',
+                          description: 'Explore verified external directories for professional support.',
+                          boundary: 'External Directory • Free Search',
+                          actionText: 'Open Directory →',
+                          targetLink: 'https://www.psychologytoday.com',
+                          icon: <DirectoryIcon />,
+                          note: null
+                        },
+                        // Card 5
+                        {
+                          name: 'Educational Guides',
+                          badge: 'Guides',
+                          mode: 'PDF / Info',
+                          description: "Read simple guides about anxiety, grief, Parkinson's support, hallucination support, and recovery.",
+                          boundary: 'MHA & NAMI Guides • 100% Free',
+                          actionText: 'View Guides →',
+                          targetLink: 'https://www.mhanational.org',
+                          icon: <EduGuidesIcon />,
+                          note: null
+                        },
+                        // Card 6
+                        {
+                          name: 'Emergency Help',
+                          badge: 'Immediate Help',
+                          mode: '24/7 Crisis',
+                          description: 'Find urgent help guidance and crisis support options.',
+                          boundary: 'Call / Text 988 • 100% Free',
+                          actionText: 'View Help Options →',
+                          targetLink: 'https://988lifeline.org',
+                          icon: <EmergencyIcon />,
+                          note: 'For immediate danger, contact your local emergency service.'
+                        }
+                      ].map((res, idx) => (
                         <div 
                           key={idx}
-                          className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between hover:shadow-2xs transition-all space-y-3"
+                          className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 hover:shadow-2xs transition-all"
                         >
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-md uppercase">
-                                {res.badge}
-                              </span>
-                              <span className="text-[13px] select-none">{getResourceIcon(res.illustration)}</span>
+                          <div className="flex-1 flex flex-col justify-between space-y-3">
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-md uppercase">
+                                  {res.badge}
+                                </span>
+                                <span className="text-[10px] font-semibold text-gray-400">
+                                  {res.mode}
+                                </span>
+                              </div>
+                              <h5 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">
+                                {res.name}
+                              </h5>
+                              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                                {res.description}
+                              </p>
+                              {res.note && (
+                                <p className="text-[10px] text-red-500 font-bold leading-normal italic mt-1">
+                                  ⚠️ {res.note}
+                                </p>
+                              )}
                             </div>
-                            <h5 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">
-                              {res.name}
-                            </h5>
-                            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                              {res.description}
-                            </p>
+
+                            <div className="space-y-2">
+                              <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-150 p-2 font-semibold text-gray-400 leading-normal">
+                                {res.boundary}
+                              </div>
+                              <button
+                                onClick={() => handleOpenResource({ name: res.name, link: res.targetLink })}
+                                className="w-full py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
+                              >
+                                {res.actionText}
+                              </button>
+                            </div>
                           </div>
 
-                          <div className="space-y-2">
-                            <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-150 p-2 font-semibold text-gray-400 leading-normal">
-                              {res.boundary}
-                            </div>
-                            <button
-                              onClick={() => handleOpenResource(res)}
-                              className="w-full py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all"
-                            >
-                              Open Resource →
-                            </button>
+                          <div className="w-14 shrink-0 flex items-center justify-center border-l border-gray-100 pl-2 self-center">
+                            {res.icon}
                           </div>
                         </div>
                       ))}
@@ -929,84 +1222,6 @@ export default function CareBridgeScreen({
                   </div>
                 </motion.div>
               </AnimatePresence>
-
-              {/* Today at HopeHeart & Visual Journey Indicator */}
-              <div className="bg-[#FEFAF3] border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-6">
-                <div className="space-y-1">
-                  <h3 className="text-[16px] font-display font-black text-gray-850 flex items-center gap-1.5">
-                    🧡 Today at HopeHeart
-                  </h3>
-                  <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
-                    Real support happening right now. You are sharing this space with understanding peers.
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap gap-2.5 justify-center">
-                  {[
-                    { label: 'checked in today', count: '214', emoji: '🟢', bg: 'bg-green-50/70 border-green-100/60 text-green-800' },
-                    { label: 'discussing anxiety', count: '34', emoji: '🧠', bg: 'bg-[#FFF2EA] border-[#FFE3D1] text-[#FF7527]' },
-                    { label: "supporting Parkinson's caregivers", count: '12', emoji: '🧓', bg: 'bg-amber-50/70 border-amber-100/60 text-amber-800' },
-                    { label: 'exploring hallucination support', count: '6', emoji: '👀', bg: 'bg-blue-50/70 border-blue-100/60 text-blue-800' },
-                    { label: 'celebrating small wins', count: '18', emoji: '🌱', bg: 'bg-emerald-50/70 border-emerald-100/60 text-emerald-800' }
-                  ].map((act, index) => (
-                    <div 
-                      key={index} 
-                      className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full border text-[12.5px] font-bold shadow-2xs hover:scale-[1.01] transition-transform ${act.bg}`}
-                    >
-                      <span>{act.emoji}</span>
-                      <span><strong>{act.count}</strong> {act.label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Visual Journey Indicator */}
-                <div className="pt-5 border-t border-[#EDE9DE] space-y-3">
-                  <div className="text-center">
-                    <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                      Your Supportive Journey Map
-                    </span>
-                    <p className="text-[11px] text-gray-400 font-semibold mt-0.5">
-                      HopeHeart guides you step-by-step from reflection to continuous safety. Click any step to visit.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 py-1">
-                    {[
-                      { name: 'Check-In', emoji: '🧡', targetPath: 'home' },
-                      { name: 'Community', emoji: '🤝', targetPath: 'support-rooms' },
-                      { name: 'Resources', emoji: '🌍', targetPath: 'doctor-suggestions' },
-                      { name: 'Safety', emoji: '🛡️', targetPath: 'ai-safety' }
-                    ].map((step, idx, arr) => {
-                      const isCurrent = step.targetPath === 'doctor-suggestions';
-                      return (
-                        <div key={idx} className="flex items-center gap-1.5 sm:gap-3">
-                          <motion.button
-                            onClick={() => {
-                              if (!isCurrent) onNavigateTo(step.targetPath);
-                            }}
-                            whileHover={isCurrent ? {} : { scale: 1.03, y: -0.5 }}
-                            whileTap={isCurrent ? {} : { scale: 0.98 }}
-                            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-display font-bold transition-all ${
-                              isCurrent 
-                                ? 'bg-[#1E1E1A] text-white border-[#1E1E1A] shadow-xs' 
-                                : 'bg-white text-gray-650 border-[#EDE9DE] hover:bg-[#FCFAF5] hover:border-gray-300 cursor-pointer'
-                            }`}
-                          >
-                            <span>{step.emoji}</span>
-                            <span>{step.name}</span>
-                          </motion.button>
-
-                          {idx < arr.length - 1 && (
-                            <span className="text-gray-300 font-bold select-none">
-                              →
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
 
               {/* Safe Boundary Reminders Box */}
               <div className="bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs">
@@ -1023,7 +1238,87 @@ export default function CareBridgeScreen({
                 </ul>
               </div>
 
+              {/* Personal Stories Modal */}
+              <AnimatePresence>
+                {viewingStories && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="bg-white border border-[#EDE9DE] rounded-[32px] shadow-xl w-full max-w-lg overflow-hidden relative z-50 text-left"
+                    >
+                      {/* Modal Header */}
+                      <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#FCFAF5]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">📖</span>
+                          <div>
+                            <h4 className="font-display font-black text-[#2B1D12] text-[18px]">
+                              Personal Stories
+                            </h4>
+                            <p className="text-[12px] font-bold text-gray-400">
+                              Anonymized community lived experiences
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setViewingStories(false)}
+                          className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 text-gray-500 cursor-pointer text-sm font-bold"
+                        >
+                          ✕
+                        </button>
+                      </div>
 
+                      {/* Modal Body */}
+                      <div className="p-6 space-y-4 max-h-[50vh] overflow-y-auto">
+                        <p className="text-[12px] text-gray-450 font-semibold italic text-center px-4 leading-normal">
+                          "Stories are shared by members anonymously to foster connection and understanding. No personal contact details or medical advice are included."
+                        </p>
+
+                        <div className="space-y-4">
+                          {ANONYMOUS_STORIES.map((item, idx) => (
+                            <div key={idx} className="bg-[#FCFAF5] border border-gray-150 rounded-2xl p-4.5 space-y-2.5">
+                              <div className="flex justify-between items-center">
+                                <span className="px-2.5 py-0.5 bg-[#FFF2EA] text-[#FF7527] border border-[#FFE4D6] rounded-full text-[10px] font-extrabold uppercase">
+                                  {item.category}
+                                </span>
+                                <span className="text-[11px] text-gray-400 font-bold">
+                                  {item.author}
+                                </span>
+                              </div>
+                              <h5 className="font-display font-black text-gray-800 text-[14px]">
+                                {item.title}
+                              </h5>
+                              <p className="text-[12.5px] text-gray-600 italic font-semibold leading-relaxed">
+                                "{item.story}"
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Modal Footer */}
+                      <div className="p-5 border-t border-gray-100 bg-[#FCFAF5] flex gap-3">
+                        <button
+                          onClick={() => {
+                            setViewingStories(false);
+                            onNavigateTo('share-safely');
+                          }}
+                          className="flex-1 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[13px] font-display font-black transition-colors cursor-pointer text-center"
+                        >
+                          Share Your Story
+                        </button>
+                        <button
+                          onClick={() => setViewingStories(false)}
+                          className="px-6 py-3 bg-white border border-gray-250 hover:bg-gray-50 text-gray-700 rounded-xl text-[13px] font-display font-black transition-all cursor-pointer text-center"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
