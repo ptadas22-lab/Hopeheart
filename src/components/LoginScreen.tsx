@@ -8,9 +8,13 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [agreed, setAgreed] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const handleLogin = (provider: 'google' | 'email' | 'guest') => {
-    if (!agreed) return;
+    if (!agreed) {
+      setShowWarning(true);
+      return;
+    }
     
     // Set a default mock nickname based on selection
     let mockName = 'Voice47';
@@ -18,6 +22,12 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     if (provider === 'email') mockName = 'EmailBuddy';
     
     onLoginSuccess(mockName);
+  };
+
+  const handleContainerClick = () => {
+    if (!agreed) {
+      setShowWarning(true);
+    }
   };
 
   const allowed = [
@@ -54,45 +64,52 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             <MascotSitting size={64} />
           </motion.div>
           <h1 className="font-display font-black text-[#2B1D12] text-[22px] md:text-[28px] tracking-tight leading-tight">
-            🔒 Enter HopeHeart Safely
+            🔒 Enter a Safe Space
           </h1>
-          <p className="text-[13px] text-gray-500 font-semibold max-w-md mx-auto">
-            Choose how you want to join our warm, anonymous space.
+          <p className="text-[13px] text-gray-500 font-semibold max-w-md mx-auto leading-relaxed">
+            Choose how you want to continue. Your safety and privacy come first.
           </p>
         </div>
 
         {/* Form and Rules Split Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-          {/* Login Buttons Column (5 cols on md) */}
+          {/* Login Buttons Column */}
           <div className="md:col-span-5 bg-white border border-[#EDE9DE] p-6 rounded-3xl space-y-5 shadow-2xs">
             <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-              Join Anonymously
+              CHOOSE HOW TO ENTER
             </span>
             
-            {/* Agreement Checkbox (Top aligned so they see it first) */}
-            <label className="flex items-start gap-2.5 p-3.5 bg-[#FAF8F4] border border-[#EFEBE0] rounded-2xl select-none cursor-pointer">
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
-              />
-              <span className="text-[11.5px] text-gray-600 font-semibold leading-tight">
-                I agree to the Community Promises and Safe Space Rules listed on the right.
-              </span>
-            </label>
+            {/* Login options wrapped to intercept click warning when disabled */}
+            <div onClick={handleContainerClick} className="space-y-2.5">
+              {/* Guest */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogin('guest');
+                }}
+                disabled={!agreed}
+                className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
+                  agreed
+                    ? 'bg-[#FF7527] text-white hover:bg-[#E55D13] cursor-pointer shadow-[0_4px_12px_rgba(255,117,39,0.2)]'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
+                }`}
+              >
+                <span>👤</span> Continue as Guest
+              </button>
 
-            {/* Login options */}
-            <div className="space-y-2.5">
               {/* Google */}
               <button
                 type="button"
-                onClick={() => handleLogin('google')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogin('google');
+                }}
                 disabled={!agreed}
                 className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
                   agreed
                     ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 cursor-pointer shadow-3xs'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
                 }`}
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -119,40 +136,62 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               {/* Email */}
               <button
                 type="button"
-                onClick={() => handleLogin('email')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLogin('email');
+                }}
                 disabled={!agreed}
                 className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
                   agreed
                     ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 cursor-pointer shadow-3xs'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
                 }`}
               >
                 <span>✉️</span> Continue with Email
               </button>
-
-              {/* Guest */}
-              <button
-                type="button"
-                onClick={() => handleLogin('guest')}
-                disabled={!agreed}
-                className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
-                  agreed
-                    ? 'bg-[#FF7527] text-white hover:bg-[#E55D13] cursor-pointer shadow-[0_4px_12px_rgba(255,117,39,0.2)]'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
-                }`}
-              >
-                <span>👤</span> Continue as Guest
-              </button>
             </div>
             
-            {!agreed && (
-              <p className="text-[10px] text-center text-red-500 font-semibold leading-normal">
-                *Please agree to the Safety Rules to continue.
+            {/* Agreement Checkbox (Moved to the bottom of the login card) */}
+            <div className="p-3.5 bg-[#FAF8F4] border border-[#EFEBE0] rounded-2xl select-none space-y-1.5">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    if (e.target.checked) setShowWarning(false);
+                  }}
+                  className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
+                />
+                <span className="text-[12px] text-gray-650 font-semibold leading-tight">
+                  I agree to the Safe Space Rules
+                </span>
+              </label>
+              <div className="pl-7">
+                <button
+                  type="button"
+                  onClick={() => alert("Terms & Conditions:\n\n1. HopeHeart is strictly for peer-to-peer emotional support.\n2. Do not share or ask for prescriptions, medical diagnoses, or clinical advice.\n3. Be kind, empathetic, and respectful of other members.\n4. AI monitoring keeps this space safe and anonymous.")}
+                  className="text-[11px] text-[#FF7527] font-bold hover:underline cursor-pointer"
+                >
+                  Terms & Conditions
+                </button>
+              </div>
+            </div>
+
+            {/* Small helper line below the checkbox */}
+            <p className="text-[10px] text-center text-gray-400 font-semibold leading-normal">
+              By continuing, you agree that HopeHeart is for emotional support only.
+            </p>
+
+            {/* Warning Message (Only visible when user tries to continue without checking the box) */}
+            {showWarning && !agreed && (
+              <p className="text-[11.5px] text-center text-red-500 font-bold leading-normal">
+                Please agree to the Safe Space Rules to continue.
               </p>
             )}
           </div>
 
-          {/* Guidelines Column (7 cols on md) */}
+          {/* Guidelines Column */}
           <div className="md:col-span-7 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Allowed Card */}
@@ -164,7 +203,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 <ul className="space-y-1.5 text-[12px] font-semibold text-gray-600">
                   {allowed.map((item, id) => (
                     <li key={id} className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-emerald-500 shrink-0" />
+                      <span className="text-emerald-500 shrink-0 text-[12px]">⭐</span>
                       {item}
                     </li>
                   ))}
@@ -179,8 +218,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 </h3>
                 <ul className="space-y-1.5 text-[12px] font-semibold text-gray-600">
                   {prohibited.map((item, id) => (
-                    <li key={id} className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                    <li key={id} className="flex items-center gap-2">
+                      <span className="text-red-500 shrink-0 font-bold text-[12px]">✦</span>
                       {item}
                     </li>
                   ))}
@@ -193,8 +232,8 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               <span className="text-[9px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block mb-0.5">
                 OUR CORE MANDATE
               </span>
-              <p className="font-display font-extrabold text-gray-700 text-[13px] sm:text-[14px]">
-                People support people. AI keeps the space safe. Professionals provide medical care.
+              <p className="font-display font-extrabold text-gray-700 text-[13px] sm:text-[14px] leading-relaxed">
+                People support people. AI helps keep the space safe. Professionals provide medical care.
               </p>
             </div>
           </div>
