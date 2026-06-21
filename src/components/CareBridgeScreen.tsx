@@ -275,6 +275,114 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
   }
 ];
 
+interface Situation {
+  id: string;
+  label: string;
+  emoji: string;
+  desc: string;
+  catId: string;
+  recommendations: { text: string; target: string }[];
+}
+
+const SITUATIONS: Situation[] = [
+  { 
+    id: 'overthinking', 
+    label: 'Overthinking', 
+    emoji: '😰', 
+    desc: 'Racing thoughts, worry, or stress.',
+    catId: 'anxiety',
+    recommendations: [
+      { text: '🤝 Talk to a calm listener', target: 'safe-listener' },
+      { text: '🧘 Try a grounding exercise', target: 'home' },
+      { text: '🌍 Explore anxiety resources', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'lonely', 
+    label: 'Feeling Lonely', 
+    emoji: '🥺', 
+    desc: 'You want someone safe to talk to.',
+    catId: 'emotional-recovery',
+    recommendations: [
+      { text: '🤝 Talk to a warm listener', target: 'safe-listener' },
+      { text: '🎪 Join a community room', target: 'support-rooms' },
+      { text: '🌍 Explore recovery resources', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'exhausted', 
+    label: 'Feeling Exhausted', 
+    emoji: '😴', 
+    desc: 'Low energy, burnout, or emotional tiredness.',
+    catId: 'emotional-recovery',
+    recommendations: [
+      { text: '🤝 Talk to a patient listener', target: 'safe-listener' },
+      { text: '🧘 Take a slow pause', target: 'home' },
+      { text: '🌍 Explore burnout tips', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'parkinsons', 
+    label: "Living with Parkinson's", 
+    emoji: '🧓', 
+    desc: 'Emotional support for daily challenges.',
+    catId: 'parkinsons',
+    recommendations: [
+      { text: '🤝 Join Parkinson’s support circle', target: 'support-rooms' },
+      { text: '👨‍👩‍👧 Caregiver resources', target: 'doctor-suggestions' },
+      { text: '🌍 External support guides', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'supporting-someone', 
+    label: 'Supporting Someone', 
+    emoji: '👨‍👩‍👧', 
+    desc: 'Caregiver stress, worry, or responsibility.',
+    catId: 'parkinsons',
+    recommendations: [
+      { text: '🤝 Talk to a caregiver listener', target: 'safe-listener' },
+      { text: '🎪 Join caregiver support circle', target: 'support-rooms' },
+      { text: '🌍 Explore caregiver toolkits', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'confusing', 
+    label: 'Confusing Experiences', 
+    emoji: '👀', 
+    desc: 'Seeing, hearing, or sensing things that feel hard to explain.',
+    catId: 'hallucinations',
+    recommendations: [
+      { text: '🤝 Find a patient listener', target: 'safe-listener' },
+      { text: '🛡️ Safety guidance', target: 'ai-safety' },
+      { text: '🌍 External resources', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'hurt', 
+    label: 'Feeling Hurt', 
+    emoji: '💔', 
+    desc: 'Difficult emotions, rejection, grief, or pain.',
+    catId: 'emotional-recovery',
+    recommendations: [
+      { text: '🤝 Connect with an empathetic listener', target: 'safe-listener' },
+      { text: '🎪 Find a recovery circle', target: 'support-rooms' },
+      { text: '🌍 Explore grief guides', target: 'doctor-suggestions' }
+    ]
+  },
+  { 
+    id: 'support-general', 
+    label: 'I just want support', 
+    emoji: '🌱', 
+    desc: 'Not sure what to choose, but I want a safe space.',
+    catId: 'emotional-recovery',
+    recommendations: [
+      { text: '🤝 Start an anonymous chat', target: 'safe-listener' },
+      { text: '🎪 Join a supportive room', target: 'support-rooms' },
+      { text: '🌍 Explore emotional resources', target: 'doctor-suggestions' }
+    ]
+  }
+];
+
 // Helper: 5 situations for small Card illustrations
 function CardIllustration({ type }: { type: 'breathing' | 'circle' | 'watering' | 'cane' | 'lantern' }) {
   const isBreathing = type === 'breathing';
@@ -610,7 +718,7 @@ export default function CareBridgeScreen({
           </svg>
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
-          {subScreen === 'suggestions' && 'Professional Resources'}
+          {subScreen === 'suggestions' && 'Support Resources'}
           {subScreen === 'questions' && 'Professional Question List'}
         </span>
         <button 
@@ -631,31 +739,24 @@ export default function CareBridgeScreen({
           {subScreen === 'suggestions' && (
             <motion.div
               key="suggestions-screen"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
               className="space-y-6"
             >
               {/* 1. Redesigned Hero Header Section */}
               <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/20 border border-emerald-100/70 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-3 md:max-w-2xl">
                   <div className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold tracking-widest px-2.5 py-0.5 rounded-full uppercase">
-                    🧑‍⚕️ Verified External Resources
+                    🌍 Support Resources
                   </div>
                   <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[26px] leading-tight">
-                    🧡 What kind of support do you need today?
+                    🧡 What are you going through today?
                   </h2>
-                  <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
-                    Choose what you are navigating today.
+                  <p className="text-[13px] text-gray-600 font-semibold leading-relaxed">
+                    Start with what feels closest. HopeHeart will guide you to support spaces, listeners, and resources.
                   </p>
-                  <div className="text-[12.5px] md:text-[13.5px] text-gray-650 leading-relaxed font-semibold space-y-1.5">
-                    <p className="text-[#FF7527] font-extrabold uppercase font-mono tracking-wider text-[11.5px]">
-                      Anxiety • Parkinson's • Hallucinations • Emotional Recovery
-                    </p>
-                    <p className="text-gray-500 font-medium leading-relaxed">
-                      HopeHeart helps you find the right space without overwhelming you.
-                    </p>
-                  </div>
                 </div>
                 <div className="shrink-0 flex items-center justify-center md:justify-end">
                   <HeroMascot activeCategoryId={activeCategoryId} />
@@ -663,24 +764,18 @@ export default function CareBridgeScreen({
               </div>
 
               {/* Onboarding Assistant / Tell Us What's Happening */}
-              <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-4">
+              <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-5">
                 <div className="space-y-1">
-                  <h3 className="text-[16px] font-display font-black text-gray-850 flex items-center gap-1.5">
-                    🫶 Tell us what's happening
+                  <h3 className="text-[16px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
+                    🫶 Tell us what’s happening
                   </h3>
                   <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
-                    "You don't need to know the right category. Start with what you're experiencing."
+                    You don’t need the perfect category. Choose what feels closest.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {[
-                    { id: 'overthinking', label: 'Overthinking', emoji: '😰', catId: 'anxiety' },
-                    { id: 'lonely', label: 'Feeling Lonely', emoji: '😔', catId: 'emotional-recovery' },
-                    { id: 'exhausted', label: 'Feeling Exhausted', emoji: '😴', catId: 'emotional-recovery' },
-                    { id: 'parkinsons', label: "Supporting Someone With Parkinson's", emoji: '🧓', catId: 'parkinsons' },
-                    { id: 'confusing', label: 'Confusing Experiences', emoji: '👀', catId: 'hallucinations' }
-                  ].map((btn) => {
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {SITUATIONS.map((btn) => {
                     const isSelected = selectedSymptomId === btn.id;
                     return (
                       <motion.button
@@ -689,24 +784,53 @@ export default function CareBridgeScreen({
                           setSelectedSymptomId(btn.id);
                           setActiveCategoryId(btn.catId);
                         }}
-                        whileHover={{ scale: 1.02, y: -0.5 }}
-                        whileTap={{ scale: 0.98 }}
-                        className={`p-4 rounded-2xl border text-left flex items-center gap-3.5 transition-all cursor-pointer ${
+                        whileHover={{ scale: 1.015, y: -0.5 }}
+                        whileTap={{ scale: 0.985 }}
+                        className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all cursor-pointer min-h-[120px] ${
                           isSelected 
                             ? 'bg-[#FFF2EA] border-[#FF7527] shadow-2xs ring-1 ring-[#FF7527]/10' 
                             : 'bg-[#FCFAF5] border-gray-200 hover:bg-[#FAF6EE] hover:border-gray-300'
                         }`}
                       >
-                        <span className="text-xl p-1 bg-white rounded-lg shadow-2xs shrink-0">{btn.emoji}</span>
-                        <div className="space-y-0.5">
-                          <span className="text-[12.5px] font-display font-black text-gray-800 block leading-tight">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl p-1 bg-white rounded-lg shadow-2xs shrink-0 select-none">{btn.emoji}</span>
+                          <span className="text-[13px] font-display font-black text-gray-800 block leading-tight">
                             {btn.label}
                           </span>
                         </div>
+                        <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                          {btn.desc}
+                        </p>
                       </motion.button>
                     );
                   })}
                 </div>
+
+                {/* Recommended for you panel */}
+                {selectedSymptomId && (
+                  <div className="bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4.5 space-y-2.5">
+                    <h4 className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
+                      ✨ Recommended for you
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                      {SITUATIONS.find(s => s.id === selectedSymptomId)?.recommendations.map((rec, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            if (rec.target !== 'doctor-suggestions') {
+                              onNavigateTo(rec.target);
+                            }
+                          }}
+                          type="button"
+                          className="p-3 bg-white hover:bg-[#FFF2EA] border border-gray-200 hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] rounded-xl text-[12px] font-bold transition-all text-left flex items-center justify-between cursor-pointer active:scale-95"
+                        >
+                          <span className="truncate">{rec.text}</span>
+                          <span className="text-[10px] text-gray-400">→</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 {/* 214 people supporting banner */}
                 <div className="pt-2 border-t border-gray-50 flex items-center">
@@ -720,8 +844,8 @@ export default function CareBridgeScreen({
               {/* 2. Category switcher directly below the hero section */}
               <div className="space-y-3.5 bg-white border border-[#EDE9DE] p-5 rounded-[28px] shadow-xs">
                 <div className="space-y-1">
-                  <h4 className="text-[14px] font-display font-black text-gray-850 flex items-center gap-1.5">
-                    🧭 What are you navigating today?
+                  <h4 className="text-[14px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
+                    Or explore by support path
                   </h4>
                   <p className="text-[12px] text-gray-500 font-semibold block leading-tight">
                     Choose the journey that feels closest to your current experience.
