@@ -750,9 +750,9 @@ export default function ListenerMatchScreen({
           {/* Matched listeners grid */}
           <div className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#EDE9DE] pb-2">
-              <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block shrink-0">
-                Matched Peer Listeners
-              </span>
+              <h3 className="text-[13.5px] font-display font-black text-[#2B1D12] shrink-0">
+                Matched listeners available now
+              </h3>
               
               {/* Filter Chips list */}
               <div className="flex flex-wrap gap-1.5 pt-0.5">
@@ -922,79 +922,23 @@ export default function ListenerMatchScreen({
             </AnimatePresence>
           </div>
 
-          {/* How Matching Works Section */}
-          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 sm:p-8 space-y-5">
-            <div className="text-center md:text-left space-y-1">
-              <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
-                How matching works
-              </h3>
-              <p className="text-[12px] text-gray-500 font-semibold">
-                HopeHeart connects you with the most compatible volunteer peer listeners.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-[12.5px] font-semibold text-gray-555 leading-relaxed">
-              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
-                <span className="text-xl block mb-1">🎯</span>
-                <p className="text-[12.5px] text-[#2B1D12] font-bold">1. We match based on your selected support need.</p>
+          {/* How Safe Matching Works Section */}
+          <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-[24px] p-4 sm:p-5 space-y-3 mt-2">
+            <h3 className="font-display font-black text-[#2B1D12] text-[14.5px] text-center sm:text-left">
+              How safe matching works
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6 text-[12px] font-semibold text-gray-600 leading-relaxed">
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 select-none text-[#FF7527]">⭐</span>
+                <p>We match you based on your support need.</p>
               </div>
-              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
-                <span className="text-xl block mb-1">🌍</span>
-                <p className="text-[12.5px] text-[#2B1D12] font-bold">2. You can choose by language, style, and availability.</p>
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 select-none text-[#FF7527]">⭐</span>
+                <p>You can choose by language, style, and availability.</p>
               </div>
-              <div className="space-y-1.5 bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4">
-                <span className="text-xl block mb-1">🛡️</span>
-                <p className="text-[12.5px] text-[#2B1D12] font-bold">3. Listeners offer emotional support only, not medical advice.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* How Safe Listening Works Section */}
-          <div className="bg-white border border-[#EDE9DE] rounded-3xl p-6 sm:p-8 space-y-6">
-            <div className="text-center md:text-left space-y-1">
-              <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
-                How safe listening works
-              </h3>
-              <p className="text-[12px] text-gray-500 font-semibold">
-                HopeHeart is built to protect your anonymity and emotional safety.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center font-display font-black text-[16px] text-[#FF7527]">
-                  1
-                </div>
-                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
-                  Share comfort, stay secure
-                </h4>
-                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
-                  Share only what you feel comfortable sharing. Your personal details are never shared.
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center font-display font-black text-[16px] text-blue-600">
-                  2
-                </div>
-                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
-                  Emotional peer support
-                </h4>
-                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
-                  Listeners offer emotional support, not medical advice, clinical treatment, or prescriptions.
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center font-display font-black text-[16px] text-emerald-600">
-                  3
-                </div>
-                <h4 className="font-display font-bold text-gray-800 text-[13.5px]">
-                  AI-powered guardrails
-                </h4>
-                <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
-                  Our system screens active chats to protect both of you from inappropriate advice or harassment.
-                </p>
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 select-none text-[#FF7527]">⭐</span>
+                <p>Listeners provide emotional support only, not medical advice.</p>
               </div>
             </div>
           </div>
