@@ -10,22 +10,6 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <div className="flex flex-col justify-center items-center min-h-full bg-[#FCFAF5] p-5 sm:p-6 md:p-8 font-sans select-none w-full my-auto space-y-5 md:space-y-6">
       
-      {/* Onboarding Progress Indicator - Top Center */}
-      <div className="w-full max-w-md text-center flex flex-col items-center gap-1 select-none">
-        <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
-          Step 1 of 4
-        </span>
-        <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
-          <span className="text-[#FF7527] font-black">Welcome</span>
-          <span>→</span>
-          <span>Login</span>
-          <span>→</span>
-          <span>Profile</span>
-          <span>→</span>
-          <span>Intro</span>
-        </div>
-      </div>
-
       {/* Brand logo at the top for mobile */}
       <div className="block md:hidden text-center mb-1 shrink-0 w-full">
         <PrimaryLogo className="scale-90 mx-auto" />
@@ -57,7 +41,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                     HopeBuddy
                   </span>
                   <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed mt-0.5">
-                    Meet HopeBuddy. Your emotional companion that checks in with you, celebrates progress, and reminds you that you're never alone.
+                    Your gentle companion for check-ins, support guidance, and safe reminders.
                   </p>
                 </div>
               </div>
@@ -65,7 +49,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
             <div className="space-y-2">
               <p className="text-[14px] sm:text-[15px] md:text-[17px] text-gray-650 font-semibold leading-relaxed">
-                Tell us how you're feeling today. We'll help you find support that feels right for you.
+                Find peer listeners, safe communities, and support resources — without judgement or medical advice.
               </p>
             </div>
 
@@ -73,12 +57,9 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               <button
                 onClick={onStart}
                 id="btn-start-heart-check"
-                className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] active:scale-[0.98] transition-all text-white font-display font-bold text-[16px] sm:text-[17px] rounded-2xl shadow-[0_4px_14px_rgba(255,117,39,0.22)] flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] active:scale-[0.98] transition-all text-white font-display font-bold text-[16px] sm:text-[17px] rounded-2xl shadow-[0_4px_14px_rgba(255,117,39,0.22)] flex items-center justify-center gap-2 cursor-pointer animate-none"
               >
-                Get Started
-                <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+                Get Started →
               </button>
 
               {/* Trust Chips */}
@@ -96,7 +77,8 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] py-3 px-4 rounded-xl text-center md:text-left shadow-xs">
                 <p className="text-[11.5px] text-gray-555 font-semibold leading-normal">
-                  HopeHeart provides emotional support only. It does not replace professional medical care.
+                  <strong>⚠️ Disclaimer</strong><br />
+                  HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.
                 </p>
               </div>
             </div>
@@ -117,7 +99,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                   HopeBuddy
                 </span>
                 <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
-                  Meet HopeBuddy. Your emotional companion that checks in with you, celebrates progress, and reminds you that you're never alone.
+                  Your gentle companion for check-ins, support guidance, and safe reminders.
                 </p>
               </div>
             </motion.div>
