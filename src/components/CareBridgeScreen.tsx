@@ -553,6 +553,64 @@ function GuideFolderIcon() {
   );
 }
 
+function CareQuestionsIllustration() {
+  return (
+    <svg viewBox="0 0 100 80" className="w-20 h-16 select-none opacity-90 shrink-0">
+      {/* Background soft circle */}
+      <circle cx="50" cy="40" r="32" fill="#FFF8F4" />
+      
+      {/* Soft heart icon */}
+      <path d="M 75 18 C 73 15, 68 15, 66 18 C 64 15, 59 15, 57 18 C 55 21, 57 26, 66 31 C 75 26, 77 21, 75 18 Z" fill="#FFE4D6" stroke="#2B1D12" strokeWidth="1" />
+      
+      {/* Clipboard/Checklist */}
+      <rect x="25" y="15" width="34" height="46" rx="3" fill="#FFF" stroke="#2B1D12" strokeWidth="1.8" />
+      <rect x="34" y="11" width="16" height="7" rx="1.5" fill="#FF7527" stroke="#2B1D12" strokeWidth="1.5" />
+      
+      {/* Small checklist lines and question card shapes */}
+      <line x1="32" y1="24" x2="44" y2="24" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="32" y1="30" x2="50" y2="30" stroke="#7BA655" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="32" y1="36" x2="46" y2="36" stroke="#2B1D12" strokeWidth="1.5" strokeLinecap="round" />
+      
+      {/* Person holding it (hands) */}
+      <path d="M 12 55 C 16 46, 24 46, 28 55" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="1.8" />
+      <circle cx="28" cy="50" r="4.5" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="1.5" />
+      <circle cx="56" cy="48" r="4.5" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+const QUESTION_CATEGORIES = [
+  "All",
+  "Anxiety",
+  "Parkinson’s",
+  "Confusing Experiences",
+  "Caregiver",
+  "Emotional Recovery"
+];
+
+const HELP_QUESTION_IDEAS = [
+  {
+    text: "How can I explain what I am feeling clearly?",
+    categories: ["All", "Anxiety", "Emotional Recovery", "Confusing Experiences"]
+  },
+  {
+    text: "What should I ask when I feel overwhelmed?",
+    categories: ["All", "Anxiety", "Emotional Recovery"]
+  },
+  {
+    text: "How can I talk about confusing experiences safely?",
+    categories: ["All", "Confusing Experiences"]
+  },
+  {
+    text: "Are there local support groups for caregivers?",
+    categories: ["All", "Caregiver", "Parkinson’s"]
+  },
+  {
+    text: "What can help me prepare before speaking to a professional?",
+    categories: ["All", "Anxiety", "Parkinson’s", "Confusing Experiences", "Caregiver", "Emotional Recovery"]
+  }
+];
+
 function getResourceIconComponent(illustration: string) {
   switch (illustration) {
     case 'crisis-phone': return <CrisisPhoneIcon />;
@@ -746,6 +804,7 @@ export default function CareBridgeScreen({
   const [selectedSymptomId, setSelectedSymptomId] = useState<string>('overthinking');
   const [questionInput, setQuestionInput] = useState<string>('');
   const [viewingStories, setViewingStories] = useState<boolean>(false);
+  const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<string>('All');
 
   const handleAddQuestion = (e: FormEvent) => {
     e.preventDefault();
@@ -757,14 +816,6 @@ export default function CareBridgeScreen({
   const handleOpenResource = (resource: { name: string; link: string }) => {
     alert(`You are now leaving HopeHeart to visit ${resource.name}. Keep supporting yourself safely!`);
   };
-
-  const exampleQuestions = [
-    'How do I talk about visual confusion episodes?',
-    'What daily exercises help support tremor cycles?',
-    'What should I do when overthinking turns into panic?',
-    'Are there local support groups for caregivers near me?',
-    'How do I identify burnout triggers before they scale?'
-  ];
 
   const activeCategory = SUPPORT_CATEGORIES.find(cat => cat.id === activeCategoryId) || SUPPORT_CATEGORIES[0];
 
@@ -789,7 +840,7 @@ export default function CareBridgeScreen({
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
           {subScreen === 'suggestions' && 'Support Resources'}
-          {subScreen === 'questions' && 'Professional Question List'}
+          {subScreen === 'questions' && 'My Care Questions'}
         </span>
         <button 
           onClick={() => setSubScreen('questions')}
@@ -1330,13 +1381,19 @@ export default function CareBridgeScreen({
               exit={{ opacity: 0, scale: 0.98 }}
               className="max-w-2xl mx-auto bg-white border border-[#E9E4D9] rounded-3xl p-6 md:p-8 space-y-6 shadow-xs"
             >
-              <div className="space-y-1.5 text-center md:text-left">
-                <h3 className="font-display font-black text-gray-800 text-[20px] md:text-[22px] tracking-tight leading-none">
-                  Professional Question List
-                </h3>
-                <p className="text-[13px] text-gray-500 font-semibold">
-                  Write down what you want to ask during your upcoming general practitioner or specialist appointment. We keep it ready for you!
-                </p>
+              {/* Header card with text on left, warm illustration on right */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-b border-gray-100 pb-5">
+                <div className="space-y-1.5 flex-1">
+                  <h3 className="font-display font-black text-gray-800 text-[20px] md:text-[22px] tracking-tight leading-none">
+                    My Care Questions
+                  </h3>
+                  <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
+                    Save questions you may want to ask a professional, caregiver, or trusted support person. Everything stays private unless you choose to share it.
+                  </p>
+                </div>
+                <div className="shrink-0 bg-[#FFF8F4] p-3.5 rounded-2xl border border-orange-100/60 shadow-2xs self-center">
+                  <CareQuestionsIllustration />
+                </div>
               </div>
 
               {/* Core add form */}
@@ -1345,7 +1402,7 @@ export default function CareBridgeScreen({
                   type="text"
                   value={questionInput}
                   onChange={(e) => setQuestionInput(e.target.value)}
-                  placeholder="Ask about symptoms, daily grounding exercises, tremors, or stress..."
+                  placeholder="Write a question about how you feel, what you need, or what you want to understand..."
                   className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 text-[13px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                 />
                 <button
@@ -1356,36 +1413,66 @@ export default function CareBridgeScreen({
                 </button>
               </form>
 
-              {/* Sample Helper suggestions */}
-              <div className="space-y-2">
+              {/* Sample Helper suggestions with category filtering chips */}
+              <div className="space-y-3">
                 <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                  Quick examples (click to auto-add)
+                  Helpful question ideas
                 </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {exampleQuestions.map((q, idx) => (
+                
+                {/* Category chips */}
+                <div className="flex flex-wrap gap-1.5 pb-1">
+                  {QUESTION_CATEGORIES.map((cat) => {
+                    const isSelected = selectedQuestionCategory === cat;
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setSelectedQuestionCategory(cat)}
+                        className={`px-3 py-1.5 rounded-xl text-[11.5px] font-bold border transition-all cursor-pointer select-none active:scale-95 ${
+                          isSelected 
+                            ? 'bg-[#FF7527] border-[#FF7527] text-white font-extrabold shadow-3xs' 
+                            : 'bg-white border-[#EDE9DE] text-gray-650 hover:bg-[#FCFAF5] hover:border-gray-300'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Filtered questions list */}
+                <div className="flex flex-col gap-1.5">
+                  {HELP_QUESTION_IDEAS.filter(q => q.categories.includes(selectedQuestionCategory)).map((q, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => onAddQuestion(q)}
-                      className="bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EEE9DD] text-gray-600 hover:text-[#FF7527] text-[11.5px] font-semibold px-3 py-1.5 rounded-xl text-left transition-colors cursor-pointer"
+                      onClick={() => onAddQuestion(q.text)}
+                      className="bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EEE9DD] text-gray-650 hover:text-[#FF7527] text-[12px] font-semibold px-4 py-2.5 rounded-xl text-left transition-colors cursor-pointer flex items-center justify-between"
                     >
-                      ➕ {q}
+                      <span>➕ {q.text}</span>
+                      <span className="text-[10px] text-gray-400 font-normal">Add to list</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Active Questions Checklist */}
-              <div className="space-y-2">
-                <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-wider block">
-                  Your Active Saved Questions Checklist ({savedQuestions.length})
-                </span>
+              {/* Saved Questions Section */}
+              <div className="space-y-3 pt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                  <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-wider block">
+                    Saved Questions ({savedQuestions.length})
+                  </span>
+                  <span className="text-[10.5px] text-gray-450 font-semibold italic flex items-center gap-1">
+                    🔒 Your questions stay private unless you choose to share them.
+                  </span>
+                </div>
+                
                 <div className="space-y-2.5 max-h-[250px] overflow-y-auto scrollbar-thin">
                   {savedQuestions.length === 0 ? (
                     <div className="text-center py-8 bg-[#FCFAF5] border border-dashed border-[#ECE6D9] rounded-2xl">
-                      <span className="text-[28px]">📜</span>
+                      <span className="text-[28px]">📓</span>
                       <p className="text-[12px] text-gray-500 font-semibold mt-2">
-                        Your professional checklist is empty. Save questions above!
+                        Your question notebook is empty. Save or tap ideas above!
                       </p>
                     </div>
                   ) : (
@@ -1407,7 +1494,7 @@ export default function CareBridgeScreen({
                             }}
                             className="bg-[#F2FAF6] text-emerald-700 hover:bg-emerald-100 text-[10px] font-display font-black px-2.5 py-1.5 rounded-lg uppercase tracking-wider cursor-pointer"
                           >
-                            Share with Professional
+                            Share Question
                           </button>
                           <button
                             onClick={() => onDeleteQuestion(q.id)}
@@ -1425,7 +1512,7 @@ export default function CareBridgeScreen({
 
               <div className="bg-[#FAF7F0] border border-[#ECE6D9] p-4 rounded-2xl">
                 <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed">
-                  💡 <strong>Tip:</strong> Keep this list open on your screen when talking face-to-face with your physician or therapist so that no important concerns are left unaddressed!
+                  💡 <strong>Tip:</strong> Keep this private list open on your screen when talking face-to-face with your support circle, doctor, or caregiver so that nothing is forgotten.
                 </p>
               </div>
 
