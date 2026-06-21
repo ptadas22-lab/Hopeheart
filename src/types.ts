@@ -3,7 +3,6 @@ export enum ScreenId {
   Welcome = 'welcome',
   Login = 'login',
   ProfileSetup = 'profile-setup',
-  Introduction = 'introduction',
   Home = 'home',
   SafeListener = 'safe-listener',
   SafeChat = 'safe-chat',

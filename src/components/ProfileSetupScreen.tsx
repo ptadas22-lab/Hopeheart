@@ -56,7 +56,7 @@ export default function ProfileSetupScreen({ initialNickname, onComplete }: Prof
       localStorage.setItem('hopeheart_profile_phoneNumber', phoneNumber);
       localStorage.setItem('hopeheart_profile_todayNeed', todayNeed);
 
-      // Route to introduction screen
+      // Complete setup and route to home screen
       onComplete({
         nickname: nickname.trim() || 'Companion',
         ageGroup,

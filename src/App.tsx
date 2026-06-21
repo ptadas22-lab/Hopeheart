@@ -7,7 +7,6 @@ import SplashScreen from './components/SplashScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
 import ProfileSetupScreen from './components/ProfileSetupScreen';
-import IntroductionScreen from './components/IntroductionScreen';
 import DashboardScreen from './components/DashboardScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
 import SupportRoomsScreen from './components/SupportRoomsScreen';
@@ -120,16 +119,8 @@ export default function App() {
             initialNickname={userName}
             onComplete={(details) => {
               setUserName(details.nickname);
-              setCurrentScreen(ScreenId.Introduction);
+              setCurrentScreen(ScreenId.Home);
             }}
-          />
-        );
-
-      case ScreenId.Introduction:
-        return (
-          <IntroductionScreen 
-            userName={userName}
-            onEnter={() => setCurrentScreen(ScreenId.Home)}
           />
         );
 
@@ -248,8 +239,7 @@ export default function App() {
   const showNavChannels = currentScreen !== ScreenId.Splash &&
                           currentScreen !== ScreenId.Welcome &&
                           currentScreen !== ScreenId.Login &&
-                          currentScreen !== ScreenId.ProfileSetup &&
-                          currentScreen !== ScreenId.Introduction;
+                          currentScreen !== ScreenId.ProfileSetup;
 
   return (
     <div className="min-h-screen w-full bg-[#FCFAF5] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">

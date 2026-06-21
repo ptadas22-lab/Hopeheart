@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import Mascot from './Mascot';
 import { MoodConfig } from '../types';
 import { MascotFace } from './Logo';
@@ -16,8 +17,45 @@ export default function DashboardScreen({
   selectedMood,
   onNavigateTo,
 }: DashboardScreenProps) {
+  const [showToast, setShowToast] = useState(true);
+
+  // Auto-dismiss the welcome toast after 4.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowToast(false);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] overflow-y-auto font-sans select-none scrollbar-none w-full">
+    <div className="flex flex-col min-h-full bg-[#FCFAF5] overflow-y-auto font-sans select-none scrollbar-none w-full relative">
+      
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -40, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 200 }}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-sm"
+          >
+            <div className="bg-[#1E1E1A] text-white px-4 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 border border-gray-800">
+              <span className="text-xl shrink-0">🧡</span>
+              <p className="text-[12px] sm:text-[12.5px] font-semibold leading-normal text-left text-gray-200">
+                Welcome, {userName} 👋 HopeBuddy is ready when you need support.
+              </p>
+              <button 
+                onClick={() => setShowToast(false)}
+                className="ml-auto text-gray-400 hover:text-white text-xs cursor-pointer flex items-center justify-center w-5 h-5 rounded-full hover:bg-white/10"
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Upper Brand / User bar */}
       <div className="pt-4 pb-3 px-5 flex items-center justify-between border-b border-[#EFEBE0] bg-white sticky top-0 z-10 shadow-xs">
         <div className="flex items-center gap-3">
