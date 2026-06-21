@@ -79,14 +79,6 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         targetPath: 'support-rooms',
         illustration: 'support-circle',
         caption: 'Share with people who understand.'
-      },
-      {
-        title: '🧡 HopeBuddy Grounding',
-        description: 'Open HopeBuddy to do a quick 4-second breathing pause exercise.',
-        actionText: 'Open HopeBuddy →',
-        targetPath: 'home',
-        illustration: 'hopebuddy-grounding',
-        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -144,14 +136,6 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         targetPath: 'support-rooms',
         illustration: 'support-circle',
         caption: 'Share with people who understand.'
-      },
-      {
-        title: '🧡 HopeBuddy Pacing',
-        description: 'Check in on daily energy pacing levels with your companion.',
-        actionText: 'Open HopeBuddy →',
-        targetPath: 'home',
-        illustration: 'hopebuddy-grounding',
-        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -209,14 +193,6 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         targetPath: 'support-rooms',
         illustration: 'support-circle',
         caption: 'Share with people who understand.'
-      },
-      {
-        title: '🧡 HopeBuddy Reassurance',
-        description: 'Interactive reality-grounding scripts when feeling confused or disoriented.',
-        actionText: 'Open HopeBuddy →',
-        targetPath: 'home',
-        illustration: 'hopebuddy-grounding',
-        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -274,14 +250,6 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         targetPath: 'support-rooms',
         illustration: 'support-circle',
         caption: 'Share with people who understand.'
-      },
-      {
-        title: '🧡 HopeBuddy Rest Check',
-        description: 'Empathetic guidance that celebrates tiny wins and self-care recovery checks.',
-        actionText: 'Open HopeBuddy →',
-        targetPath: 'home',
-        illustration: 'hopebuddy-grounding',
-        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -761,6 +729,150 @@ function HeroMascot({ activeCategoryId }: { activeCategoryId: string }) {
   );
 }
 
+// Custom SVGs for main resource cards representing warm human/support styles
+function TalkingIllustration() {
+  return (
+    <svg viewBox="0 0 160 100" className="w-full h-24 overflow-visible">
+      <circle cx="80" cy="50" r="36" fill="#FFF2EA" />
+      <g transform="translate(42, 22)">
+        <path d="M 5,55 Q 20,30 35,55 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="2.2" />
+        <circle cx="20" cy="22" r="10" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+      </g>
+      <g transform="translate(82, 22)">
+        <path d="M 5,55 Q 20,30 35,55 Z" fill="#FF7527" stroke="#2B1D12" strokeWidth="2.2" />
+        <circle cx="20" cy="22" r="10" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+      </g>
+      <path d="M 60,20 Q 65,12 80,12 Q 95,12 95,20 Q 95,28 80,28 Q 72,28 68,32 L 68,26 Q 60,25 60,20 Z" fill="#FFF" stroke="#2B1D12" strokeWidth="1.8" />
+      <circle cx="74" cy="20" r="1.5" fill="#2B1D12"/>
+      <circle cx="80" cy="20" r="1.5" fill="#2B1D12"/>
+      <circle cx="86" cy="20" r="1.5" fill="#2B1D12"/>
+    </svg>
+  );
+}
+
+function ReadingIllustration() {
+  return (
+    <svg viewBox="0 0 160 100" className="w-full h-24 overflow-visible">
+      <circle cx="80" cy="50" r="36" fill="#EBF5FF" />
+      <g transform="translate(60, 18)">
+        <path d="M 10,60 Q 25,35 40,60 Z" fill="#3B82F6" stroke="#2B1D12" strokeWidth="2.2" />
+        <circle cx="25" cy="25" r="10" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+        <path d="M 15,48 L 35,48 L 38,55 L 12,55 Z" fill="#FFF" stroke="#2B1D12" strokeWidth="1.8" />
+      </g>
+      <g transform="translate(102, 18)">
+        <circle cx="15" cy="15" r="12" fill="#10B981" stroke="#2B1D12" strokeWidth="1.8" />
+        <path d="M 9,15 L 13,19 L 21,11" fill="none" stroke="#FFF" strokeWidth="2.2" strokeLinecap="round" />
+      </g>
+      <rect x="25" y="20" width="18" height="24" rx="3" fill="#FFF" stroke="#2B1D12" strokeWidth="1.2" transform="rotate(-15 34 32)" />
+      <rect x="35" y="12" width="18" height="24" rx="3" fill="#FFF" stroke="#2B1D12" strokeWidth="1.2" transform="rotate(10 44 24)" />
+    </svg>
+  );
+}
+
+function JournalingIllustration() {
+  return (
+    <svg viewBox="0 0 160 100" className="w-full h-24 overflow-visible">
+      <circle cx="80" cy="50" r="36" fill="#FEFAF0" />
+      <g transform="translate(38, 22)">
+        <path d="M 5,55 Q 20,30 35,55 Z" fill="#F59E0B" stroke="#2B1D12" strokeWidth="2.2" />
+        <circle cx="20" cy="22" r="10" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+        <rect x="22" y="38" width="12" height="15" rx="1.5" fill="#FFF" stroke="#2B1D12" strokeWidth="1.2" />
+      </g>
+      <g transform="translate(85, 22)">
+        <path d="M 5,55 Q 20,30 35,55 Z" fill="#10B981" stroke="#2B1D12" strokeWidth="2.2" />
+        <circle cx="20" cy="22" r="10" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+        <rect x="5" y="36" width="14" height="10" rx="1.2" fill="#FFF" stroke="#2B1D12" strokeWidth="1.2" />
+      </g>
+    </svg>
+  );
+}
+
+function AnxietyPathIllustration() {
+  return (
+    <svg viewBox="0 0 100 80" className="w-16 h-16 overflow-visible mx-auto">
+      <circle cx="50" cy="40" r="24" fill="#FFF2EA" />
+      <g transform="translate(30, 20)">
+        <path d="M 5,45 Q 20,25 35,45 Z" fill="#FF7527" stroke="#2B1D12" strokeWidth="2" />
+        <circle cx="20" cy="18" r="8" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2" />
+        <rect x="23" y="26" width="6" height="12" rx="1" fill="#333" stroke="#2B1D12" strokeWidth="1.2" />
+      </g>
+      <path d="M 62,22 Q 68,16 75,22" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ParkinsonsPathIllustration() {
+  return (
+    <svg viewBox="0 0 100 80" className="w-16 h-16 overflow-visible mx-auto">
+      <circle cx="50" cy="40" r="24" fill="#F2FAF6" />
+      <g transform="translate(24, 20)">
+        <path d="M 5,45 Q 18,22 30,45 Z" fill="#8A6E58" stroke="#2B1D12" strokeWidth="2" />
+        <circle cx="18" cy="16" r="7.5" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="2" />
+        <line x1="28" y1="28" x2="33" y2="45" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
+      </g>
+      <g transform="translate(44, 18)">
+        <path d="M 5,47 Q 18,22 30,47 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="2" />
+        <circle cx="18" cy="16" r="7.5" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2" />
+      </g>
+    </svg>
+  );
+}
+
+function HallucinationsPathIllustration() {
+  return (
+    <svg viewBox="0 0 100 80" className="w-16 h-16 overflow-visible mx-auto">
+      <circle cx="50" cy="40" r="24" fill="#F0ECE1" />
+      <g transform="translate(28, 20)">
+        <path d="M 5,45 Q 20,25 35,45 Z" fill="#8B5CF6" stroke="#2B1D12" strokeWidth="2" />
+        <circle cx="20" cy="18" r="8" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2" />
+      </g>
+      <circle cx="68" cy="38" r="9" fill="#FFF2EA" opacity="0.6" />
+      <g transform="translate(63, 31)">
+        <rect x="0" y="3" width="10" height="14" rx="2" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="1.5" />
+        <line x1="5" y1="0" x2="5" y2="3" stroke="#2B1D12" strokeWidth="1.5" />
+      </g>
+    </svg>
+  );
+}
+
+function RecoveryPathIllustration() {
+  return (
+    <svg viewBox="0 0 100 80" className="w-16 h-16 overflow-visible mx-auto">
+      <circle cx="50" cy="40" r="24" fill="#EBF5FF" />
+      <g transform="translate(24, 20)">
+        <path d="M 5,45 Q 20,25 35,45 Z" fill="#10B981" stroke="#2B1D12" strokeWidth="2" />
+        <circle cx="20" cy="18" r="8" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2" />
+      </g>
+      <g transform="translate(62, 32)">
+        <line x1="5" y1="20" x2="5" y2="10" stroke="#8A6E58" strokeWidth="2.2" />
+        <path d="M 5,10 Q 12,2 15,10" fill="none" stroke="#7BA655" strokeWidth="1.5" />
+        <path d="M 5,14 Q -2,7 2,15" fill="none" stroke="#7BA655" strokeWidth="1.5" />
+      </g>
+    </svg>
+  );
+}
+
+const ANONYMOUS_STORIES = [
+  {
+    title: "Finding my grounding",
+    category: "Anxiety",
+    story: "During a severe anxiety episode last week, my thoughts were racing. I checked in and started active listening with Priya. Having someone comfort me without diagnostic advice allowed my nervous system to slow down step-by-step. Sharing without judgment is a quiet victory.",
+    author: "Anonymous Peer"
+  },
+  {
+    title: "A caregiver's quiet pause",
+    category: "Caregiving",
+    story: "Caring for a spouse with daily Parkinson's tremors takes immense emotional energy. I felt so lonely and exhausted. Joining the caregiver Corner room helped me connect with others who understand the exact weight of this role. We share coping wins daily.",
+    author: "Anonymous Member"
+  },
+  {
+    title: "Grounding through confusion",
+    category: "Hallucinations",
+    story: "When I experience visual shifts and confusing episodes, fear escalates quickly. The quiet companion grounding in the community helped me focus on reality-grounding details. It's safe to slow down, and I am learning to trust my space again.",
+    author: "Anonymous Friend"
+  }
+];
+
 export default function CareBridgeScreen({
   onBack,
   onNavigateTo,
@@ -772,6 +884,7 @@ export default function CareBridgeScreen({
   const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
   const [selectedSymptomId, setSelectedSymptomId] = useState<string>('overthinking');
   const [questionInput, setQuestionInput] = useState<string>('');
+  const [viewingStories, setViewingStories] = useState<boolean>(false);
 
   const handleAddQuestion = (e: FormEvent) => {
     e.preventDefault();
@@ -841,21 +954,110 @@ export default function CareBridgeScreen({
               transition={{ duration: 0.25 }}
               className="space-y-6"
             >
-              {/* 1. Redesigned Hero Header Section */}
-              <div className="bg-gradient-to-r from-emerald-50/50 to-teal-50/20 border border-emerald-100/70 rounded-3xl p-6 md:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="space-y-3 md:max-w-2xl">
-                  <div className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold tracking-widest px-2.5 py-0.5 rounded-full uppercase">
-                    🌍 Support Resources
+              {/* 3 Main Resource Option Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Card 1: HopeSupport */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[28px] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <TalkingIllustration />
+                    <h3 className="font-display font-black text-gray-800 text-[16px] flex items-center gap-1.5 mt-2">
+                      🧡 HopeSupport
+                    </h3>
+                    <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                      Safe peer support spaces, emotional support rooms, and listener matching.
+                    </p>
+                    <div className="text-[11.5px] text-gray-500 font-semibold bg-[#FCFAF5] rounded-xl p-2.5">
+                      <strong>Best for:</strong> Feeling lonely, anxious, overwhelmed, or needing someone to listen.
+                    </div>
                   </div>
-                  <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[26px] leading-tight">
-                    🧡 What are you going through today?
-                  </h2>
-                  <p className="text-[13px] text-gray-600 font-semibold leading-relaxed">
-                    Start with what feels closest. HopeHeart will guide you to support spaces, listeners, and resources.
-                  </p>
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <button
+                      onClick={() => onNavigateTo('safe-listener')}
+                      className="py-2.5 px-1 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Find Listener →
+                    </button>
+                    <button
+                      onClick={() => onNavigateTo('support-rooms')}
+                      className="py-2.5 px-1 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Join Support Room →
+                    </button>
+                  </div>
                 </div>
-                <div className="shrink-0 flex items-center justify-center md:justify-end">
-                  <HeroMascot activeCategoryId={activeCategoryId} />
+
+                {/* Card 2: Professional Resources */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[28px] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <ReadingIllustration />
+                    <h3 className="font-display font-black text-gray-800 text-[16px] flex items-center gap-1.5 mt-2">
+                      🌍 Professional Resources
+                    </h3>
+                    <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                      Verified external help options, directories, helplines, and care guidance.
+                    </p>
+                    <div className="text-[11.5px] text-gray-500 font-semibold bg-[#FCFAF5] rounded-xl p-2.5">
+                      <strong>Best for:</strong> When emotional support is not enough and you want external professional help.
+                    </div>
+                    <p className="text-[10px] text-gray-400 italic font-semibold leading-snug">
+                      ⚠️ External guidance only. HopeHeart does not diagnose, treat, prescribe, or provide medical decisions.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById('trusted-external-resources-section');
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          const area = document.getElementById('active-category-details-area');
+                          area?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="py-2.5 px-1 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Open Resources →
+                    </button>
+                    <button
+                      onClick={() => setSubScreen('questions')}
+                      className="py-2.5 px-1 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Save Questions →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card 3: Personal Stories */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[28px] p-5 shadow-xs flex flex-col justify-between space-y-4">
+                  <div className="space-y-3">
+                    <JournalingIllustration />
+                    <h3 className="font-display font-black text-gray-800 text-[16px] flex items-center gap-1.5 mt-2">
+                      📖 Personal Stories
+                    </h3>
+                    <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                      Read real shared experiences from people who felt anxious, lonely, overwhelmed, or supported someone.
+                    </p>
+                    <div className="text-[11.5px] text-gray-500 font-semibold bg-[#FCFAF5] rounded-xl p-2.5">
+                      <strong>Best for:</strong> Feeling understood through lived experiences.
+                    </div>
+                    <p className="text-[10px] text-gray-400 italic font-semibold leading-snug">
+                      🔒 Stories are anonymized. No personal contact details are shown.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <button
+                      onClick={() => setViewingStories(true)}
+                      className="py-2.5 px-1 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Read Stories →
+                    </button>
+                    <button
+                      onClick={() => onNavigateTo('share-safely')}
+                      className="py-2.5 px-1 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-[11px] font-bold cursor-pointer transition-all text-center"
+                    >
+                      Share Safely →
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -865,7 +1067,7 @@ export default function CareBridgeScreen({
                   <h3 className="text-[16px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
                     🫶 Tell us what’s happening
                   </h3>
-                  <p className="text-[12.5px] text-gray-500 font-semibold leading-normal">
+                  <p className="text-[12.5px] text-gray-550 font-semibold leading-normal">
                     You don’t need the perfect category. Choose what feels closest.
                   </p>
                 </div>
@@ -937,55 +1139,70 @@ export default function CareBridgeScreen({
                 </div>
               </div>
 
-              {/* 2. Category switcher directly below the hero section */}
-              <div className="space-y-3.5 bg-white border border-[#EDE9DE] p-5 rounded-[28px] shadow-xs">
+              {/* Explore by support path */}
+              <div className="space-y-4">
                 <div className="space-y-1">
-                  <h4 className="text-[14px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
-                    Or explore by support path
+                  <h4 className="text-[15px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
+                    Explore by support path
                   </h4>
-                  <p className="text-[12px] text-gray-500 font-semibold block leading-tight">
+                  <p className="text-[12.5px] text-gray-550 font-semibold block leading-tight">
                     Choose the journey that feels closest to your current experience.
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2.5 pt-0.5">
-                  {SUPPORT_CATEGORIES.map((cat) => (
-                    <motion.button
-                      key={cat.id}
-                      onClick={() => {
-                        setActiveCategoryId(cat.id);
-                        // Auto-highlight corresponding symptom button
-                        if (cat.id === 'anxiety') {
-                          setSelectedSymptomId('overthinking');
-                        } else if (cat.id === 'parkinsons') {
-                          setSelectedSymptomId('parkinsons');
-                        } else if (cat.id === 'hallucinations') {
-                          setSelectedSymptomId('confusing');
-                        } else if (cat.id === 'emotional-recovery') {
-                          if (selectedSymptomId !== 'lonely' && selectedSymptomId !== 'exhausted') {
-                            setSelectedSymptomId('lonely');
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {SUPPORT_CATEGORIES.map((cat) => {
+                    const isSelected = activeCategoryId === cat.id;
+                    const pathDescription = 
+                      cat.id === 'anxiety' ? '24 active circles' :
+                      cat.id === 'parkinsons' ? '18 caregiver groups' :
+                      cat.id === 'hallucinations' ? '8 safe spaces' :
+                      '36 communities';
+
+                    return (
+                      <motion.button
+                        key={cat.id}
+                        onClick={() => {
+                          setActiveCategoryId(cat.id);
+                          // Auto-highlight corresponding symptom button
+                          if (cat.id === 'anxiety') {
+                            setSelectedSymptomId('overthinking');
+                          } else if (cat.id === 'parkinsons') {
+                            setSelectedSymptomId('parkinsons');
+                          } else if (cat.id === 'hallucinations') {
+                            setSelectedSymptomId('confusing');
+                          } else if (cat.id === 'emotional-recovery') {
+                            if (selectedSymptomId !== 'lonely' && selectedSymptomId !== 'exhausted') {
+                              setSelectedSymptomId('lonely');
+                            }
                           }
-                        }
-                      }}
-                      whileHover={{ scale: 1.02, y: -0.5 }}
-                      whileTap={{ scale: 0.98 }}
-                      className={`px-4.5 py-3 rounded-xl transition-all cursor-pointer font-display font-bold text-[12.5px] flex items-center gap-2.5 ${
-                        activeCategoryId === cat.id 
-                          ? 'bg-[#1E1E1A] text-white shadow-xs' 
-                          : 'bg-[#FCFAF5] text-gray-600 border border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="text-lg">{cat.emoji}</span>
-                      <div className="text-left leading-tight">
-                        <span className="block">{cat.name}</span>
-                        <span className={`block text-[9.5px] ${activeCategoryId === cat.id ? 'text-orange-200' : 'text-gray-400'} font-mono font-medium mt-0.5`}>
-                          {cat.id === 'anxiety' && '→ 24 active circles'}
-                          {cat.id === 'parkinsons' && '→ 18 caregiver groups'}
-                          {cat.id === 'hallucinations' && '→ 8 safe spaces'}
-                          {cat.id === 'emotional-recovery' && '→ 36 communities'}
-                        </span>
-                      </div>
-                    </motion.button>
-                  ))}
+                        }}
+                        whileHover={{ scale: 1.02, y: -0.5 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-4 border rounded-[24px] text-center flex flex-col justify-between gap-3.5 transition-all cursor-pointer ${
+                          isSelected 
+                            ? 'bg-[#1E1E1A] border-[#1E1E1A] text-white shadow-xs' 
+                            : 'bg-white border-gray-200 text-gray-650 hover:bg-[#FAF9F5]'
+                        }`}
+                      >
+                        <div className="space-y-1 text-center">
+                          <span className="text-[14px] font-display font-black block">
+                            {cat.emoji} {cat.name}
+                          </span>
+                          <span className={`text-[10.5px] font-bold block ${isSelected ? 'text-orange-200' : 'text-gray-400'}`}>
+                            {pathDescription}
+                          </span>
+                        </div>
+
+                        {/* Custom path SVGs */}
+                        <div className="py-1">
+                          {cat.id === 'anxiety' && <AnxietyPathIllustration />}
+                          {cat.id === 'parkinsons' && <ParkinsonsPathIllustration />}
+                          {cat.id === 'hallucinations' && <HallucinationsPathIllustration />}
+                          {cat.id === 'emotional-recovery' && <RecoveryPathIllustration />}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -993,6 +1210,7 @@ export default function CareBridgeScreen({
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeCategory.id}
+                  id="active-category-details-area"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -1229,15 +1447,87 @@ export default function CareBridgeScreen({
                 </ul>
               </div>
 
-              {/* Core Creed Card */}
-              <div className="bg-[#FEFAF0] border-2 border-dashed border-[#F3E2C4] p-5 rounded-3xl text-center">
-                <span className="font-mono text-[9px] font-extrabold text-[#FF7527] uppercase tracking-widest block mb-1">
-                  Our Code of Practice
-                </span>
-                <p className="text-[13.5px] font-bold text-gray-700">
-                  "Community supports. AI protects. Professionals provide care."
-                </p>
-              </div>
+              {/* Personal Stories Modal */}
+              <AnimatePresence>
+                {viewingStories && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="bg-white border border-[#EDE9DE] rounded-[32px] shadow-xl w-full max-w-lg overflow-hidden relative z-50 text-left"
+                    >
+                      {/* Modal Header */}
+                      <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#FCFAF5]">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">📖</span>
+                          <div>
+                            <h4 className="font-display font-black text-[#2B1D12] text-[18px]">
+                              Personal Stories
+                            </h4>
+                            <p className="text-[12px] font-bold text-gray-400">
+                              Anonymized community lived experiences
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setViewingStories(false)}
+                          className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 text-gray-500 cursor-pointer text-sm font-bold"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {/* Modal Body */}
+                      <div className="p-6 space-y-4 max-h-[50vh] overflow-y-auto">
+                        <p className="text-[12px] text-gray-450 font-semibold italic text-center px-4 leading-normal">
+                          "Stories are shared by members anonymously to foster connection and understanding. No personal contact details or medical advice are included."
+                        </p>
+
+                        <div className="space-y-4">
+                          {ANONYMOUS_STORIES.map((item, idx) => (
+                            <div key={idx} className="bg-[#FCFAF5] border border-gray-150 rounded-2xl p-4.5 space-y-2.5">
+                              <div className="flex justify-between items-center">
+                                <span className="px-2.5 py-0.5 bg-[#FFF2EA] text-[#FF7527] border border-[#FFE4D6] rounded-full text-[10px] font-extrabold uppercase">
+                                  {item.category}
+                                </span>
+                                <span className="text-[11px] text-gray-400 font-bold">
+                                  {item.author}
+                                </span>
+                              </div>
+                              <h5 className="font-display font-black text-gray-800 text-[14px]">
+                                {item.title}
+                              </h5>
+                              <p className="text-[12.5px] text-gray-600 italic font-semibold leading-relaxed">
+                                "{item.story}"
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Modal Footer */}
+                      <div className="p-5 border-t border-gray-100 bg-[#FCFAF5] flex gap-3">
+                        <button
+                          onClick={() => {
+                            setViewingStories(false);
+                            onNavigateTo('share-safely');
+                          }}
+                          className="flex-1 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[13px] font-display font-black transition-colors cursor-pointer text-center"
+                        >
+                          Share Your Story
+                        </button>
+                        <button
+                          onClick={() => setViewingStories(false)}
+                          className="px-6 py-3 bg-white border border-gray-250 hover:bg-gray-50 text-gray-700 rounded-xl text-[13px] font-display font-black transition-all cursor-pointer text-center"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 

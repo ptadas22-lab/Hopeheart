@@ -415,6 +415,7 @@ export default function ListenerMatchScreen({
   const [selectedFeeling, setSelectedFeeling] = useState<string>('I need someone to listen');
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [activeListener, setActiveListener] = useState<Listener | null>(null);
+  const [viewingProfileListener, setViewingProfileListener] = useState<Listener | null>(null);
   const [isChatActive, setIsChatActive] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(() => {
@@ -969,116 +970,91 @@ export default function ListenerMatchScreen({
                       </p>
                     </div>
                   ) : (
-                    filteredListeners.map((listener, idx) => (
-                      <motion.div
-                        key={listener.name}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
-                      >
-                        <div className="space-y-4">
-                          {/* Header: Avatar, Name, and Anonymous Listener label */}
-                          <div className="flex items-center gap-3">
-                            <ListenerAvatar name={listener.name} gender={listener.gender} />
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-display font-black text-[#2B1D12] text-[16px] leading-tight truncate">
-                                {listener.name}
-                              </h4>
-                              <p className="text-[11px] font-bold text-[#FF7527] bg-[#FFF2EA] px-2 py-0.5 rounded-full inline-block mt-0.5 border border-[#FFE4D6]">
-                                Anonymous Listener
+                    filteredListeners.map((listener, idx) => {
+                      const genderIcon = listener.gender.toLowerCase() === 'female' ? '👩' : listener.gender.toLowerCase() === 'male' ? '👨' : '👤';
+                      const availabilityText = listener.status === 'available' ? 'Available now' : 'Available soon';
+                      const availabilityIcon = listener.status === 'available' ? '🟢' : '⏳';
+                      return (
+                        <motion.div
+                          key={listener.name}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
+                        >
+                          <div className="space-y-4">
+                            {/* Header: Avatar, Name, and Role label */}
+                            <div className="flex items-center gap-3">
+                              <ListenerAvatar name={listener.name} gender={listener.gender} />
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-display font-black text-[#2B1D12] text-[16px] leading-tight truncate">
+                                  {listener.name}
+                                </h4>
+                                <p className="text-[11px] font-bold text-[#FF7527] bg-[#FFF2EA] px-2 py-0.5 rounded-full inline-block mt-0.5 border border-[#FFE4D6]">
+                                  {listener.role}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Profile Details */}
+                            <div className="space-y-2 text-[12.5px] font-semibold text-gray-655 pl-1">
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400 text-[14px]">{genderIcon}</span>
+                                <span>{listener.gender} • {listener.ageGroup}</span>
                               </p>
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400 text-[14px]">💼</span>
+                                <span>{listener.profession}</span>
+                              </p>
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400 text-[14px]">🤝</span>
+                                <span>{listener.listeningStyle}</span>
+                              </p>
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400 text-[14px]">🗣️</span>
+                                <span>{listener.languages}</span>
+                              </p>
+                              <p className="flex items-center gap-2">
+                                <span className="text-[14px]">{availabilityIcon}</span>
+                                <span>{availabilityText}</span>
+                              </p>
+                              <p className="flex items-center gap-2">
+                                <span className="text-gray-400 text-[14px]">🛡️</span>
+                                <span>Trust Score {listener.rating}</span>
+                              </p>
+                            </div>
+
+                            {/* Best For Tags Section */}
+                            <div className="pt-2 border-t border-gray-100">
+                              <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">
+                                Best for:
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {listener.bestFor.map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="px-2 py-0.5 bg-[#FCFAF5] border border-gray-200 rounded-lg text-gray-600 text-[11px] font-bold"
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                           </div>
 
-                          {/* Profile Details */}
-                          <div className="space-y-1.5 text-[12.5px] font-semibold text-gray-600 pl-1">
-                            <p className="flex items-center gap-2">
-                              <span className="text-gray-400 text-[14px]">👤</span>
-                              <span>{listener.gender} • {listener.profession}</span>
-                            </p>
-                            <p className="flex items-center gap-2">
-                              <span className="text-gray-400 text-[14px]">🧠</span>
-                              <span>{listener.listeningStyle}</span>
-                            </p>
-                            <p className="flex items-center gap-2">
-                              <span className="text-gray-400 text-[14px]">🗣️</span>
-                              <span>{listener.languages}</span>
-                            </p>
-                            <p className="flex items-center gap-2">
-                              <span>{listener.status === 'available' ? '🟢 Available now' : '⏳ Available soon'}</span>
-                            </p>
-
-                            {/* Optional Location Distance */}
-                            {hasLocationPermission === true && listener.distance && (
-                              <p className="flex items-center gap-2 text-[#FF7527] font-bold">
-                                <span className="text-[14px]">📍</span>
-                                <span>{listener.distance}</span>
-                              </p>
-                            )}
-
-                            {/* Shared interests */}
-                            {listener.interests && (
-                              <p className="flex items-center gap-2 text-[#2B1D12] font-extrabold mt-1">
-                                <span className="text-[14px]">🎵</span>
-                                <span>{listener.interests.join(' • ')}</span>
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Trust Score & Listens */}
-                          <div className="bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-3 flex justify-between items-center text-[12.5px] font-semibold text-gray-700">
-                            <div className="flex items-center gap-1">
-                              <span>🛡️ Trust Score:</span>
-                              <span className="font-black text-gray-800">{listener.rating}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span>🤝 {listener.sessions}</span>
-                            </div>
-                          </div>
-
-                          {/* Match reason card */}
-                          <div className="bg-[#FFFDF9] border border-dashed border-[#FFE4D6] rounded-2xl p-3.5 space-y-1">
-                            <p className="text-[11.5px] text-[#E55D13] font-bold uppercase tracking-wider">Matched because:</p>
-                            <p className="text-[12.5px] text-gray-600 italic font-semibold leading-relaxed">
-                              "{listener.matchedReason}"
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Action buttons row */}
-                        <div className="pt-3 border-t border-gray-100 space-y-2">
-                          <div className="grid grid-cols-3 gap-1.5">
+                          {/* View Profile Button */}
+                          <div className="pt-2">
                             <button
-                              onClick={() => startChatFlow(listener)}
+                              onClick={() => setViewingProfileListener(listener)}
                               type="button"
-                              className="py-2 px-1 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[11px] font-bold cursor-pointer transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs"
+                              className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all text-center active:scale-98 shadow-xs"
                             >
-                              <span>💬</span> Chat
-                            </button>
-                            <button
-                              disabled
-                              type="button"
-                              className="py-2 px-1 bg-gray-50 border border-gray-205 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[11px] font-bold cursor-not-allowed"
-                              title="Call unlocked after trust is built"
-                            >
-                              <span>📞</span> Call locked
-                            </button>
-                            <button
-                              disabled
-                              type="button"
-                              className="py-2 px-1 bg-gray-50 border border-gray-205 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[11px] font-bold cursor-not-allowed"
-                              title="Video unlocked after trust is built"
-                            >
-                              <span>🎥</span> Video locked
+                              View Profile
                             </button>
                           </div>
-                          <p className="text-[10.5px] text-gray-400 text-center font-semibold mt-1">
-                            Call and video unlock after trust is built.
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))
+                        </motion.div>
+                      );
+                    })
                   )}
                 </motion.div>
               )}
@@ -1182,6 +1158,147 @@ export default function ListenerMatchScreen({
 
         </div>
       )}
+
+      {/* Detail Profile Modal Overlay */}
+      <AnimatePresence>
+        {viewingProfileListener && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white border border-[#EDE9DE] rounded-[32px] shadow-xl w-full max-w-md overflow-hidden relative z-50"
+            >
+              {/* Modal Header */}
+              <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#FCFAF5]">
+                <div className="flex items-center gap-3">
+                  <ListenerAvatar name={viewingProfileListener.name} gender={viewingProfileListener.gender} />
+                  <div>
+                    <h4 className="font-display font-black text-[#2B1D12] text-[18px]">
+                      {viewingProfileListener.name}
+                    </h4>
+                    <p className="text-[12px] font-bold text-[#FF7527]">
+                      {viewingProfileListener.role}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setViewingProfileListener(null)}
+                  className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 text-gray-500 cursor-pointer text-sm font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+                {/* Full Metadata Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] font-semibold text-gray-700">
+                  <div className="flex items-center gap-2">
+                    <span>👩</span>
+                    <span>Gender: {viewingProfileListener.gender}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>🧑</span>
+                    <span>Age Group: {viewingProfileListener.ageGroup}</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:col-span-2">
+                    <span>💼</span>
+                    <span>Role: {viewingProfileListener.profession}</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:col-span-2">
+                    <span>🤝</span>
+                    <span>Listening Style: {viewingProfileListener.listeningStyle}</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:col-span-2">
+                    <span>🗣️</span>
+                    <span>Languages: {viewingProfileListener.languages}</span>
+                  </div>
+                  {viewingProfileListener.interests && viewingProfileListener.interests.length > 0 && (
+                    <div className="flex items-center gap-2 sm:col-span-2">
+                      <span>🌱</span>
+                      <span>Interests: {viewingProfileListener.interests.join(' • ')}</span>
+                    </div>
+                  )}
+                  {viewingProfileListener.distance && (
+                    <div className="flex items-center gap-2 sm:col-span-2 text-[#FF7527] font-bold">
+                      <span>📍</span>
+                      <span>Nearby: {viewingProfileListener.distance}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span>🟢</span>
+                    <span>Availability: {viewingProfileListener.status === 'available' ? 'Available now' : 'Available soon'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>🛡️</span>
+                    <span>Trust Score: {viewingProfileListener.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>💬</span>
+                    <span>{viewingProfileListener.sessions}</span>
+                  </div>
+                </div>
+
+                {/* About Section */}
+                <div className="space-y-1.5">
+                  <h5 className="text-[12px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
+                    About:
+                  </h5>
+                  <p className="text-[13px] text-gray-650 bg-[#FCFAF5] border border-gray-100 rounded-2xl p-4 italic font-semibold leading-relaxed">
+                    "{viewingProfileListener.bio}"
+                  </p>
+                </div>
+
+                {/* Boundaries Section */}
+                <div className="space-y-1.5">
+                  <h5 className="text-[12px] font-mono font-extrabold text-red-500 uppercase tracking-wider">
+                    Boundaries:
+                  </h5>
+                  <p className="text-[12.5px] text-red-800 bg-[#FFF8F8] border border-red-100 rounded-2xl p-4 font-semibold leading-relaxed">
+                    "{viewingProfileListener.boundary}"
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions footer */}
+              <div className="p-5 border-t border-gray-100 bg-[#FCFAF5] space-y-3">
+                <div className="grid grid-cols-3 gap-3">
+                  <button
+                    onClick={() => {
+                      setViewingProfileListener(null);
+                      startChatFlow(viewingProfileListener);
+                    }}
+                    type="button"
+                    className="py-3 px-2 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[13px] font-bold cursor-pointer transition-all flex items-center justify-center gap-1 active:scale-95 shadow-sm"
+                  >
+                    <span>💬</span> Chat
+                  </button>
+                  <button
+                    disabled
+                    type="button"
+                    className="py-3 px-2 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[13px] font-bold cursor-not-allowed"
+                    title="Call unlocked after trust is built"
+                  >
+                    <span>🔒</span> Call
+                  </button>
+                  <button
+                    disabled
+                    type="button"
+                    className="py-3 px-2 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl flex items-center justify-center gap-1 text-[13px] font-bold cursor-not-allowed"
+                    title="Video unlocked after trust is built"
+                  >
+                    <span>🔒</span> Video
+                  </button>
+                </div>
+                <p className="text-[10.5px] text-gray-400 text-center font-semibold">
+                  Call and video unlock after trust is built.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
