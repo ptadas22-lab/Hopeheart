@@ -23,7 +23,17 @@ interface SupportCategory {
     description: string;
     actionText: string;
     targetPath: string;
-    illustration: 'breathing' | 'circle' | 'watering' | 'cane' | 'lantern';
+    illustration: 
+      | 'anxiety-listener'
+      | 'support-circle'
+      | 'hopebuddy-grounding'
+      | 'crisis-phone'
+      | 'therapy-professional'
+      | 'guide-folder'
+      | 'parkinsons-support'
+      | 'hallucination-grounding'
+      | 'emotional-recovery';
+    caption?: string;
   }[];
   externalResources: {
     name: string;
@@ -32,7 +42,17 @@ interface SupportCategory {
     badge: string;
     boundary: string;
     mode: string;
-    illustration: 'breathing' | 'circle' | 'watering' | 'cane' | 'lantern';
+    illustration: 
+      | 'anxiety-listener'
+      | 'support-circle'
+      | 'hopebuddy-grounding'
+      | 'crisis-phone'
+      | 'therapy-professional'
+      | 'guide-folder'
+      | 'parkinsons-support'
+      | 'hallucination-grounding'
+      | 'emotional-recovery';
+    caption?: string;
   }[];
 }
 
@@ -49,21 +69,24 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         description: 'Talk 1-on-1 with volunteers who listen without judgment and help you slow down.',
         actionText: 'Find Listener →',
         targetPath: 'safe-listener',
-        illustration: 'breathing'
+        illustration: 'anxiety-listener',
+        caption: 'Someone is ready to listen.'
       },
       {
         title: '🎪 Anxiety Support Circles',
         description: 'Join group chat rooms centered on stress and overthinking support.',
         actionText: 'Join Circle →',
         targetPath: 'support-rooms',
-        illustration: 'circle'
+        illustration: 'support-circle',
+        caption: 'Share with people who understand.'
       },
       {
         title: '🧡 HopeBuddy Grounding',
         description: 'Open HopeBuddy to do a quick 4-second breathing pause exercise.',
         actionText: 'Open HopeBuddy →',
         targetPath: 'home',
-        illustration: 'watering'
+        illustration: 'hopebuddy-grounding',
+        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -74,7 +97,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Immediate Help',
         boundary: 'External Helpline • 100% Free',
         mode: 'Text Support',
-        illustration: 'breathing'
+        illustration: 'crisis-phone',
+        caption: 'Support is one text away.'
       },
       {
         name: 'BetterHelp Therapy',
@@ -83,7 +107,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Professional Therapy',
         boundary: 'External Resource • Paid Directory',
         mode: 'Online Therapy',
-        illustration: 'breathing'
+        illustration: 'therapy-professional',
+        caption: 'Connect with professionals online.'
       },
       {
         name: 'NAMI Anxiety Guide',
@@ -92,7 +117,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Resource Finder',
         boundary: 'External Directory • Free Info',
         mode: 'Directories & Guides',
-        illustration: 'circle'
+        illustration: 'guide-folder',
+        caption: 'Explore guides & directories.'
       }
     ]
   },
@@ -108,21 +134,24 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         description: 'Connect with understanding peers who know the daily path of caregiver support.',
         actionText: 'Find Listener →',
         targetPath: 'safe-listener',
-        illustration: 'cane'
+        illustration: 'parkinsons-support',
+        caption: 'Walking together with care.'
       },
       {
         title: '🎪 Parkinson\'s Circles',
         description: 'Join rooms where families share somatic tremor tips and emotional wins.',
         actionText: 'Join Circle →',
         targetPath: 'support-rooms',
-        illustration: 'circle'
+        illustration: 'support-circle',
+        caption: 'Share with people who understand.'
       },
       {
         title: '🧡 HopeBuddy Pacing',
         description: 'Check in on daily energy pacing levels with your companion.',
         actionText: 'Open HopeBuddy →',
         targetPath: 'home',
-        illustration: 'watering'
+        illustration: 'hopebuddy-grounding',
+        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -133,7 +162,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'National Helpline',
         boundary: 'External Helpline • 100% Free',
         mode: 'Phone Support',
-        illustration: 'cane'
+        illustration: 'parkinsons-support',
+        caption: 'Walking together with care.'
       },
       {
         name: 'Family Caregiver Alliance',
@@ -142,7 +172,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Caregiver Support',
         boundary: 'External Directory • Free Help',
         mode: 'Toolkits & Groups',
-        illustration: 'circle'
+        illustration: 'guide-folder',
+        caption: 'Explore guides & directories.'
       },
       {
         name: 'Davis Phinney Foundation',
@@ -151,7 +182,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Living Tools',
         boundary: 'External Resource • Free Info',
         mode: 'Action Guides',
-        illustration: 'cane'
+        illustration: 'parkinsons-support',
+        caption: 'Walking together with care.'
       }
     ]
   },
@@ -167,21 +199,24 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         description: 'Talk to peer volunteers trained in quiet reality validation and soothing presence.',
         actionText: 'Find Listener →',
         targetPath: 'safe-listener',
-        illustration: 'lantern'
+        illustration: 'hallucination-grounding',
+        caption: 'Soothing presence and clarity.'
       },
       {
         title: '🎪 Quiet Sharing Circles',
         description: 'Slow-paced rooms for talking through confusion, visual shifts, or fears.',
         actionText: 'Join Circle →',
         targetPath: 'support-rooms',
-        illustration: 'circle'
+        illustration: 'support-circle',
+        caption: 'Share with people who understand.'
       },
       {
         title: '🧡 HopeBuddy Reassurance',
         description: 'Interactive reality-grounding scripts when feeling confused or disoriented.',
         actionText: 'Open HopeBuddy →',
         targetPath: 'home',
-        illustration: 'watering'
+        illustration: 'hopebuddy-grounding',
+        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -192,7 +227,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Support Line',
         boundary: 'External Support • Free Info',
         mode: 'Helpline Call',
-        illustration: 'lantern'
+        illustration: 'hallucination-grounding',
+        caption: 'Soothing presence and clarity.'
       },
       {
         name: 'Mental Health America Guide',
@@ -201,7 +237,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Guides & Articles',
         boundary: 'External Resource • Free Info',
         mode: 'Educational Guides',
-        illustration: 'lantern'
+        illustration: 'guide-folder',
+        caption: 'Explore guides & directories.'
       },
       {
         name: 'Geriatric Psychiatry Finder',
@@ -210,7 +247,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Specialist Finder',
         boundary: 'External Directory • Insurance',
         mode: 'Medical Directory',
-        illustration: 'lantern'
+        illustration: 'therapy-professional',
+        caption: 'Connect with professionals online.'
       }
     ]
   },
@@ -226,21 +264,24 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         description: 'Connect with listeners who hold a gentle, comforting space for grief.',
         actionText: 'Find Listener →',
         targetPath: 'safe-listener',
-        illustration: 'breathing'
+        illustration: 'emotional-recovery',
+        caption: 'Nurturing recovery at your own pace.'
       },
       {
         title: '🎪 Burnout & Loss Circles',
         description: 'Weekly sharing circles for mutual recovery during life transitions.',
         actionText: 'Join Circle →',
         targetPath: 'support-rooms',
-        illustration: 'circle'
+        illustration: 'support-circle',
+        caption: 'Share with people who understand.'
       },
       {
         title: '🧡 HopeBuddy Rest Check',
         description: 'Empathetic guidance that celebrates tiny wins and self-care recovery checks.',
         actionText: 'Open HopeBuddy →',
         targetPath: 'home',
-        illustration: 'watering'
+        illustration: 'hopebuddy-grounding',
+        caption: 'Breathe with HopeBuddy for a moment.'
       }
     ],
     externalResources: [
@@ -251,7 +292,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Recovery Directory',
         boundary: 'External Registry • Search Free',
         mode: 'Local Groups',
-        illustration: 'circle'
+        illustration: 'emotional-recovery',
+        caption: 'Nurturing recovery at your own pace.'
       },
       {
         name: 'Burnout Recovery Guide',
@@ -260,7 +302,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: 'Burnout Info',
         boundary: 'External Resource • Free Guides',
         mode: 'Worksheets & Tips',
-        illustration: 'watering'
+        illustration: 'emotional-recovery',
+        caption: 'Nurturing recovery at your own pace.'
       },
       {
         name: 'Crisis Response Line',
@@ -269,7 +312,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         badge: '24/7 Helpline',
         boundary: 'External Helpline • 100% Free',
         mode: 'Text / Call Line',
-        illustration: 'breathing'
+        illustration: 'crisis-phone',
+        caption: 'Support is one text away.'
       }
     ]
   }
@@ -383,19 +427,71 @@ const SITUATIONS: Situation[] = [
   }
 ];
 
-// Helper: 5 situations for small Card illustrations
-function CardIllustration({ type }: { type: 'breathing' | 'circle' | 'watering' | 'cane' | 'lantern' }) {
-  const isBreathing = type === 'breathing';
-  const isCircle = type === 'circle';
-  const isWatering = type === 'watering';
-  const isCane = type === 'cane';
-  const isLantern = type === 'lantern';
-
+// Helper: Custom SVGs for small Card illustrations representing warm human/support styles
+function CardIllustration({ 
+  type, 
+  caption 
+}: { 
+  type: 
+    | 'anxiety-listener'
+    | 'support-circle'
+    | 'hopebuddy-grounding'
+    | 'crisis-phone'
+    | 'therapy-professional'
+    | 'guide-folder'
+    | 'parkinsons-support'
+    | 'hallucination-grounding'
+    | 'emotional-recovery';
+  caption?: string;
+}) {
   return (
     <div className="w-24 flex flex-col items-center justify-center select-none text-center">
       <div className="w-20 h-16 flex items-center justify-center relative overflow-visible">
-        {/* Breathing Illustration */}
-        {isBreathing && (
+        {type === 'anxiety-listener' && (
+          <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
+            <motion.circle
+              cx="100" cy="30" r="18"
+              fill="#EBF5FF" opacity="0.6"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.7, 0.4] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            />
+            <g transform="translate(15, 15)">
+              <path d="M 10 75 Q 35 45 60 75 Z" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="2.5" />
+              <circle cx="35" cy="35" r="18" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.5" />
+              <path d="M 27 34 Q 31 32 35 34" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 39 34 Q 43 32 47 34" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 32 43 Q 35 45 38 43" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 52 65 Q 58 55 54 50" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+              <rect x="52" y="52" width="10" height="18" rx="2" fill="#333" stroke="#2B1D12" strokeWidth="1.5" />
+            </g>
+            <g transform="translate(90, 15)">
+              <path d="M 0 15 Q 0 0 15 0 Q 30 0 30 15 Q 30 30 15 30 L 5 35 L 7 27 Q 0 25 0 15 Z" fill="#FFF2EA" stroke="#FF7527" strokeWidth="2" />
+              <path d="M 15 11 C 12 7, 7 10, 15 19 C 23 10, 18 7, 15 11 Z" fill="#FF7527" />
+            </g>
+          </svg>
+        )}
+
+        {type === 'support-circle' && (
+          <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
+            <motion.circle cx="70" cy="55" r="22" fill="#FFE3D1" opacity="0.4" animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.2, 0.5, 0.2] }} transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }} />
+            <g transform="translate(15, 25) scale(0.85)">
+              <path d="M 10 70 Q 30 40 50 70 Z" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.5" />
+              <circle cx="30" cy="30" r="14" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="2.5" />
+            </g>
+            <g transform="translate(75, 25) scale(0.85)">
+              <path d="M 10 70 Q 30 40 50 70 Z" fill="#ffe3d1" stroke="#2B1D12" strokeWidth="2.5" />
+              <circle cx="30" cy="30" r="14" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.5" />
+            </g>
+            <g transform="translate(45, 12)">
+              <path d="M 10 75 Q 35 42 60 75 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.8" />
+              <circle cx="35" cy="32" r="16" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.8" />
+              <path d="M 29 30 Q 32 28 35 30" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 41 30 Q 44 28 47 30" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </g>
+          </svg>
+        )}
+
+        {type === 'hopebuddy-grounding' && (
           <svg width="60" height="50" viewBox="0 0 120 100" className="overflow-visible">
             <motion.circle 
               cx="60" cy="50" r="32" 
@@ -408,183 +504,183 @@ function CardIllustration({ type }: { type: 'breathing' | 'circle' | 'watering' 
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
               style={{ transformOrigin: "60px 85px" }}
             >
-              {/* Ears */}
               <path d="M 33 22 C 30 10, 48 10, 52 20 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.5" />
               <path d="M 87 22 C 90 10, 72 10, 68 20 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.5" />
-              {/* Body */}
               <rect x="20" y="20" width="80" height="66" rx="28" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
               <rect x="22" y="22" width="76" height="62" rx="26" fill="#ffa552" />
-              {/* Peaceful Eyes */}
               <path d="M 38 48 Q 43 44 48 48" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
               <path d="M 72 48 Q 77 44 82 48" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
-              {/* Smile */}
               <path d="M 55 58 Q 60 60 65 58" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
             </motion.g>
           </svg>
         )}
 
-        {/* 3 Buddies Sitting Circle */}
-        {isCircle && (
+        {type === 'crisis-phone' && (
+          <svg width="60" height="50" viewBox="0 0 120 100" className="overflow-visible">
+            <circle cx="60" cy="50" r="32" fill="#F4FAF6" />
+            <motion.g
+              animate={{ rotate: [-6, 6, -6] }}
+              transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
+              style={{ transformOrigin: "45px 55px" }}
+            >
+              <path d="M 25,65 C 28,52 42,38 58,35 C 65,33 72,36 78,42 L 72,48 C 68,44 63,42 56,44 C 44,47 34,57 32,70 L 25,65 Z" fill="#2B1D12" />
+              <rect x="18" y="58" width="12" height="16" rx="4" transform="rotate(-30 24 66)" fill="#FF7527" stroke="#2B1D12" strokeWidth="2" />
+              <rect x="68" y="30" width="12" height="16" rx="4" transform="rotate(-30 74 38)" fill="#FF7527" stroke="#2B1D12" strokeWidth="2" />
+            </motion.g>
+            <motion.g
+              animate={{ y: [-3, 1, -3] }}
+              transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+            >
+              <rect x="62" y="15" width="40" height="28" rx="8" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2" />
+              <path d="M 72,43 L 72,49 L 79,43" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2" />
+              <path d="M 72,42 L 72,48 L 78,42" fill="#FFF2EA" />
+              <path d="M 82,24 C 80,21 76,21 74,24 C 72,27 76,32 82,35 C 88,32 92,27 90,24 C 88,21 84,21 82,24 Z" fill="#FF7527" />
+            </motion.g>
+          </svg>
+        )}
+
+        {type === 'therapy-professional' && (
           <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
             <motion.g
-              animate={{ rotate: [-1.5, 1.5, -1.5] }}
-              transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
-              style={{ transformOrigin: "70px 85px" }}
+              animate={{ y: [0, -1.5, 0] }}
+              transition={{ repeat: Infinity, duration: 3.8, ease: "easeInOut" }}
             >
-              {/* Left Buddy */}
-              <g transform="translate(10, 25) scale(0.8)">
-                <rect x="15" y="15" width="45" height="55" rx="16" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.8" />
-                <rect x="17" y="17" width="41" height="51" rx="14" fill="#dddbd0" />
-                <path d="M 28 38 Q 32 35 36 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
-                <path d="M 46 38 Q 50 35 54 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <rect x="15" y="15" width="48" height="58" rx="8" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="2.2" />
+              <rect x="19" y="19" width="40" height="40" rx="4" fill="#FFF" />
+              <circle cx="39" cy="30" r="8" fill="#7BA655" />
+              <path d="M 27 50 C 27 42, 51 42, 51 50 Z" fill="#7BA655" />
+            </motion.g>
+            <motion.g
+              animate={{ y: [0, 1.5, 0] }}
+              transition={{ repeat: Infinity, duration: 3.8, delay: 0.5, ease: "easeInOut" }}
+            >
+              <rect x="75" y="30" width="48" height="58" rx="8" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="2.2" />
+              <rect x="79" y="34" width="40" height="40" rx="4" fill="#FFF" />
+              <circle cx="99" cy="45" r="8" fill="#FF7527" />
+              <path d="M 87 65 C 87 57, 111 57, 111 65 Z" fill="#FF7527" />
+            </motion.g>
+            <motion.path
+              d="M 65 35 Q 70 30 75 35"
+              fill="none"
+              stroke="#2B1D12"
+              strokeWidth="2"
+              strokeDasharray="3 3"
+              animate={{ strokeDashoffset: [0, -6] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+            />
+          </svg>
+        )}
+
+        {type === 'guide-folder' && (
+          <svg width="60" height="50" viewBox="0 0 120 100" className="overflow-visible">
+            <rect x="25" y="25" width="70" height="55" rx="6" fill="#F0ECE1" stroke="#2B1D12" strokeWidth="2.2" />
+            <motion.g
+              animate={{ rotate: [-2, 2, -2] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              style={{ transformOrigin: "60px 80px" }}
+            >
+              <path d="M 30,30 L 60,30 L 65,38 L 95,38 L 95,75 C 95,77 93,79 91,79 L 34,79 C 32,79 30,77 30,75 Z" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2.2" />
+              <path d="M 52,62 C 52,50 68,50 68,62 C 68,68 62,68 60,65 L 60,70 L 56,66 Q 52,65 52,62 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="1.5" />
+              <line x1="40" y1="46" x2="80" y2="46" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <line x1="40" y1="52" x2="70" y2="52" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </motion.g>
+          </svg>
+        )}
+
+        {type === 'parkinsons-support' && (
+          <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
+            <motion.g
+              animate={{ y: [0, -1, 0] }}
+              transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+            >
+              <g transform="translate(25, 15)">
+                <path d="M 5,75 Q 25,48 45,75 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="2.5" />
+                <circle cx="25" cy="35" r="14" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.5" />
+                <path d="M 38,55 Q 52,52 56,58" fill="none" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
               </g>
-              {/* Right Buddy */}
-              <g transform="translate(75, 25) scale(0.8)">
-                <rect x="15" y="15" width="45" height="55" rx="16" fill="#ffe3d1" stroke="#2B1D12" strokeWidth="2.8" />
-                <rect x="17" y="17" width="41" height="51" rx="14" fill="#ffe3d1" />
-                <path d="M 28 38 Q 32 35 36 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
-                <path d="M 46 38 Q 50 35 54 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
-              </g>
-              {/* Center Main Buddy */}
-              <g transform="translate(45, 15)">
-                <rect x="15" y="15" width="50" height="60" rx="18" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
-                <rect x="17" y="17" width="46" height="56" rx="16" fill="#ffa552" />
-                <path d="M 28 38 Q 32 35 36 38" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
-                <path d="M 48 38 Q 52 35 56 38" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
-                <path d="M 37 49 Q 41 51 45 49" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <g transform="translate(65, 18)">
+                <path d="M 5,72 Q 22,48 40,72 Z" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.5" />
+                <circle cx="22" cy="32" r="14" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2.5" />
+                <path d="M 10,25 C 10,12 34,12 34,25" fill="none" stroke="#FFF" strokeWidth="4.5" strokeLinecap="round" />
+                <path d="M 36,45 L 42,72" stroke="#8A6E58" strokeWidth="2.8" strokeLinecap="round" />
+                <path d="M 36,45 Q 38,40 33,40" fill="none" stroke="#8A6E58" strokeWidth="2.8" strokeLinecap="round" />
               </g>
             </motion.g>
           </svg>
         )}
 
-        {/* Watering Plant */}
-        {isWatering && (
+        {type === 'hallucination-grounding' && (
           <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
-            <motion.g
-              animate={{ y: [0, -1.5, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              style={{ transformOrigin: "50px 85px" }}
-            >
-              {/* Body */}
-              <rect x="15" y="20" width="70" height="60" rx="24" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.8" />
-              <rect x="17" y="22" width="66" height="56" rx="22" fill="#ffa552" />
-              {/* Peaceful Eyes */}
-              <path d="M 30 45 A 4 4 0 0 1 40 45" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
-              <path d="M 60 45 A 4 4 0 0 1 70 45" fill="none" stroke="#2B1D12" strokeWidth="2.2" strokeLinecap="round" />
-              {/* Arm & Tilted Watering Can */}
-              <path d="M 80 55 Q 92 50 96 55" fill="none" stroke="#EA713E" strokeWidth="5.5" strokeLinecap="round" />
-              <g transform="translate(93, 50) rotate(15)">
-                <rect x="0" y="0" width="12" height="9" rx="1.5" fill="#BAAE9C" stroke="#2B1D12" strokeWidth="1.5" />
-                <path d="M 12 5 L 18 2" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
-              </g>
-              {/* Falling Droplets */}
-              <g transform="translate(112, 60)">
-                <motion.circle cx="0" cy="0" r="1" fill="#4AA0E6" animate={{ y: [0, 10, 0], opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }} />
-                <motion.circle cx="3" cy="4" r="1" fill="#4AA0E6" animate={{ y: [-3, 7, -3], opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1.2, delay: 0.4, ease: "linear" }} />
-              </g>
-            </motion.g>
-            {/* Growing plant */}
-            <g transform="translate(112, 75)">
-              <path d="M 5,10 L 5,0" stroke="#7BA655" strokeWidth="2" />
-              <motion.g 
-                style={{ transformOrigin: "5px 10px" }}
-                animate={{ scale: [0.85, 1.15, 0.85] }}
-                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              >
-                <circle cx="2" cy="2" r="2" fill="#90C467" />
-                <circle cx="8" cy="1" r="2" fill="#90C467" />
-              </motion.g>
+            <motion.circle
+              cx="92" cy="48" r="18"
+              fill="#FFF2EA" opacity="0.6"
+              animate={{ scale: [0.95, 1.15, 0.95], opacity: [0.3, 0.6, 0.3] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            />
+            <g transform="translate(15, 15)">
+              <path d="M 10,75 Q 32,45 55,75 Z" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="2.5" />
+              <circle cx="32" cy="35" r="16" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.5" />
+              <path d="M 24,35 Q 28,33 32,35" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 36,35 Q 40,33 44,35" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </g>
+            <g transform="translate(85, 35)">
+              <rect x="0" y="5" width="14" height="22" rx="3" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="2.2" />
+              <path d="M -2,5 Q 7,-5 16,5" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <motion.circle
+                cx="7" cy="16" r="3.5" fill="#FF7527"
+                animate={{ scale: [0.8, 1.2, 0.8] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              />
             </g>
           </svg>
         )}
 
-        {/* Supporting Cane */}
-        {isCane && (
+        {type === 'emotional-recovery' && (
           <svg width="74" height="50" viewBox="0 0 140 100" className="overflow-visible">
-            <motion.g
-              animate={{ rotate: [-2, 2, -2] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              style={{ transformOrigin: "70px 85px" }}
-            >
-              {/* Left Buddy */}
-              <g transform="translate(15, 20)">
-                <rect x="15" y="15" width="45" height="55" rx="16" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
-                <rect x="17" y="17" width="41" height="51" rx="14" fill="#ffa552" />
-                <path d="M 26 38 A 3 3 0 0 1 32 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
-                <path d="M 44 38 A 3 3 0 0 1 50 38" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
-                {/* Arm support */}
-                <path d="M 55 45 Q 68 45 74 48" fill="none" stroke="#EA713E" strokeWidth="5" strokeLinecap="round" />
-              </g>
-              {/* Right Buddy with walking cane */}
-              <g transform="translate(68, 30)">
-                <rect x="15" y="10" width="38" height="45" rx="12" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.8" />
-                <rect x="17" y="12" width="34" height="41" rx="10" fill="#dddbd0" />
-                <path d="M 24 25 A 2.5 2.5 0 0 1 29 25" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
-                <path d="M 38 25 A 2.5 2.5 0 0 1 43 25" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
-                {/* Cane */}
-                <path d="M 12 35 L 5 55" stroke="#8A6E58" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M 12 35 Q 14 32 11 30" fill="none" stroke="#8A6E58" strokeWidth="2.5" strokeLinecap="round" />
-                {/* Arm holding cane */}
-                <path d="M 19 28 Q 11 32 12 35" fill="none" stroke="#BAAE9C" strokeWidth="4.5" strokeLinecap="round" />
-              </g>
-            </motion.g>
-          </svg>
-        )}
-
-        {/* Lantern Blinking */}
-        {isLantern && (
-          <svg width="60" height="50" viewBox="0 0 120 100" className="overflow-visible">
-            <motion.g
-              animate={{ y: [0, -2, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              style={{ transformOrigin: "60px 85px" }}
-            >
-              {/* Ears */}
-              <path d="M 33 22 C 30 10, 48 10, 52 20 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.5" />
-              <path d="M 87 22 C 90 10, 72 10, 68 20 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.5" />
-              {/* Body */}
-              <rect x="20" y="20" width="80" height="66" rx="28" fill="#ffa552" stroke="#2B1D12" strokeWidth="3" />
-              <rect x="22" y="22" width="76" height="62" rx="26" fill="#ffa552" />
-              {/* Blinking Eyes */}
-              <g>
-                <motion.ellipse 
-                  cx="40" cy="46" rx="6.5" ry="6.5" fill="#2B1D12"
-                  animate={{ scaleY: [1, 1, 0, 1, 1, 1] }}
-                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
-                  style={{ transformOrigin: "40px 46px" }}
-                />
-                <motion.ellipse 
-                  cx="76" cy="46" rx="6.5" ry="6.5" fill="#2B1D12"
-                  animate={{ scaleY: [1, 1, 0, 1, 1, 1] }}
-                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
-                  style={{ transformOrigin: "76px 46px" }}
-                />
-              </g>
-              {/* Arm & Lantern */}
-              <path d="M 98 62 C 104 68 107 74 107 78" fill="none" stroke="#EA713E" strokeWidth="6" strokeLinecap="round" />
-              <g transform="translate(102, 72)">
-                <rect x="-5" y="5" width="10" height="15" rx="1.5" fill="#FFAE00" stroke="#2B1D12" strokeWidth="1.8" />
-                <motion.circle 
-                  cx="0" cy="12" r="2.5" fill="#FFF200"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 1.2 }}
-                />
-              </g>
-            </motion.g>
+            <g transform="translate(15, 20)">
+              <path d="M 10,70 Q 30,42 50,70 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.5" />
+              <circle cx="30" cy="30" r="14" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.5" />
+              <path d="M 24,30 Q 27,28 30,30" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 34,30 Q 37,28 40,30" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </g>
+            <g transform="translate(90, 45)">
+              <path d="M 10,35 L 10,15" stroke="#2B1D12" strokeWidth="2.5" strokeLinecap="round" />
+              <motion.path
+                d="M 10,20 Q 22,12 20,25" fill="#7BA655" stroke="#2B1D12" strokeWidth="2"
+                animate={{ rotate: [-5, 5, -5] }}
+                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              />
+              <motion.path
+                d="M 10,25 Q -2,18 2,30" fill="#7BA655" stroke="#2B1D12" strokeWidth="2"
+                animate={{ rotate: [5, -5, 5] }}
+                transition={{ repeat: Infinity, duration: 3, delay: 0.5, ease: "easeInOut" }}
+              />
+            </g>
           </svg>
         )}
       </div>
 
       {/* 3. Dynamic Caption */}
-      <span className="text-[7.5px] font-bold text-gray-400 mt-1 italic leading-tight select-none px-1 w-24">
-        {isBreathing && "Breathe with me for a moment."}
-        {isCircle && "Sharing together."}
-        {isWatering && "Small steps count too."}
-        {isCane && "You don't have to navigate this journey alone."}
-        {isLantern && "Let's bring clarity to confusing moments."}
+      <span className="text-[7.5px] font-bold text-gray-400 mt-1 italic leading-tight select-none px-1 w-24 text-center">
+        {caption || getDefaultCaption(type)}
       </span>
     </div>
   );
+}
+
+function getDefaultCaption(type: string): string {
+  switch (type) {
+    case 'anxiety-listener': return "Someone is ready to listen.";
+    case 'support-circle': return "Share with people who understand.";
+    case 'hopebuddy-grounding': return "Breathe with HopeBuddy for a moment.";
+    case 'crisis-phone': return "Support is one text away.";
+    case 'therapy-professional': return "Connect with professionals online.";
+    case 'guide-folder': return "Explore guides & directories.";
+    case 'parkinsons-support': return "Walking together with care.";
+    case 'hallucination-grounding': return "Soothing presence and clarity.";
+    case 'emotional-recovery': return "Nurturing recovery at your own pace.";
+    default: return "";
+  }
 }
 
 // 5. Contextual HopeBuddy animation inside the hero section
@@ -974,7 +1070,7 @@ export default function CareBridgeScreen({
                           
                           {/* 1. Small illustration area at the top-right */}
                           <div className="w-24 shrink-0 flex items-center justify-center border-l border-gray-100 pl-2">
-                            <CardIllustration type={support.illustration} />
+                            <CardIllustration type={support.illustration} caption={support.caption} />
                           </div>
                         </div>
                       ))}
@@ -1031,7 +1127,7 @@ export default function CareBridgeScreen({
 
                           {/* 1. Small illustration area at the top-right */}
                           <div className="w-24 shrink-0 flex items-center justify-center border-l border-gray-100 pl-2">
-                            <CardIllustration type={res.illustration} />
+                            <CardIllustration type={res.illustration} caption={res.caption} />
                           </div>
                         </div>
                       ))}
