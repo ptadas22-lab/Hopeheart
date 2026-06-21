@@ -825,7 +825,7 @@ export default function CareBridgeScreen({
                     </div>
 
                     {/* Card grid with small top-right illustrations */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {activeCategory.availableSupport.map((support, idx) => (
                         <div 
                           key={idx}
@@ -868,7 +868,7 @@ export default function CareBridgeScreen({
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {activeCategory.externalResources.map((res, idx) => (
                         <div 
                           key={idx}

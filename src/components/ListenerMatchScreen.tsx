@@ -687,7 +687,7 @@ export default function ListenerMatchScreen({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   {currentListeners.map((listener, idx) => (
                     <motion.div
@@ -827,7 +827,7 @@ export default function ListenerMatchScreen({
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="space-y-2.5">
                 <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center font-display font-black text-[16px] text-[#FF7527]">
                   1

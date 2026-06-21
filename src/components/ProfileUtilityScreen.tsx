@@ -93,13 +93,13 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               </div>
 
               {/* Statistics Grid */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
                 {[
                   { value: '7 Days', label: 'Safety Streak', emoji: '🛡️' },
                   { value: '4 Times', label: 'Check-ins Done', emoji: '🩺' },
                   { value: '12 Hearts', label: 'Warmth Shared', emoji: '❤️' }
                 ].map((stat, idx) => (
-                  <div key={idx} className="bg-white border border-[#EDE9DE] rounded-2xl p-4 text-center space-y-1 shadow-xs">
+                  <div key={idx} className="bg-white border border-[#EDE9DE] rounded-2xl p-2.5 sm:p-4 text-center space-y-1 shadow-xs">
                     <span className="text-xl block">{stat.emoji}</span>
                     <h5 className="font-display font-black text-[#FF7527] text-[15px] sm:text-[16px]">{stat.value}</h5>
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{stat.label}</p>
