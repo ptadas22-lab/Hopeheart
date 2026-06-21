@@ -1,6 +1,136 @@
 import { useState, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
+const FILTER_CHIPS = [
+  'All Rooms',
+  'Anxiety',
+  'Loneliness',
+  'Caregivers',
+  'Parkinson’s',
+  'Emotional Recovery',
+  'Small Wins',
+  'Nearby'
+];
+
+function RoomIllustration({ type }: { type: 'anxiety' | 'emotional-recovery' | 'loneliness' | 'parkinsons' | 'caregiver' | 'small-wins' }) {
+  return (
+    <div className="w-20 h-16 flex items-center justify-center relative overflow-visible">
+      {type === 'anxiety' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <motion.circle 
+            cx="80" cy="45" r="24" 
+            fill="none" stroke="#FF7527" strokeWidth="2" opacity="0.3"
+            animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          />
+          <g transform="translate(15, 15)">
+            <path d="M 10,70 Q 30,42 50,70 Z" fill="#E2DCD0" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="30" cy="30" r="14" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+            <path d="M 24,30 Q 27,28 30,30" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M 34,30 Q 37,28 40,30" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M 42,55 L 48,50" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            <rect x="46" y="44" width="8" height="14" rx="1.5" fill="#333" stroke="#2B1D12" strokeWidth="1.2" />
+          </g>
+        </svg>
+      )}
+
+      {type === 'emotional-recovery' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <g transform="translate(15, 18)">
+            <path d="M 10,70 Q 30,42 50,70 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="30" cy="30" r="14" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+            <path d="M 24,30 Q 27,28 30,30" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M 34,30 Q 37,28 40,30" fill="none" stroke="#2B1D12" strokeWidth="1.8" strokeLinecap="round" />
+          </g>
+          <g transform="translate(80, 35)">
+            <circle cx="10" cy="10" r="12" fill="#FFE3D1" opacity="0.4" />
+            <path d="M 10,35 L 10,18" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            <path d="M 10,22 Q 18,15 16,24" fill="#7BA655" stroke="#2B1D12" strokeWidth="1.5" />
+            <path d="M 10,26 Q 2,20 4,28" fill="#7BA655" stroke="#2B1D12" strokeWidth="1.5" />
+          </g>
+        </svg>
+      )}
+
+      {type === 'loneliness' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <g transform="translate(10, 25) scale(0.85)">
+            <path d="M 5,70 Q 22,42 40,70 Z" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="22" cy="30" r="12" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+          </g>
+          <g transform="translate(70, 25) scale(0.85)">
+            <path d="M 5,70 Q 22,42 40,70 Z" fill="#ffe3d1" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="22" cy="30" r="12" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.2" />
+          </g>
+          <motion.g
+            animate={{ y: [-2, 2, -2] }}
+            transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+          >
+            <path d="M 45,25 H 75 Q 82,25 82,32 V 42 Q 82,49 75,49 H 58 L 50,56 V 49 H 45 Q 38,49 38,42 V 32 Q 38,25 45,25 Z" fill="#FFF2EA" stroke="#FF7527" strokeWidth="1.8" />
+            <line x1="48" y1="37" x2="72" y2="37" stroke="#FF7527" strokeWidth="1.5" strokeDasharray="2 2" />
+          </motion.g>
+        </svg>
+      )}
+
+      {type === 'parkinsons' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <g transform="translate(15, 15)">
+            <g transform="translate(0, 0)">
+              <path d="M 5,75 Q 22,48 40,75 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="2.2" />
+              <circle cx="22" cy="35" r="12" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+              <path d="M 32,55 Q 45,52 48,58" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </g>
+            <g transform="translate(38, 3)">
+              <path d="M 5,72 Q 22,48 40,72 Z" fill="#dddbd0" stroke="#2B1D12" strokeWidth="2.2" />
+              <circle cx="22" cy="32" r="12" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2.2" />
+              <path d="M 12,25 C 12,14 32,14 32,25" fill="none" stroke="#FFF" strokeWidth="4" strokeLinecap="round" />
+              <path d="M 32,45 L 37,72" stroke="#8A6E58" strokeWidth="2.5" strokeLinecap="round" />
+            </g>
+          </g>
+        </svg>
+      )}
+
+      {type === 'caregiver' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <g transform="translate(15, 15)">
+            <g transform="translate(5, 5)">
+              <path d="M 5,70 Q 22,42 40,70 Z" fill="#7BA655" stroke="#2B1D12" strokeWidth="2.2" />
+              <circle cx="22" cy="30" r="12" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+              <path d="M 35,46 Q 52,42 56,48" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+            </g>
+            <g transform="translate(45, 10)">
+              <path d="M 5,65 Q 20,40 35,65 Z" fill="#FFF2EA" stroke="#2B1D12" strokeWidth="2.2" />
+              <circle cx="20" cy="26" r="11" fill="#FFE3D1" stroke="#2B1D12" strokeWidth="2.2" />
+            </g>
+          </g>
+        </svg>
+      )}
+
+      {type === 'small-wins' && (
+        <svg width="80" height="65" viewBox="0 0 120 100" className="overflow-visible">
+          <rect x="65" y="20" width="35" height="50" rx="3" fill="#F0ECE1" stroke="#2B1D12" strokeWidth="2" />
+          <line x1="72" y1="35" x2="93" y2="35" stroke="#BAAE9C" strokeWidth="1.5" />
+          <line x1="72" y1="48" x2="93" y2="48" stroke="#BAAE9C" strokeWidth="1.5" />
+          <line x1="72" y1="60" x2="85" y2="60" stroke="#BAAE9C" strokeWidth="1.5" />
+          <g transform="translate(10, 20)">
+            <path d="M 5,70 Q 25,42 45,70 Z" fill="#ffa552" stroke="#2B1D12" strokeWidth="2.2" />
+            <circle cx="25" cy="30" r="12" fill="#FCE5D6" stroke="#2B1D12" strokeWidth="2.2" />
+            <path d="M 38,46 Q 55,38 58,40" fill="none" stroke="#2B1D12" strokeWidth="2" strokeLinecap="round" />
+          </g>
+          <motion.path
+            d="M 68,36 L 70,30 L 72,36 L 78,36 L 73,40 L 75,46 L 70,42 L 65,46 L 67,40 L 62,36 Z"
+            fill="#FF7527"
+            stroke="#2B1D12"
+            strokeWidth="1.2"
+            animate={{ scale: [0.9, 1.1, 0.9] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            style={{ transformOrigin: "70px 38px" }}
+          />
+        </svg>
+      )}
+    </div>
+  );
+}
+
 interface SupportRoomsScreenProps {
   onBack: () => void;
   onOpenModerationBlock?: () => void; // Trigger for Screen 21
@@ -26,32 +156,52 @@ interface RoomCard {
   accent: string;
   rule: string;
   defaultPosts: PostItem[];
+  roomType: string;
+  languages: string[];
+  privacyStatus: string;
+  moderationStatus: string;
+  isNearby?: boolean;
+  distance?: string;
+  illustrationType: 'anxiety' | 'emotional-recovery' | 'loneliness' | 'parkinsons' | 'caregiver' | 'small-wins';
 }
 
 const SUPPORT_ROOMS_DATA: RoomCard[] = [
   {
     id: 'anxiety',
     name: 'Anxiety Support',
-    category: 'Coping Support',
-    activeCount: 42,
+    category: 'Anxiety',
+    activeCount: 48,
     emoji: '🧘',
     accent: 'bg-amber-50 border-amber-150',
     rule: 'Focus on calming breaths. Avoid prescribing tranquilizers or medical diagnoses.',
     description: 'For worry, panic, fear, and overthinking.',
+    roomType: 'Peer support',
+    languages: ['English', 'Hindi'],
+    privacyStatus: 'Anonymous room',
+    moderationStatus: 'AI moderated',
+    isNearby: true,
+    distance: '3 km away',
+    illustrationType: 'anxiety',
     defaultPosts: [
       { id: 'anx-1', sender: 'Voice11', content: 'Feeling some chest tension tonight. Deep breathing helps slow my heart rate.', supportCount: 4, repliesCount: 1 },
       { id: 'anx-2', sender: 'Voice81', content: 'Remember, thoughts are just clouds. They pass.', supportCount: 8, repliesCount: 3 }
     ]
   },
   {
-    id: 'trauma',
-    name: 'Trauma Healing',
-    category: 'Safe Sharing',
+    id: 'emotional-recovery',
+    name: 'Emotional Recovery',
+    category: 'Emotional Recovery',
     activeCount: 18,
     emoji: '🌱',
     accent: 'bg-orange-50 border-orange-150',
-    rule: 'Respect triggers. Do not compare therapies or claim cures.',
-    description: 'For triggers, painful memories, and emotional safety.',
+    rule: 'Respect boundaries and triggers. We support recovery at your own pace.',
+    description: 'For healing, life changes, grief, and recovering emotional strength.',
+    roomType: 'Peer support',
+    languages: ['English', 'Spanish'],
+    privacyStatus: 'Safe sharing',
+    moderationStatus: 'AI moderated',
+    isNearby: false,
+    illustrationType: 'emotional-recovery',
     defaultPosts: [
       { id: 'tr-1', sender: 'Voice33', content: 'Today I acknowledged my trigger without spiral. That is a millimeter gain.', supportCount: 12, repliesCount: 4 }
     ]
@@ -59,12 +209,18 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
   {
     id: 'loneliness',
     name: 'Loneliness Circle',
-    category: 'Silent Companionship',
+    category: 'Loneliness',
     activeCount: 56,
     emoji: '🕯️',
     accent: 'bg-blue-50 border-blue-150',
-    rule: 'Listen with kindness. Do not diagnose, prescribe, or judge.',
+    rule: 'Listen with kindness and empathy. Lived experiences only.',
     description: 'For people who feel unseen, isolated, or emotionally distant.',
+    roomType: 'Silent Companionship',
+    languages: ['English', 'Kannada'],
+    privacyStatus: 'Anonymous room',
+    moderationStatus: 'AI moderated',
+    isNearby: false,
+    illustrationType: 'loneliness',
     defaultPosts: [
       { id: 'l1', sender: 'Voice21', content: 'I feel lonely today even though people are around me. I just want someone to understand.', supportCount: 14, repliesCount: 2 },
       { id: 'l2', sender: 'Voice88', content: 'I understand this feeling. You are not alone here.', supportCount: 19, repliesCount: 5 },
@@ -72,14 +228,20 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
     ]
   },
   {
-    id: 'chronic',
-    name: 'Parkinson’s & Chronic Illness',
-    category: 'Allies & Fighters',
+    id: 'parkinsons',
+    name: 'Living with Parkinson’s',
+    category: 'Parkinson’s',
     activeCount: 29,
     emoji: '🤝',
     accent: 'bg-purple-50 border-purple-150',
-    rule: 'Lived experience only. No professional therapist advice, prescription medication dosage claims.',
-    description: 'For people living with long-term health struggles who need emotional support.',
+    rule: 'Lived Parkinson\'s experience sharing. Avoid prescribing medication or dosages.',
+    description: 'For Parkinson\'s emotional comfort and caregiver support.',
+    roomType: 'Peer support',
+    languages: ['English', 'Hindi'],
+    privacyStatus: 'Safe space',
+    moderationStatus: 'AI moderated',
+    isNearby: false,
+    illustrationType: 'parkinsons',
     defaultPosts: [
       { id: 'ch-1', sender: 'Voice9', content: 'Sharing love to fellow caregivers and friends managing tremors today.', supportCount: 9, repliesCount: 2 }
     ]
@@ -87,12 +249,19 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
   {
     id: 'caregiver',
     name: 'Caregiver Corner',
-    category: 'Helper Haven',
+    category: 'Caregivers',
     activeCount: 23,
     emoji: '🛡️',
     accent: 'bg-emerald-50 border-emerald-150',
-    rule: 'Respect exhaustion. No medicine advice or medical prescriptions.',
+    rule: 'Respect caregiver exhaustion. Share mutual encouragement and rest reminders.',
     description: 'For family members and caregivers who feel emotionally tired.',
+    roomType: 'Helper Haven',
+    languages: ['English', 'Telugu'],
+    privacyStatus: 'Anonymous room',
+    moderationStatus: 'AI moderated',
+    isNearby: true,
+    distance: '5 km away',
+    illustrationType: 'caregiver',
     defaultPosts: [
       { id: 'ca-1', sender: 'Voice70', content: 'We cannot pour support from a barren vessel. Remember to rest.', supportCount: 11, repliesCount: 1 }
     ]
@@ -100,12 +269,18 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
   {
     id: 'smallwins',
     name: 'Small Wins Only',
-    category: 'Celebration',
+    category: 'Small Wins',
     activeCount: 88,
     emoji: '🥳',
     accent: 'bg-yellow-50 border-yellow-150',
-    rule: 'Cheer each other on. No cynical judgment or diagnostic labels.',
+    rule: 'Celebrate tiny steps and positive moments. Lived experiences only.',
     description: 'Share one small step, one brave moment, or one hopeful thing from today.',
+    roomType: 'Celebration',
+    languages: ['English'],
+    privacyStatus: 'Open room',
+    moderationStatus: 'AI moderated',
+    isNearby: false,
+    illustrationType: 'small-wins',
     defaultPosts: [
       { id: 'sw-1', sender: 'Voice5', content: 'Finally watered my plants today after a heavy week. They look glad.', supportCount: 30, repliesCount: 2, type: 'celebrate' }
     ]
@@ -116,6 +291,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
   const [selectedRoom, setSelectedRoom] = useState<RoomCard | null>(null);
   const [roomPosts, setRoomPosts] = useState<Record<string, PostItem[]>>({});
   const [postInput, setPostInput] = useState<string>('');
+  const [activeFilter, setActiveFilter] = useState<string>('All Rooms');
 
   const navigateToRoom = (room: RoomCard) => {
     setSelectedRoom(room);
@@ -203,6 +379,21 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
 
   const currentRoomPosts = selectedRoom ? (roomPosts[selectedRoom.id] || selectedRoom.defaultPosts) : [];
 
+  const filteredRooms = SUPPORT_ROOMS_DATA.filter((room) => {
+    if (activeFilter === 'All Rooms') return true;
+    if (activeFilter === 'Nearby') return room.isNearby;
+    
+    const filterLower = activeFilter.toLowerCase();
+    if (filterLower === 'anxiety') return room.id === 'anxiety';
+    if (filterLower === 'loneliness') return room.id === 'loneliness';
+    if (filterLower === 'caregivers') return room.id === 'caregiver';
+    if (filterLower === 'parkinson’s') return room.id === 'parkinsons';
+    if (filterLower === 'emotional recovery') return room.id === 'emotional-recovery';
+    if (filterLower === 'small wins') return room.id === 'smallwins';
+    
+    return true;
+  });
+
   return (
     <div className="flex flex-col min-h-full bg-[#FCFAF5] font-sans select-none w-full">
       {/* Dynamic Header */}
@@ -239,51 +430,102 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
                   Support Rooms
                 </h2>
                 <p className="text-[14px] text-gray-500 font-semibold">
-                  Choose a room where you feel safe. Share feelings, support caregivers, or celebrate wins.
+                  Choose a safe room to share, listen, or quietly feel less alone.
                 </p>
+              </div>
+
+              {/* Filter chips */}
+              <div className="flex flex-wrap gap-2 py-1 justify-center md:justify-start">
+                {FILTER_CHIPS.map((chip) => {
+                  const isActive = activeFilter === chip;
+                  return (
+                    <button
+                      key={chip}
+                      onClick={() => setActiveFilter(chip)}
+                      className={`px-3.5 py-1.5 rounded-full text-[12px] font-display font-bold border transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#1E1E1A] text-white border-[#1E1E1A] shadow-xs'
+                          : 'bg-[#FCFAF5] text-gray-655 border-gray-200 hover:bg-[#FAF6EE] hover:border-gray-300'
+                      }`}
+                    >
+                      {chip}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {SUPPORT_ROOMS_DATA.map((room) => {
+                {filteredRooms.map((room) => {
                   const liveCount = room.activeCount + ((roomPosts[room.id] || []).length - room.defaultPosts.length);
                   return (
                     <div 
                       key={room.id}
                       className="bg-white border border-[#EDE9DE] hover:border-orange-300 rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
                     >
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-[20px] select-none">
-                            {room.emoji}
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className="bg-[#FCFAF5] border border-gray-100 rounded-2xl p-1 shrink-0">
+                            <RoomIllustration type={room.illustrationType} />
                           </div>
-                          <span className="text-[10px] font-mono font-bold bg-[#FAF7F0] text-gray-500 border border-gray-100 px-2 py-0.5 rounded-lg uppercase">
-                            ❤️ {liveCount} Active
-                          </span>
+                          
+                          <div className="flex flex-col items-end gap-1.5">
+                            <span className="text-[10.5px] font-bold text-green-700 bg-green-50/70 px-2.5 py-1 rounded-full flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse"></span>
+                              {liveCount} active now
+                            </span>
+                            {room.isNearby && room.distance && (
+                              <span className="text-[9.5px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                                📍 {room.distance}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <h3 className="font-display font-extrabold text-[#2b1d12] text-[16px]">
-                          {room.name}
-                        </h3>
-                        <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
-                          {room.description}
-                        </p>
+
+                        <div className="space-y-1">
+                          <span className="text-[9.5px] font-mono font-bold text-[#FF7527] bg-[#FFF2EA] px-2 py-0.5 rounded-md uppercase">
+                            {room.roomType}
+                          </span>
+                          <h3 className="font-display font-black text-[#2b1d12] text-[17px] pt-1">
+                            {room.name}
+                          </h3>
+                          <p className="text-[12px] text-gray-500 leading-relaxed font-semibold">
+                            {room.description}
+                          </p>
+                        </div>
+
+                        {/* Room metadata details */}
+                        <div className="grid grid-cols-2 gap-2 pt-2.5 border-t border-gray-100 text-[11px] font-semibold text-gray-400">
+                          <div className="flex items-center gap-1.5">
+                            <span>🌐</span>
+                            <span className="truncate">{room.languages.join(' • ')}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span>🔒</span>
+                            <span className="truncate">{room.privacyStatus}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 col-span-2">
+                            <span>🛡️</span>
+                            <span>{room.moderationStatus}</span>
+                          </div>
+                        </div>
                       </div>
 
                       <button
                         onClick={() => navigateToRoom(room)}
-                        className="w-full py-2.5 bg-[#FAF7F0] hover:bg-[#FF7527] border hover:border-[#FF7527] text-gray-700 hover:text-white rounded-xl text-[12.5px] font-display font-black transition-all cursor-pointer text-center"
+                        className="w-full py-2.5 bg-[#FAF7F0] hover:bg-[#FF7527] border hover:border-[#FF7527] text-gray-700 hover:text-white rounded-xl text-[12.5px] font-display font-black transition-all cursor-pointer text-center flex items-center justify-center gap-1"
                       >
-                        Join Room
+                        Enter Room →
                       </button>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Verified Clinical Notice footer */}
-              <div className="bg-[#FAF7F0] border border-[#ECE6D9] p-4 rounded-2xl text-center shadow-inner">
-                <p className="text-[11.5px] text-gray-500 font-semibold">
-                  🛡️ <strong>Footer Note:</strong> Support rooms are for emotional support only. They are not medical treatment spaces. AI protects this space.
+              {/* Safety Note Footer */}
+              <div className="bg-[#FEFAF0] border border-[#F3E2C4] p-4 rounded-2xl text-center shadow-xs">
+                <p className="text-[11.5px] text-gray-600 font-semibold leading-relaxed">
+                  ⚠️ <strong>Rooms are for emotional support only.</strong> Please do not share prescriptions, dosage advice, diagnosis, or personal contact details.
                 </p>
               </div>
             </motion.div>
