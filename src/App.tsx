@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId, MoodConfig, DoctorQuestion } from './types';
 
 // Importing all modular screen components
+import SplashScreen from './components/SplashScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
 import ProfileSetupScreen from './components/ProfileSetupScreen';
+import IntroductionScreen from './components/IntroductionScreen';
 import DashboardScreen from './components/DashboardScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
 import SupportRoomsScreen from './components/SupportRoomsScreen';
@@ -43,7 +45,7 @@ const EN_DIARY_WISDOM = [
 ];
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenId>(ScreenId.Welcome);
+  const [currentScreen, setCurrentScreen] = useState<ScreenId>(ScreenId.Splash);
   const [selectedMoodId, setSelectedMoodId] = useState<string>(() => {
     return localStorage.getItem('hopeheart_mood') || 'calm';
   });
@@ -88,6 +90,13 @@ export default function App() {
   // Router for current screens
   const renderActiveScreen = () => {
     switch (currentScreen) {
+      case ScreenId.Splash:
+        return (
+          <SplashScreen 
+            onFinish={() => setCurrentScreen(ScreenId.Welcome)}
+          />
+        );
+
       case ScreenId.Welcome:
         return (
           <WelcomeScreen 
@@ -111,8 +120,16 @@ export default function App() {
             initialNickname={userName}
             onComplete={(details) => {
               setUserName(details.nickname);
-              setCurrentScreen(ScreenId.Home);
+              setCurrentScreen(ScreenId.Introduction);
             }}
+          />
+        );
+
+      case ScreenId.Introduction:
+        return (
+          <IntroductionScreen 
+            userName={userName}
+            onEnter={() => setCurrentScreen(ScreenId.Home)}
           />
         );
 
@@ -217,7 +234,7 @@ export default function App() {
         );
 
       default:
-        return <WelcomeScreen onStart={() => setCurrentScreen(ScreenId.Login)} />;
+        return <SplashScreen onFinish={() => setCurrentScreen(ScreenId.Welcome)} />;
     }
   };
 
@@ -227,8 +244,12 @@ export default function App() {
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
   const isSafetyActive = currentScreen === ScreenId.AISafety;
  
-  // Bottom & Top Navigation is visible when the user advances past Welcome, Login, and ProfileSetup screens
-  const showNavChannels = currentScreen !== ScreenId.Welcome && currentScreen !== ScreenId.Login && currentScreen !== ScreenId.ProfileSetup;
+  // Bottom & Top Navigation is visible when the user advances past onboarding screens
+  const showNavChannels = currentScreen !== ScreenId.Splash &&
+                          currentScreen !== ScreenId.Welcome &&
+                          currentScreen !== ScreenId.Login &&
+                          currentScreen !== ScreenId.ProfileSetup &&
+                          currentScreen !== ScreenId.Introduction;
 
   return (
     <div className="min-h-screen w-full bg-[#FCFAF5] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">

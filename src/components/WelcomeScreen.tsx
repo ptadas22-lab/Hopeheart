@@ -13,7 +13,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       {/* Onboarding Progress Indicator - Top Center */}
       <div className="w-full max-w-md text-center flex flex-col items-center gap-1 select-none">
         <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest">
-          Step 1 of 3
+          Step 1 of 4
         </span>
         <div className="flex items-center gap-2.5 text-[11px] font-bold text-gray-400">
           <span className="text-[#FF7527] font-black">Welcome</span>
@@ -21,6 +21,8 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           <span>Login</span>
           <span>→</span>
           <span>Profile</span>
+          <span>→</span>
+          <span>Intro</span>
         </div>
       </div>
 
