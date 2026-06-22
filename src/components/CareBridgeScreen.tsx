@@ -805,6 +805,7 @@ export default function CareBridgeScreen({
   const [questionInput, setQuestionInput] = useState<string>('');
   const [viewingStories, setViewingStories] = useState<boolean>(false);
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<string>('All');
+  const [mobileSection, setMobileSection] = useState<'what-happening' | 'support-path' | 'hopeheart-support' | 'external-resources'>('what-happening');
 
   const handleAddQuestion = (e: FormEvent) => {
     e.preventDefault();
@@ -855,6 +856,33 @@ export default function CareBridgeScreen({
         </button>
       </div>
 
+      {/* Sticky Section Toggle on Mobile */}
+      {subScreen === 'suggestions' && (
+        <div className="sm:hidden sticky top-[64px] z-15 bg-white/80 backdrop-blur-md border-b border-[#EDE9DE] py-2.5 px-4 flex gap-2 overflow-x-auto scrollbar-none select-none shrink-0">
+          {[
+            { id: 'what-happening', label: 'What’s happening' },
+            { id: 'support-path', label: 'Support path' },
+            { id: 'hopeheart-support', label: 'HopeHeart support' },
+            { id: 'external-resources', label: 'External resources' }
+          ].map((sec) => {
+            const isActive = mobileSection === sec.id;
+            return (
+              <button
+                key={sec.id}
+                onClick={() => setMobileSection(sec.id as any)}
+                className={`px-3.5 py-1.5 rounded-full text-[11.5px] font-display font-black transition-all whitespace-nowrap active:scale-95 cursor-pointer ${
+                  isActive
+                    ? 'bg-[#FF7527] text-white shadow-3xs'
+                    : 'bg-white text-gray-650 border border-[#EDE9DE] hover:bg-[#FCFAF5]'
+                }`}
+              >
+                {sec.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <div className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-6 lg:p-8">
         <AnimatePresence mode="wait">
           {subScreen === 'suggestions' && (
@@ -868,85 +896,87 @@ export default function CareBridgeScreen({
             >
 
               {/* Onboarding Assistant / Tell Us What's Happening */}
-              <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-5">
-                <div className="space-y-1">
-                  <h3 className="text-[16px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
-                    🫶 Tell us what’s happening
-                  </h3>
-                  <p className="text-[12.5px] text-gray-550 font-semibold leading-normal">
-                    You don’t need the perfect category. Choose what feels closest.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {SITUATIONS.map((btn) => {
-                    const isSelected = selectedSymptomId === btn.id;
-                    return (
-                      <motion.button
-                        key={btn.id}
-                        onClick={() => {
-                          setSelectedSymptomId(btn.id);
-                          setActiveCategoryId(btn.catId);
-                        }}
-                        whileHover={{ scale: 1.015, y: -0.5 }}
-                        whileTap={{ scale: 0.985 }}
-                        className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all cursor-pointer min-h-[120px] ${
-                          isSelected 
-                            ? 'bg-[#FFF2EA] border-[#FF7527] shadow-2xs ring-1 ring-[#FF7527]/10' 
-                            : 'bg-[#FCFAF5] border-gray-200 hover:bg-[#FAF6EE] hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-xl p-1 bg-white rounded-lg shadow-2xs shrink-0 select-none">{btn.emoji}</span>
-                          <span className="text-[13px] font-display font-black text-gray-800 block leading-tight">
-                            {btn.label}
-                          </span>
-                        </div>
-                        <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                          {btn.desc}
-                        </p>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-
-                {/* Recommended for you panel */}
-                {selectedSymptomId && (
-                  <div className="bg-[#FCFAF5] border border-[#E9E4D9] rounded-2xl p-4.5 space-y-2.5">
-                    <h4 className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
-                      ✨ Recommended for you
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      {SITUATIONS.find(s => s.id === selectedSymptomId)?.recommendations.map((rec, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            if (rec.target !== 'doctor-suggestions') {
-                              onNavigateTo(rec.target);
-                            }
-                          }}
-                          type="button"
-                          className="p-3 bg-white hover:bg-[#FFF2EA] border border-gray-200 hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] rounded-xl text-[12px] font-bold transition-all text-left flex items-center justify-between cursor-pointer active:scale-95"
-                        >
-                          <span className="truncate">{rec.text}</span>
-                          <span className="text-[10px] text-gray-400">→</span>
-                        </button>
-                      ))}
-                    </div>
+              <div className={`sm:block ${mobileSection === 'what-happening' ? 'block' : 'hidden'}`}>
+                <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-5">
+                  <div className="space-y-1">
+                    <h3 className="text-[16px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
+                      🫶 Tell us what’s happening
+                    </h3>
+                    <p className="text-[12.5px] text-gray-550 font-semibold leading-normal">
+                      You don’t need the perfect category. Choose what feels closest.
+                    </p>
                   </div>
-                )}
-                
-                {/* 214 people supporting banner */}
-                <div className="pt-2 border-t border-gray-50 flex items-center">
-                  <div className="inline-flex items-center gap-2 bg-[#F2FAF6] border border-green-200/60 px-4 py-2 rounded-full text-green-800 text-[11.5px] font-bold shadow-2xs">
-                    <span className="text-[12px]">🟢</span>
-                    <span>214 people are supporting each other right now</span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {SITUATIONS.map((btn) => {
+                      const isSelected = selectedSymptomId === btn.id;
+                      return (
+                        <motion.button
+                          key={btn.id}
+                          onClick={() => {
+                            setSelectedSymptomId(btn.id);
+                            setActiveCategoryId(btn.catId);
+                          }}
+                          whileHover={{ scale: 1.015, y: -0.5 }}
+                          whileTap={{ scale: 0.985 }}
+                          className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all cursor-pointer min-h-[120px] ${
+                            isSelected 
+                              ? 'bg-[#FFF2EA] border-[#FF7527] shadow-2xs ring-1 ring-[#FF7527]/10' 
+                              : 'bg-white border-gray-200 hover:bg-[#FAF6EE] hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-xl p-1 bg-white rounded-lg shadow-2xs shrink-0 select-none">{btn.emoji}</span>
+                            <span className="text-[13px] font-display font-black text-gray-800 block leading-tight">
+                              {btn.label}
+                            </span>
+                          </div>
+                          <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                            {btn.desc}
+                          </p>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Recommended for you panel */}
+                  {selectedSymptomId && (
+                    <div className="bg-transparent border border-[#E9E4D9] rounded-2xl p-4.5 space-y-2.5">
+                      <h4 className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
+                        ✨ Recommended for you
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        {SITUATIONS.find(s => s.id === selectedSymptomId)?.recommendations.map((rec, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              if (rec.target !== 'doctor-suggestions') {
+                                onNavigateTo(rec.target);
+                              }
+                            }}
+                            type="button"
+                            className="p-3 bg-white hover:bg-[#FFF2EA] border border-gray-200 hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] rounded-xl text-[12px] font-bold transition-all text-left flex items-center justify-between cursor-pointer active:scale-95"
+                          >
+                            <span className="truncate">{rec.text}</span>
+                            <span className="text-[10px] text-gray-400">→</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* 214 people supporting banner */}
+                  <div className="pt-2 border-t border-gray-50 flex items-center">
+                    <div className="inline-flex items-center gap-2 bg-[#F2FAF6] border border-green-200/60 px-4 py-2 rounded-full text-green-800 text-[11.5px] font-bold shadow-2xs">
+                      <span className="text-[12px]">🟢</span>
+                      <span>214 people are supporting each other right now</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Explore by support path */}
-              <div className="space-y-4">
+              <div className={`space-y-4 sm:block ${mobileSection === 'support-path' ? 'block' : 'hidden'}`}>
                 <div className="space-y-1">
                   <h4 className="text-[15px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
                     Explore by support path
@@ -1013,7 +1043,8 @@ export default function CareBridgeScreen({
               </div>
 
               {/* 3. Dynamic Category Details and Cards Area */}
-              <AnimatePresence mode="wait">
+              <div className={`w-full sm:block ${mobileSection === 'hopeheart-support' || mobileSection === 'external-resources' ? 'block' : 'hidden'}`}>
+                <AnimatePresence mode="wait">
                 <motion.div
                   key={activeCategory.id}
                   id="active-category-details-area"
@@ -1058,7 +1089,7 @@ export default function CareBridgeScreen({
                   </div>
 
                   {/* AVAILABLE SUPPORT (HOPEHEART) */}
-                  <div className="space-y-3">
+                  <div className={`space-y-3 sm:block ${mobileSection === 'hopeheart-support' ? 'block' : 'hidden'}`}>
                     <div>
                       <h4 className="font-display font-black text-gray-800 text-[15px] flex items-center gap-1.5">
                         🧡 Available Support on HopeHeart
@@ -1164,7 +1195,7 @@ export default function CareBridgeScreen({
                   </div>
 
                   {/* 4. Trusted External Resources Section */}
-                  <div className="space-y-3 pt-2">
+                  <div className={`space-y-3 pt-2 sm:block ${mobileSection === 'external-resources' ? 'block' : 'hidden'}`}>
                     <div>
                       <h4 className="font-display font-black text-emerald-800 text-[15px] flex items-center gap-1.5">
                         🌍 Trusted External Resources
@@ -1273,9 +1304,10 @@ export default function CareBridgeScreen({
                   </div>
                 </motion.div>
               </AnimatePresence>
+            </div>
 
               {/* Safe Boundary Reminders Box */}
-              <div className="bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs">
+              <div className={`bg-[#FEFBF7] border border-amber-100/70 rounded-3xl p-5 space-y-2.5 shadow-2xs sm:block ${mobileSection === 'hopeheart-support' || mobileSection === 'external-resources' ? 'block' : 'hidden'}`}>
                 <div className="flex items-center gap-1.5">
                   <span className="text-lg">🛡️</span>
                   <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
