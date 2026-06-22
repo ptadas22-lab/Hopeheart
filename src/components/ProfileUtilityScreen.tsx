@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ScreenId } from '../types';
 
 interface ProfileUtilityScreenProps {
   onBack: () => void;
   userName: string;
   onChangeName: (newName: string) => void;
   initialSubStage?: 'profile' | 'privacy';
+  onNavigateTo?: (screenId: ScreenId) => void;
 }
 
-export default function ProfileUtilityScreen({ onBack, userName, onChangeName, initialSubStage }: ProfileUtilityScreenProps) {
+export default function ProfileUtilityScreen({ onBack, userName, onChangeName, initialSubStage, onNavigateTo }: ProfileUtilityScreenProps) {
   const [subStage, setSubStage] = useState<'profile' | 'privacy'>(initialSubStage || 'profile');
   const [anonNameInput, setAnonNameInput] = useState<string>(userName);
+
 
   useEffect(() => {
     if (initialSubStage) {
@@ -113,6 +116,15 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                   { label: 'Resource Logs', detail: 'View history of saved questions for professionals.', action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") },
                   { label: 'Account Info', detail: 'Review security key tokens, backup codes, and active platforms.', action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") },
                   { label: 'Security & Safety Toggles', detail: 'Adjust real-time AI moderation sensitivity levels.', action: () => setSubStage('privacy') },
+                  {
+                    label: 'Service Model & Financials',
+                    detail: 'Founder View: Explore HopeHeart sustainability ecosystem models.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.Financials);
+                      }
+                    }
+                  }
                 ].map((item, id) => (
                   <button
                     key={id}

@@ -26,7 +26,8 @@ export enum ScreenId {
   PrivacySettings = 'privacy-settings',
   Notifications = 'notifications',
   About = 'about',
-  MedicalDisclaimer = 'medical-disclaimer'
+  MedicalDisclaimer = 'medical-disclaimer',
+  Financials = 'financials'
 }
 
 export interface MoodConfig {

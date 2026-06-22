@@ -19,6 +19,7 @@ import ProfileUtilityScreen from './components/ProfileUtilityScreen';
 import NotificationsScreen from './components/NotificationsScreen';
 import AboutScreen from './components/AboutScreen';
 import ModerationAlertScreen from './components/ModerationAlertScreen';
+import FinancialsScreen from './components/FinancialsScreen';
 import { MascotSitting, BrandWordmark } from './components/Logo';
 import HopeBuddyWidget from './components/HopeBuddyWidget';
 
@@ -40,7 +41,8 @@ function AppBackground({ currentScreen }: { currentScreen: ScreenId }) {
     currentScreen === ScreenId.PrivacySettings || 
     currentScreen === ScreenId.Notifications || 
     currentScreen === ScreenId.About || 
-    currentScreen === ScreenId.MedicalDisclaimer;
+    currentScreen === ScreenId.MedicalDisclaimer ||
+    currentScreen === ScreenId.Financials;
     
   const isHomeCommunityResources = !isSplashWelcome && !isSafety && !isProfileSettings;
 
@@ -343,6 +345,14 @@ export default function App() {
             userName={userName}
             onChangeName={(newName) => setUserName(newName)}
             initialSubStage={currentScreen === ScreenId.PrivacySettings ? 'privacy' : 'profile'}
+            onNavigateTo={(scr) => setCurrentScreen(scr)}
+          />
+        );
+
+      case ScreenId.Financials:
+        return (
+          <FinancialsScreen 
+            onBack={() => setCurrentScreen(ScreenId.Profile)}
           />
         );
 
