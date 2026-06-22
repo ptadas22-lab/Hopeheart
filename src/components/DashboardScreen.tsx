@@ -141,11 +141,18 @@ export default function DashboardScreen({
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
 
+  // HopeBuddy Song states
+  const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
   const [isHumming, setIsHumming] = useState(false);
   const [isMuted, setIsMuted] = useState(() => {
     return localStorage.getItem('hopeheart_music_muted') === 'true';
   });
+  const [audioError, setAudioError] = useState<string | null>(null);
 
+  // Web Audio refs
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
   const humTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getLyricsForMoodId = (moodId: string): string => {
@@ -162,23 +169,92 @@ export default function DashboardScreen({
     return lyricsMap[moodId] || lyricsMap['calm'];
   };
 
-  // Stop humming when mood changes
-  useEffect(() => {
-    if (isHumming) {
-      setIsHumming(false);
-    }
+  const stopWebAudioHum = () => {
+    setIsHumming(false);
+    
     if (humTimerRef.current) {
       clearTimeout(humTimerRef.current);
       humTimerRef.current = null;
     }
-  }, [currentMood]);
+
+    try {
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
+        oscillatorRef.current = null;
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+      }
+      if (audioCtxRef.current) {
+        if (audioCtxRef.current.state !== 'closed') {
+          audioCtxRef.current.close();
+        }
+        audioCtxRef.current = null;
+      }
+    } catch (e) {
+      console.warn('[WebAudio] Error cleaning up audio:', e);
+    }
+  };
+
+  const startWebAudioHum = async () => {
+    setAudioError(null);
+    stopWebAudioHum();
+
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) {
+        setAudioError("Your browser does not support AudioContext.");
+        return;
+      }
+
+      const ctx = new AudioContextClass();
+      audioCtxRef.current = ctx;
+
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+
+      if (!isMuted) {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, ctx.currentTime); // Softer 220 Hz tone (A3)
+
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.05, ctx.currentTime); // Low safe gain
+
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillatorRef.current = osc;
+        gainNodeRef.current = gainNode;
+
+        osc.start();
+      }
+
+      setIsHumming(true);
+
+      // Stop automatically after 8 seconds
+      humTimerRef.current = setTimeout(() => {
+        stopWebAudioHum();
+      }, 8000);
+    } catch (err) {
+      console.warn('[WebAudio] Browser blocked play action:', err);
+      setAudioError("Your browser blocked sound. Tap Play again or check volume.");
+      setIsHumming(false);
+    }
+  };
+
+  // Stop humming when mood changes or song card is closed
+  useEffect(() => {
+    stopWebAudioHum();
+  }, [currentMood, isSongCardExpanded]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (humTimerRef.current) {
-        clearTimeout(humTimerRef.current);
-      }
+      stopWebAudioHum();
     };
   }, []);
 
@@ -428,97 +504,92 @@ export default function DashboardScreen({
 
               {/* HopeBuddy Song Section (shows when a mood is selected) */}
               {currentMood && (
-                <div className="mt-4 pt-4 border-t border-dashed border-[#EDE9DE] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm">🎵</span>
-                      <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                        HopeBuddy Song
+                <div className="mt-3 pt-3 border-t border-dashed border-[#EDE9DE] flex flex-col items-center">
+                  <div className="flex items-center justify-between w-full">
+                    <button
+                      onClick={() => setIsSongCardExpanded(!isSongCardExpanded)}
+                      type="button"
+                      className="flex items-center gap-2 px-3.5 py-1.5 bg-[#FFF2EA] hover:bg-[#FFEAE1] text-[#FF7527] border border-[#FF7527]/15 rounded-full text-[12px] font-bold cursor-pointer transition-all active:scale-95 hover:scale-[1.02]"
+                    >
+                      <span className="w-5 h-5 rounded-full bg-[#FF7527] text-white flex items-center justify-center text-[10px] shadow-3xs font-sans">🎵</span>
+                      <span>HopeBuddy Song</span>
+                      <span className="text-[10px] text-[#FF7527]/70 transition-transform duration-200" style={{ transform: isSongCardExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                        ▼
                       </span>
-                    </div>
+                    </button>
                     {isHumming && (
                       <div className="flex items-center gap-1.5 animate-pulse text-[11px] font-semibold text-gray-500">
-                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.1s' }}>🎵</span>
-                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.3s' }}>🎶</span>
-                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.5s' }}>🎵</span>
+                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.1s' }}>🎵</span>
+                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.3s' }}>🎶</span>
                         <span>Humming...</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="bg-[#FFFDF9]/60 border border-[#EDE9DE]/50 rounded-2xl p-3.5 text-center relative overflow-hidden">
-                    <h4 className="font-display font-black text-gray-800 text-[13px] leading-tight mb-1">
-                      “HopeBuddy has a little song for you”
-                    </h4>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-2.5">
-                      Based on your mood today.
-                    </p>
-                    <p className="text-[12.5px] text-gray-655 font-semibold italic whitespace-pre-line leading-relaxed">
-                      {getLyricsForMoodId(currentMood)}
-                    </p>
-                    
-                    {isHumming && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-3.5 py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11px] font-bold"
-                      >
-                        HopeBuddy is humming for you 🎵{isMuted && " (Muted)"}
-                      </motion.div>
-                    )}
-                  </div>
+                  {isSongCardExpanded && (
+                    <div className="w-full mt-3 bg-[#FFFDF9]/80 border border-[#EDE9DE]/50 rounded-2xl p-4 text-center relative overflow-hidden space-y-3 shadow-3xs">
+                      <div>
+                        <h4 className="font-display font-black text-gray-800 text-[13px] leading-tight mb-0.5">
+                          “HopeBuddy has a little song for you”
+                        </h4>
+                        <p className="text-[9.5px] text-gray-400 font-bold uppercase tracking-wider block">
+                          Based on your mood today.
+                        </p>
+                      </div>
 
-                  {/* Song card actions */}
-                  <div className="flex flex-wrap gap-2 pt-1 justify-center">
-                    <button
-                      onClick={() => {
-                        if (isHumming) {
-                          setIsHumming(false);
-                          if (humTimerRef.current) {
-                            clearTimeout(humTimerRef.current);
-                            humTimerRef.current = null;
-                          }
-                        } else {
-                          setIsHumming(true);
-                          // Clean up any existing timer
-                          if (humTimerRef.current) {
-                            clearTimeout(humTimerRef.current);
-                          }
-                          // Set 8-second auto-stop timer
-                          humTimerRef.current = setTimeout(() => {
-                            setIsHumming(false);
-                            humTimerRef.current = null;
-                          }, 8000);
-                        }
-                      }}
-                      type="button"
-                      className="py-1.5 px-3 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1"
-                    >
-                      <span>{isHumming ? '⏹️ Stop hum' : '🎵 Play HopeBuddy hum'}</span>
-                    </button>
+                      <p className="text-[12.5px] text-gray-600 font-semibold italic whitespace-pre-line leading-relaxed px-2 py-1">
+                        {getLyricsForMoodId(currentMood)}
+                      </p>
 
-                    <button
-                      onClick={() => {
-                        const nextMuted = !isMuted;
-                        setIsMuted(nextMuted);
-                        localStorage.setItem('hopeheart_music_muted', nextMuted ? 'true' : 'false');
-                      }}
-                      type="button"
-                      className="py-1.5 px-3 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1"
-                    >
-                      <span>{isMuted ? '🔊 Unmute' : '🔇 Mute'}</span>
-                    </button>
+                      {audioError && (
+                        <div className="py-1.5 px-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[11px] font-semibold text-center leading-normal">
+                          ⚠️ {audioError}
+                        </div>
+                      )}
 
-                    <button
-                      onClick={() => {
-                        onMoodSelected(currentMood);
-                      }}
-                      type="button"
-                      className="py-1.5 px-3.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[11.5px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs flex items-center gap-1"
-                    >
-                      <span>🧡 Save this feeling</span>
-                    </button>
-                  </div>
+                      {isHumming && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11.5px] font-bold"
+                        >
+                          {isMuted ? 'HopeBuddy is muted 🎵' : 'HopeBuddy is humming for you 🎵'}
+                        </motion.div>
+                      )}
+
+                      {/* Song card actions */}
+                      <div className="flex flex-wrap gap-2 pt-1 justify-center">
+                        <button
+                          onClick={() => {
+                            if (isHumming) {
+                              stopWebAudioHum();
+                            } else {
+                              startWebAudioHum();
+                            }
+                          }}
+                          type="button"
+                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
+                        >
+                          <span>{isHumming ? '⏹️ Stop hum' : '🎵 Play HopeBuddy hum'}</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            const nextMuted = !isMuted;
+                            setIsMuted(nextMuted);
+                            localStorage.setItem('hopeheart_music_muted', nextMuted ? 'true' : 'false');
+                            if (nextMuted) {
+                              stopWebAudioHum();
+                            }
+                          }}
+                          type="button"
+                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
+                        >
+                          <span>{isMuted ? '🔊 Unmute' : '🔇 Mute'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
