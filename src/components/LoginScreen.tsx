@@ -149,7 +149,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           
           {/* Left Column: 3 Compact Helper Cards */}
-          <div className="space-y-4">
+          <div className="space-y-4 order-2 md:order-1">
             {/* Card 1: Share safely */}
             <div className="hh-surface rounded-2.5xl p-4.5 flex items-start gap-4 text-left shadow-3xs">
               <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-orange-50 text-[#FF7527] text-[20px] shrink-0 border border-orange-100/50">
@@ -197,7 +197,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
           </div>
 
           {/* Right Column: Safety Promise & Login actions */}
-          <div className="hh-surface rounded-3xl p-5 md:p-6 space-y-4 shadow-2xs">
+          <div className="hh-surface rounded-3xl p-5 md:p-6 space-y-4 shadow-2xs order-1 md:order-2">
             
             {/* Compact Safety Promise Card */}
             <div className="p-4 bg-[#FFFDF9] border border-[#EDE9DE]/60 rounded-2xl text-left space-y-1.5">
@@ -207,40 +207,10 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               <h4 className="font-display font-black text-gray-800 text-[13.5px]">
                 HopeHeart is a safe emotional support space.
               </h4>
-              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+              <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
                 You can share feelings, stories, and lived experiences. Please do not share prescriptions, diagnosis, dosage advice, cure claims, or harmful comments.
               </p>
             </div>
-
-            {/* Agreement Checkbox & Modal Link */}
-            <div className="space-y-2">
-              <label className="flex items-start gap-2.5 cursor-pointer text-left select-none">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => {
-                    setAgreed(e.target.checked);
-                    if (e.target.checked) setInfoMessage(null);
-                  }}
-                  className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
-                />
-                <span className="text-[12.5px] text-gray-650 font-bold leading-snug">
-                  I understand HopeHeart is for emotional support only.
-                </span>
-              </label>
-              <div className="pl-7 text-left">
-                <button
-                  type="button"
-                  onClick={() => setShowRulesModal(true)}
-                  className="text-[11.5px] text-[#FF7527] font-display font-black hover:underline cursor-pointer flex items-center gap-1"
-                >
-                  📖 View full safe rules
-                </button>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-gray-150/40 my-3.5" />
 
             {/* Visual alert message block */}
             {infoMessage && (
@@ -321,7 +291,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                   <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
                     Enter your Email
                   </span>
-                  <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
+                  <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
                     We will send a magic link directly to your inbox for passwordless entry.
                   </p>
                   <div className="flex flex-col gap-2">
@@ -356,6 +326,33 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Agreement Checkbox & Modal Link */}
+            <div className="space-y-2.5 pt-1">
+              <label className="flex items-start gap-2.5 cursor-pointer text-left select-none">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    if (e.target.checked) setInfoMessage(null);
+                  }}
+                  className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
+                />
+                <span className="text-[12.5px] text-gray-650 font-bold leading-snug">
+                  I understand HopeHeart is for emotional support only.
+                </span>
+              </label>
+              <div className="pl-7 text-left">
+                <button
+                  type="button"
+                  onClick={() => setShowRulesModal(true)}
+                  className="text-[11.5px] text-[#FF7527] font-display font-black hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  📖 View full safe rules
+                </button>
+              </div>
+            </div>
 
             {/* Helper disclaimer */}
             <p className="text-[10px] text-center text-gray-450 font-semibold leading-normal">
