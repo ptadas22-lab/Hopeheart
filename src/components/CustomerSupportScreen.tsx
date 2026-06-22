@@ -38,8 +38,8 @@ export default function CustomerSupportScreen({
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id || null;
 
-      // Attempt to save to Supabase support_requests table
-      const { error } = await supabase.from('support_requests').insert({
+      // Attempt to save to Supabase customer_support_requests table
+      const { error } = await supabase.from('customer_support_requests').insert({
         user_id: userId,
         issue_type: issueType,
         message: message.trim(),

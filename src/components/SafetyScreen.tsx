@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../lib/supabaseClient';
 
 interface SafetyScreenProps {
   onBack: () => void;
@@ -92,14 +93,56 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
   const [reportWhereHappened, setReportWhereHappened] = useState('');
   const [reportOptionalNote, setReportOptionalNote] = useState('');
 
-  const handleReportSubmit = (e: React.FormEvent) => {
+  const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reportWhatHappened.trim() || !reportWhereHappened.trim()) return;
-    alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
-    setReportWhatHappened('');
-    setReportWhereHappened('');
-    setReportOptionalNote('');
-    setShowReportForm(false);
+
+    let userId = null;
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        userId = session?.user?.id || null;
+      } catch (err) {
+        console.warn("Failed to retrieve user ID for safety report:", err);
+      }
+    }
+
+    const messageContent = `What: ${reportWhatHappened.trim()}\nWhere: ${reportWhereHappened.trim()}\nNote: ${reportOptionalNote.trim()}`;
+
+    try {
+      if (!supabase) throw new Error("Supabase is not configured");
+
+      const { error } = await supabase.from('safety_concerns').insert({
+        user_id: userId,
+        concern_type: 'General Safety Concern',
+        message: messageContent,
+        created_at: new Date().toISOString()
+      });
+
+      if (error) throw error;
+      alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+    } catch (err) {
+      console.warn('[Safety] Supabase concern insert failed, saving locally:', err);
+      try {
+        const pending = JSON.parse(localStorage.getItem('hopeheart_pending_safety_concerns') || '[]');
+        pending.push({
+          user_id: userId,
+          concern_type: 'General Safety Concern',
+          message: messageContent,
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem('hopeheart_pending_safety_concerns', JSON.stringify(pending));
+        alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+      } catch (localErr) {
+        console.error('[Safety] Local storage concern save failed:', localErr);
+        alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+      }
+    } finally {
+      setReportWhatHappened('');
+      setReportWhereHappened('');
+      setReportOptionalNote('');
+      setShowReportForm(false);
+    }
   };
 
   return (

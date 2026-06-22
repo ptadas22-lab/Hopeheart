@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Message } from '../types';
+import { supabase } from '../lib/supabaseClient';
 
 interface ListenerMatchScreenProps {
   onBack: () => void;
@@ -11,6 +12,7 @@ interface ListenerMatchScreenProps {
 }
 
 interface Listener {
+  id: string;
   name: string;
   role: string;
   bio: string;
@@ -36,6 +38,7 @@ interface Listener {
 const LISTENERS_DATA: Record<string, Listener[]> = {
   'I need someone to listen': [
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823001',
       name: 'Priya',
       role: 'Peer Listener',
       bio: 'I’m here to listen without judgement. You can share slowly and only what feels safe.',
@@ -52,11 +55,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
       matchedReason: 'You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.',
-      distance: 'Around 5 km away',
+      distance: 'Near your area',
       interests: ['Walking', 'Music', 'Coffee Chats'],
       bestFor: ['Anxiety', 'Loneliness', 'Emotional overwhelm']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823002',
       name: 'Aarav',
       role: 'Peer Listener',
       bio: 'Here to listen quietly and support you with a gentle, patient space. Share what feels safe.',
@@ -73,11 +77,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '110 listens',
       languages: 'English • Hindi',
       matchedReason: 'You both selected active listening, English, and quiet reading as a shared interest.',
-      distance: 'Around 7 km away',
+      distance: 'Same interest',
       interests: ['Cycling', 'Reading', 'Gaming'],
       bestFor: ['Quiet support', 'Stress', 'Anxiety']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823003',
       name: 'Leo',
       role: 'Peer Listener',
       bio: 'Offering a quiet, comforting presence. A warm cup of tea for your heavy thoughts today.',
@@ -94,13 +99,14 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '85 listens',
       languages: 'English • Spanish',
       matchedReason: 'You both selected patient presence, English/Spanish, and nature walks as an interest.',
-      distance: 'Around 10 km away',
+      distance: 'Available online',
       interests: ['Nature Walks', 'Cooking', 'Gardening'],
       bestFor: ['Grief', 'Burnout', 'Caregiver support']
     }
   ],
   'I feel anxious': [
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823004',
       name: 'Maya',
       role: 'Peer Listener',
       bio: 'Providing gentle grounding support and slow conversations during racing moments.',
@@ -117,11 +123,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '120 listens',
       languages: 'English • Hindi • Kannada',
       matchedReason: 'You both selected emotional support, Kannada/Hindi, and walking as an interest.',
-      distance: 'Around 5 km away',
+      distance: 'Near your area',
       interests: ['Music', 'Walking', 'Coffee Chats'],
       bestFor: ['Overthinking', 'Panic', 'Grounding']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823005',
       name: 'Nisha',
       role: 'Peer Listener',
       bio: 'Let’s take it one minute at a time. Slow breathing and quiet space. I am here for you.',
@@ -138,11 +145,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '95 listens',
       languages: 'English • Hindi',
       matchedReason: 'You both selected grounding conversations, English, and writing/journaling interests.',
-      distance: 'Around 3 km away',
+      distance: 'Near your area',
       interests: ['Tea brewing', 'Journaling', 'Poetry'],
       bestFor: ['Anxiety grounding', 'Worry', 'Panic']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823003',
       name: 'Leo',
       role: 'Peer Listener',
       bio: 'A soft, patient presence when everything feels too fast. You can set the pace.',
@@ -159,13 +167,14 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '85 listens',
       languages: 'English • Spanish',
       matchedReason: 'You both selected patient presence, English/Spanish, and nature walks as an interest.',
-      distance: 'Around 10 km away',
+      distance: 'Available online',
       interests: ['Nature Walks', 'Cooking', 'Gardening'],
       bestFor: ['Grief', 'Burnout', 'Caregiver support']
     }
   ],
   'I feel lonely': [
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823001',
       name: 'Priya',
       role: 'Peer Listener',
       bio: 'I’m here to listen without judgement. You can share slowly and only what feels safe.',
@@ -182,11 +191,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
       matchedReason: 'You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.',
-      distance: 'Around 5 km away',
+      distance: 'Near your area',
       interests: ['Walking', 'Music', 'Coffee Chats'],
       bestFor: ['Anxiety', 'Loneliness', 'Emotional overwhelm']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823006',
       name: 'Kabir',
       role: 'Peer Listener',
       bio: 'Let’s connect and talk about life, art, or anything else you love. I am here to share a chat.',
@@ -203,11 +213,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '72 listens',
       languages: 'English • Hindi • Urdu',
       matchedReason: 'You both selected patient companionship, Hindi/Urdu, and music as a shared interest.',
-      distance: 'Around 6 km away',
+      distance: 'Same interest',
       interests: ['Painting', 'Music', 'Coffee Chats'],
       bestFor: ['Loneliness', 'Life changes', 'Sharing a chat']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823002',
       name: 'Aarav',
       role: 'Peer Listener',
       bio: 'Here to listen quietly and support you with a gentle, patient space. Share what feels safe.',
@@ -224,13 +235,14 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '110 listens',
       languages: 'English • Hindi',
       matchedReason: 'You both selected active listening, English, and quiet reading as a shared interest.',
-      distance: 'Around 7 km away',
+      distance: 'Same interest',
       interests: ['Cycling', 'Reading', 'Gaming'],
       bestFor: ['Quiet support', 'Stress', 'Anxiety']
     }
   ],
   'I feel hurt': [
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823005',
       name: 'Nisha',
       role: 'Peer Listener',
       bio: 'Let’s take it one minute at a time. Slow breathing and quiet space. I am here for you.',
@@ -247,11 +259,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '95 listens',
       languages: 'English • Hindi',
       matchedReason: 'You both selected grounding conversations, English, and writing/journaling interests.',
-      distance: 'Around 3 km away',
+      distance: 'Near your area',
       interests: ['Tea brewing', 'Journaling', 'Poetry'],
       bestFor: ['Anxiety grounding', 'Worry', 'Panic']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823004',
       name: 'Maya',
       role: 'Peer Listener',
       bio: 'Providing gentle grounding support and slow conversations during racing moments.',
@@ -268,11 +281,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '120 listens',
       languages: 'English • Hindi • Kannada',
       matchedReason: 'You both selected emotional support, Kannada/Hindi, and walking as an interest.',
-      distance: 'Around 5 km away',
+      distance: 'Near your area',
       interests: ['Music', 'Walking', 'Coffee Chats'],
       bestFor: ['Overthinking', 'Panic', 'Grounding']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823003',
       name: 'Leo',
       role: 'Peer Listener',
       bio: 'Offering a quiet, comforting presence. A warm cup of tea for your heavy thoughts today.',
@@ -289,13 +303,14 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '85 listens',
       languages: 'English • Spanish',
       matchedReason: 'You both selected patient presence, English/Spanish, and nature walks as an interest.',
-      distance: 'Around 10 km away',
+      distance: 'Available online',
       interests: ['Nature Walks', 'Cooking', 'Gardening'],
       bestFor: ['Grief', 'Burnout', 'Caregiver support']
     }
   ],
   'I want guidance, not advice': [
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823006',
       name: 'Kabir',
       role: 'Peer Listener',
       bio: 'Let’s connect and talk about life, art, or anything else you love. I am here to share a chat.',
@@ -312,11 +327,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '72 listens',
       languages: 'English • Hindi • Urdu',
       matchedReason: 'You both selected patient companionship, Hindi/Urdu, and music as a shared interest.',
-      distance: 'Around 6 km away',
+      distance: 'Same interest',
       interests: ['Painting', 'Music', 'Coffee Chats'],
       bestFor: ['Loneliness', 'Life changes', 'Sharing a chat']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823005',
       name: 'Nisha',
       role: 'Peer Listener',
       bio: 'Let’s take it one minute at a time. Slow breathing and quiet space. I am here for you.',
@@ -333,11 +349,12 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '95 listens',
       languages: 'English • Hindi',
       matchedReason: 'You both selected grounding conversations, English, and writing/journaling interests.',
-      distance: 'Around 3 km away',
+      distance: 'Near your area',
       interests: ['Tea brewing', 'Journaling', 'Poetry'],
       bestFor: ['Anxiety grounding', 'Worry', 'Panic']
     },
     {
+      id: 'd1a3b8ee-8b2b-4b2a-8cfa-555aa8823001',
       name: 'Priya',
       role: 'Peer Listener',
       bio: 'I’m here to listen without judgement. You can share slowly and only what feels safe.',
@@ -354,7 +371,7 @@ const LISTENERS_DATA: Record<string, Listener[]> = {
       sessions: '140 listens',
       languages: 'English • Hindi • Kannada',
       matchedReason: 'You both selected emotional support, Hindi/Kannada, and yoga as a calm interest.',
-      distance: 'Around 5 km away',
+      distance: 'Near your area',
       interests: ['Walking', 'Music', 'Coffee Chats'],
       bestFor: ['Anxiety', 'Loneliness', 'Emotional overwhelm']
     }
@@ -424,6 +441,101 @@ export default function ListenerMatchScreen({
     const saved = localStorage.getItem('hopeheart_location_permission');
     return saved === 'true' ? true : saved === 'false' ? false : null;
   });
+  
+  const [backendListeners, setBackendListeners] = useState<Listener[]>([]);
+
+  useEffect(() => {
+    const fetchListeners = async () => {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('community_listeners')
+          .select('*');
+        if (error) throw error;
+        if (data && data.length > 0) {
+          const mapped: Listener[] = data.map((dbRow: any) => ({
+            id: dbRow.id,
+            name: dbRow.display_name,
+            role: dbRow.role,
+            bio: dbRow.listening_style || "I'm here to listen without judgement. You can share slowly and only what feels safe.",
+            status: dbRow.availability === 'soon' ? 'soon' : 'available',
+            supportType: dbRow.support_focus || 'Active listening',
+            boundary: 'Emotional support only. No diagnosis, prescriptions, or treatment advice.',
+            iconBg: 'bg-emerald-100 text-emerald-700',
+            actionText: 'Start Safe Chat',
+            gender: 'Neutral',
+            ageGroup: 'Adult',
+            profession: 'Peer Listener',
+            listeningStyle: dbRow.listening_style || 'Warm listener',
+            rating: dbRow.trust_score || '95%',
+            sessions: '50 listens',
+            languages: dbRow.languages || 'English',
+            matchedReason: 'Matched on common support goals.',
+            distance: 'Available online',
+            interests: [],
+            bestFor: dbRow.support_focus ? [dbRow.support_focus] : ['Quiet support']
+          }));
+          setBackendListeners(mapped);
+        }
+      } catch (err) {
+        console.warn("Failed to load community listeners from Supabase, using mock fallback:", err);
+      }
+    };
+    fetchListeners();
+  }, []);
+
+  const handleRequestSupport = async (listener: Listener) => {
+    const action = async () => {
+      let userId = null;
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          userId = session?.user?.id || null;
+        } catch (e) {
+          console.warn("Failed to get session:", e);
+        }
+      }
+
+      try {
+        if (!supabase) throw new Error("Supabase is not configured");
+
+        const { error } = await supabase.from('community_support_requests').insert({
+          user_id: userId,
+          listener_id: listener.id,
+          support_focus: selectedFeeling,
+          status: 'requested',
+          created_at: new Date().toISOString()
+        });
+
+        if (error) throw error;
+
+        alert("Your support request has been saved. HopeHeart will guide you safely.");
+      } catch (err) {
+        console.warn('[RequestSupport] Supabase insert failed, saving locally:', err);
+        try {
+          const pending = JSON.parse(localStorage.getItem('hopeheart_pending_support_requests') || '[]');
+          pending.push({
+            user_id: userId,
+            listener_id: listener.id,
+            support_focus: selectedFeeling,
+            status: 'requested',
+            created_at: new Date().toISOString()
+          });
+          localStorage.setItem('hopeheart_pending_support_requests', JSON.stringify(pending));
+          alert("Your support request has been saved. HopeHeart will guide you safely.");
+        } catch (localErr) {
+          console.error('[RequestSupport] Local storage save failed:', localErr);
+          alert("Could not process request. Please try again later.");
+        }
+      }
+    };
+
+    if (onRequireProfileCompletion) {
+      onRequireProfileCompletion(action);
+    } else {
+      action();
+    }
+  };
   
   // Chat messaging state
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -568,8 +680,51 @@ export default function ListenerMatchScreen({
     }
   };
 
-  const triggerReportModal = () => {
-    alert("Thank you. Our safety moderators have been notified of this chat session. We prioritize emotional safety.");
+  const triggerReportModal = async () => {
+    if (!activeListener) return;
+    if (confirm(`Report concern regarding listener ${activeListener.name}?`)) {
+      let userId = null;
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          userId = session?.user?.id || null;
+        } catch (err) {
+          console.warn("Failed to retrieve user ID for safety report:", err);
+        }
+      }
+
+      try {
+        if (!supabase) throw new Error("Supabase is not configured");
+
+        const { error } = await supabase.from('safety_concerns').insert({
+          user_id: userId,
+          concern_type: 'Chat Safety Concern',
+          message: `Concern reported during chat session with listener ${activeListener.name}.`,
+          related_listener_id: activeListener.id,
+          created_at: new Date().toISOString()
+        });
+
+        if (error) throw error;
+        alert("Thank you. Our safety moderators have been notified of this chat session. We prioritize emotional safety.");
+      } catch (err) {
+        console.warn('[Safety] Chat concern insert failed, saving locally:', err);
+        try {
+          const pending = JSON.parse(localStorage.getItem('hopeheart_pending_safety_concerns') || '[]');
+          pending.push({
+            user_id: userId,
+            concern_type: 'Chat Safety Concern',
+            message: `Concern reported during chat session with listener ${activeListener.name}.`,
+            related_listener_id: activeListener.id,
+            created_at: new Date().toISOString()
+          });
+          localStorage.setItem('hopeheart_pending_safety_concerns', JSON.stringify(pending));
+          alert("Thank you. Our safety moderators have been notified of this chat session. We prioritize emotional safety.");
+        } catch (localErr) {
+          console.error('[Safety] Local storage concern save failed:', localErr);
+          alert("Thank you. Our safety moderators have been notified of this chat session. We prioritize emotional safety.");
+        }
+      }
+    }
   };
 
   const suggestedReplies = [
@@ -579,7 +734,9 @@ export default function ListenerMatchScreen({
   ];
 
   // Resolve active category listeners and filter them
-  const currentListeners = LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen'];
+  const currentListeners = backendListeners.length > 0 
+    ? backendListeners.filter(l => l.supportType.toLowerCase() === selectedFeeling.toLowerCase() || l.bestFor.some(b => b.toLowerCase() === selectedFeeling.toLowerCase()))
+    : (LISTENERS_DATA[selectedFeeling] || LISTENERS_DATA['I need someone to listen']);
   const filteredListeners = currentListeners.filter(listener => {
     if (!activeFilter) return true;
     if (activeFilter === 'Nearby') {
@@ -1001,57 +1158,35 @@ export default function ListenerMatchScreen({
                             {/* Profile Details */}
                             <div className="space-y-2 text-[12.5px] font-semibold text-gray-655 pl-1">
                               <p className="flex items-center gap-2">
-                                <span className="text-gray-400 text-[14px]">{genderIcon}</span>
-                                <span>{listener.gender} • {listener.ageGroup}</span>
-                              </p>
-                              <p className="flex items-center gap-2">
-                                <span className="text-gray-400 text-[14px]">💼</span>
-                                <span>{listener.profession}</span>
-                              </p>
-                              <p className="flex items-center gap-2">
                                 <span className="text-gray-400 text-[14px]">🤝</span>
                                 <span>{listener.listeningStyle}</span>
-                              </p>
-                              <p className="flex items-center gap-2">
-                                <span className="text-gray-400 text-[14px]">🗣️</span>
-                                <span>{listener.languages}</span>
                               </p>
                               <p className="flex items-center gap-2">
                                 <span className="text-[14px]">{availabilityIcon}</span>
                                 <span>{availabilityText}</span>
                               </p>
                               <p className="flex items-center gap-2">
-                                <span className="text-gray-400 text-[14px]">🛡️</span>
-                                <span>Trust Score {listener.rating}</span>
+                                <span className="text-gray-400 text-[14px]">🗣️</span>
+                                <span>{listener.languages}</span>
                               </p>
-                            </div>
-
-                            {/* Best For Tags Section */}
-                            <div className="pt-2 border-t border-gray-100">
-                              <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">
-                                Best for:
-                              </p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {listener.bestFor.map((tag) => (
-                                  <span
-                                    key={tag}
-                                    className="px-2 py-0.5 bg-[#FCFAF5] border border-gray-200 rounded-lg text-gray-600 text-[11px] font-bold"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
                             </div>
                           </div>
 
-                          {/* View Profile Button */}
-                          <div className="pt-2">
+                          {/* View Profile & Request Support Action Buttons */}
+                          <div className="pt-2 grid grid-cols-2 gap-2">
                             <button
                               onClick={() => setViewingProfileListener(listener)}
                               type="button"
-                              className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all text-center active:scale-98 shadow-xs"
+                              className="w-full py-2 bg-[#FCFAF5] hover:bg-gray-100 border border-gray-250 text-gray-700 rounded-xl text-[12px] font-bold cursor-pointer transition-all text-center active:scale-98"
                             >
                               View Profile
+                            </button>
+                            <button
+                              onClick={() => handleRequestSupport(listener)}
+                              type="button"
+                              className="w-full py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12px] font-bold cursor-pointer transition-all text-center active:scale-98 shadow-xs"
+                            >
+                              Request Support
                             </button>
                           </div>
                         </motion.div>
@@ -1091,8 +1226,8 @@ export default function ListenerMatchScreen({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-600 bg-[#FCFAF5] rounded-xl p-2.5">
-                    <span className="flex items-center gap-1">📍 Around 3 km away</span>
+                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-655 bg-[#FCFAF5] rounded-xl p-2.5">
+                    <span className="flex items-center gap-1">📍 Near your area</span>
                     <span className="flex items-center gap-1">👥 12 members</span>
                   </div>
 
@@ -1127,8 +1262,8 @@ export default function ListenerMatchScreen({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-600 bg-[#FCFAF5] rounded-xl p-2.5">
-                    <span className="flex items-center gap-1">📍 Around 6 km away</span>
+                  <div className="flex justify-between items-center text-[12px] font-semibold text-gray-655 bg-[#FCFAF5] rounded-xl p-2.5">
+                    <span className="flex items-center gap-1">📍 Near your area</span>
                     <span className="flex items-center gap-1">👥 8 members</span>
                   </div>
 
@@ -1272,6 +1407,16 @@ export default function ListenerMatchScreen({
 
               {/* Actions footer */}
               <div className="p-5 border-t border-gray-100 bg-[#FCFAF5] space-y-3">
+                <button
+                  onClick={() => {
+                    setViewingProfileListener(null);
+                    handleRequestSupport(viewingProfileListener);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[13px] font-display font-black cursor-pointer transition-all text-center active:scale-[0.98] shadow-sm block"
+                >
+                  🤝 Request Support
+                </button>
                 <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={() => {

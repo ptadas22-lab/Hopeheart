@@ -1,5 +1,6 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../lib/supabaseClient';
 
 const FILTER_CHIPS = [
   'All Rooms',
@@ -181,7 +182,7 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
     privacyStatus: 'Anonymous room',
     moderationStatus: 'AI moderated',
     isNearby: true,
-    distance: '3 km away',
+    distance: 'Near your area',
     illustrationType: 'anxiety',
     defaultPosts: [
       { id: 'anx-1', sender: 'Voice11', content: 'Feeling some chest tension tonight. Deep breathing helps slow my heart rate.', supportCount: 4, repliesCount: 1 },
@@ -261,7 +262,7 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
     privacyStatus: 'Anonymous room',
     moderationStatus: 'AI moderated',
     isNearby: true,
-    distance: '5 km away',
+    distance: 'Near your area',
     illustrationType: 'caregiver',
     defaultPosts: [
       { id: 'ca-1', sender: 'Voice70', content: 'We cannot pour support from a barren vessel. Remember to rest.', supportCount: 11, repliesCount: 1 }
@@ -297,6 +298,190 @@ export default function SupportRoomsScreen({
   const [roomPosts, setRoomPosts] = useState<Record<string, PostItem[]>>({});
   const [postInput, setPostInput] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('All Rooms');
+
+  const [backendRooms, setBackendRooms] = useState<RoomCard[]>([]);
+  const [joinedRoomIds, setJoinedRoomIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('support_rooms')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          const mapped: RoomCard[] = data.map((dbRow: any) => ({
+            id: dbRow.id,
+            name: dbRow.room_name,
+            description: dbRow.description || 'Safe space for peer support.',
+            category: dbRow.support_focus || 'General',
+            activeCount: 12,
+            emoji: dbRow.emoji || '🧘',
+            accent: dbRow.accent || 'bg-amber-50 border-amber-150',
+            rule: dbRow.rule || 'Focus on calming breaths. Avoid prescribing tranquilizers or medical diagnoses.',
+            defaultPosts: [],
+            roomType: dbRow.room_type || 'Peer support',
+            languages: dbRow.languages || ['English'],
+            privacyStatus: dbRow.privacy_status || 'Anonymous room',
+            moderationStatus: dbRow.moderation_status || 'AI moderated',
+            isNearby: dbRow.is_nearby || false,
+            distance: dbRow.distance || 'Near your area',
+            illustrationType: dbRow.illustration_type || 'anxiety'
+          }));
+          setBackendRooms(mapped);
+        }
+      } catch (err) {
+        console.warn("Failed to load support rooms from Supabase, using mock fallback:", err);
+      }
+    };
+
+    const loadJoinedRooms = async () => {
+      let localJoined = JSON.parse(localStorage.getItem('hopeheart_joined_rooms') || '[]');
+      let pendingJoined = JSON.parse(localStorage.getItem('hopeheart_pending_room_joins') || '[]');
+      let allJoined = Array.from(new Set([...localJoined, ...pendingJoined.map((p: any) => p.room_id)]));
+      
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user?.id) {
+            const { data, error } = await supabase
+              .from('room_memberships')
+              .select('room_id')
+              .eq('user_id', session.user.id);
+            if (data) {
+              const dbJoined = data.map((item: any) => item.room_id);
+              allJoined = Array.from(new Set([...allJoined, ...dbJoined]));
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to load room memberships from Supabase:", err);
+        }
+      }
+      setJoinedRoomIds(allJoined);
+    };
+
+    fetchRooms();
+    loadJoinedRooms();
+  }, []);
+
+  const handleJoinRoom = async (room: RoomCard) => {
+    const action = async () => {
+      let userId = null;
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          userId = session?.user?.id || null;
+        } catch (e) {
+          console.warn("Failed to get session:", e);
+        }
+      }
+
+      // Check if already joined
+      if (joinedRoomIds.includes(room.id)) {
+        alert("You have already joined this support room.");
+        setSelectedRoom(room);
+        // Initialize room posts if not loaded
+        if (!roomPosts[room.id]) {
+          setRoomPosts(prev => ({
+            ...prev,
+            [room.id]: room.defaultPosts
+          }));
+        }
+        return;
+      }
+
+      try {
+        if (!supabase || !userId) {
+          throw new Error("Offline or not logged in");
+        }
+
+        const { error } = await supabase.from('room_memberships').insert({
+          user_id: userId,
+          room_id: room.id,
+          created_at: new Date().toISOString()
+        });
+
+        if (error) {
+          if (error.code === '23505') {
+            alert("You have already joined this support room.");
+            setJoinedRoomIds(prev => Array.from(new Set([...prev, room.id])));
+            setSelectedRoom(room);
+            // Initialize room posts if not loaded
+            if (!roomPosts[room.id]) {
+              setRoomPosts(prev => ({
+                ...prev,
+                [room.id]: room.defaultPosts
+              }));
+            }
+            return;
+          }
+          throw error;
+        }
+
+        // Update local joined storage
+        const localJoined = JSON.parse(localStorage.getItem('hopeheart_joined_rooms') || '[]');
+        if (!localJoined.includes(room.id)) {
+          localJoined.push(room.id);
+          localStorage.setItem('hopeheart_joined_rooms', JSON.stringify(localJoined));
+        }
+
+        setJoinedRoomIds(prev => Array.from(new Set([...prev, room.id])));
+        alert("You have joined this room successfully.");
+        setSelectedRoom(room);
+        // Initialize room posts if not loaded
+        if (!roomPosts[room.id]) {
+          setRoomPosts(prev => ({
+            ...prev,
+            [room.id]: room.defaultPosts
+          }));
+        }
+      } catch (err) {
+        console.warn("Join room backend insert failed, saving locally:", err);
+        // Save locally fallback
+        try {
+          const pending = JSON.parse(localStorage.getItem('hopeheart_pending_room_joins') || '[]');
+          if (!pending.some((item: any) => item.room_id === room.id)) {
+            pending.push({
+              user_id: userId,
+              room_id: room.id,
+              created_at: new Date().toISOString()
+            });
+            localStorage.setItem('hopeheart_pending_room_joins', JSON.stringify(pending));
+          }
+
+          const localJoined = JSON.parse(localStorage.getItem('hopeheart_joined_rooms') || '[]');
+          if (!localJoined.includes(room.id)) {
+            localJoined.push(room.id);
+            localStorage.setItem('hopeheart_joined_rooms', JSON.stringify(localJoined));
+          }
+
+          setJoinedRoomIds(prev => Array.from(new Set([...prev, room.id])));
+          alert("You have joined this room successfully.");
+          setSelectedRoom(room);
+          // Initialize room posts if not loaded
+          if (!roomPosts[room.id]) {
+            setRoomPosts(prev => ({
+              ...prev,
+              [room.id]: room.defaultPosts
+            }));
+          }
+        } catch (localErr) {
+          console.error("Local save failed:", localErr);
+          alert("Could not process request. Please try again later.");
+        }
+      }
+    };
+
+    if (onRequireProfileCompletion) {
+      onRequireProfileCompletion(action);
+    } else {
+      await action();
+    }
+  };
 
   const navigateToRoom = (room: RoomCard) => {
     const action = () => {
@@ -391,14 +576,16 @@ export default function SupportRoomsScreen({
 
   const currentRoomPosts = selectedRoom ? (roomPosts[selectedRoom.id] || selectedRoom.defaultPosts) : [];
 
-  const filteredRooms = SUPPORT_ROOMS_DATA.filter((room) => {
+  const activeRoomsList = backendRooms.length > 0 ? backendRooms : SUPPORT_ROOMS_DATA;
+
+  const filteredRooms = activeRoomsList.filter((room) => {
     if (activeFilter === 'All Rooms') return true;
     if (activeFilter === 'Nearby') return room.isNearby;
     
     const filterLower = activeFilter.toLowerCase();
     if (filterLower === 'anxiety') return room.id === 'anxiety';
     if (filterLower === 'loneliness') return room.id === 'loneliness';
-    if (filterLower === 'caregivers') return room.id === 'caregiver';
+    if (filterLower === 'caregivers') return room.id === 'caregiver' || room.id === 'caregivers';
     if (filterLower === 'parkinson’s') return room.id === 'parkinsons';
     if (filterLower === 'emotional recovery') return room.id === 'emotional-recovery';
     if (filterLower === 'small wins') return room.id === 'smallwins';
@@ -523,12 +710,21 @@ export default function SupportRoomsScreen({
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => navigateToRoom(room)}
-                        className="w-full py-2.5 bg-[#FAF7F0] hover:bg-[#FF7527] border hover:border-[#FF7527] text-gray-700 hover:text-white rounded-xl text-[12.5px] font-display font-black transition-all cursor-pointer text-center flex items-center justify-center gap-1"
-                      >
-                        Enter Room →
-                      </button>
+                      {joinedRoomIds.includes(room.id) ? (
+                        <button
+                          onClick={() => navigateToRoom(room)}
+                          className="w-full py-2.5 bg-[#FAF7F0] hover:bg-[#FF7527] border hover:border-[#FF7527] text-gray-700 hover:text-white rounded-xl text-[12.5px] font-display font-black transition-all cursor-pointer text-center flex items-center justify-center gap-1"
+                        >
+                          Enter Room →
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleJoinRoom(room)}
+                          className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] border border-[#FF7527] hover:border-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black transition-all cursor-pointer text-center flex items-center justify-center gap-1 shadow-xs"
+                        >
+                          Join Room
+                        </button>
+                      )}
                     </div>
                   );
                 })}
