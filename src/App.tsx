@@ -18,6 +18,7 @@ import CareBridgeScreen from './components/CareBridgeScreen';
 import SafetyScreen from './components/SafetyScreen';
 import ProfileUtilityScreen from './components/ProfileUtilityScreen';
 import NotificationsScreen from './components/NotificationsScreen';
+import CustomerSupportScreen from './components/CustomerSupportScreen';
 import AboutScreen from './components/AboutScreen';
 import ModerationAlertScreen from './components/ModerationAlertScreen';
 import FinancialsScreen from './components/FinancialsScreen';
@@ -357,6 +358,7 @@ export default function App() {
   const [shareFileError, setShareFileError] = useState<string | null>(null);
   const [shareToast, setShareToast] = useState<string | null>(null);
   const [showShareTextPreview, setShowShareTextPreview] = useState(false);
+  const [safetyReportDirectOpen, setSafetyReportDirectOpen] = useState(false);
 
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -764,7 +766,29 @@ export default function App() {
       case ScreenId.AISafety:
         return (
           <SafetyScreen 
-            onBack={() => setCurrentScreen(ScreenId.Home)}
+            onBack={() => {
+              setSafetyReportDirectOpen(false);
+              setCurrentScreen(ScreenId.Home);
+            }}
+            initialShowReport={safetyReportDirectOpen}
+          />
+        );
+
+      case ScreenId.CustomerSupport:
+        return (
+          <CustomerSupportScreen
+            onBack={() => {
+              setSafetyReportDirectOpen(false);
+              setCurrentScreen(ScreenId.Home);
+            }}
+            onNavigateTo={(scr) => {
+              setSafetyReportDirectOpen(false);
+              setCurrentScreen(scr as ScreenId);
+            }}
+            onOpenSafetyReport={() => {
+              setSafetyReportDirectOpen(true);
+              setCurrentScreen(ScreenId.AISafety);
+            }}
           />
         );
 

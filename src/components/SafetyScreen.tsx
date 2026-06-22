@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface SafetyScreenProps {
   onBack: () => void;
+  initialShowReport?: boolean;
 }
 
 function SafetyIllustration() {
@@ -83,9 +84,9 @@ function SafetyIllustration() {
   );
 }
 
-export default function SafetyScreen({ onBack }: SafetyScreenProps) {
+export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreenProps) {
   const [showUrgentModal, setShowUrgentModal] = useState(false);
-  const [showReportForm, setShowReportForm] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(initialShowReport || false);
 
   const [reportWhatHappened, setReportWhatHappened] = useState('');
   const [reportWhereHappened, setReportWhereHappened] = useState('');

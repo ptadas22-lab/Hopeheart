@@ -175,6 +175,15 @@ export default function ProfileUtilityScreen({
                     detail: 'Adjust privacy, reporting, and safe-space preferences.', 
                     action: () => setSubStage('privacy') 
                   },
+                  { 
+                    label: 'Customer Support', 
+                    detail: 'Contact our support team for account, privacy, safety, or app-related issues.', 
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.CustomerSupport);
+                      }
+                    }
+                  },
                 ].map((item, id) => (
                   <button
                     key={id}

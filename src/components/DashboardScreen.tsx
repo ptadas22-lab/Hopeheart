@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Mascot from './Mascot';
-import { MoodConfig } from '../types';
+import { MoodConfig, ScreenId } from '../types';
 import { MascotFace } from './Logo';
 
 interface DashboardScreenProps {
@@ -683,7 +683,7 @@ export default function DashboardScreen({
               </div>
             </div>
             <button
-              onClick={() => alert("Contact Support:\n\nOur emotional support team is available 24/7. Drop us a message at support@hopeheart.org or report navigation/safety concerns directly.")}
+              onClick={() => onNavigateTo(ScreenId.CustomerSupport)}
               type="button"
               className="w-full py-2.5 bg-[#FAF8F4] hover:bg-[#FFF2EA] hover:text-[#FF7527] border border-[#ECE6D9] hover:border-[#FF7527] text-gray-700 rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center mt-1"
             >
