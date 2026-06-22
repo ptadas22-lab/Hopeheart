@@ -1,28 +1,127 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MascotSitting } from './Logo';
-import { saveSafeRulesConsent } from '../lib/supabaseClient';
+import { ScreenId } from '../types';
+import { saveSafeRulesConsentLocal, supabase } from '../lib/supabaseClient';
 
 interface LoginScreenProps {
   onLoginSuccess: (nickname: string) => void;
+  onNavigateTo?: (screenId: ScreenId) => void;
 }
 
-export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
+export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScreenProps) {
   const [agreed, setAgreed] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
 
-  const handleLogin = async (provider: 'google' | 'email' | 'guest') => {
-    if (!agreed) return;
-    
-    // Save consent status securely in Supabase with localStorage backup fallback
-    await saveSafeRulesConsent(provider);
-    
-    // Set a default mock nickname based on selection
-    let mockName = 'Voice47';
-    if (provider === 'google') mockName = 'GoogleBuddy';
-    if (provider === 'email') mockName = 'EmailBuddy';
-    
-    onLoginSuccess(mockName);
+  // Helper login function handling guest, google, and email flows
+  const handleLogin = async (entryMethod: 'guest' | 'google' | 'email') => {
+    setInfoMessage(null);
+
+    // Save local consent cache & pending entry method (Stage 1)
+    saveSafeRulesConsentLocal(entryMethod);
+
+    try {
+      // 1. Guest flow
+      if (entryMethod === 'guest') {
+        const guestSessionId = 'guest_' + Date.now();
+        localStorage.setItem('hopeheart_guest_session_id', guestSessionId);
+
+        if (supabase) {
+          try {
+            const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously();
+            if (anonError) {
+              console.warn('[Consent] Supabase anonymous auth failed:', anonError.message);
+            } else {
+              console.log('[Consent] Guest anonymous session created.');
+            }
+          } catch (e) {
+            console.warn('[Consent] Anonymous auth check encountered error:', e);
+          }
+        }
+        
+        // Guest mode goes directly to Profile Setup
+        onLoginSuccess('Companion');
+        if (onNavigateTo) {
+          onNavigateTo(ScreenId.ProfileSetup);
+        }
+        return;
+      }
+
+      // 2. Google OAuth flow
+      if (entryMethod === 'google') {
+        if (supabase) {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              scopes: 'email profile', // Request only basic profile and email
+              redirectTo: window.location.origin
+            }
+          });
+          if (error) {
+            setInfoMessage("Login could not continue. Please try again.");
+            console.error('Google OAuth error:', error.message);
+          }
+        } else {
+          // Demo fallback
+          onLoginSuccess('GoogleBuddy');
+        }
+        return;
+      }
+
+      // 3. Email Magic Link flow
+      if (entryMethod === 'email') {
+        if (supabase) {
+          setShowEmailInput(true);
+        } else {
+          setInfoMessage("Email login is coming soon!");
+        }
+        return;
+      }
+    } catch (err) {
+      setInfoMessage("Login could not continue. Please try again.");
+      console.error('Login method failed:', err);
+    }
+  };
+
+  const handleButtonClick = (method: 'guest' | 'google' | 'email') => {
+    if (!agreed) {
+      setInfoMessage("Please accept the emotional-support agreement to continue.");
+      return;
+    }
+    handleLogin(method);
+  };
+
+  const handleSendEmailLink = async () => {
+    if (!agreed) {
+      setInfoMessage("Please accept the emotional-support agreement to continue.");
+      return;
+    }
+    if (!email.trim() || !supabase) return;
+    setEmailLoading(true);
+    setInfoMessage(null);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      });
+      if (error) {
+        setInfoMessage("Login could not continue. Please try again.");
+        console.error('Email Magic Link error:', error.message);
+      } else {
+        setInfoMessage("Magic link sent safely! Please check your inbox.");
+      }
+    } catch (err) {
+      setInfoMessage("Login could not continue. Please try again.");
+      console.error('Email Magic Link error:', err);
+    } finally {
+      setEmailLoading(false);
+    }
   };
 
   return (
@@ -119,7 +218,10 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 <input
                   type="checkbox"
                   checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    if (e.target.checked) setInfoMessage(null);
+                  }}
                   className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
                 />
                 <span className="text-[12.5px] text-gray-650 font-bold leading-snug">
@@ -140,77 +242,123 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             {/* Divider */}
             <div className="border-t border-gray-150/40 my-3.5" />
 
-            {/* Login options (Google, Email, Guest - disabled unless checkbox is active) */}
-            <div className="space-y-2.5">
-              {/* Guest */}
-              <button
-                type="button"
-                onClick={() => handleLogin('guest')}
-                disabled={!agreed}
-                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
-                  agreed
-                    ? 'bg-[#EBF5FF] border border-[#C2E0FF] text-blue-800 hover:bg-[#D6EBFF] cursor-pointer shadow-3xs active:scale-[0.98]'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
-                }`}
-              >
-                <svg className={`w-4 h-4 shrink-0 fill-none stroke-current ${agreed ? 'text-blue-500' : 'text-gray-400'}`} strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-                Continue as Guest
-              </button>
+            {/* Visual alert message block */}
+            {infoMessage && (
+              <div className="py-2.5 px-3 bg-amber-50 text-amber-900 border border-amber-150 rounded-xl text-[12px] font-bold text-center leading-normal">
+                {infoMessage}
+              </div>
+            )}
 
-              {/* Google */}
-              <button
-                type="button"
-                onClick={() => handleLogin('google')}
-                disabled={!agreed}
-                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
-                  agreed
-                    ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 cursor-pointer shadow-3xs active:scale-[0.98]'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
-                }`}
-              >
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    fill={agreed ? "#4285F4" : "currentColor"}
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill={agreed ? "#34A853" : "currentColor"}
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill={agreed ? "#FBBC05" : "currentColor"}
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                  />
-                  <path
-                    fill={agreed ? "#EA4335" : "currentColor"}
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                  />
-                </svg>
-                Continue with Google (Demo)
-              </button>
+            {/* Action views (Toggles email forms or standard choices) */}
+            <AnimatePresence mode="wait">
+              {!showEmailInput ? (
+                <motion.div
+                  key="login-buttons"
+                  initial={{ opacity: 0, y: 3 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  className="space-y-2.5"
+                >
+                  {/* Guest */}
+                  <button
+                    type="button"
+                    onClick={() => handleButtonClick('guest')}
+                    className="w-full py-3 px-4 bg-[#EBF5FF] border border-[#C2E0FF] text-blue-800 hover:bg-[#D6EBFF] rounded-xl font-display font-black text-[13px] cursor-pointer transition-all active:scale-[0.98] shadow-3xs flex items-center justify-center gap-2.5"
+                  >
+                    <svg className="w-4 h-4 shrink-0 fill-none stroke-current text-blue-500" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+                    Continue as Guest
+                  </button>
 
-              {/* Email */}
-              <button
-                type="button"
-                onClick={() => handleLogin('email')}
-                disabled={!agreed}
-                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
-                  agreed
-                    ? 'bg-white border border-[#FF7527]/30 text-gray-700 hover:border-[#FF7527]/60 hover:bg-[#FFFDF9] cursor-pointer shadow-3xs active:scale-[0.98]'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
-                }`}
-              >
-                <svg className={`w-4 h-4 shrink-0 fill-none stroke-current ${agreed ? 'text-[#FF7527]' : 'text-gray-400'}`} strokeWidth="2.2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                </svg>
-                Continue with Email (Demo)
-              </button>
-            </div>
+                  {/* Google */}
+                  <button
+                    type="button"
+                    onClick={() => handleButtonClick('google')}
+                    className="w-full py-3 px-4 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 rounded-xl font-display font-black text-[13px] cursor-pointer transition-all active:scale-[0.98] shadow-3xs flex items-center justify-center gap-2.5"
+                  >
+                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      />
+                    </svg>
+                    Continue with Google
+                  </button>
+
+                  {/* Email */}
+                  <button
+                    type="button"
+                    onClick={() => handleButtonClick('email')}
+                    className="w-full py-3 px-4 bg-white border border-[#FF7527]/30 text-gray-700 hover:border-[#FF7527]/60 hover:bg-[#FFFDF9] rounded-xl font-display font-black text-[13px] cursor-pointer transition-all active:scale-[0.98] shadow-3xs flex items-center justify-center gap-2.5"
+                  >
+                    <svg className="w-4 h-4 shrink-0 fill-none stroke-current text-[#FF7527]" strokeWidth="2.2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                    Continue with Email
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="email-input-form"
+                  initial={{ opacity: 0, y: 3 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -3 }}
+                  className="space-y-3 text-left"
+                >
+                  <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Enter your Email
+                  </span>
+                  <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
+                    We will send a magic link directly to your inbox for passwordless entry.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="yourname@domain.com"
+                      className="px-4 py-2.5 border border-gray-200 rounded-xl text-[13px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowEmailInput(false);
+                          setInfoMessage(null);
+                        }}
+                        className="flex-1 py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-705 font-display font-extrabold text-[12.5px] rounded-xl cursor-pointer transition-all active:scale-[0.98]"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSendEmailLink}
+                        disabled={emailLoading || !email.trim()}
+                        className="flex-1 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-xs disabled:bg-gray-150 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      >
+                        {emailLoading ? 'Sending...' : 'Send Magic Link'}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Helper disclaimer */}
-            <p className="text-[10px] text-center text-gray-400 font-semibold leading-normal">
+            <p className="text-[10px] text-center text-gray-450 font-semibold leading-normal">
               HopeHeart is strictly for peer emotional support. We do not diagnose, treat, or replace professional therapy.
             </p>
           </div>

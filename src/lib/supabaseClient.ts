@@ -9,69 +9,70 @@ export const supabase = supabaseUrl && supabaseAnonKey
   : null;
 
 /**
- * Saves Safe Space Rules Consent.
- * 1. Saves to localStorage fallback first.
- * 2. Attempts to save to Supabase backend if initialized and authenticated.
- * 3. Falls back silently if Supabase is unconfigured or if connection/insert fails.
+ * Stage 1: Saves consent locally and caches the pending entry method before auth redirect.
  */
-export async function saveSafeRulesConsent(entryMethod: 'guest' | 'google' | 'email') {
+export function saveSafeRulesConsentLocal(entryMethod: 'guest' | 'google' | 'email') {
   const currentIsoTime = new Date().toISOString();
-
-  // 1. Save to local storage first (Consent cache)
+  
+  // Local fallback keys
   localStorage.setItem('hopeheart_safe_rules_accepted', 'true');
   localStorage.setItem('hopeheart_safe_rules_accepted_at', currentIsoTime);
+  
+  // Caching pending method
+  localStorage.setItem('hopeheart_pending_entry_method', entryMethod);
+  
+  console.log(`[Consent] Stage 1 (Local cache & pending method) saved for: ${entryMethod}`);
+}
 
-  console.log(`[Consent] Local fallback saved successfully for method: ${entryMethod}`);
-
-  // 2. Check if Supabase client is configured
+/**
+ * Stage 2: Saves consent to Supabase backend using the authenticated user_id and clears pending method.
+ * Bypasses silently on any backend errors to preserve flow.
+ */
+export async function saveSafeRulesConsentBackend(userId: string, entryMethod: 'guest' | 'google' | 'email') {
   if (!supabase) {
-    console.warn('[Consent] Supabase is not configured (VITE_SUPABASE_URL/ANON_KEY are missing). Saved to local storage only.');
+    console.warn('[Consent] Supabase not configured. Stage 2 backend save bypassed.');
     return;
   }
-
+  
+  const currentIsoTime = new Date().toISOString();
   try {
-    // Check if an authenticated user session already exists
-    let { data: { session } } = await supabase.auth.getSession();
-    let userId = session?.user?.id || null;
+    const { error } = await supabase
+      .from('safe_rule_consents')
+      .insert({
+        user_id: userId,
+        accepted: true,
+        accepted_at: currentIsoTime,
+        consent_version: 'v1',
+        entry_method: entryMethod
+      });
 
-    // 3. Anonymous Guest Login logic (only if Supabase Anonymous Sign-Ins are enabled)
-    if (!userId && entryMethod === 'guest') {
-      try {
-        const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously();
-        if (anonError) {
-          console.warn('[Consent] Anonymous Guest auth failed or is not enabled:', anonError.message);
-        } else if (anonData?.session) {
-          session = anonData.session;
-          userId = anonData.session.user.id;
-          console.log('[Consent] Anonymous Guest login session created successfully.');
-        }
-      } catch (authErr) {
-        console.warn('[Consent] Error signing in anonymously:', authErr);
-      }
-    }
-
-    // 4. Save to database if user is authenticated
-    if (userId) {
-      const { error: dbError } = await supabase
-        .from('safe_rule_consents')
-        .insert({
-          user_id: userId,
-          accepted: true,
-          accepted_at: currentIsoTime,
-          consent_version: 'v1',
-          entry_method: entryMethod
-        });
-
-      if (dbError) {
-        console.warn('[Consent] Supabase insert failed (check if database table safe_rule_consents is configured):', dbError.message);
-      } else {
-        console.log('[Consent] Consent saved securely to Supabase safe_rule_consents.');
-      }
+    if (error) {
+      console.warn('[Consent] Stage 2 Supabase insert failed (check safe_rule_consents table setup):', error.message);
     } else {
-      console.warn('[Consent] No authenticated session available for backend saving. Saved to local storage fallback only.');
+      console.log('[Consent] Stage 2 Backend consent saved securely to Supabase.');
     }
   } catch (err) {
-    // 5. Fail silently without blocking the emotional-support flow
-    console.warn('[Consent] Supabase operation encountered an error:', err);
+    console.warn('[Consent] Stage 2 Backend insert encountered error:', err);
+  } finally {
+    localStorage.removeItem('hopeheart_pending_entry_method');
+  }
+}
+
+/**
+ * Wrapper helper: Executes local consent saving immediately, and tries backend if user is already authenticated.
+ */
+export async function saveSafeRulesConsent(entryMethod: 'guest' | 'google' | 'email') {
+  saveSafeRulesConsentLocal(entryMethod);
+  
+  if (!supabase) return;
+  
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id;
+    if (userId) {
+      await saveSafeRulesConsentBackend(userId, entryMethod);
+    }
+  } catch (e) {
+    console.warn('[Consent] Error in saveSafeRulesConsent wrapper:', e);
   }
 }

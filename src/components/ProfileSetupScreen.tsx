@@ -49,6 +49,7 @@ export default function ProfileSetupScreen({ initialNickname, onComplete }: Prof
     } else {
       // Save all answers in localStorage
       localStorage.setItem('hopeheart_profile_nickname', nickname);
+      localStorage.setItem('hopeheart_profile_completed', 'true');
       localStorage.setItem('hopeheart_profile_ageGroup', ageGroup);
       localStorage.setItem('hopeheart_profile_gender', gender);
       localStorage.setItem('hopeheart_profile_profession', profession);

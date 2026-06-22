@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId, MoodConfig, DoctorQuestion } from './types';
+import { supabase, saveSafeRulesConsentBackend } from './lib/supabaseClient';
 
 // Importing all modular screen components
 import SplashScreen from './components/SplashScreen';
@@ -167,6 +168,73 @@ export default function App() {
     }
   }, [downloadComingSoon]);
 
+  // Handle post-OAuth redirect sessions & consent saving
+  useEffect(() => {
+    const parseAuthSession = async (session: any) => {
+      if (session?.user) {
+        const pendingMethod = localStorage.getItem('hopeheart_pending_entry_method');
+        if (pendingMethod) {
+          // Stage 2 Backend saving
+          await saveSafeRulesConsentBackend(session.user.id, pendingMethod as any);
+        }
+
+        // Update nickname
+        const nickName = session.user.user_metadata?.full_name || session.user.email || 'Companion';
+        setUserName(nickName);
+
+        // Check if profile is completed
+        const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
+                            localStorage.getItem('hopeheart_profile_nickname');
+        if (isCompleted) {
+          setCurrentScreen(ScreenId.Home);
+        } else {
+          setCurrentScreen(ScreenId.ProfileSetup);
+        }
+      }
+    };
+
+    const checkGuestSession = () => {
+      const guestSessionId = localStorage.getItem('hopeheart_guest_session_id');
+      if (guestSessionId) {
+        const storedNick = localStorage.getItem('hopeheart_profile_nickname') || 'Companion';
+        setUserName(storedNick);
+
+        const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
+                            localStorage.getItem('hopeheart_profile_nickname');
+        if (isCompleted) {
+          setCurrentScreen(ScreenId.Home);
+        } else {
+          setCurrentScreen(ScreenId.ProfileSetup);
+        }
+      }
+    };
+
+    if (supabase) {
+      // Check session on mount
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          parseAuthSession(session);
+        } else {
+          checkGuestSession();
+        }
+      }).catch((err) => {
+        console.warn('[Session] Error fetching session:', err);
+        checkGuestSession();
+      });
+
+      // Listen for auth state changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          await parseAuthSession(session);
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    } else {
+      checkGuestSession();
+    }
+  }, []);
+
   const handleShareClick = async () => {
     const shareData = {
       title: 'HopeHeart Check-In',
@@ -238,8 +306,16 @@ export default function App() {
           <LoginScreen 
             onLoginSuccess={(nick) => {
               setUserName(nick);
-              setCurrentScreen(ScreenId.ProfileSetup);
+              // Check profile completion status
+              const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
+                                  localStorage.getItem('hopeheart_profile_nickname');
+              if (isCompleted) {
+                setCurrentScreen(ScreenId.Home);
+              } else {
+                setCurrentScreen(ScreenId.ProfileSetup);
+              }
             }}
+            onNavigateTo={(scr) => setCurrentScreen(scr)}
           />
         );
 
@@ -249,6 +325,7 @@ export default function App() {
             initialNickname={userName}
             onComplete={(details) => {
               setUserName(details.nickname);
+              localStorage.setItem('hopeheart_profile_completed', 'true');
               setCurrentScreen(ScreenId.Home);
             }}
           />
