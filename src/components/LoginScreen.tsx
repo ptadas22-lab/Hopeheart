@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MascotSitting } from './Logo';
+import { saveSafeRulesConsent } from '../lib/supabaseClient';
 
 interface LoginScreenProps {
   onLoginSuccess: (nickname: string) => void;
@@ -10,12 +11,11 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [agreed, setAgreed] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
 
-  const handleLogin = (provider: 'google' | 'email' | 'guest') => {
+  const handleLogin = async (provider: 'google' | 'email' | 'guest') => {
     if (!agreed) return;
     
-    // Save consent status in localStorage with hopeheart_ prefix
-    localStorage.setItem('hopeheart_safe_rules_accepted', 'true');
-    localStorage.setItem('hopeheart_safe_rules_accepted_at', new Date().toISOString());
+    // Save consent status securely in Supabase with localStorage backup fallback
+    await saveSafeRulesConsent(provider);
     
     // Set a default mock nickname based on selection
     let mockName = 'Voice47';
