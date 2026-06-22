@@ -5,35 +5,101 @@ interface SafetyScreenProps {
   onBack: () => void;
 }
 
-type TabId = 'ai-protection' | 'guidelines' | 'report' | 'emergency';
+function SafetyIllustration() {
+  return (
+    <svg width="220" height="190" viewBox="0 0 220 190" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto my-1">
+      {/* Background soft glow / shield shadow */}
+      <defs>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FFF1F2" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#EDE9FE" stopOpacity="0.9" />
+        </linearGradient>
+        <linearGradient id="avatar1Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FF8A4C" />
+          <stop offset="100%" stopColor="#FF6A1A" />
+        </linearGradient>
+        <linearGradient id="avatar2Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#A78BFA" />
+          <stop offset="100%" stopColor="#7C3AED" />
+        </linearGradient>
+        <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#8B5CF6" floodOpacity="0.06" />
+        </filter>
+      </defs>
+
+      {/* Main Shield Shape */}
+      <path 
+        d="M110 15C138 15 175 28 175 70C175 120 128 160 110 170C92 160 45 120 45 70C45 28 82 15 110 15Z" 
+        fill="url(#shieldGrad)" 
+        stroke="#E9D5FF" 
+        strokeWidth="2" 
+        strokeDasharray="4 4"
+        filter="url(#shadow)"
+      />
+
+      {/* Connection path / communication line */}
+      <path d="M85 95C95 87 125 87 135 95" stroke="#FF7527" strokeWidth="2" strokeLinecap="round" strokeDasharray="3 3" />
+
+      {/* Person 1 (Left) */}
+      <g transform="translate(62, 75)">
+        {/* Body */}
+        <path d="M5 40 C5 26, 35 26, 35 40" fill="url(#avatar1Grad)" />
+        {/* Head */}
+        <circle cx="20" cy="16" r="11" fill="#FED7AA" />
+        {/* Hair/Cap */}
+        <path d="M9 16C9 9, 31 9, 31 16" fill="#D97706" />
+        {/* Happy eyes */}
+        <path d="M15 16Q17 14 19 16" stroke="#7C2D12" strokeWidth="1.2" strokeLinecap="round" />
+        {/* Smile */}
+        <path d="M18 21Q20 23 22 21" stroke="#7C2D12" strokeWidth="1.2" strokeLinecap="round" />
+      </g>
+
+      {/* Person 2 (Right) */}
+      <g transform="translate(118, 75)">
+        {/* Body */}
+        <path d="M5 40 C5 26, 35 26, 35 40" fill="url(#avatar2Grad)" />
+        {/* Head */}
+        <circle cx="20" cy="16" r="11" fill="#F3E8FF" />
+        {/* Hair */}
+        <path d="M9 16C9 7, 31 7, 31 16" fill="#5B21B6" />
+        {/* Happy eyes */}
+        <path d="M15 16Q17 14 19 16" stroke="#2E1065" strokeWidth="1.2" strokeLinecap="round" />
+        {/* Smile */}
+        <path d="M18 21Q20 23 22 21" stroke="#2E1065" strokeWidth="1.2" strokeLinecap="round" />
+      </g>
+
+      {/* Heart Icon near the center top of communication line */}
+      <path 
+        d="M110 65C108 62 104 62 102 64C100 66 100 70 102 72L110 80L118 72C120 70 120 66 118 64C116 62 112 62 110 65Z" 
+        fill="#FF4B4B" 
+      />
+
+      {/* Green Checkmark Badge (Bottom Right of Shield) */}
+      <g transform="translate(140, 115)" filter="url(#shadow)">
+        <circle cx="14" cy="14" r="12" fill="#10B981" stroke="white" strokeWidth="2" />
+        <path d="M9 14L12 17L19 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+    </svg>
+  );
+}
 
 export default function SafetyScreen({ onBack }: SafetyScreenProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('ai-protection');
-  const [reportTarget, setReportTarget] = useState('');
-  const [reportDetails, setReportDetails] = useState('');
+  const [showUrgentModal, setShowUrgentModal] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+
+  const [reportWhatHappened, setReportWhatHappened] = useState('');
+  const [reportWhereHappened, setReportWhereHappened] = useState('');
+  const [reportOptionalNote, setReportOptionalNote] = useState('');
 
   const handleReportSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reportTarget.trim() || !reportDetails.trim()) return;
-    alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review the report for ${reportTarget} immediately.`);
-    setReportTarget('');
-    setReportDetails('');
+    if (!reportWhatHappened.trim() || !reportWhereHappened.trim()) return;
+    alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+    setReportWhatHappened('');
+    setReportWhereHappened('');
+    setReportOptionalNote('');
+    setShowReportForm(false);
   };
-
-  const allowedItems = [
-    { text: 'Feelings', desc: 'Anxiety, hurt, grief, numbness, loneliness, or emotional burden.' },
-    { text: 'Stories', desc: 'Sharing your unique journey, daily triumphs, and healing paths.' },
-    { text: 'Kind words', desc: 'Empathetic validation, active supportive listening, & companionship.' },
-    { text: 'Lived experiences', desc: 'Peer-to-peer discussions of chronic conditions or caregiver life.' },
-  ];
-
-  const blockedItems = [
-    { text: 'Prescriptions', desc: 'Naming drugs, suggesting script adjustments, or drug combinations.' },
-    { text: 'Diagnosis', desc: 'Claiming health outcomes, matching symptoms to specific conditions.' },
-    { text: 'Medicine advice', desc: 'Dosages, pharmaceutical recommendations, or side-effect treatments.' },
-    { text: 'Cure claims', desc: 'Cure promises, holistic instructions that replace verified care.' },
-    { text: 'Judgment', desc: 'Criticism, trauma comparison, or demeaning peer input.' },
-  ];
 
   return (
     <div className="flex flex-col h-full bg-transparent font-sans select-none overflow-y-auto scrollbar-thin w-full">
@@ -57,220 +123,305 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
       </div>
 
       <div className="p-4 md:p-6 lg:p-8 space-y-6 flex-1 max-w-4xl mx-auto w-full">
-        {/* Title */}
-        <div className="text-center space-y-1">
-          <h2 className="font-display font-black text-[#2B1D12] text-[20px] leading-tight">
-            How HopeHeart Protects You
-          </h2>
-          <p className="text-[12px] text-gray-500 font-medium leading-relaxed max-w-sm mx-auto">
-            We combine active peer filters, reporting tools, and guidelines to maintain clinical boundaries.
+        {/* Safety Header Card */}
+        <div className="relative bg-white/70 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-[#EDE9DE]/70 shadow-xs">
+          {/* Urgent Help Button */}
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={() => setShowUrgentModal(true)}
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3 bg-[#FFF1F2] border border-[#FECDD3] hover:bg-[#FFE4E6] text-rose-700 rounded-full font-display font-black text-[12px] transition-colors shadow-3xs cursor-pointer"
+            >
+              <span>🚨</span>
+              <span className="hidden sm:inline">Urgent Help</span>
+            </button>
+          </div>
+
+          <div className="text-center space-y-2 max-w-2xl mx-auto pt-6 sm:pt-0 pr-8 sm:pr-0">
+            <h2 className="font-display font-black text-[#2B1D12] text-[20px] sm:text-[23px] leading-tight">
+              How HopeHeart Protects You
+            </h2>
+            <p className="text-[12px] sm:text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+              HopeHeart uses safety filters, community rules, and reporting tools to keep support kind, private, and free from unsafe medical advice.
+            </p>
+          </div>
+
+          {/* Warm human-based safety illustration */}
+          <div className="mt-4 flex justify-center">
+            <SafetyIllustration />
+          </div>
+        </div>
+
+        {/* Section 1: AI Safety Filter */}
+        <div className="bg-white/80 backdrop-blur-md border border-orange-100 p-5 rounded-3xl space-y-2 shadow-3xs">
+          <h3 className="font-display font-black text-[#FF7527] text-[15px] flex items-center gap-1.5">
+            <span>🛡️</span> AI Safety Filter
+          </h3>
+          <p className="text-[12px] sm:text-[12.5px] text-gray-600 font-semibold leading-relaxed">
+            HopeHeart checks conversations for unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, cure promises, abuse, or harmful content.
           </p>
         </div>
 
-        {/* Tab Selector */}
-        <div className="flex flex-wrap gap-2 justify-center border-b border-[#EDE9DE] pb-4">
-          {[
-            { id: 'ai-protection', label: '🤖 AI Protection' },
-            { id: 'guidelines', label: '📜 Guidelines' },
-            { id: 'report', label: '🚩 Report User' },
-            { id: 'emergency', label: '📞 Emergency' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as TabId)}
-              className={`px-4 py-2.5 rounded-xl text-[12.5px] font-display font-bold border transition-all cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-[#1E1E1A] text-white border-[#1E1E1A] shadow-xs'
-                  : 'bg-white text-gray-650 border-[#EDE9DE] hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Section 2 & 3: Allowed and Blocked */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Section 2: Allowed */}
+          <div className="bg-white/80 backdrop-blur-md border border-emerald-100 rounded-3xl p-5 shadow-3xs space-y-4">
+            <div>
+              <h3 className="font-display font-black text-emerald-800 text-[14.5px] flex items-center gap-1.5 mb-1.5">
+                <span className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] flex items-center justify-center font-bold">✓</span>
+                Allowed
+              </h3>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
+                People can share emotions, lived experiences, and kind support without giving medical instructions.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {[
+                'Feelings',
+                'Personal stories',
+                'Kind words',
+                'Lived experiences',
+                'Caregiver support',
+                'Emotional sharing'
+              ].map((chip, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50/70 text-emerald-800 border border-emerald-100/50 rounded-full text-[11.5px] font-bold">
+                  ✅ {chip}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Section 3: Blocked */}
+          <div className="bg-white/80 backdrop-blur-md border border-red-100 rounded-3xl p-5 shadow-3xs space-y-4">
+            <div>
+              <h3 className="font-display font-black text-red-800 text-[14.5px] flex items-center gap-1.5 mb-1.5">
+                <span className="w-5 h-5 rounded-full bg-red-50 text-red-800 text-[11px] flex items-center justify-center font-bold">×</span>
+                Blocked
+              </h3>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
+                HopeHeart blocks medical advice, diagnosis, prescriptions, dosage guidance, cure claims, and harmful behaviour.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              {[
+                'Prescriptions',
+                'Dosage advice',
+                'Diagnosis',
+                'Cure claims',
+                'Medicine changes',
+                'Abuse or judgement'
+              ].map((chip, idx) => (
+                <span key={idx} className="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-50/70 text-rose-855 border border-rose-100/50 rounded-full text-[11.5px] font-bold">
+                  🚫 {chip}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Tab Contents */}
-        <div className="min-h-[300px]">
-          <AnimatePresence mode="wait">
-            {activeTab === 'ai-protection' && (
-              <motion.div
-                key="ai"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="space-y-4"
-              >
-                <div className="bg-[#FAF8F3] border border-orange-100 p-4 rounded-2xl">
-                  <h3 className="font-display font-bold text-orange-700 text-[14px] mb-1">
-                    Automated Content Filter
-                  </h3>
-                  <p className="text-[12px] text-gray-600 leading-relaxed">
-                    Our safety filters analyze messages in real-time. If medical prescriptions, dosage information, or clinical diagnosis claims are detected, the system blocks transmission and suggests seeking verified care.
+        {/* Section 4: Community Rules */}
+        <div className="space-y-4">
+          <div className="text-center sm:text-left">
+            <h3 className="font-display font-black text-[#2B1D12] text-[15px] flex items-center justify-center sm:justify-start gap-1.5">
+              <span>📜</span> Community Rules
+            </h3>
+            <p className="text-[12px] text-gray-500 font-semibold mt-1">
+              Please follow these guidelines to keep HopeHeart safe for everyone.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { title: 'Be kind and respectful', desc: 'Treat everyone with empathy, support, and understanding.', icon: '❤️' },
+              { title: 'Share only what feels safe', desc: 'Your boundaries matter. Only share what you are comfortable with.', icon: '🔒' },
+              { title: 'Do not pressure others', desc: 'Respect other users\' choices, response times, and comfort levels.', icon: '🤝' },
+              { title: 'Do not give medical instructions', desc: 'Leave medical recommendations, prescriptions, and diagnosis to professionals.', icon: '🚫' },
+              { title: 'Do not ask for personal contact details', desc: 'Keep conversations within HopeHeart to protect your privacy.', icon: '📱' },
+              { title: 'Report unsafe behaviour', desc: 'Flag any messaging that crosses boundaries or causes discomfort.', icon: '🚩' }
+            ].map((rule, idx) => (
+              <div key={idx} className="bg-white/80 border border-[#EDE9DE] rounded-2xl p-4 shadow-3xs flex gap-3 items-start">
+                <div className="w-8 h-8 bg-orange-50/80 text-orange-500 rounded-xl flex items-center justify-center text-[16px] shrink-0">
+                  {rule.icon}
+                </div>
+                <div className="space-y-0.5">
+                  <h4 className="font-display font-black text-gray-800 text-[12.5px] leading-tight">
+                    {rule.title}
+                  </h4>
+                  <p className="text-[11.5px] text-gray-500 font-medium leading-snug">
+                    {rule.desc}
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Allowed Card */}
-                  <div className="bg-white border border-[#CDE1D7] rounded-2xl p-4.5 shadow-2xs">
-                    <h4 className="font-display font-extrabold text-emerald-800 text-[13px] uppercase mb-2 flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 text-[10px] flex items-center justify-center font-bold">✓</span>
-                      Allowed
-                    </h4>
-                    <ul className="space-y-2 text-[11.5px] text-gray-600 font-semibold">
-                      {allowedItems.map((item, i) => (
-                        <li key={i}>
-                          <strong>{item.text}</strong>: {item.desc}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                  {/* Blocked Card */}
-                  <div className="bg-white border border-red-200 rounded-2xl p-4.5 shadow-2xs">
-                    <h4 className="font-display font-extrabold text-red-800 text-[13px] uppercase mb-2 flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-red-100 text-red-800 text-[10px] flex items-center justify-center font-bold">×</span>
-                      Blocked
-                    </h4>
-                    <ul className="space-y-2 text-[11.5px] text-gray-600 font-semibold">
-                      {blockedItems.map((item, i) => (
-                        <li key={i}>
-                          <strong>{item.text}</strong>: {item.desc}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+        {/* Section 5 & 6: Report a Concern & Response policy */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Section 5: Report a Concern */}
+          <div className="bg-white/80 backdrop-blur-md border border-[#EDE9DE] rounded-3xl p-5 shadow-3xs flex flex-col justify-between min-h-[160px]">
+            <div className="space-y-2 mb-4">
+              <h3 className="font-display font-black text-gray-850 text-[15px] flex items-center gap-1.5">
+                <span>🚩</span> Report a Concern
+              </h3>
+              <p className="text-[12px] sm:text-[12.5px] text-gray-600 font-semibold leading-relaxed">
+                If something feels unsafe, harmful, abusive, or medically risky, you can report it.
+              </p>
+            </div>
 
-            {activeTab === 'guidelines' && (
-              <motion.div
-                key="guidelines"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="bg-white border border-[#EDE9DE] p-5 rounded-3xl space-y-4 shadow-3xs"
-              >
-                <h3 className="font-display font-black text-gray-800 text-[16px]">
-                  HopeHeart Code of Conduct
-                </h3>
-                <ul className="space-y-2.5 text-[12.5px] text-gray-650 font-semibold leading-relaxed list-disc list-inside">
-                  <li><strong>Absolute Anonymity:</strong> Do not share phone numbers, social media handles, or home addresses in chats.</li>
-                  <li><strong>No Prescribing or Diagnosing:</strong> Refrain from telling peers what medication to take or telling them they have a medical condition.</li>
-                  <li><strong>Caregiver Validation:</strong> Celebrate the journey of caregivers supporting someone with Parkinson's or emotional exhaustion.</li>
-                  <li><strong>Zero Tolerance for Abuse:</strong> Judgmental behavior, bullying, or inappropriate content results in immediate moderation blocks.</li>
-                </ul>
-
-                <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-2xl text-center">
-                  <p className="font-display font-bold text-gray-700 text-[13px]">
-                    "Community supports. AI protects. Professionals provide care."
-                  </p>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'report' && (
-              <motion.div
-                key="report"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="bg-white border border-[#EDE9DE] p-5 rounded-3xl shadow-3xs"
-              >
-                <form onSubmit={handleReportSubmit} className="space-y-4">
-                  <div>
-                    <h3 className="font-display font-black text-gray-850 text-[15px] mb-1">
-                      Flag a Safety Concern
-                    </h3>
-                    <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
-                      Report users attempting clinical diagnosis, prescribing, or acting inappropriately.
-                    </p>
-                  </div>
-
+            <AnimatePresence initial={false} mode="wait">
+              {!showReportForm ? (
+                <motion.div
+                  key="button-state"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <button
+                    onClick={() => setShowReportForm(true)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-bold text-[12.5px] rounded-xl transition-colors cursor-pointer shadow-3xs"
+                  >
+                    Report Concern →
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.form
+                  key="form-state"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  onSubmit={handleReportSubmit}
+                  className="space-y-3.5 pt-2"
+                >
                   <div className="space-y-1">
-                    <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                      Target User / Chat Room Name
+                    <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                      What happened?
                     </label>
                     <input
                       type="text"
-                      value={reportTarget}
-                      onChange={(e) => setReportTarget(e.target.value)}
-                      placeholder="e.g. Voice123 or Anxiety Circle..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-[13px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                      value={reportWhatHappened}
+                      onChange={(e) => setReportWhatHappened(e.target.value)}
+                      placeholder="Brief summary of the safety issue..."
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                       required
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                      Details of Concern
+                    <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                      Where did it happen?
                     </label>
-                    <textarea
-                      rows={3}
-                      value={reportDetails}
-                      onChange={(e) => setReportDetails(e.target.value)}
-                      placeholder="Describe what occurred (attempts to prescribe, harassment, etc.)..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-[13px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                    <input
+                      type="text"
+                      value={reportWhereHappened}
+                      onChange={(e) => setReportWhereHappened(e.target.value)}
+                      placeholder="e.g. Chat with user Alex, or Group support room..."
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                       required
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-bold text-[14px] rounded-xl cursor-pointer"
-                  >
-                    Submit Safety Report
-                  </button>
-                </form>
-              </motion.div>
-            )}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                      Optional note (Optional)
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={reportOptionalNote}
+                      onChange={(e) => setReportOptionalNote(e.target.value)}
+                      placeholder="Any extra details you want to add..."
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                    />
+                  </div>
 
-            {activeTab === 'emergency' && (
-              <motion.div
-                key="emergency"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="bg-white border border-[#EDE9DE] p-5 rounded-3xl shadow-3xs space-y-4"
-              >
-                <div>
-                  <h3 className="font-display font-black text-gray-850 text-[15px] mb-1">
-                    Emergency Support Pathways
-                  </h3>
-                  <p className="text-[11.5px] text-gray-500 font-semibold leading-normal">
-                    HopeHeart is a peer-to-peer emotional space. If you are facing a medical emergency, threat of self-harm, or severe cognitive distress, please seek immediate real-world help:
-                  </p>
-                </div>
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      type="submit"
+                      className="flex-1 py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-bold text-[12px] rounded-xl cursor-pointer"
+                    >
+                      Submit Report
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowReportForm(false);
+                        setReportWhatHappened('');
+                        setReportWhereHappened('');
+                        setReportOptionalNote('');
+                      }}
+                      className="px-3 py-2 border border-gray-200 hover:bg-gray-50 text-gray-500 font-display font-bold text-[12px] rounded-xl cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { title: '🚨 Local emergency number', desc: 'Call your local emergency number immediately.' },
-                    { title: '🏥 Nearby hospital / emergency care', desc: 'Go to the nearest hospital or urgent care clinic for direct physical evaluation.' },
-                    { title: '👨‍👩‍👧 Trusted family contact', desc: 'Reach out to a family member, local caregiver, or trusted neighbor right away.' },
-                    { title: '🌍 Verified crisis helpline directory', desc: 'Consult local public directories for verified state-supported emotional hotlines.' }
-                  ].map((item, idx) => (
-                    <div key={idx} className="p-3 bg-[#FCFAF5] border border-gray-150 rounded-xl space-y-1">
-                      <h4 className="font-display font-extrabold text-[12.5px] text-gray-800 leading-tight">
-                        {item.title}
-                      </h4>
-                      <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="p-3 bg-amber-50/50 border border-amber-100 rounded-xl text-center text-[10.5px] text-amber-800 font-semibold">
-                  ⚠️ <strong>Disclaimer:</strong> HopeHeart does not offer diagnostic evaluations or crisis helpline intervention services. Keep yourself safe first.
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Section 6: What happens if unsafe advice appears? */}
+          <div className="bg-white/80 backdrop-blur-md border border-[#EDE9DE] rounded-3xl p-5 shadow-3xs flex flex-col justify-between min-h-[160px]">
+            <div className="space-y-2">
+              <h3 className="font-display font-black text-gray-850 text-[15px] flex items-center gap-1.5">
+                <span>💬</span> What happens if unsafe advice appears?
+              </h3>
+              <p className="text-[12px] sm:text-[12.5px] text-gray-600 font-semibold leading-relaxed">
+                If a message includes diagnosis, dosage, prescriptions, cure claims, or harmful advice, HopeHeart blocks it and guides the user toward safe support or professional care.
+              </p>
+            </div>
+            <div className="mt-4 p-3 bg-orange-50/50 border border-orange-100 rounded-2xl flex items-center gap-2">
+              <span className="text-[16px]">🛡️</span>
+              <p className="text-[11px] text-gray-600 font-bold leading-normal">
+                Real-time safety monitors actively scan and intercept medical advice.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Urgent Help Modal */}
+      <AnimatePresence>
+        {showUrgentModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowUrgentModal(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-xs"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-xl border border-gray-100 text-center z-10 space-y-4"
+            >
+              <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-[24px] mx-auto">
+                🚨
+              </div>
+              <h3 className="font-display font-black text-[18px] text-gray-800">
+                Urgent Help
+              </h3>
+              <p className="text-[13px] text-gray-600 font-semibold leading-relaxed">
+                If you or someone else is in immediate danger, contact your local emergency service or go to the nearest hospital/emergency care center.
+              </p>
+              <div className="py-2 px-3 bg-red-50/50 rounded-xl">
+                <p className="text-[11.5px] text-red-700 font-bold">
+                  HopeHeart is not an emergency service.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowUrgentModal(false)}
+                className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-display font-bold text-[13px] rounded-xl transition-colors cursor-pointer"
+              >
+                Close
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
