@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Mascot from './Mascot';
 import { MoodConfig } from '../types';
@@ -140,6 +140,47 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
+
+  const [isHumming, setIsHumming] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => {
+    return localStorage.getItem('hopeheart_music_muted') === 'true';
+  });
+
+  const humTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const getLyricsForMoodId = (moodId: string): string => {
+    const lyricsMap: Record<string, string> = {
+      anxious: "Breathe in slow, I’m here with you,\nOne small step will carry you through.",
+      sad: "Even quiet days still matter,\nYour heart can rest, not shatter.",
+      hurt: "Even quiet days still matter,\nYour heart can rest, not shatter.",
+      lonely: "Even quiet days still matter,\nYour heart can rest, not shatter.",
+      tired: "Rest your mind, soften the day,\nYou don’t have to rush your way.",
+      'need-support': "One thing now, then one thing more,\nYou are safe on this small shore.",
+      calm: "Keep this peace, soft and bright,\nCarry it gently through the night.",
+      hopeful: "Hold that little light today,\nHope can grow in a gentle way."
+    };
+    return lyricsMap[moodId] || lyricsMap['calm'];
+  };
+
+  // Stop humming when mood changes
+  useEffect(() => {
+    if (isHumming) {
+      setIsHumming(false);
+    }
+    if (humTimerRef.current) {
+      clearTimeout(humTimerRef.current);
+      humTimerRef.current = null;
+    }
+  }, [currentMood]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (humTimerRef.current) {
+        clearTimeout(humTimerRef.current);
+      }
+    };
+  }, []);
 
   // Auto-dismiss the welcome toast after 4.5 seconds
   useEffect(() => {
@@ -384,6 +425,102 @@ export default function DashboardScreen({
                   <span>📸</span> Share
                 </button>
               </div>
+
+              {/* HopeBuddy Song Section (shows when a mood is selected) */}
+              {currentMood && (
+                <div className="mt-4 pt-4 border-t border-dashed border-[#EDE9DE] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">🎵</span>
+                      <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                        HopeBuddy Song
+                      </span>
+                    </div>
+                    {isHumming && (
+                      <div className="flex items-center gap-1.5 animate-pulse text-[11px] font-semibold text-gray-500">
+                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.1s' }}>🎵</span>
+                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.3s' }}>🎶</span>
+                        <span className="inline-block animate-bounce text-xs" style={{ animationDelay: '0.5s' }}>🎵</span>
+                        <span>Humming...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-[#FFFDF9]/60 border border-[#EDE9DE]/50 rounded-2xl p-3.5 text-center relative overflow-hidden">
+                    <h4 className="font-display font-black text-gray-800 text-[13px] leading-tight mb-1">
+                      “HopeBuddy has a little song for you”
+                    </h4>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block mb-2.5">
+                      Based on your mood today.
+                    </p>
+                    <p className="text-[12.5px] text-gray-655 font-semibold italic whitespace-pre-line leading-relaxed">
+                      {getLyricsForMoodId(currentMood)}
+                    </p>
+                    
+                    {isHumming && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-3.5 py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11px] font-bold"
+                      >
+                        HopeBuddy is humming for you 🎵{isMuted && " (Muted)"}
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Song card actions */}
+                  <div className="flex flex-wrap gap-2 pt-1 justify-center">
+                    <button
+                      onClick={() => {
+                        if (isHumming) {
+                          setIsHumming(false);
+                          if (humTimerRef.current) {
+                            clearTimeout(humTimerRef.current);
+                            humTimerRef.current = null;
+                          }
+                        } else {
+                          setIsHumming(true);
+                          // Clean up any existing timer
+                          if (humTimerRef.current) {
+                            clearTimeout(humTimerRef.current);
+                          }
+                          // Set 8-second auto-stop timer
+                          humTimerRef.current = setTimeout(() => {
+                            setIsHumming(false);
+                            humTimerRef.current = null;
+                          }, 8000);
+                        }
+                      }}
+                      type="button"
+                      className="py-1.5 px-3 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1"
+                    >
+                      <span>{isHumming ? '⏹️ Stop hum' : '🎵 Play HopeBuddy hum'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const nextMuted = !isMuted;
+                        setIsMuted(nextMuted);
+                        localStorage.setItem('hopeheart_music_muted', nextMuted ? 'true' : 'false');
+                      }}
+                      type="button"
+                      className="py-1.5 px-3 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1"
+                    >
+                      <span>{isMuted ? '🔊 Unmute' : '🔇 Mute'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        onMoodSelected(currentMood);
+                      }}
+                      type="button"
+                      className="py-1.5 px-3.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[11.5px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs flex items-center gap-1"
+                    >
+                      <span>🧡 Save this feeling</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
