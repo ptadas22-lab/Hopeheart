@@ -147,6 +147,50 @@ export default function App() {
   // Global overlay trigger states for Screen 21 (Moderation Block) and Screen 22 (Crisis Hotline)
   const [overlayType, setOverlayType] = useState<'moderation' | 'crisis' | null>(null);
 
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [downloadComingSoon, setDownloadComingSoon] = useState(false);
+
+  useEffect(() => {
+    if (copySuccess) {
+      const t = setTimeout(() => setCopySuccess(false), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [copySuccess]);
+
+  useEffect(() => {
+    if (downloadComingSoon) {
+      const t = setTimeout(() => setDownloadComingSoon(false), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [downloadComingSoon]);
+
+  const handleShareClick = async () => {
+    const shareData = {
+      title: 'HopeHeart Check-In',
+      text: 'Today I’m choosing support, not silence.',
+      url: window.location.href
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopySuccess(true);
+  };
+
+  const handleDownloadCard = () => {
+    setDownloadComingSoon(true);
+  };
+
   // Trigger quote refresh
   const handleRefreshQuote = () => {
     const list = EN_DIARY_WISDOM.filter(q => q !== todayQuote);
@@ -217,6 +261,7 @@ export default function App() {
             todayQuote={todayQuote}
             onRefreshQuote={handleRefreshQuote}
             onMoodSelected={handleMoodSelected}
+            onShareCheckIn={() => setShowShareModal(true)}
           />
         );
 
@@ -564,15 +609,122 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-
       {showNavChannels && currentScreen !== ScreenId.HopeBuddyChat && (
         <HopeBuddyWidget 
           selectedMood={selectedMood}
           moodConfigs={MOOD_CONFIGS}
           onMoodSelected={handleMoodSelected}
           onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+          onShareCheckIn={() => setShowShareModal(true)}
         />
       )}
+
+      {/* Share Card Modal Overlay */}
+      <AnimatePresence>
+        {showShareModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-xs select-none">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowShareModal(false)}
+              className="absolute inset-0"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative w-full max-w-sm hh-surface rounded-[32px] p-6 z-10 space-y-5 text-center"
+            >
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2.5">
+                <span className="font-display font-black text-[15px] text-gray-800">
+                  Share Your Check-In
+                </span>
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-655 text-xs font-bold cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Share Card Preview Box */}
+              <div className="p-5 bg-gradient-to-br from-[#FFF8F4] to-[#FAF5FF] border border-[#FFD3B6]/30 rounded-2.5xl shadow-sm text-center space-y-4 relative overflow-hidden">
+                <div className="absolute top-0 right-0 opacity-[0.05] pointer-events-none select-none text-[80px] translate-x-5 -translate-y-5">
+                  🧡
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest block">
+                    HopeHeart Check-In
+                  </span>
+                  <p className="text-[14px] font-display font-black text-gray-855 px-2 leading-snug">
+                    "Today I’m choosing support, not silence."
+                  </p>
+                </div>
+
+                {/* Mood Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/85 border border-gray-200/50 rounded-2xl shadow-3xs">
+                  <span className="text-[20px]">{selectedMood.emoji}</span>
+                  <span className="text-[12.5px] font-display font-black text-gray-750">
+                    Mood: {selectedMood.label}
+                  </span>
+                </div>
+
+                <div className="border-t border-[#EDE9DE]/50 pt-3 flex flex-col items-center leading-none gap-1">
+                  <span className="font-display font-black text-[#2B1D12] text-[13px]">
+                    HopeHeart
+                  </span>
+                  <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest">
+                    Safe Emotional Hub
+                  </span>
+                </div>
+              </div>
+
+              {/* Privacy Notice */}
+              <p className="text-[10.5px] text-gray-450 font-semibold leading-normal max-w-[240px] mx-auto italic">
+                Only your selected mood is shown. Private notes are never shared.
+              </p>
+
+              {/* Toast Copy Link / Download success */}
+              {copySuccess && (
+                <div className="py-1.5 px-3 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-xl text-[11px] font-bold">
+                  Link copied safely
+                </div>
+              )}
+              {downloadComingSoon && (
+                <div className="py-1.5 px-3 bg-amber-50 text-amber-850 border border-amber-200 rounded-xl text-[11px] font-bold">
+                  Coming soon
+                </div>
+              )}
+
+              {/* Actions Grid */}
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+                <button
+                  onClick={handleShareClick}
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-xs"
+                >
+                  Share
+                </button>
+                <button
+                  onClick={handleCopyLink}
+                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-750 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
+                >
+                  Copy Link
+                </button>
+                <button
+                  onClick={handleDownloadCard}
+                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-750 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
+                >
+                  Download Card
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
     </div>
   );

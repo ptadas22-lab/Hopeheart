@@ -11,6 +11,7 @@ interface DashboardScreenProps {
   todayQuote: string;
   onRefreshQuote: () => void;
   onMoodSelected: (moodId: string) => void;
+  onShareCheckIn?: () => void;
 }
 
 // 1. Community Support Illustration (Anxious person holding phone, listening chat bubble)
@@ -119,6 +120,7 @@ export default function DashboardScreen({
   selectedMood,
   onNavigateTo,
   onMoodSelected,
+  onShareCheckIn,
 }: DashboardScreenProps) {
   const [showToast, setShowToast] = useState(true);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
@@ -246,16 +248,26 @@ export default function DashboardScreen({
                   );
                 })}
               </div>
-              <button
-                onClick={() => {
-                  onMoodSelected(currentMood);
-                  alert("Mood check-in updated successfully! HopeBuddy expressions synchronized.");
-                }}
-                type="button"
-                className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
-              >
-                Update Check-In
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    onMoodSelected(currentMood);
+                    alert("Mood check-in updated successfully! HopeBuddy expressions synchronized.");
+                  }}
+                  type="button"
+                  className="flex-1 py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
+                >
+                  Update Check-In
+                </button>
+                <button
+                  onClick={onShareCheckIn}
+                  type="button"
+                  className="px-4 py-2.5 bg-[#FFF2EA] hover:bg-[#FFE4E6] text-[#FF7527] border border-[#FF7527]/20 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1"
+                  title="Share Check-In Card"
+                >
+                  <span>📸</span> Share
+                </button>
+              </div>
             </div>
           </div>
 

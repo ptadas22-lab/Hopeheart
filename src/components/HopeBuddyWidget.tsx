@@ -9,17 +9,15 @@ interface HopeBuddyWidgetProps {
   moodConfigs: MoodConfig[];
   onMoodSelected: (moodId: string) => void;
   onNavigateTo: (screenId: string) => void;
+  onShareCheckIn?: () => void;
 }
 
 export default function HopeBuddyWidget({
   selectedMood,
-  moodConfigs,
-  onMoodSelected,
   onNavigateTo,
+  onShareCheckIn,
 }: HopeBuddyWidgetProps) {
   const [isMinimized, setIsMinimized] = useState<boolean>(true);
-  const [step, setStep] = useState<'mood-select' | 'support-options'>('mood-select');
-  const [tempMoodId, setTempMoodId] = useState<string>(selectedMood.id);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   
   // Ref for dragging
@@ -35,7 +33,6 @@ export default function HopeBuddyWidget({
       try {
         const parsed = JSON.parse(saved);
         if (typeof parsed.right === 'number' && typeof parsed.bottom === 'number') {
-          // enforce mobile bottom limit
           if (isMobileInitial && parsed.bottom < 90) {
             parsed.bottom = 90;
           }
@@ -43,7 +40,6 @@ export default function HopeBuddyWidget({
         }
       } catch (e) {}
     }
-    // Default position (above bottom nav on mobile)
     return { right: 20, bottom: isMobileInitial ? 90 : 20 };
   });
 
@@ -68,11 +64,6 @@ export default function HopeBuddyWidget({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // Sync temp mood when selected mood changes externally
-  useEffect(() => {
-    setTempMoodId(selectedMood.id);
-  }, [selectedMood.id]);
 
   // Handle pointer drag actions
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
@@ -123,12 +114,6 @@ export default function HopeBuddyWidget({
     }
   };
 
-  const handleSaveCheckIn = () => {
-    if (!tempMoodId) return;
-    onMoodSelected(tempMoodId);
-    setStep('support-options');
-  };
-
   return (
     <>
       <AnimatePresence>
@@ -152,192 +137,129 @@ export default function HopeBuddyWidget({
                     position: 'fixed',
                     right: `${position.right}px`,
                     bottom: `${position.bottom + 64}px`,
-                    width: '320px',
+                    width: '300px',
                     zIndex: 50,
                   }
             }
-            className="bg-white border border-[#EDE9DE] p-4.5 rounded-[28px] shadow-lg flex flex-col gap-4 select-none z-50"
+            className="hh-surface p-5 rounded-[28px] flex flex-col gap-4 select-none"
           >
-            {/* Stage 1: Compact Check-In */}
-            {step === 'mood-select' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-150 pb-2">
-                  <span className="font-display font-extrabold text-[14.5px] text-gray-800 flex items-center gap-1.5">
-                    <span>🧡</span> HopeBuddy 👋
-                  </span>
-                  <button
-                    onClick={() => setIsMinimized(true)}
-                    type="button"
-                    className="text-gray-400 hover:text-gray-600 font-bold text-xs w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-                
-                <div className="space-y-1 text-center">
-                  <p className="text-[13px] text-gray-700 font-semibold leading-normal">
-                    How are you feeling?
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: 'calm', label: 'Calm', emoji: '😊' },
-                    { id: 'sad', label: 'Low', emoji: '😔' },
-                    { id: 'anxious', label: 'Anxious', emoji: '😰' },
-                    { id: 'tired', label: 'Tired', emoji: '😴' }
-                  ].map((mood) => {
-                    const isSelected = tempMoodId === mood.id;
-                    return (
-                      <button
-                        key={mood.id}
-                        onClick={() => setTempMoodId(mood.id)}
-                        type="button"
-                        className={`p-2.5 border rounded-xl flex flex-col items-center justify-center gap-0.5 cursor-pointer transition-all ${
-                          isSelected
-                            ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
-                            : 'bg-[#FCFBF8] border-gray-150 text-gray-500 hover:border-gray-300'
-                        }`}
-                      >
-                        <span className="text-[20px]">{mood.emoji}</span>
-                        <span className="text-[11px] font-bold">{mood.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="flex gap-2 pt-2 border-t border-gray-100">
-                  <button
-                    onClick={() => setIsMinimized(true)}
-                    type="button"
-                    className="flex-1 py-2 bg-gray-50 hover:bg-gray-100 text-gray-550 border border-gray-200 rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95"
-                  >
-                    Maybe later
-                  </button>
-                  <button
-                    onClick={handleSaveCheckIn}
-                    disabled={!tempMoodId}
-                    type="button"
-                    className={`flex-1 py-2 rounded-xl text-[12.5px] font-black transition-all ${
-                      tempMoodId
-                        ? 'bg-[#1E1E1A] hover:bg-black text-white cursor-pointer shadow-xs active:scale-95'
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    Save
-                  </button>
-                </div>
+            {/* Options Popup */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2">
+                <span className="font-display font-extrabold text-[14.5px] text-gray-800 flex items-center gap-1.5">
+                  <span>🧡</span> HopeBuddy 👋
+                </span>
+                <button
+                  onClick={() => setIsMinimized(true)}
+                  type="button"
+                  className="text-gray-400 hover:text-gray-600 font-bold text-xs w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer"
+                >
+                  ✕
+                </button>
               </div>
-            )}
 
-            {/* Stage 2: Support Options */}
-            {step === 'support-options' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-150 pb-2">
-                  <span className="font-display font-extrabold text-[14.5px] text-gray-800 flex items-center gap-1.5">
-                    <span>🧡</span> HopeBuddy 👋
-                  </span>
-                  <button
-                    onClick={() => setIsMinimized(true)}
-                    type="button"
-                    className="text-gray-400 hover:text-gray-600 font-bold text-xs w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 cursor-pointer"
-                  >
-                    ✕
-                  </button>
+              <div className="space-y-3 text-center">
+                <div className="w-12 h-12 rounded-full bg-[#FFFDF9] border border-[#EDE9DE] flex items-center justify-center mx-auto overflow-hidden">
+                  <MascotSitting size={34} />
                 </div>
-
-                <div className="space-y-3.5">
-                  <div className="space-y-1.5 text-center">
-                    <div className="w-10 h-10 rounded-full bg-[#FFFDF9] border border-[#EDE9DE] flex items-center justify-center mx-auto overflow-hidden">
-                      <MascotSitting size={28} />
-                    </div>
-                    <p className="text-[12.5px] font-semibold text-gray-700 px-2 leading-relaxed">
-                      I’m here with you. What would help?
-                    </p>
-                  </div>
-                  
-                  <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
-                    <button
-                      onClick={() => {
-                        onNavigateTo('hopebuddy-chat');
-                        setIsMinimized(true);
-                      }}
-                      type="button"
-                      className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs text-center"
-                    >
-                      💬 Talk with HopeBuddy
-                    </button>
-                    <button
-                      onClick={() => {
-                        onNavigateTo('safe-listener');
-                        setIsMinimized(true);
-                      }}
-                      type="button"
-                      className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 text-center"
-                    >
-                      🤝 Find Listener
-                    </button>
-                    <button
-                      onClick={() => {
-                        onNavigateTo('doctor-suggestions');
-                        setIsMinimized(true);
-                      }}
-                      type="button"
-                      className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 text-center"
-                    >
-                      🌍 Resources
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        setStep('mood-select');
-                      }}
-                      type="button"
-                      className="w-full py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl text-[11px] font-bold cursor-pointer transition-all active:scale-95 text-center mt-1"
-                    >
-                      Change Mood Check-In
-                    </button>
-                  </div>
-                </div>
+                <p className="text-[13px] font-semibold text-gray-750 px-2 leading-relaxed">
+                  Want to capture how you’re doing today?
+                </p>
               </div>
-            )}
+
+              <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
+                <button
+                  onClick={() => {
+                    if (onShareCheckIn) onShareCheckIn();
+                    setIsMinimized(true);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-xs text-center"
+                >
+                  📸 Create Share Card
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigateTo('hopebuddy-chat');
+                    setIsMinimized(true);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-xs text-center"
+                >
+                  💬 Talk with HopeBuddy
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigateTo('safe-listener');
+                    setIsMinimized(true);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  🤝 Find Support
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating Mascot Button Trigger (Gentle Float Loop) */}
-      <motion.button
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        initial={{ opacity: 0, y: 80, scale: 0.5 }}
-        animate={isDragging ? { opacity: 1, scale: 1.05 } : { opacity: 1, scale: 1, y: [0, -6, 0] }}
-        transition={
-          isDragging 
-            ? { duration: 0.1 } 
-            : {
-                y: {
-                  repeat: Infinity,
-                  duration: 3,
-                  ease: "easeInOut"
-                },
-                opacity: { duration: 0.3 },
-                scale: { duration: 0.3 }
-              }
-        }
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      {/* Floating Mascot Button Trigger Container */}
+      <div
         style={{
           position: 'fixed',
           right: position.right,
           bottom: position.bottom,
           touchAction: 'none',
+          zIndex: 40,
         }}
-        className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing overflow-hidden border border-gray-800 z-40"
-        title="Chat with HopeBuddy"
       >
-        <Mascot expression={selectedMood.buddyExpression} size={48} className="scale-[1.1] translate-y-1.5 pointer-events-none" />
-      </motion.button>
+        <motion.button
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={isDragging ? { opacity: 1, scale: 1.05 } : { opacity: 1, scale: 1, y: [0, -6, 0] }}
+          transition={
+            isDragging 
+              ? { duration: 0.1 } 
+              : {
+                  y: {
+                    repeat: Infinity,
+                    duration: 3,
+                    ease: "easeInOut"
+                  },
+                  scale: { duration: 0.3 }
+                }
+          }
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing overflow-hidden border border-gray-800 relative"
+          title="Interact with HopeBuddy"
+        >
+          {/* Mascot face inside floating bubble */}
+          <Mascot expression={selectedMood.buddyExpression} size={48} className="scale-[1.1] translate-y-1.5 pointer-events-none" />
+
+          {/* Gentle Waving Hand 👋 */}
+          <motion.div
+            className="absolute bottom-1 right-1 text-[13px] pointer-events-none select-none"
+            animate={{ rotate: [0, 15, -10, 15, 0] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+            style={{ transformOrigin: 'bottom right' }}
+          >
+            👋
+          </motion.div>
+        </motion.button>
+
+        {/* Small Camera Icon Badge 📸 */}
+        <motion.div
+          animate={isDragging ? {} : { y: [0, -6, 0] }}
+          transition={isDragging ? {} : { y: { repeat: Infinity, duration: 3, ease: "easeInOut" } }}
+          className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#FF7527] border border-white text-white flex items-center justify-center text-[11px] shadow-sm select-none pointer-events-none"
+        >
+          📸
+        </motion.div>
+      </div>
     </>
   );
 }
