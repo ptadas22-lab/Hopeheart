@@ -345,10 +345,61 @@ export default function App() {
   };
   const [userName, setUserName] = useState<string>('Voice47');
   const [todayQuote, setTodayQuote] = useState<string>("Rest is productive too. You're allowed to slow down.");
-  const [savedQuestions, setSavedQuestions] = useState<DoctorQuestion[]>([
-    { id: 'q-1', text: 'Can medication dosage adjust on an empty stomach?', createdAt: 'Just now' },
-    { id: 'q-2', text: 'Daily morning tremor checking checklist', createdAt: 'Just now' }
-  ]);
+  const [savedQuestions, setSavedQuestions] = useState<DoctorQuestion[]>(() => {
+    const local = localStorage.getItem('hopeheart_care_questions');
+    if (local) {
+      try {
+        return JSON.parse(local);
+      } catch (e) {
+        // Fallback
+      }
+    }
+    return [
+      { id: 'q-1', text: 'Can medication dosage adjust on an empty stomach?', createdAt: 'Just now' },
+      { id: 'q-2', text: 'Daily morning tremor checking checklist', createdAt: 'Just now' }
+    ];
+  });
+
+  const loadCareQuestions = async (userId?: string) => {
+    if (supabase && userId) {
+      try {
+        const { data, error } = await supabase
+          .from('care_questions')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        if (!error && data) {
+          const formatted: DoctorQuestion[] = data.map(q => ({
+            id: q.id,
+            text: q.question_text,
+            category: q.category,
+            createdAt: q.created_at ? new Date(q.created_at).toLocaleDateString() : 'Just now'
+          }));
+          setSavedQuestions(formatted);
+          localStorage.setItem('hopeheart_care_questions', JSON.stringify(formatted));
+          return;
+        }
+      } catch (err) {
+        console.warn('[Questions] Failed to fetch from Supabase:', err);
+      }
+    }
+    // LocalStorage fallback
+    const local = localStorage.getItem('hopeheart_care_questions');
+    if (local) {
+      try {
+        setSavedQuestions(JSON.parse(local));
+      } catch (e) {
+        console.warn('[Questions] Error parsing local care questions:', e);
+      }
+    } else {
+      const defaults = [
+        { id: 'q-1', text: 'Can medication dosage adjust on an empty stomach?', createdAt: 'Just now' },
+        { id: 'q-2', text: 'Daily morning tremor checking checklist', createdAt: 'Just now' }
+      ];
+      setSavedQuestions(defaults);
+      localStorage.setItem('hopeheart_care_questions', JSON.stringify(defaults));
+    }
+  };
 
   // Global overlay trigger states for Screen 21 (Moderation Block) and Screen 22 (Crisis Hotline)
   const [overlayType, setOverlayType] = useState<'moderation' | 'crisis' | null>(null);
@@ -501,6 +552,9 @@ export default function App() {
         // Fetch previous mood
         await fetchPreviousMood(session.user.id);
 
+        // Fetch care questions
+        await loadCareQuestions(session.user.id);
+
         // Always route directly to Home
         setCurrentScreen(ScreenId.Home);
       }
@@ -514,6 +568,9 @@ export default function App() {
 
         // Load local previous mood
         setPreviousMood(getLocalPreviousMood());
+
+        // Load local care questions
+        loadCareQuestions();
 
         // Always route directly to Home
         setCurrentScreen(ScreenId.Home);
@@ -624,17 +681,71 @@ export default function App() {
   };
 
   // Doctor checklist actions
-  const handleAddQuestion = (text: string) => {
+  const handleAddQuestion = async (text: string) => {
+    const tempId = 'temp-' + Date.now();
     const newQ: DoctorQuestion = {
-      id: Date.now().toString(),
+      id: tempId,
       text,
       createdAt: 'Just now'
     };
     setSavedQuestions(prev => [newQ, ...prev]);
+
+    let finalId = tempId;
+
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          const { data, error } = await supabase
+            .from('care_questions')
+            .insert({
+              user_id: userId,
+              question_text: text,
+              category: 'General'
+            })
+            .select('id')
+            .single();
+
+          if (!error && data) {
+            finalId = data.id;
+            setSavedQuestions(prev =>
+              prev.map(q => q.id === tempId ? { ...q, id: data.id } : q)
+            );
+          }
+        }
+      } catch (err) {
+        console.warn('[Questions] Error syncing care question to Supabase:', err);
+      }
+    }
+
+    const currentLocalQuestions = JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]');
+    const updatedLocal = [{ ...newQ, id: finalId }, ...currentLocalQuestions];
+    localStorage.setItem('hopeheart_care_questions', JSON.stringify(updatedLocal));
   };
 
-  const handleDeleteQuestion = (id: string) => {
+  const handleDeleteQuestion = async (id: string) => {
     setSavedQuestions(prev => prev.filter(q => q.id !== id));
+
+    const currentLocalQuestions = JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]');
+    const updatedLocal = currentLocalQuestions.filter((q: any) => q.id !== id);
+    localStorage.setItem('hopeheart_care_questions', JSON.stringify(updatedLocal));
+
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId && !id.startsWith('temp-') && id !== 'q-1' && id !== 'q-2') {
+          await supabase
+            .from('care_questions')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', userId);
+        }
+      } catch (err) {
+        console.warn('[Questions] Error deleting care question from Supabase:', err);
+      }
+    }
   };
 
   const selectedMood = MOOD_CONFIGS.find(m => m.id === selectedMoodId) || MOOD_CONFIGS[0];

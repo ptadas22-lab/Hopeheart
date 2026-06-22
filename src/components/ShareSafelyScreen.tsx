@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../lib/supabaseClient';
 
 interface ShareSafelyScreenProps {
   onBack: () => void;
@@ -46,9 +47,62 @@ export default function ShareSafelyScreen({
   };
 
   const handleShareSubmit = () => {
-    const action = () => {
+    const action = async () => {
       // Show automated image scanning disclaimer
       setAiScreeningMessage('🛡️ HopeHeart Safe AI is scanning your moment image... Clear of prescriptions/IDs! Approved.');
+      
+      let userId: string | null = null;
+      if (supabase) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          userId = session?.user?.id || null;
+        } catch (e) {
+          console.warn('[Stories] Error getting session:', e);
+        }
+      }
+
+      const saveStoryLocally = () => {
+        try {
+          const localQueue = JSON.parse(localStorage.getItem('hopeheart_pending_stories') || '[]');
+          const newStory = {
+            id: 'local-' + Date.now(),
+            title: `${selectedMoodTag} Moment`,
+            story_text: momentCaption,
+            category: selectedMoodTag.toLowerCase(),
+            author_name: privacyOption === 'Share anonymously' ? 'Anonymous' : 'Companion',
+            status: 'pending_review',
+            createdAt: new Date().toISOString()
+          };
+          localStorage.setItem('hopeheart_pending_stories', JSON.stringify([...localQueue, newStory]));
+        } catch (e) {
+          console.warn('[Stories] Error saving story locally:', e);
+        }
+      };
+
+      if (supabase) {
+        try {
+          const { error } = await supabase
+            .from('community_stories')
+            .insert({
+              user_id: userId,
+              title: `${selectedMoodTag} Moment`,
+              story_text: momentCaption,
+              category: selectedMoodTag.toLowerCase(),
+              author_name: privacyOption === 'Share anonymously' ? 'Anonymous' : 'Companion',
+              status: 'pending_review'
+            });
+          if (error) {
+            console.warn('[Stories] Failed to insert story into Supabase:', error.message);
+            saveStoryLocally();
+          }
+        } catch (err) {
+          console.warn('[Stories] Error saving story in Supabase:', err);
+          saveStoryLocally();
+        }
+      } else {
+        saveStoryLocally();
+      }
+
       setTimeout(() => {
         alert("Hope Moment Posted Safely! Thank you for sharing a spark of light.");
         onPostSuccess();
@@ -171,7 +225,7 @@ export default function ShareSafelyScreen({
               {/* Safety rules note */}
               <div className="bg-[#FFF8F8] border border-red-100 p-4 rounded-2xl">
                 <p className="text-[12px] text-red-800 font-semibold leading-relaxed">
-                  ⚠️ <strong>Disclaimer Note:</strong> Do not upload personal medical documents, diagnostic prescriptions, private government IDs, pill boxes, or unsafe contact details.
+                  ⚠️ <strong>Disclaimer Note:</strong> Do not include diagnosis, medication, phone number, exact location, or private contact details in your story. Do not upload personal medical documents, diagnostic prescriptions, private government IDs, or pill boxes.
                 </p>
               </div>
 
@@ -295,8 +349,9 @@ export default function ShareSafelyScreen({
                   {aiScreeningMessage}
                 </div>
               ) : (
-                <div className="bg-[#FAF7F0] border border-[#EDE9DE] p-3.5 rounded-2xl text-[11px] text-gray-500 font-semibold leading-normal">
-                  🛡️ <strong>AI Safety Notice:</strong> HopeHeart automatically scans captions and images to shield the community from drug prescriptions, clinic IDs, or self-harm triggers.
+                <div className="bg-[#FAF7F0] border border-[#EDE9DE] p-3.5 rounded-2xl text-[11px] text-gray-500 font-semibold leading-normal space-y-1">
+                  <p>🛡️ <strong>AI Safety Notice:</strong> HopeHeart automatically scans captions and images to shield the community from drug prescriptions, clinic IDs, or self-harm triggers.</p>
+                  <p className="text-amber-800">⚠️ <strong>Important:</strong> Do not include diagnosis, medication, phone number, exact location, or private contact details.</p>
                 </div>
               )}
 

@@ -1,6 +1,7 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DoctorQuestion } from '../types';
+import { supabase } from '../lib/supabaseClient';
 
 interface CareBridgeScreenProps {
   onBack: () => void;
@@ -10,7 +11,7 @@ interface CareBridgeScreenProps {
   onDeleteQuestion: (id: string) => void;
 }
 
-type SubScreen = 'suggestions' | 'questions';
+type SubScreen = 'suggestions' | 'questions' | 'saved_resources';
 
 interface SupportCategory {
   id: string;
@@ -807,6 +808,442 @@ export default function CareBridgeScreen({
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<string>('All');
   const [mobileSection, setMobileSection] = useState<'what-happening' | 'support-path' | 'hopeheart-support' | 'external-resources'>('what-happening');
 
+  const [dbResources, setDbResources] = useState<any[]>([]);
+  const [savedBookmarks, setSavedBookmarks] = useState<any[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const mapDbResourceToUi = (dbRes: any) => {
+    let badge = 'Resource';
+    let boundary = 'External Resource';
+    let mode = 'General Support';
+    let illustration = 'guide-folder';
+    let note: string | null = null;
+    let icon: any = null;
+
+    switch (dbRes.resource_type?.toLowerCase()) {
+      case 'helpline':
+        badge = 'Immediate Help';
+        boundary = 'External Helpline • 100% Free';
+        mode = 'Text / Phone Support';
+        illustration = 'crisis-phone';
+        break;
+      case 'therapy':
+        badge = 'Professional Therapy';
+        boundary = 'External Resource • Paid Directory';
+        mode = 'Online Therapy';
+        illustration = 'therapy-professional';
+        break;
+      case 'guide':
+        badge = 'Resource Finder';
+        boundary = 'External Directory • Free Info';
+        mode = 'Directories & Guides';
+        illustration = 'guide-folder';
+        break;
+      case 'directory':
+        badge = 'Directory';
+        boundary = 'External Directory • Free Search';
+        mode = 'Search Directory';
+        illustration = 'guide-folder';
+        break;
+    }
+
+    switch (dbRes.id) {
+      case 'c1111111-1111-1111-1111-111111111101':
+        badge = 'Immediate Help';
+        boundary = 'External Helpline • 100% Free';
+        mode = 'Text Support';
+        illustration = 'crisis-phone';
+        break;
+      case 'c1111111-1111-1111-1111-111111111102':
+        badge = 'Professional Therapy';
+        boundary = 'External Resource • Paid Directory';
+        mode = 'Online Therapy';
+        illustration = 'therapy-professional';
+        break;
+      case 'c1111111-1111-1111-1111-111111111103':
+        badge = 'Resource Finder';
+        boundary = 'External Directory • Free Info';
+        mode = 'Directories & Guides';
+        illustration = 'guide-folder';
+        break;
+      case 'c1111111-1111-1111-1111-111111111104':
+        badge = 'National Helpline';
+        boundary = 'External Helpline • 100% Free';
+        mode = 'Phone Support';
+        illustration = 'parkinsons-support';
+        break;
+      case 'c1111111-1111-1111-1111-111111111105':
+        badge = 'Caregiver Support';
+        boundary = 'External Directory • Free Help';
+        mode = 'Toolkits & Groups';
+        illustration = 'guide-folder';
+        break;
+      case 'c1111111-1111-1111-1111-111111111106':
+        badge = 'Living Tools';
+        boundary = 'External Resource • Free Info';
+        mode = 'Action Guides';
+        illustration = 'parkinsons-support';
+        break;
+      case 'c1111111-1111-1111-1111-111111111107':
+        badge = 'Support Line';
+        boundary = 'External Support • Free Info';
+        mode = 'Helpline Call';
+        illustration = 'hallucination-grounding';
+        break;
+      case 'c1111111-1111-1111-1111-111111111108':
+        badge = 'Guides & Articles';
+        boundary = 'External Resource • Free Info';
+        mode = 'Educational Guides';
+        illustration = 'guide-folder';
+        break;
+      case 'c1111111-1111-1111-1111-111111111109':
+        badge = 'Specialist Finder';
+        boundary = 'External Directory • Insurance';
+        mode = 'Medical Directory';
+        illustration = 'therapy-professional';
+        break;
+      case 'c1111111-1111-1111-1111-111111111110':
+        badge = 'Recovery Directory';
+        boundary = 'External Registry • Search Free';
+        mode = 'Local Groups';
+        illustration = 'emotional-recovery';
+        break;
+      case 'c1111111-1111-1111-1111-111111111111':
+        badge = 'Burnout Info';
+        boundary = 'External Resource • Free Guides';
+        mode = 'Worksheets & Tips';
+        illustration = 'emotional-recovery';
+        break;
+      case 'c1111111-1111-1111-1111-111111111112':
+        badge = '24/7 Helpline';
+        boundary = 'External Helpline • 100% Free';
+        mode = 'Text / Call Line';
+        illustration = 'crisis-phone';
+        break;
+      case 'c1111111-1111-1111-1111-111111111113':
+        badge = 'Directory';
+        boundary = 'External Directory • Free Search';
+        mode = 'Search Finder';
+        illustration = 'therapy-professional';
+        icon = <DirectoryIcon />;
+        break;
+      case 'c1111111-1111-1111-1111-111111111114':
+        badge = 'Guides';
+        boundary = 'MHA & NAMI Guides • 100% Free';
+        mode = 'PDF / Info';
+        illustration = 'guide-folder';
+        icon = <EduGuidesIcon />;
+        break;
+      case 'c1111111-1111-1111-1111-111111111115':
+        badge = 'Immediate Help';
+        boundary = 'Call / Text 988 • 100% Free';
+        mode = '24/7 Crisis';
+        illustration = 'crisis-phone';
+        icon = <EmergencyIcon />;
+        note = 'Contact local emergency services or nearest emergency care if you are in immediate danger.';
+        break;
+    }
+
+    if (!icon) {
+      icon = getResourceIconComponent(illustration);
+    }
+
+    return {
+      id: dbRes.id,
+      name: dbRes.title,
+      badge,
+      mode,
+      description: dbRes.summary,
+      boundary,
+      actionText: dbRes.external_url ? 'Open Resource →' : 'View Details →',
+      targetLink: dbRes.external_url,
+      icon,
+      note
+    };
+  };
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('resource_items')
+          .select('*')
+          .eq('is_active', true);
+        if (!error && data) {
+          setDbResources(data);
+        }
+      } catch (err) {
+        console.warn('[Resources] Error loading resources from Supabase:', err);
+      }
+    };
+    fetchResources();
+  }, []);
+
+  const fetchSavedBookmarks = async () => {
+    let userId: string | null = null;
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        userId = session?.user?.id || null;
+        if (userId) {
+          const { data, error } = await supabase
+            .from('saved_resources')
+            .select(`
+              id,
+              saved_at,
+              resource_items (
+                id,
+                title,
+                category,
+                summary,
+                resource_type,
+                external_url
+              )
+            `)
+            .eq('user_id', userId);
+          
+          if (!error && data) {
+            const mapped = data
+              .filter((item: any) => item.resource_items !== null)
+              .map((item: any) => {
+                const dbRes = item.resource_items;
+                const uiFormat = mapDbResourceToUi(dbRes);
+                return {
+                  ...uiFormat,
+                  savedRecordId: item.id,
+                  savedAt: item.saved_at
+                };
+              });
+            setSavedBookmarks(mapped);
+            localStorage.setItem('hopeheart_saved_resources', JSON.stringify(mapped));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('[Bookmarks] Failed to fetch saved bookmarks from Supabase:', e);
+      }
+    }
+    const local = localStorage.getItem('hopeheart_saved_resources');
+    if (local) {
+      try {
+        setSavedBookmarks(JSON.parse(local));
+      } catch (err) {
+        console.warn('[Bookmarks] Error parsing local saved resources:', err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedBookmarks();
+  }, [dbResources]);
+
+  const getActiveCategoryResources = () => {
+    if (dbResources.length > 0) {
+      const categoryRes = dbResources.filter(res => res.category === activeCategoryId).map(mapDbResourceToUi);
+      const generalRes = dbResources.filter(res => res.category === 'general').map(mapDbResourceToUi);
+      if (activeCategoryId === 'general') {
+        return categoryRes;
+      }
+      return [...categoryRes, ...generalRes];
+    }
+
+    const staticCategory = activeCategory.externalResources.map(res => {
+      return {
+        id: `static-${res.name.replace(/\s+/g, '-').toLowerCase()}`,
+        name: res.name,
+        badge: res.badge,
+        mode: res.mode,
+        description: res.description,
+        boundary: res.boundary,
+        actionText: 'Open Resource →',
+        targetLink: res.link,
+        illustration: res.illustration,
+        note: null
+      };
+    });
+
+    const staticGeneral = [
+      {
+        id: 'static-professional-directory',
+        name: 'Professional Directory',
+        badge: 'Directory',
+        mode: 'Search Finder',
+        description: 'Explore verified external directories for professional support.',
+        boundary: 'External Directory • Free Search',
+        actionText: 'Open Directory →',
+        targetLink: 'https://www.psychologytoday.com',
+        illustration: 'therapy-professional',
+        note: null
+      },
+      {
+        id: 'static-educational-guides',
+        name: 'Educational Guides',
+        badge: 'Guides',
+        mode: 'PDF / Info',
+        description: "Read simple guides about anxiety, grief, Parkinson's support, hallucination support, and recovery.",
+        boundary: 'MHA & NAMI Guides • 100% Free',
+        actionText: 'View Guides →',
+        targetLink: 'https://www.mhanational.org',
+        illustration: 'guide-folder',
+        note: null
+      },
+      {
+        id: 'static-emergency-help',
+        name: 'Emergency Help',
+        badge: 'Immediate Help',
+        mode: '24/7 Crisis',
+        description: 'Contact local emergency services or nearest emergency care if you are in immediate danger.',
+        boundary: 'Call / Text 988 • 100% Free',
+        actionText: 'View Help Options →',
+        targetLink: 'https://988lifeline.org',
+        illustration: 'crisis-phone',
+        note: 'Contact local emergency services or nearest emergency care if you are in immediate danger.'
+      }
+    ];
+
+    const mappedStaticCategory = staticCategory.map(res => ({
+      ...res,
+      icon: getResourceIconComponent(res.illustration)
+    }));
+
+    const mappedStaticGeneral = staticGeneral.map(res => {
+      let icon: any = null;
+      if (res.name === 'Professional Directory') icon = <DirectoryIcon />;
+      else if (res.name === 'Educational Guides') icon = <EduGuidesIcon />;
+      else icon = <EmergencyIcon />;
+      return {
+        ...res,
+        icon
+      };
+    });
+
+    return [...mappedStaticCategory, ...mappedStaticGeneral];
+  };
+
+  const handleSaveBookmark = async (resource: any) => {
+    let userId: string | null = null;
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        userId = session?.user?.id || null;
+      } catch (e) {
+        console.warn('[Bookmarks] Error checking auth session:', e);
+      }
+    }
+
+    const savedLocal = JSON.parse(localStorage.getItem('hopeheart_saved_resources') || '[]');
+    const isAlreadySaved = savedLocal.some((item: any) => item.name === resource.name);
+
+    if (isAlreadySaved) {
+      showToast('This resource is already saved.');
+      return;
+    }
+
+    let savedRecordId = null;
+
+    if (userId && supabase) {
+      try {
+        let resourceIdToSave = resource.id;
+        if (resourceIdToSave.startsWith('static-')) {
+          const matchingDb = dbResources.find(r => r.title.toLowerCase() === resource.name.toLowerCase());
+          if (matchingDb) {
+            resourceIdToSave = matchingDb.id;
+          } else {
+            console.warn('[Bookmarks] Static resource has no DB match:', resource.name);
+          }
+        }
+
+        const { data, error } = await supabase
+          .from('saved_resources')
+          .insert({
+            user_id: userId,
+            resource_id: resourceIdToSave
+          })
+          .select('id')
+          .single();
+
+        if (error) {
+          if (error.code === '23505') {
+            showToast('This resource is already saved.');
+            return;
+          }
+          console.warn('[Bookmarks] Failed to save in Supabase:', error.message);
+        } else if (data) {
+          savedRecordId = data.id;
+          showToast('Resource saved successfully.');
+        }
+      } catch (err) {
+        console.warn('[Bookmarks] Error saving bookmark in backend:', err);
+      }
+    } else {
+      showToast('Resource saved locally.');
+    }
+
+    const newItem = {
+      id: resource.id,
+      name: resource.name,
+      description: resource.description,
+      targetLink: resource.targetLink,
+      badge: resource.badge,
+      mode: resource.mode,
+      boundary: resource.boundary,
+      note: resource.note,
+      savedRecordId,
+      savedAt: new Date().toISOString()
+    };
+    const updatedLocal = [...savedLocal, newItem];
+    localStorage.setItem('hopeheart_saved_resources', JSON.stringify(updatedLocal));
+    setSavedBookmarks(updatedLocal);
+  };
+
+  const handleRemoveBookmark = async (bookmark: any) => {
+    setSavedBookmarks(prev => prev.filter(item => item.id !== bookmark.id));
+
+    const savedLocal = JSON.parse(localStorage.getItem('hopeheart_saved_resources') || '[]');
+    const updatedLocal = savedLocal.filter((item: any) => item.id !== bookmark.id);
+    localStorage.setItem('hopeheart_saved_resources', JSON.stringify(updatedLocal));
+
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          if (bookmark.savedRecordId) {
+            await supabase
+              .from('saved_resources')
+              .delete()
+              .eq('id', bookmark.savedRecordId)
+              .eq('user_id', userId);
+          } else {
+            let resourceId = bookmark.id;
+            if (resourceId.startsWith('static-')) {
+              const matchingDb = dbResources.find(r => r.title.toLowerCase() === bookmark.name.toLowerCase());
+              if (matchingDb) {
+                resourceId = matchingDb.id;
+              }
+            }
+            await supabase
+              .from('saved_resources')
+              .delete()
+              .eq('resource_id', resourceId)
+              .eq('user_id', userId);
+          }
+          showToast('Resource removed.');
+        }
+      } catch (err) {
+        console.warn('[Bookmarks] Error deleting bookmark from Supabase:', err);
+      }
+    } else {
+      showToast('Resource removed.');
+    }
+  };
+
   const handleAddQuestion = (e: FormEvent) => {
     e.preventDefault();
     if (!questionInput.trim()) return;
@@ -814,8 +1251,17 @@ export default function CareBridgeScreen({
     setQuestionInput('');
   };
 
-  const handleOpenResource = (resource: { name: string; link: string }) => {
-    alert(`You are now leaving HopeHeart to visit ${resource.name}. Keep supporting yourself safely!`);
+  const handleOpenResource = (resource: { name: string; link?: string }) => {
+    if (!resource.link) {
+      alert(`This is an internal resource on HopeHeart.`);
+      return;
+    }
+    const confirmLeave = window.confirm(
+      `You are now leaving HopeHeart to visit ${resource.name}.\n\nDisclaimer: External resources are for general support information. HopeHeart does not provide diagnosis, prescriptions, or treatment advice.\n\nDo you wish to proceed?`
+    );
+    if (confirmLeave) {
+      window.open(resource.link, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const activeCategory = SUPPORT_CATEGORIES.find(cat => cat.id === activeCategoryId) || SUPPORT_CATEGORIES[0];
@@ -842,6 +1288,7 @@ export default function CareBridgeScreen({
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
           {subScreen === 'suggestions' && 'Support Resources'}
           {subScreen === 'questions' && 'My Care Questions'}
+          {subScreen === 'saved_resources' && 'Saved Resources'}
         </span>
         <button 
           onClick={() => setSubScreen('questions')}
@@ -1174,7 +1621,7 @@ export default function CareBridgeScreen({
                                   } else if (support.targetPath === 'caregiver_guides') {
                                     alert("Opening HopeHeart Caregiver Guides: Checklists, communication tips, and emotional grounding tools for families.");
                                   } else if (support.targetPath === 'saved_resources') {
-                                    alert("Saved Resources Checklist: 3 peer conversation bookmarks, 1 grounding guide, and 2 emergency directories saved securely.");
+                                    setSubScreen('saved_resources');
                                   } else {
                                     onNavigateTo(support.targetPath);
                                   }
@@ -1206,55 +1653,7 @@ export default function CareBridgeScreen({
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {[
-                        ...activeCategory.externalResources.map(res => ({
-                          name: res.name,
-                          badge: res.badge,
-                          mode: res.mode,
-                          description: res.description,
-                          boundary: res.boundary,
-                          actionText: 'Open Resource →',
-                          targetLink: res.link,
-                          icon: getResourceIconComponent(res.illustration),
-                          note: null
-                        })),
-                        // Card 4
-                        {
-                          name: 'Professional Directory',
-                          badge: 'Directory',
-                          mode: 'Search Finder',
-                          description: 'Explore verified external directories for professional support.',
-                          boundary: 'External Directory • Free Search',
-                          actionText: 'Open Directory →',
-                          targetLink: 'https://www.psychologytoday.com',
-                          icon: <DirectoryIcon />,
-                          note: null
-                        },
-                        // Card 5
-                        {
-                          name: 'Educational Guides',
-                          badge: 'Guides',
-                          mode: 'PDF / Info',
-                          description: "Read simple guides about anxiety, grief, Parkinson's support, hallucination support, and recovery.",
-                          boundary: 'MHA & NAMI Guides • 100% Free',
-                          actionText: 'View Guides →',
-                          targetLink: 'https://www.mhanational.org',
-                          icon: <EduGuidesIcon />,
-                          note: null
-                        },
-                        // Card 6
-                        {
-                          name: 'Emergency Help',
-                          badge: 'Immediate Help',
-                          mode: '24/7 Crisis',
-                          description: 'Find urgent help guidance and crisis support options.',
-                          boundary: 'Call / Text 988 • 100% Free',
-                          actionText: 'View Help Options →',
-                          targetLink: 'https://988lifeline.org',
-                          icon: <EmergencyIcon />,
-                          note: 'For immediate danger, contact your local emergency service.'
-                        }
-                      ].map((res, idx) => (
+                      {getActiveCategoryResources().map((res, idx) => (
                         <div 
                           key={idx}
                           className="hh-surface rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 transition-all"
@@ -1280,18 +1679,32 @@ export default function CareBridgeScreen({
                                   ⚠️ {res.note}
                                 </p>
                               )}
+                              {res.targetLink && (
+                                <p className="text-[9.5px] text-amber-700 font-semibold leading-normal italic mt-1">
+                                  ℹ️ External resources are for general support information. HopeHeart does not provide diagnosis, prescriptions, or treatment advice.
+                                </p>
+                              )}
                             </div>
 
                             <div className="space-y-2">
                               <div className="text-[9.5px] bg-[#FCFAF5] rounded-lg border border-gray-150 p-2 font-semibold text-gray-400 leading-normal">
                                 {res.boundary}
                               </div>
-                              <button
-                                onClick={() => handleOpenResource({ name: res.name, link: res.targetLink })}
-                                className="w-full py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
-                              >
-                                {res.actionText}
-                              </button>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleOpenResource({ name: res.name, link: res.targetLink })}
+                                  className="flex-1 py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
+                                >
+                                  {res.actionText}
+                                </button>
+                                <button
+                                  onClick={() => handleSaveBookmark(res)}
+                                  className="px-3 py-2 bg-[#FFF2EA] hover:bg-[#FFE3D1] border border-[#FF7527]/20 hover:border-[#FF7527]/40 text-[#FF7527] transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center flex items-center justify-center gap-1 shrink-0"
+                                  title="Save Resource"
+                                >
+                                  🔖 Save
+                                </button>
+                              </div>
                             </div>
                           </div>
 
@@ -1557,8 +1970,117 @@ export default function CareBridgeScreen({
             </motion.div>
           )}
 
+          {subScreen === 'saved_resources' && (
+            <motion.div
+              key="saved-resources-screen"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              className="max-w-2xl mx-auto hh-surface rounded-3xl p-6 md:p-8 space-y-6"
+            >
+              {/* Header card */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-b border-gray-100 pb-5">
+                <div className="space-y-1.5 flex-1">
+                  <h3 className="font-display font-black text-gray-800 text-[20px] md:text-[22px] tracking-tight leading-none">
+                    Saved Resources
+                  </h3>
+                  <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
+                    Access your bookmarked resources, helplines, and guides. Saved items stay private to your device and account.
+                  </p>
+                </div>
+                <div className="shrink-0 bg-[#FFF8F4] p-3.5 rounded-2xl border border-orange-100/60 shadow-2xs self-center">
+                  <span className="text-3xl">🔖</span>
+                </div>
+              </div>
+
+              {/* List of bookmarks */}
+              <div className="space-y-3.5">
+                {savedBookmarks.length === 0 ? (
+                  <div className="text-center py-12 bg-[#FCFAF5] border border-dashed border-[#ECE6D9] rounded-2xl">
+                    <span className="text-[32px]">🔖</span>
+                    <p className="text-[13px] text-gray-500 font-semibold mt-2">
+                      You haven't bookmarked any resources yet.
+                    </p>
+                    <p className="text-[11.5px] text-gray-400 font-medium mt-1">
+                      Browse categories in the main tab and tap "Save" on resources you want to keep here.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {savedBookmarks.map((bookmark) => (
+                      <div
+                        key={bookmark.id}
+                        className="bg-[#FCFAF5] hover:bg-[#FFF2EA]/20 border border-[#EDE9DE] rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 transition-all"
+                      >
+                        <div className="flex-1 flex flex-col justify-between space-y-3">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50/60 px-2 py-0.5 rounded-md uppercase">
+                                {bookmark.badge}
+                              </span>
+                              <span className="text-[10px] font-semibold text-gray-400">
+                                {bookmark.mode}
+                              </span>
+                            </div>
+                            <h5 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">
+                              {bookmark.name}
+                            </h5>
+                            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                              {bookmark.description}
+                            </p>
+                            {bookmark.note && (
+                              <p className="text-[10px] text-red-500 font-bold leading-normal italic mt-1">
+                                ⚠️ {bookmark.note}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleOpenResource({ name: bookmark.name, link: bookmark.targetLink })}
+                              className="flex-1 py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
+                            >
+                              Open Resource →
+                            </button>
+                            <button
+                              onClick={() => handleRemoveBookmark(bookmark)}
+                              className="px-3 py-2 bg-red-50 hover:bg-red-100 border border-red-100 hover:border-red-200 text-red-650 transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button
+                onClick={() => setSubScreen('suggestions')}
+                className="w-full py-3 bg-[#1e1e1a] text-white font-display font-black text-[14px] rounded-xl cursor-pointer"
+              >
+                Back to Resources Grid
+              </button>
+            </motion.div>
+          )}
+
         </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#2B1D12] text-[#FEFBF7] font-semibold text-[13px] px-5 py-3 rounded-2xl shadow-xl z-55 flex items-center gap-2 max-w-[90%] text-center border border-amber-950/20"
+          >
+            <span>✨</span> {toastMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
