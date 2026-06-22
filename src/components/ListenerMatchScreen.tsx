@@ -7,6 +7,7 @@ interface ListenerMatchScreenProps {
   onNavigateTo: (screenId: string) => void;
   onOpenModerationBlock?: () => void; // Trigger for Screen 21
   onOpenCrisisScreen?: () => void; // Trigger for Screen 22
+  onRequireProfileCompletion?: (onSuccess: () => void) => void;
 }
 
 interface Listener {
@@ -410,7 +411,8 @@ export default function ListenerMatchScreen({
   onBack, 
   onNavigateTo,
   onOpenModerationBlock,
-  onOpenCrisisScreen
+  onOpenCrisisScreen,
+  onRequireProfileCompletion
 }: ListenerMatchScreenProps) {
   const [selectedFeeling, setSelectedFeeling] = useState<string>('I need someone to listen');
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -1095,7 +1097,14 @@ export default function ListenerMatchScreen({
                   </div>
 
                   <button
-                    onClick={() => alert("Joined Anxiety Support Circle. You will be notified of the next session.")}
+                    onClick={() => {
+                      const action = () => alert("Joined Anxiety Support Circle. You will be notified of the next session.");
+                      if (onRequireProfileCompletion) {
+                        onRequireProfileCompletion(action);
+                      } else {
+                        action();
+                      }
+                    }}
                     type="button"
                     className="w-full py-2 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12px] font-bold transition-all cursor-pointer text-center"
                   >
@@ -1266,8 +1275,15 @@ export default function ListenerMatchScreen({
                 <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={() => {
-                      setViewingProfileListener(null);
-                      startChatFlow(viewingProfileListener);
+                      const action = () => {
+                        setViewingProfileListener(null);
+                        startChatFlow(viewingProfileListener);
+                      };
+                      if (onRequireProfileCompletion) {
+                        onRequireProfileCompletion(action);
+                      } else {
+                        action();
+                      }
                     }}
                     type="button"
                     className="py-3 px-2 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[13px] font-bold cursor-pointer transition-all flex items-center justify-center gap-1 active:scale-95 shadow-sm"

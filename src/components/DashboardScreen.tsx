@@ -12,6 +12,8 @@ interface DashboardScreenProps {
   onRefreshQuote: () => void;
   onMoodSelected: (moodId: string) => void;
   onShareCheckIn?: () => void;
+  isProfileIncomplete: boolean;
+  onOpenProfileModal: () => void;
 }
 
 // 1. Community Support Illustration (Anxious person holding phone, listening chat bubble)
@@ -121,8 +123,11 @@ export default function DashboardScreen({
   onNavigateTo,
   onMoodSelected,
   onShareCheckIn,
+  isProfileIncomplete,
+  onOpenProfileModal,
 }: DashboardScreenProps) {
   const [showToast, setShowToast] = useState(true);
+  const [showReminder, setShowReminder] = useState(true);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
 
   // Auto-dismiss the welcome toast after 4.5 seconds
@@ -185,6 +190,41 @@ export default function DashboardScreen({
           </div>
         </div>
       </div>
+
+      {/* Profile Completion Gentle Reminder Banner */}
+      {isProfileIncomplete && showReminder && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#FFF5F0] to-[#FAF5FF] border border-[#FFD3B6]/50 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[24px] shrink-0">🔔</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Complete your Safe Profile
+                </h4>
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                  Add a few details so HopeHeart can match you better.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setShowReminder(false)}
+                type="button"
+                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
+              >
+                Later
+              </button>
+              <button
+                onClick={onOpenProfileModal}
+                type="button"
+                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
+              >
+                Complete Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">

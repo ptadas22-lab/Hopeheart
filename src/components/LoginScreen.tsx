@@ -43,10 +43,10 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
           }
         }
         
-        // Guest mode goes directly to Profile Setup
+        // Guest mode goes directly to Home
         onLoginSuccess('Companion');
         if (onNavigateTo) {
-          onNavigateTo(ScreenId.ProfileSetup);
+          onNavigateTo(ScreenId.Home);
         }
         return;
       }

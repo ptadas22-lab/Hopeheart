@@ -4,9 +4,14 @@ import { motion, AnimatePresence } from 'motion/react';
 interface ShareSafelyScreenProps {
   onBack: () => void;
   onPostSuccess: () => void;
+  onRequireProfileCompletion?: (onSuccess: () => void) => void;
 }
 
-export default function ShareSafelyScreen({ onBack, onPostSuccess }: ShareSafelyScreenProps) {
+export default function ShareSafelyScreen({ 
+  onBack, 
+  onPostSuccess,
+  onRequireProfileCompletion
+}: ShareSafelyScreenProps) {
   const [subStage, setSubStage] = useState<'write' | 'moment'>('write');
   
   // Custom states
@@ -41,12 +46,19 @@ export default function ShareSafelyScreen({ onBack, onPostSuccess }: ShareSafely
   };
 
   const handleShareSubmit = () => {
-    // Show automated image scanning disclaimer
-    setAiScreeningMessage('🛡️ HopeHeart Safe AI is scanning your moment image... Clear of prescriptions/IDs! Approved.');
-    setTimeout(() => {
-      alert("Hope Moment Posted Safely! Thank you for sharing a spark of light.");
-      onPostSuccess();
-    }, 1800);
+    const action = () => {
+      // Show automated image scanning disclaimer
+      setAiScreeningMessage('🛡️ HopeHeart Safe AI is scanning your moment image... Clear of prescriptions/IDs! Approved.');
+      setTimeout(() => {
+        alert("Hope Moment Posted Safely! Thank you for sharing a spark of light.");
+        onPostSuccess();
+      }, 1800);
+    };
+    if (onRequireProfileCompletion) {
+      onRequireProfileCompletion(action);
+    } else {
+      action();
+    }
   };
 
   return (

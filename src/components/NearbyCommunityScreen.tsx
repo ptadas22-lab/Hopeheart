@@ -3,11 +3,15 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface NearbyCommunityScreenProps {
   onBack: () => void;
+  onRequireProfileCompletion?: (onSuccess: () => void) => void;
 }
 
 type NearbyStage = 'access' | 'results' | 'detail' | 'safety';
 
-export default function NearbyCommunityScreen({ onBack }: NearbyCommunityScreenProps) {
+export default function NearbyCommunityScreen({ 
+  onBack,
+  onRequireProfileCompletion
+}: NearbyCommunityScreenProps) {
   const [stage, setStage] = useState<NearbyStage>('access');
   const [locationPreference, setLocationPreference] = useState<string>('Use approximate location');
   const [cityInput, setCityInput] = useState<string>('');
@@ -45,7 +49,14 @@ export default function NearbyCommunityScreen({ onBack }: NearbyCommunityScreenP
       alert("Please specify your city manually.");
       return;
     }
-    setStage('results');
+    const action = () => {
+      setStage('results');
+    };
+    if (onRequireProfileCompletion) {
+      onRequireProfileCompletion(action);
+    } else {
+      action();
+    }
   };
 
   const circlesData = [

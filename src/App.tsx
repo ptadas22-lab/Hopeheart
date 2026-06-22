@@ -7,7 +7,7 @@ import { supabase, saveSafeRulesConsentBackend } from './lib/supabaseClient';
 import SplashScreen from './components/SplashScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
-import ProfileSetupScreen from './components/ProfileSetupScreen';
+// import ProfileSetupScreen from './components/ProfileSetupScreen';
 import DashboardScreen from './components/DashboardScreen';
 import HopeBuddyChatScreen from './components/HopeBuddyChatScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
@@ -154,6 +154,80 @@ export default function App() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [downloadComingSoon, setDownloadComingSoon] = useState(false);
 
+  // Profile completion states
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showDeeperMatchingModal, setShowDeeperMatchingModal] = useState(false);
+  const [profileSuccessCallback, setProfileSuccessCallback] = useState<(() => void) | null>(null);
+
+  const [isProfileCompleted, setIsProfileCompleted] = useState(() => {
+    return localStorage.getItem('hopeheart_profile_basic_completed') === 'true';
+  });
+
+  const [tempDisplayName, setTempDisplayName] = useState('');
+  const [tempAgeGroup, setTempAgeGroup] = useState('25–34');
+  const [tempLanguage, setTempLanguage] = useState('English');
+  const [tempSupportInterest, setTempSupportInterest] = useState('🌱 General Support');
+
+  const handleRequireProfileCompletion = (onSuccess: () => void) => {
+    if (isProfileCompleted) {
+      onSuccess();
+    } else {
+      setProfileSuccessCallback(() => onSuccess);
+      setShowDeeperMatchingModal(true);
+    }
+  };
+
+  const handleSaveProfileModal = async () => {
+    const displayName = tempDisplayName.trim() || userName || 'Companion';
+    
+    // Save to LocalStorage fallback keys
+    localStorage.setItem('hopeheart_profile_display_name', displayName);
+    localStorage.setItem('hopeheart_profile_age_group', tempAgeGroup);
+    localStorage.setItem('hopeheart_profile_language', tempLanguage);
+    localStorage.setItem('hopeheart_profile_support_interest', tempSupportInterest);
+    localStorage.setItem('hopeheart_profile_basic_completed', 'true');
+    
+    // Update active userName state immediately
+    setUserName(displayName);
+    setIsProfileCompleted(true);
+
+    // Save to profiles table if supabase user exists
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          const { error } = await supabase
+            .from('profiles')
+            .upsert({
+              id: userId,
+              display_name: displayName,
+              age_group: tempAgeGroup,
+              language: tempLanguage,
+              support_interest: tempSupportInterest,
+              updated_at: new Date().toISOString()
+            });
+          if (error) {
+            console.warn('[Profile] Failed to save profile to backend:', error.message);
+          } else {
+            console.log('[Profile] Saved successfully to Supabase backend.');
+          }
+        }
+      } catch (err) {
+        console.warn('[Profile] Error during backend profiles write:', err);
+      }
+    }
+
+    // Close modal
+    setShowProfileModal(false);
+
+    // Execute callback and clear it
+    if (profileSuccessCallback) {
+      profileSuccessCallback();
+      setProfileSuccessCallback(null);
+    }
+  };
+
   useEffect(() => {
     if (copySuccess) {
       const t = setTimeout(() => setCopySuccess(false), 2500);
@@ -182,14 +256,8 @@ export default function App() {
         const nickName = session.user.user_metadata?.full_name || session.user.email || 'Companion';
         setUserName(nickName);
 
-        // Check if profile is completed
-        const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
-                            localStorage.getItem('hopeheart_profile_nickname');
-        if (isCompleted) {
-          setCurrentScreen(ScreenId.Home);
-        } else {
-          setCurrentScreen(ScreenId.ProfileSetup);
-        }
+        // Always route directly to Home
+        setCurrentScreen(ScreenId.Home);
       }
     };
 
@@ -199,13 +267,8 @@ export default function App() {
         const storedNick = localStorage.getItem('hopeheart_profile_nickname') || 'Companion';
         setUserName(storedNick);
 
-        const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
-                            localStorage.getItem('hopeheart_profile_nickname');
-        if (isCompleted) {
-          setCurrentScreen(ScreenId.Home);
-        } else {
-          setCurrentScreen(ScreenId.ProfileSetup);
-        }
+        // Always route directly to Home
+        setCurrentScreen(ScreenId.Home);
       }
     };
 
@@ -306,30 +369,16 @@ export default function App() {
           <LoginScreen 
             onLoginSuccess={(nick) => {
               setUserName(nick);
-              // Check profile completion status
-              const isCompleted = localStorage.getItem('hopeheart_profile_completed') === 'true' || 
-                                  localStorage.getItem('hopeheart_profile_nickname');
-              if (isCompleted) {
-                setCurrentScreen(ScreenId.Home);
-              } else {
-                setCurrentScreen(ScreenId.ProfileSetup);
-              }
+              setCurrentScreen(ScreenId.Home);
             }}
             onNavigateTo={(scr) => setCurrentScreen(scr)}
           />
         );
 
       case ScreenId.ProfileSetup:
-        return (
-          <ProfileSetupScreen 
-            initialNickname={userName}
-            onComplete={(details) => {
-              setUserName(details.nickname);
-              localStorage.setItem('hopeheart_profile_completed', 'true');
-              setCurrentScreen(ScreenId.Home);
-            }}
-          />
-        );
+        // Disabled onboarding step, redirects to Home
+        setCurrentScreen(ScreenId.Home);
+        return null;
 
       case ScreenId.Home:
         return (
@@ -341,6 +390,11 @@ export default function App() {
             onRefreshQuote={handleRefreshQuote}
             onMoodSelected={handleMoodSelected}
             onShareCheckIn={() => setShowShareModal(true)}
+            isProfileIncomplete={!isProfileCompleted}
+            onOpenProfileModal={() => {
+              setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
+              setShowProfileModal(true);
+            }}
           />
         );
 
@@ -362,6 +416,7 @@ export default function App() {
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
             onOpenModerationBlock={() => setOverlayType('moderation')}
             onOpenCrisisScreen={() => setOverlayType('crisis')}
+            onRequireProfileCompletion={handleRequireProfileCompletion}
           />
         );
 
@@ -371,6 +426,7 @@ export default function App() {
           <SupportRoomsScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
             onOpenModerationBlock={() => setOverlayType('moderation')}
+            onRequireProfileCompletion={handleRequireProfileCompletion}
           />
         );
 
@@ -380,6 +436,7 @@ export default function App() {
           <ShareSafelyScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
             onPostSuccess={() => setCurrentScreen(ScreenId.Home)}
+            onRequireProfileCompletion={handleRequireProfileCompletion}
           />
         );
 
@@ -390,6 +447,7 @@ export default function App() {
         return (
           <NearbyCommunityScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
+            onRequireProfileCompletion={handleRequireProfileCompletion}
           />
         );
 
@@ -532,11 +590,21 @@ export default function App() {
 
             <div className="flex items-center gap-1.5">
               <button 
-                onClick={() => setCurrentScreen(ScreenId.Notifications)}
-                className="w-10 h-10 rounded-full border border-gray-100 hover:bg-gray-50 flex items-center justify-center text-[18px] cursor-pointer"
+                onClick={() => {
+                  if (!isProfileCompleted) {
+                    setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
+                    setShowProfileModal(true);
+                  } else {
+                    setCurrentScreen(ScreenId.Notifications);
+                  }
+                }}
+                className="w-10 h-10 rounded-full border border-gray-100 hover:bg-gray-50 flex items-center justify-center text-[18px] cursor-pointer relative"
                 title="Notifications Alert"
               >
                 🔔
+                {!isProfileCompleted && (
+                  <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-red-500 border border-white" />
+                )}
               </button>
               <button 
                 onClick={() => setCurrentScreen(ScreenId.Profile)}
@@ -806,6 +874,183 @@ export default function App() {
                   className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-750 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
                 >
                   Download Card
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Complete Profile Warning Modal for Deeper Matching */}
+      <AnimatePresence>
+        {showDeeperMatchingModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 select-none">
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              className="hh-surface rounded-[32px] w-full max-w-sm p-6 space-y-4 text-center"
+            >
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2.5">
+                <span className="font-display font-black text-[15px] text-gray-800 flex items-center gap-1.5">
+                  🔒 Complete your profile to continue
+                </span>
+                <button
+                  onClick={() => {
+                    setShowDeeperMatchingModal(false);
+                    setProfileSuccessCallback(null);
+                  }}
+                  type="button"
+                  className="w-7 h-7 rounded-full border border-gray-250 flex items-center justify-center text-gray-400 hover:text-gray-655 text-xs font-bold cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                We only need a few safe details to match you better.
+              </p>
+              <div className="flex flex-col gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    setShowDeeperMatchingModal(false);
+                    setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
+                    setShowProfileModal(true);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-xs"
+                >
+                  Complete Now
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeeperMatchingModal(false);
+                    setProfileSuccessCallback(null);
+                  }}
+                  type="button"
+                  className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  Later
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Compact Profile Completion Modal */}
+      <AnimatePresence>
+        {showProfileModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 select-none">
+            <motion.div
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              className="hh-surface rounded-[32px] w-full max-w-md p-6 space-y-4 text-left"
+            >
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2.5">
+                <span className="font-display font-black text-[15px] text-gray-800 flex items-center gap-1.5">
+                  👤 Complete your Safe Profile
+                </span>
+                <button
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    setProfileSuccessCallback(null);
+                  }}
+                  type="button"
+                  className="w-7 h-7 rounded-full border border-gray-250 flex items-center justify-center text-gray-400 hover:text-gray-655 text-xs font-bold cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                We only need a few safe details to improve support matching.
+              </p>
+
+              <div className="space-y-3.5">
+                {/* Display Name */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={tempDisplayName}
+                    onChange={(e) => setTempDisplayName(e.target.value)}
+                    placeholder="e.g. Voice47"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  />
+                </div>
+
+                {/* Age Group */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Age Group
+                  </label>
+                  <select
+                    value={tempAgeGroup}
+                    onChange={(e) => setTempAgeGroup(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-white font-semibold focus:outline-none focus:border-[#FF7527]"
+                  >
+                    {['Under 18', '18–24', '25–34', '35–44', '45–54', '55–64', '65+', 'Prefer not to say'].map((grp) => (
+                      <option key={grp} value={grp}>{grp}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Language */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Language
+                  </label>
+                  <input
+                    type="text"
+                    value={tempLanguage}
+                    onChange={(e) => setTempLanguage(e.target.value)}
+                    placeholder="e.g. English, Spanish"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  />
+                </div>
+
+                {/* Support Interest */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Support Interest
+                  </label>
+                  <select
+                    value={tempSupportInterest}
+                    onChange={(e) => setTempSupportInterest(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-white font-semibold focus:outline-none focus:border-[#FF7527]"
+                  >
+                    {[
+                      '🌱 General Support',
+                      '🧠 Anxiety Support',
+                      '🧓 Parkinson’s Support',
+                      '👨👩👧 Caregiver Support'
+                    ].map((interest) => (
+                      <option key={interest} value={interest}>{interest}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100">
+                <button
+                  onClick={() => {
+                    setShowProfileModal(false);
+                    setProfileSuccessCallback(null);
+                  }}
+                  type="button"
+                  className="w-full py-2 bg-white hover:bg-gray-50 border border-gray-255 text-gray-700 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  Later
+                </button>
+                <button
+                  onClick={handleSaveProfileModal}
+                  type="button"
+                  className="w-full py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-xs"
+                >
+                  Save Profile
                 </button>
               </div>
             </motion.div>

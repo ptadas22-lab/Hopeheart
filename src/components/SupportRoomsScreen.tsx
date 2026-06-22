@@ -134,6 +134,7 @@ function RoomIllustration({ type }: { type: 'anxiety' | 'emotional-recovery' | '
 interface SupportRoomsScreenProps {
   onBack: () => void;
   onOpenModerationBlock?: () => void; // Trigger for Screen 21
+  onRequireProfileCompletion?: (onSuccess: () => void) => void;
 }
 
 interface PostItem {
@@ -287,20 +288,31 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
   }
 ];
 
-export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: SupportRoomsScreenProps) {
+export default function SupportRoomsScreen({ 
+  onBack, 
+  onOpenModerationBlock,
+  onRequireProfileCompletion
+}: SupportRoomsScreenProps) {
   const [selectedRoom, setSelectedRoom] = useState<RoomCard | null>(null);
   const [roomPosts, setRoomPosts] = useState<Record<string, PostItem[]>>({});
   const [postInput, setPostInput] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<string>('All Rooms');
 
   const navigateToRoom = (room: RoomCard) => {
-    setSelectedRoom(room);
-    // Initialize room posts if not loaded
-    if (!roomPosts[room.id]) {
-      setRoomPosts(prev => ({
-        ...prev,
-        [room.id]: room.defaultPosts
-      }));
+    const action = () => {
+      setSelectedRoom(room);
+      // Initialize room posts if not loaded
+      if (!roomPosts[room.id]) {
+        setRoomPosts(prev => ({
+          ...prev,
+          [room.id]: room.defaultPosts
+        }));
+      }
+    };
+    if (onRequireProfileCompletion) {
+      onRequireProfileCompletion(action);
+    } else {
+      action();
     }
   };
 
