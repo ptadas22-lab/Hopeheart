@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId, MoodConfig, DoctorQuestion } from './types';
 import { supabase, saveSafeRulesConsentBackend } from './lib/supabaseClient';
@@ -353,8 +353,13 @@ export default function App() {
   const [overlayType, setOverlayType] = useState<'moderation' | 'crisis' | null>(null);
 
   const [showShareModal, setShowShareModal] = useState(false);
-  const [copySuccess, setCopySuccess] = useState(false);
-  const [downloadComingSoon, setDownloadComingSoon] = useState(false);
+  const [sharePreviewUrl, setSharePreviewUrl] = useState<string | null>(null);
+  const [shareFileError, setShareFileError] = useState<string | null>(null);
+  const [shareToast, setShareToast] = useState<string | null>(null);
+  const [showShareTextPreview, setShowShareTextPreview] = useState(false);
+
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile completion states
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -431,19 +436,22 @@ export default function App() {
     }
   };
 
+  // Auto-dismiss share toast notification after 3 seconds
   useEffect(() => {
-    if (copySuccess) {
-      const t = setTimeout(() => setCopySuccess(false), 2500);
+    if (shareToast) {
+      const t = setTimeout(() => setShareToast(null), 3000);
       return () => clearTimeout(t);
     }
-  }, [copySuccess]);
+  }, [shareToast]);
 
+  // Clean up object URL when a new preview is set or when component unmounts
   useEffect(() => {
-    if (downloadComingSoon) {
-      const t = setTimeout(() => setDownloadComingSoon(false), 2500);
-      return () => clearTimeout(t);
-    }
-  }, [downloadComingSoon]);
+    return () => {
+      if (sharePreviewUrl) {
+        URL.revokeObjectURL(sharePreviewUrl);
+      }
+    };
+  }, [sharePreviewUrl]);
 
   // Handle post-OAuth redirect sessions & consent saving
   useEffect(() => {
@@ -536,30 +544,74 @@ export default function App() {
     }
   }, []);
 
-  const handleShareClick = async () => {
-    const shareData = {
-      title: 'HopeHeart Check-In',
-      text: 'Today I’m choosing support, not silence.',
-      url: window.location.href
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.error('Error sharing:', err);
-      }
-    } else {
-      handleCopyLink();
+  const getSafeShareText = () => {
+    const activeMood = MOOD_CONFIGS.find(m => m.id === selectedMoodId);
+    const moodText = activeMood ? `Mood: ${activeMood.emoji} ${activeMood.label}` : 'Mood: Not shared';
+    return `Today I’m choosing support, not silence.\n${moodText}\nHopeHeart — Safe Emotional Support`;
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+    setShareFileError(null);
+    setShareToast(null);
+    setShowShareTextPreview(false);
+    if (sharePreviewUrl) {
+      URL.revokeObjectURL(sharePreviewUrl);
+      setSharePreviewUrl(null);
     }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopySuccess(true);
+  const handleShareFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setShareFileError(null);
+    setShareToast(null);
+
+    if (!file.type.startsWith('image/')) {
+      setShareFileError("Please choose a valid image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setShareFileError("Please choose an image under 5MB.");
+      return;
+    }
+
+    if (sharePreviewUrl) {
+      URL.revokeObjectURL(sharePreviewUrl);
+    }
+
+    const url = URL.createObjectURL(file);
+    setSharePreviewUrl(url);
   };
 
-  const handleDownloadCard = () => {
-    setDownloadComingSoon(true);
+  const handleCopyShareMessage = () => {
+    const text = getSafeShareText();
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setShareToast("Share message copied safely.");
+      })
+      .catch((err) => {
+        console.error('Failed to copy text:', err);
+        setShareFileError("Could not copy message automatically.");
+      });
+  };
+
+  const handleNativeShare = async () => {
+    const text = getSafeShareText();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "HopeHeart Check-In",
+          text: text
+        });
+      } catch (err) {
+        console.warn('Native share failed or dismissed:', err);
+      }
+    } else {
+      setShareToast("Sharing is not supported on this browser. You can copy the message instead.");
+    }
   };
 
   // Trigger quote refresh
@@ -1021,15 +1073,33 @@ export default function App() {
       )}
 
       {/* Share Card Modal Overlay */}
+      {/* Share Card Modal Overlay */}
       <AnimatePresence>
         {showShareModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-xs select-none">
+            {/* Hidden native input elements for camera/gallery */}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              ref={cameraInputRef}
+              onChange={handleShareFileChange}
+              className="hidden"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleShareFileChange}
+              className="hidden"
+            />
+
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setShowShareModal(false)}
+              onClick={handleCloseShareModal}
               className="absolute inset-0"
             />
 
@@ -1038,90 +1108,161 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="relative w-full max-w-sm hh-surface rounded-[32px] p-6 z-10 space-y-5 text-center"
+              className="relative w-full max-w-sm hh-surface rounded-[32px] p-6 z-10 space-y-4 text-center animate-in fade-in-50 duration-200"
             >
               <div className="flex items-center justify-between border-b border-gray-150 pb-2.5">
                 <span className="font-display font-black text-[15px] text-gray-800">
-                  Share Your Check-In
+                  Share with HopeBuddy
                 </span>
                 <button
-                  onClick={() => setShowShareModal(false)}
+                  onClick={handleCloseShareModal}
                   className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-655 text-xs font-bold cursor-pointer"
                 >
                   ✕
                 </button>
               </div>
 
-              {/* Share Card Preview Box */}
-              <div className="p-5 bg-gradient-to-br from-[#FFF8F4] to-[#FAF5FF] border border-[#FFD3B6]/30 rounded-2.5xl shadow-sm text-center space-y-4 relative overflow-hidden">
-                <div className="absolute top-0 right-0 opacity-[0.05] pointer-events-none select-none text-[80px] translate-x-5 -translate-y-5">
-                  🧡
-                </div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest block">
-                    HopeHeart Check-In
-                  </span>
-                  <p className="text-[14px] font-display font-black text-gray-855 px-2 leading-snug">
-                    "Today I’m choosing support, not silence."
-                  </p>
-                </div>
+              {/* Action Sheet Option list */}
+              <div className="flex flex-col gap-2 pt-1">
+                <button
+                  onClick={() => cameraInputRef.current?.click()}
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FCFBF8] hover:bg-[#FFF2EA] border border-gray-150 rounded-xl text-[12.5px] text-gray-700 font-bold transition-all active:scale-98 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>📸</span>
+                    <span>Take photo</span>
+                  </div>
+                  <span className="text-[10px] text-gray-400">❯</span>
+                </button>
 
-                {/* Mood Badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/85 border border-gray-200/50 rounded-2xl shadow-3xs">
-                  <span className="text-[20px]">{selectedMood.emoji}</span>
-                  <span className="text-[12.5px] font-display font-black text-gray-750">
-                    Mood: {selectedMood.label}
-                  </span>
-                </div>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FCFBF8] hover:bg-[#FFF2EA] border border-gray-150 rounded-xl text-[12.5px] text-gray-700 font-bold transition-all active:scale-98 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>🖼️</span>
+                    <span>Attach image</span>
+                  </div>
+                  <span className="text-[10px] text-gray-400">❯</span>
+                </button>
 
-                <div className="border-t border-[#EDE9DE]/50 pt-3 flex flex-col items-center leading-none gap-1">
-                  <span className="font-display font-black text-[#2B1D12] text-[13px]">
-                    HopeHeart
-                  </span>
-                  <span className="text-[9px] font-mono font-bold text-gray-400 uppercase tracking-widest">
-                    Safe Emotional Hub
-                  </span>
-                </div>
+                <button
+                  onClick={() => setShowShareTextPreview(!showShareTextPreview)}
+                  type="button"
+                  className={`w-full flex items-center justify-between px-4 py-2.5 border rounded-xl text-[12.5px] font-bold transition-all active:scale-98 cursor-pointer ${
+                    showShareTextPreview
+                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527]'
+                      : 'border-gray-150 bg-[#FCFBF8] hover:bg-[#FFF2EA] text-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span>📇</span>
+                    <span>Create HopeHeart share card</span>
+                  </div>
+                  <span className="text-[10px] text-gray-400" style={{ transform: showShareTextPreview ? 'rotate(90deg)' : 'none' }}>❯</span>
+                </button>
+
+                <button
+                  onClick={handleCopyShareMessage}
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FCFBF8] hover:bg-[#FFF2EA] border border-gray-150 rounded-xl text-[12.5px] text-gray-700 font-bold transition-all active:scale-98 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>📋</span>
+                    <span>Copy share message</span>
+                  </div>
+                  <span className="text-[10px] text-gray-400">❯</span>
+                </button>
+
+                <button
+                  onClick={handleNativeShare}
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FCFBF8] hover:bg-[#FFF2EA] border border-gray-150 rounded-xl text-[12.5px] text-gray-700 font-bold transition-all active:scale-98 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>🔗</span>
+                    <span>Share using phone apps</span>
+                  </div>
+                  <span className="text-[10px] text-gray-400">❯</span>
+                </button>
               </div>
 
-              {/* Privacy Notice */}
-              <p className="text-[10.5px] text-gray-450 font-semibold leading-normal max-w-[240px] mx-auto italic">
-                Only your selected mood is shown. Private notes are never shared.
+              {/* Toast & Error messages inside the sheet */}
+              {shareToast && (
+                <div className="py-1.5 px-3 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-xl text-[11px] font-bold text-center leading-normal">
+                  {shareToast}
+                </div>
+              )}
+              {shareFileError && (
+                <div className="py-1.5 px-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[11px] font-semibold text-center leading-normal">
+                  ⚠️ {shareFileError}
+                </div>
+              )}
+
+              {/* Local Image/Photo Preview */}
+              {sharePreviewUrl && (
+                <div className="mt-2 p-3 bg-white border border-gray-150 rounded-2xl relative">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-left mb-1.5 flex justify-between items-center">
+                    <span>Local Image Preview</span>
+                    <button
+                      onClick={() => {
+                        if (sharePreviewUrl) {
+                          URL.revokeObjectURL(sharePreviewUrl);
+                          setSharePreviewUrl(null);
+                        }
+                      }}
+                      className="text-red-500 hover:text-red-700 cursor-pointer font-bold lowercase text-[10px]"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="relative rounded-xl overflow-hidden max-h-[140px] flex items-center justify-center bg-gray-50 border border-dashed border-gray-200">
+                    <img
+                      src={sharePreviewUrl}
+                      alt="Selected preview"
+                      className="max-w-full max-h-[140px] object-contain"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Safe Share Card Text Preview */}
+              {showShareTextPreview && (
+                <div className="p-4 bg-gradient-to-br from-[#FFF8F4] to-[#FAF5FF] border border-[#FFD3B6]/30 rounded-2.5xl text-center space-y-3 relative overflow-hidden shadow-2xs">
+                  <div className="absolute top-0 right-0 opacity-[0.05] pointer-events-none select-none text-[60px] translate-x-3 -translate-y-3">
+                    🧡
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-[9px] font-mono font-extrabold text-[#FF7527] uppercase tracking-widest block">
+                      HopeHeart Share Card
+                    </span>
+                    <p className="text-[13px] font-display font-black text-gray-800 leading-snug">
+                      "Today I’m choosing support, not silence."
+                    </p>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 border border-gray-200/50 rounded-xl shadow-4xs">
+                    <span className="text-[16px]">{selectedMoodId ? selectedMood.emoji : '⚪'}</span>
+                    <span className="text-[11px] font-display font-black text-gray-700">
+                      Mood: {selectedMoodId ? selectedMood.label : 'Not shared'}
+                    </span>
+                  </div>
+                  <div className="border-t border-[#EDE9DE]/50 pt-2 flex flex-col items-center leading-none gap-0.5">
+                    <span className="font-display font-black text-[#2B1D12] text-[11px]">
+                      HopeHeart
+                    </span>
+                    <span className="text-[8px] font-mono font-bold text-gray-400 uppercase tracking-wider">
+                      Safe Emotional Support
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Privacy Footer */}
+              <p className="text-[10px] text-gray-450 font-semibold leading-normal max-w-[260px] mx-auto pt-1 border-t border-gray-100/60">
+                HopeHeart does not share your private notes, exact location, phone number, or chat history.
               </p>
-
-              {/* Toast Copy Link / Download success */}
-              {copySuccess && (
-                <div className="py-1.5 px-3 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-xl text-[11px] font-bold">
-                  Link copied safely
-                </div>
-              )}
-              {downloadComingSoon && (
-                <div className="py-1.5 px-3 bg-amber-50 text-amber-850 border border-amber-200 rounded-xl text-[11px] font-bold">
-                  Coming soon
-                </div>
-              )}
-
-              {/* Actions Grid */}
-              <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">
-                <button
-                  onClick={handleShareClick}
-                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-xs"
-                >
-                  Share
-                </button>
-                <button
-                  onClick={handleCopyLink}
-                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-750 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
-                >
-                  Copy Link
-                </button>
-                <button
-                  onClick={handleDownloadCard}
-                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-750 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
-                >
-                  Download Card
-                </button>
-              </div>
             </motion.div>
           </div>
         )}
