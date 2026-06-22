@@ -397,7 +397,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Dynamic Header */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={selectedRoom ? () => setSelectedRoom(null) : onBack}
           id="btn-back-rooms-screen"
@@ -461,7 +461,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
                   return (
                     <div 
                       key={room.id}
-                      className="bg-white border border-[#EDE9DE] hover:border-orange-300 rounded-3xl p-5 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
+                      className="hh-surface rounded-3xl p-5 hover:border-orange-300 transition-all flex flex-col justify-between space-y-4"
                     >
                       <div className="space-y-4">
                         <div className="flex justify-between items-start">
@@ -548,7 +548,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
               </button>
 
               {/* Room Banner cards */}
-              <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 md:p-6 space-y-3">
+              <div className="hh-surface rounded-3xl p-5 md:p-6 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-2xl bg-[#FFF2EA] flex items-center justify-center text-[26px]">
                     {selectedRoom.emoji}
@@ -578,7 +578,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
                 {currentRoomPosts.map((post) => (
                   <div 
                     key={post.id}
-                    className="p-4 bg-white border border-[#EDE9DE] rounded-2xl shadow-xs space-y-3"
+                    className="p-4 hh-surface rounded-2xl space-y-3"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-mono uppercase tracking-widest text-gray-400 font-extrabold">
@@ -632,7 +632,7 @@ export default function SupportRoomsScreen({ onBack, onOpenModerationBlock }: Su
               </div>
 
               {/* Submit Post Form */}
-              <div className="bg-white p-4 border border-[#ECE6D9] rounded-2.5xl space-y-2">
+              <div className="hh-surface p-4 rounded-2.5xl space-y-2">
                 <form onSubmit={handlePostThoughtSubmit} className="flex gap-2.5">
                   <input
                     type="text"

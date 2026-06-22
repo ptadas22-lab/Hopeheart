@@ -167,7 +167,7 @@ export default function DashboardScreen({
       </AnimatePresence>
 
       {/* Upper Brand / User bar */}
-      <div className="pt-4 pb-3 px-5 flex items-center justify-between border-b border-[#EFEBE0] bg-white sticky top-0 z-10 shadow-xs">
+      <div className="pt-4 pb-3 px-5 flex items-center justify-between hh-header-surface sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <div className="relative">
             <div className="w-10 h-10 rounded-full border border-[#FF7527] bg-[#FFEFE5] flex items-center justify-center p-0.5 overflow-hidden">
@@ -189,7 +189,7 @@ export default function DashboardScreen({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           
           {/* Component 1: 🧡 HopeBuddy Check-In Card */}
-          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 shadow-xs flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
+          <div className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🧡</span>
@@ -265,7 +265,7 @@ export default function DashboardScreen({
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 bg-white border border-[#EDE9DE] rounded-[32px] text-left transition-all cursor-pointer shadow-3xs flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <SafetyIllustration />
@@ -289,7 +289,7 @@ export default function DashboardScreen({
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 bg-white border border-[#EDE9DE] rounded-[32px] text-left transition-all cursor-pointer shadow-3xs flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <CommunityIllustration />
@@ -313,7 +313,7 @@ export default function DashboardScreen({
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 bg-white border border-[#EDE9DE] rounded-[32px] text-left transition-all cursor-pointer shadow-3xs flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <ResourcesIllustration />
@@ -333,7 +333,7 @@ export default function DashboardScreen({
 
           {/* Component 5: 🛟 Help & Support Card */}
           <div
-            className="p-5 bg-white border border-[#EDE9DE] rounded-[32px] text-left shadow-3xs flex flex-col justify-between gap-4 col-span-1 sm:col-span-2 lg:col-span-1"
+            className="p-5 hh-surface rounded-[32px] text-left flex flex-col justify-between gap-4 col-span-1 sm:col-span-2 lg:col-span-1"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <SupportIllustration />

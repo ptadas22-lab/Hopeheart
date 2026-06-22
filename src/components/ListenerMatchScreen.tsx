@@ -603,7 +603,7 @@ export default function ListenerMatchScreen({
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={isChatActive ? () => setIsChatActive(false) : onBack}
           id="btn-back-match-screen"
@@ -629,7 +629,7 @@ export default function ListenerMatchScreen({
           </div>
 
           {/* Listener Profile Card & Status Badges */}
-          <div className="bg-white border-b border-[#E9E4D9] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+          <div className="hh-header-surface p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3">
               <ListenerAvatar name={activeListener.name} gender={activeListener.gender} />
               <div>
@@ -666,7 +666,7 @@ export default function ListenerMatchScreen({
             {chatMessages.map((msg) => {
               if (msg.sender === 'system') {
                 return (
-                  <div key={msg.id} className="bg-white/80 border border-[#ECE6D9] p-3 rounded-2xl text-[11.5px] text-gray-500 font-semibold text-center leading-relaxed">
+                  <div key={msg.id} className="hh-surface border border-[#ECE6D9] p-3 rounded-2xl text-[11.5px] text-gray-500 font-semibold text-center leading-relaxed">
                     {msg.content}
                   </div>
                 );
@@ -734,7 +734,7 @@ export default function ListenerMatchScreen({
           </div>
 
           {/* Core Chat Form & Actions */}
-          <div className="bg-white p-3 border-t border-[#E9E4D9] space-y-2 shrink-0">
+          <div className="hh-header-surface border-t p-3 space-y-2 shrink-0">
             <form onSubmit={handleFormSubmit} className="flex gap-2">
               <input
                 type="text"
@@ -825,7 +825,7 @@ export default function ListenerMatchScreen({
           </div>
 
           {/* Nearby Support Match Section */}
-          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 space-y-4">
+          <div className="hh-surface rounded-[32px] p-5 space-y-4">
             <div className="space-y-1">
               <h3 className="font-display font-black text-[#2B1D12] text-[15px] flex items-center gap-2">
                 <span>📍</span> Nearby Support Match
@@ -960,7 +960,7 @@ export default function ListenerMatchScreen({
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   {filteredListeners.length === 0 ? (
-                    <div className="col-span-full py-16 text-center space-y-2 bg-white border border-[#EDE9DE] rounded-[32px] p-6 shadow-3xs">
+                    <div className="col-span-full py-16 text-center space-y-2 hh-surface rounded-[32px] p-6">
                       <span className="text-3xl block">🔍</span>
                       <h4 className="font-display font-black text-gray-800 text-[16px]">
                         No active listeners match this filter
@@ -980,7 +980,7 @@ export default function ListenerMatchScreen({
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="bg-white border border-[#EDE9DE] rounded-[32px] p-5 shadow-xs flex flex-col justify-between space-y-4 hover:shadow-sm transition-all"
+                          className="hh-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 transition-all"
                         >
                           <div className="space-y-4">
                             {/* Header: Avatar, Name, and Role label */}
@@ -1167,7 +1167,7 @@ export default function ListenerMatchScreen({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white border border-[#EDE9DE] rounded-[32px] shadow-xl w-full max-w-md overflow-hidden relative z-50"
+              className="hh-surface rounded-[32px] w-full max-w-md overflow-hidden relative z-50"
             >
               {/* Modal Header */}
               <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#FCFAF5]">

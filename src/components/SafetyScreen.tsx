@@ -104,7 +104,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
   return (
     <div className="flex flex-col h-full bg-transparent font-sans select-none overflow-y-auto scrollbar-thin w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3 px-4 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3 px-4 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={onBack}
           id="btn-back-safety"
@@ -124,7 +124,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
 
       <div className="p-4 md:p-6 lg:p-8 space-y-6 flex-1 max-w-4xl mx-auto w-full">
         {/* Safety Header Card */}
-        <div className="relative bg-white/70 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-[#EDE9DE]/70 shadow-xs">
+        <div className="relative hh-hero-surface rounded-3xl p-4 sm:p-5">
           {/* Urgent Help Button */}
           <div className="absolute top-4 right-4">
             <button
@@ -152,7 +152,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
         </div>
 
         {/* Section 1: AI Safety Filter */}
-        <div className="bg-white/80 backdrop-blur-md border border-orange-100 p-5 rounded-3xl space-y-2 shadow-3xs">
+        <div className="hh-surface border border-orange-100 p-5 rounded-3xl space-y-2">
           <h3 className="font-display font-black text-[#FF7527] text-[15px] flex items-center gap-1.5">
             <span>🛡️</span> AI Safety Filter
           </h3>
@@ -164,7 +164,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
         {/* Section 2 & 3: Allowed and Blocked */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Section 2: Allowed */}
-          <div className="bg-white/80 backdrop-blur-md border border-emerald-100 rounded-3xl p-5 shadow-3xs space-y-4">
+          <div className="hh-surface border border-emerald-100 rounded-3xl p-5 space-y-4">
             <div>
               <h3 className="font-display font-black text-emerald-800 text-[14.5px] flex items-center gap-1.5 mb-1.5">
                 <span className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] flex items-center justify-center font-bold">✓</span>
@@ -191,7 +191,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
           </div>
 
           {/* Section 3: Blocked */}
-          <div className="bg-white/80 backdrop-blur-md border border-red-100 rounded-3xl p-5 shadow-3xs space-y-4">
+          <div className="hh-surface border border-red-100 rounded-3xl p-5 space-y-4">
             <div>
               <h3 className="font-display font-black text-red-800 text-[14.5px] flex items-center gap-1.5 mb-1.5">
                 <span className="w-5 h-5 rounded-full bg-red-50 text-red-800 text-[11px] flex items-center justify-center font-bold">×</span>
@@ -238,7 +238,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
               { title: 'Do not ask for personal contact details', desc: 'Keep conversations within HopeHeart to protect your privacy.', icon: '📱' },
               { title: 'Report unsafe behaviour', desc: 'Flag any messaging that crosses boundaries or causes discomfort.', icon: '🚩' }
             ].map((rule, idx) => (
-              <div key={idx} className="bg-white/80 border border-[#EDE9DE] rounded-2xl p-4 shadow-3xs flex gap-3 items-start">
+              <div key={idx} className="hh-surface rounded-2xl p-4 flex gap-3 items-start">
                 <div className="w-8 h-8 bg-orange-50/80 text-orange-500 rounded-xl flex items-center justify-center text-[16px] shrink-0">
                   {rule.icon}
                 </div>
@@ -258,7 +258,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
         {/* Section 5 & 6: Report a Concern & Response policy */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Section 5: Report a Concern */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#EDE9DE] rounded-3xl p-5 shadow-3xs flex flex-col justify-between min-h-[160px]">
+          <div className="hh-surface rounded-3xl p-5 flex flex-col justify-between min-h-[160px]">
             <div className="space-y-2 mb-4">
               <h3 className="font-display font-black text-gray-850 text-[15px] flex items-center gap-1.5">
                 <span>🚩</span> Report a Concern
@@ -359,7 +359,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
           </div>
 
           {/* Section 6: What happens if unsafe advice appears? */}
-          <div className="bg-white/80 backdrop-blur-md border border-[#EDE9DE] rounded-3xl p-5 shadow-3xs flex flex-col justify-between min-h-[160px]">
+          <div className="hh-surface rounded-3xl p-5 flex flex-col justify-between min-h-[160px]">
             <div className="space-y-2">
               <h3 className="font-display font-black text-gray-850 text-[15px] flex items-center gap-1.5">
                 <span>💬</span> What happens if unsafe advice appears?
@@ -396,7 +396,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-xl border border-gray-100 text-center z-10 space-y-4"
+              className="relative w-full max-w-sm hh-surface rounded-3xl p-6 text-center z-10 space-y-4"
             >
               <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-[24px] mx-auto">
                 🚨

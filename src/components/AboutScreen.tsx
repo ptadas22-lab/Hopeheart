@@ -13,7 +13,7 @@ export default function AboutScreen({ onBack, onAcceptDisclaimer }: AboutScreenP
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={panel === 'disclaimer' ? () => setPanel('about') : onBack}
           className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
@@ -51,7 +51,7 @@ export default function AboutScreen({ onBack, onAcceptDisclaimer }: AboutScreenP
               </div>
 
               {/* Belief Creed blocks */}
-              <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 md:p-6 space-y-4 shadow-xs">
+              <div className="hh-surface rounded-3xl p-5 md:p-6 space-y-4">
                 <h4 className="font-display font-bold text-gray-800 text-[15px] border-b border-gray-100 pb-2.5">
                   The Trust-First Philosophy
                 </h4>
@@ -114,7 +114,7 @@ export default function AboutScreen({ onBack, onAcceptDisclaimer }: AboutScreenP
               </div>
 
               {/* Comprehensive Terms banner */}
-              <div className="bg-white border border-red-150 rounded-3xl p-5 md:p-6 space-y-4 shadow-sm text-[12.5px] font-semibold text-gray-650 leading-relaxed">
+              <div className="hh-surface border border-red-150 rounded-3xl p-5 md:p-6 space-y-4 text-[12.5px] font-semibold text-gray-650 leading-relaxed">
                 <p className="text-red-900 font-bold border-b border-red-50 pb-2">
                   🔴 HopeHeart is NOT a diagnosis, prescription, or clinical crisis hospital service.
                 </p>

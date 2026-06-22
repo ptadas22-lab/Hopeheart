@@ -33,64 +33,25 @@
 }
 
 /* ====================================================
-   GLOBAL WARM GLASS DESIGN SYSTEM & SURFACE POLISH
+   REUSABLE WARM GLASS DESIGN SURFACE CLASSES
    ==================================================== */
 
-/* 1. Large Cards & Page Container Surfaces */
-/* Replaces pure white containers with background-adaptive warm glass */
-div.bg-white.rounded-2xl,
-div.bg-white.rounded-3xl,
-div.bg-white.rounded-\[32px\],
-div.bg-white.rounded-\[28px\],
-div.bg-white\/70.rounded-2xl,
-div.bg-white\/70.rounded-3xl,
-div.bg-white\/70.rounded-\[32px\],
-div.bg-white\/80.rounded-2xl,
-div.bg-white\/80.rounded-3xl,
-div.bg-white\/80.rounded-\[32px\],
-button.bg-white.rounded-\[32px\].p-5,
-button.bg-white.rounded-3xl.p-5 {
+.hh-surface {
   background: rgba(255, 250, 245, 0.78) !important;
   border: 1px solid rgba(255, 180, 120, 0.25) !important;
   box-shadow: 0 18px 45px rgba(80, 45, 20, 0.08) !important;
   backdrop-filter: blur(14px) !important;
 }
 
-/* 2. Top Header Navigation & Sticky Page Header Strips */
-/* Converts pure white header bars into warm translucent surfaces */
-header.bg-white\/70,
-nav.bg-white\/70,
-div.bg-white.sticky,
-div.bg-white.sticky.top-0,
-div.pt-4.pb-3.px-5.bg-white.sticky.top-0 {
-  background: rgba(255, 251, 246, 0.78) !important;
-  border-bottom: 1px solid rgba(255, 180, 120, 0.2) !important;
-  backdrop-filter: blur(14px) !important;
-  box-shadow: 0 4px 20px rgba(80, 45, 20, 0.02) !important;
-}
-
-/* 3. Hero Cards & Main Header Blocks */
-/* Soft gradient backgrounds with reduced vertical padding to keep it integrated */
-div.bg-white.border.rounded-\[32px\].col-span-1.sm\:col-span-2.lg\:col-span-2,
-div.relative.bg-white\/70.backdrop-blur-md.rounded-3xl.p-5,
-div.relative.bg-white\/70.backdrop-blur-md.rounded-3xl.p-6,
-div.bg-white.border.rounded-\[32px\].p-6.space-y-5 {
-  background: linear-gradient(135deg, rgba(255,247,237,0.85), rgba(248,239,255,0.75), rgba(238,242,255,0.72)) !important;
+.hh-hero-surface {
+  background: linear-gradient(135deg, rgba(255,247,237,0.88), rgba(248,239,255,0.78), rgba(238,242,255,0.75)) !important;
   border: 1px solid rgba(255, 180, 120, 0.25) !important;
-  box-shadow: 0 18px 45px rgba(80, 45, 20, 0.06) !important;
+  box-shadow: 0 18px 45px rgba(80, 45, 20, 0.08) !important;
   backdrop-filter: blur(14px) !important;
-  padding-top: 1.1rem !important;
-  padding-bottom: 1.1rem !important;
 }
 
-/* 4. Modals & Overlay Containers */
-/* Warm glass overlay look with premium soft shadows and deep blurs */
-div.bg-white.shadow-xl.w-full.max-w-lg,
-div.bg-white.shadow-xl.w-full.max-w-md,
-div.bg-white.rounded-3xl.p-6.shadow-xl.text-center,
-div.bg-\[\#FCFAF5\].rounded-\[28px\].w-full.max-w-lg.shadow-2xl {
-  background: rgba(255, 252, 248, 0.92) !important;
-  border: 1px solid rgba(255, 180, 120, 0.3) !important;
-  box-shadow: 0 24px 60px rgba(80, 45, 20, 0.12) !important;
-  backdrop-filter: blur(20px) !important;
+.hh-header-surface {
+  background: rgba(255, 251, 246, 0.82) !important;
+  border-bottom: 1px solid rgba(255, 180, 120, 0.22) !important;
+  backdrop-filter: blur(16px) !important;
 }

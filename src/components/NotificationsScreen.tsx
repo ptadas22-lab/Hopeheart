@@ -20,7 +20,7 @@ export default function NotificationsScreen({ onBack }: NotificationsScreenProps
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={onBack}
           className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
@@ -46,7 +46,7 @@ export default function NotificationsScreen({ onBack }: NotificationsScreenProps
         </div>
 
         {/* Toggles Checklist */}
-        <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="hh-surface rounded-3xl p-5 space-y-4">
           <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
             ALERT CATEGORY CHANNELS:
           </span>
@@ -105,7 +105,7 @@ export default function NotificationsScreen({ onBack }: NotificationsScreenProps
             {notificationsList.map((notify) => (
               <div 
                 key={notify.id}
-                className="p-4 bg-white border border-[#EEE9DD] rounded-2xl flex items-start justify-between gap-4"
+                className="p-4 hh-surface rounded-2xl flex items-start justify-between gap-4"
               >
                 <div>
                   <h4 className="text-[13px] font-extrabold text-gray-800">{notify.title}</h4>

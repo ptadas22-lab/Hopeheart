@@ -36,7 +36,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={subStage === 'privacy' ? () => setSubStage('profile') : onBack}
           className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
@@ -64,7 +64,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               className="space-y-6"
             >
               {/* Profile Card Header */}
-              <div className="bg-white border border-[#EDE9DE] rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center gap-5 shadow-xs">
+              <div className="hh-surface rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center gap-5">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[28px] shrink-0 shadow-sm select-none">
                   🦊
                 </div>
@@ -99,7 +99,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                   { value: '4 Times', label: 'Check-ins Done', emoji: '🩺' },
                   { value: '12 Hearts', label: 'Warmth Shared', emoji: '❤️' }
                 ].map((stat, idx) => (
-                  <div key={idx} className="bg-white border border-[#EDE9DE] rounded-2xl p-2.5 sm:p-4 text-center space-y-1 shadow-xs">
+                  <div key={idx} className="hh-surface rounded-2xl p-2.5 sm:p-4 text-center space-y-1">
                     <span className="text-xl block">{stat.emoji}</span>
                     <h5 className="font-display font-black text-[#FF7527] text-[15px] sm:text-[16px]">{stat.value}</h5>
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{stat.label}</p>
@@ -108,7 +108,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               </div>
 
               {/* Utility List Menu */}
-              <div className="bg-white border border-[#EDE9DE] rounded-3xl p-4 divide-y divide-gray-100 shadow-xs">
+              <div className="hh-surface rounded-3xl p-4 divide-y divide-gray-100">
                 {[
                   { label: 'Resource Logs', detail: 'View history of saved questions for professionals.', action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") },
                   { label: 'Account Info', detail: 'Review security key tokens, backup codes, and active platforms.', action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") },
@@ -161,7 +161,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               </div>
 
               {/* Anon Handle input panel */}
-              <div className="space-y-1.5 bg-white border border-[#EEE9DD] p-4.5 rounded-2.5xl shadow-xs">
+              <div className="space-y-1.5 hh-surface rounded-2.5xl p-4.5">
                 <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
                   Customize Anonymous Username Tag
                 </label>
@@ -187,7 +187,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               </div>
 
               {/* Toggles Options checklist */}
-              <div className="bg-white border border-[#EEE9DD] rounded-2.5xl p-4.5 shadow-xs space-y-4">
+              <div className="hh-surface rounded-2.5xl p-4.5 space-y-4">
                 
                 {/* Heart Status */}
                 <div className="flex items-center justify-between pb-3.5 border-b border-gray-50">

@@ -823,7 +823,7 @@ export default function CareBridgeScreen({
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none scrollbar-none w-full">
       {/* Header bar */}
-      <div className="flex items-center justify-between py-3 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-3 px-5 hh-header-surface sticky top-0 z-20">
         <button 
           onClick={() => {
             if (subScreen === 'suggestions') {
@@ -858,7 +858,7 @@ export default function CareBridgeScreen({
 
       {/* Sticky Section Toggle on Mobile */}
       {subScreen === 'suggestions' && (
-        <div className="sm:hidden sticky top-[64px] z-15 bg-white/80 backdrop-blur-md border-b border-[#EDE9DE] py-2.5 px-4 flex gap-2 overflow-x-auto scrollbar-none select-none shrink-0">
+        <div className="sm:hidden sticky top-[64px] z-15 hh-header-surface border-t py-2.5 px-4 flex gap-2 overflow-x-auto scrollbar-none select-none shrink-0">
           {[
             { id: 'what-happening', label: 'What’s happening' },
             { id: 'support-path', label: 'Support path' },
@@ -897,7 +897,7 @@ export default function CareBridgeScreen({
 
               {/* Onboarding Assistant / Tell Us What's Happening */}
               <div className={`sm:block ${mobileSection === 'what-happening' ? 'block' : 'hidden'}`}>
-                <div className="bg-white border border-[#EDE9DE] p-6 rounded-[32px] shadow-xs space-y-5">
+                <div className="hh-hero-surface p-5 rounded-[32px] space-y-5">
                   <div className="space-y-1">
                     <h3 className="text-[16px] font-display font-black text-[#2B1D12] flex items-center gap-1.5">
                       🫶 Tell us what’s happening
@@ -1052,7 +1052,7 @@ export default function CareBridgeScreen({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.18 }}
-                  className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 space-y-6 shadow-xs"
+                  className="hh-surface rounded-[32px] p-6 space-y-6"
                 >
                   {/* Header info without the static/redundant mascot - kept clean and card-focused */}
                   <div className="border-b border-gray-100 pb-5 space-y-3">
@@ -1154,7 +1154,7 @@ export default function CareBridgeScreen({
                         return (
                           <div 
                             key={idx}
-                            className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 hover:shadow-2xs transition-all"
+                            className="hh-surface rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 transition-all"
                           >
                             <div className="flex-1 flex flex-col justify-between space-y-3">
                               <div className="space-y-1.5">
@@ -1257,7 +1257,7 @@ export default function CareBridgeScreen({
                       ].map((res, idx) => (
                         <div 
                           key={idx}
-                          className="bg-white border border-[#EDE9DE] rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 hover:shadow-2xs transition-all"
+                          className="hh-surface rounded-2xl p-4 flex flex-row items-stretch justify-between gap-3 transition-all"
                         >
                           <div className="flex-1 flex flex-col justify-between space-y-3">
                             <div className="space-y-2">
@@ -1329,7 +1329,7 @@ export default function CareBridgeScreen({
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="bg-white border border-[#EDE9DE] rounded-[32px] shadow-xl w-full max-w-lg overflow-hidden relative z-50 text-left"
+                      className="hh-surface rounded-[32px] w-full max-w-lg overflow-hidden relative z-50 text-left"
                     >
                       {/* Modal Header */}
                       <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-[#FCFAF5]">
@@ -1411,7 +1411,7 @@ export default function CareBridgeScreen({
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              className="max-w-2xl mx-auto bg-white border border-[#E9E4D9] rounded-3xl p-6 md:p-8 space-y-6 shadow-xs"
+              className="max-w-2xl mx-auto hh-surface rounded-3xl p-6 md:p-8 space-y-6"
             >
               {/* Header card with text on left, warm illustration on right */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 border-b border-gray-100 pb-5">
@@ -1514,7 +1514,7 @@ export default function CareBridgeScreen({
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className="flex items-start justify-between gap-3 p-3.5 bg-white border border-[#EEE9DD] rounded-xl text-[12.5px] text-gray-700"
+                        className="flex items-start justify-between gap-3 p-3.5 hh-surface rounded-xl text-[12.5px] text-gray-700"
                       >
                         <div className="flex-1 font-semibold leading-relaxed select-all">
                           • {q.text}

@@ -353,7 +353,7 @@ export default function App() {
 
         {/* TOP Header and Navigation Bar */}
         {showNavChannels && (
-          <header className="flex h-[64px] sm:h-[68px] shrink-0 bg-white/70 backdrop-blur-md border-b border-[#ECE6D9] items-center justify-between px-4 sm:px-6 z-30 select-none">
+          <header className="flex h-[64px] sm:h-[68px] shrink-0 hh-header-surface items-center justify-between px-4 sm:px-6 z-30 select-none">
             <div className="flex items-center gap-2.5">
               <MascotSitting size={36} className="shrink-0" />
               <div>
@@ -462,7 +462,7 @@ export default function App() {
 
         {/* MOBILE Safe Bottom Touch 5-Tab Navigation Bar - only on screens under 640px */}
         {showNavChannels && (
-          <nav className="sm:hidden h-[74px] shrink-0 bg-white/70 backdrop-blur-md border-t border-[#ECE6D9] flex items-center justify-around pb-safe z-30 shadow-[0_-3px_12px_rgba(43,29,18,0.015)] select-none">
+          <nav className="sm:hidden h-[74px] shrink-0 hh-header-surface border-t border-[#ECE6D9] flex items-center justify-around pb-safe z-30 shadow-[0_-3px_12px_rgba(43,29,18,0.015)] select-none">
             
             {/* Tab 1: Home */}
             <button
@@ -550,7 +550,7 @@ export default function App() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-[#FCFAF5] rounded-[28px] w-full max-w-lg shadow-2xl border border-gray-150 overflow-hidden"
+              className="hh-surface rounded-[28px] w-full max-w-lg overflow-hidden"
             >
               <ModerationAlertScreen 
                 type={overlayType}
