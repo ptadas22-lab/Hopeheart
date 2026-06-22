@@ -10,46 +10,47 @@ interface ProfileUtilityScreenProps {
   onNavigateTo?: (screenId: ScreenId) => void;
 }
 
-export default function ProfileUtilityScreen({ onBack, userName, onChangeName, initialSubStage, onNavigateTo }: ProfileUtilityScreenProps) {
-  const [subStage, setSubStage] = useState<'profile' | 'privacy'>(initialSubStage || 'profile');
+export default function ProfileUtilityScreen({ 
+  onBack, 
+  userName, 
+  onChangeName, 
+  initialSubStage, 
+  onNavigateTo 
+}: ProfileUtilityScreenProps) {
+  const [subStage, setSubStage] = useState<'profile' | 'edit-profile' | 'privacy'>(
+    initialSubStage === 'privacy' ? 'privacy' : 'profile'
+  );
   const [anonNameInput, setAnonNameInput] = useState<string>(userName);
-
 
   useEffect(() => {
     if (initialSubStage) {
-      setSubStage(initialSubStage);
+      setSubStage(initialSubStage === 'privacy' ? 'privacy' : 'profile');
     }
   }, [initialSubStage]);
   
   // Toggle states
+  const [showBasics, setShowBasics] = useState<boolean>(true);
   const [showHeartStatus, setShowHeartStatus] = useState<boolean>(true);
   const [showActivity, setShowActivity] = useState<boolean>(true);
-  const [showNearbyResults, setShowNearbyResults] = useState<boolean>(false);
-
-  const handleSavePrivacy = () => {
-    if (!anonNameInput.trim()) {
-      alert("Name cannot be empty.");
-      return;
-    }
-    onChangeName(anonNameInput);
-    alert("Privacy Settings Saved! Your custom anonymous handle has been updated.");
-    setSubStage('profile');
-  };
+  const [useApproximateNearby, setUseApproximateNearby] = useState<boolean>(true);
+  const [allowStorySharing, setAllowStorySharing] = useState<boolean>(true);
+  const [hideNearbySuggestions, setHideNearbySuggestions] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
       <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
         <button 
-          onClick={subStage === 'privacy' ? () => setSubStage('profile') : onBack}
-          className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
+          onClick={subStage !== 'profile' ? () => setSubStage('profile') : onBack}
+          type="button"
+          className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer transition-all active:scale-95 shadow-3xs"
         >
           <svg className="w-5 h-5 stroke-current cursor-pointer" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
-          {subStage === 'profile' ? 'My Safe Profile' : 'Privacy Settings'}
+          {subStage === 'profile' ? 'My Safe Profile' : subStage === 'edit-profile' ? 'Edit Profile' : 'Privacy Settings'}
         </span>
         <span className="text-[20px] select-none">👤</span>
       </div>
@@ -112,7 +113,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                 <div className="w-full flex flex-col sm:flex-row gap-2 pt-3.5 border-t border-gray-100 mt-2">
                   <button
                     type="button"
-                    onClick={() => setSubStage('privacy')}
+                    onClick={() => setSubStage('edit-profile')}
                     className="flex-1 py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1.5"
                   >
                     <span>✏️</span> Edit Profile
@@ -223,31 +224,34 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
             </motion.div>
           )}
 
-          {/* SCREEN 24: PRIVACY SETTINGS SCREEN */}
-          {subStage === 'privacy' && (
+          {/* EDIT PROFILE SCREEN */}
+          {subStage === 'edit-profile' && (
             <motion.div
-              key="privacy-settings"
+              key="edit-profile-hub"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-6 max-w-md mx-auto"
+              className="space-y-4 max-w-md mx-auto mt-1 sm:mt-2"
             >
               <div className="text-center space-y-1">
-                <div className="text-[32px]">🔒</div>
+                <div className="text-[28px]">👤</div>
                 <h3 className="font-display font-black text-gray-800 text-[19px]">
-                  You control what you share
+                  Edit Profile
                 </h3>
-                <p className="text-[12.5px] text-gray-500 font-semibold">
-                  Adjust your privacy vector settings anytime. Keep your identities safe.
+                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed px-4">
+                  Set your public presence. Remember, your personal details always remain private.
                 </p>
               </div>
 
-              {/* Anon Handle input panel */}
-              <div className="space-y-1.5 hh-surface rounded-2.5xl p-4.5">
-                <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                  Customize Anonymous Username Tag
-                </label>
-                <div className="flex gap-2">
+              {/* Anon Display Name input panel */}
+              <div className="space-y-2 hh-surface rounded-2.5xl p-4.5">
+                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                  Anonymous Display Name
+                </span>
+                <p className="text-[11.5px] text-gray-550 font-semibold leading-normal">
+                  This is the name others see in support rooms and listener chats.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 mt-1">
                   <input
                     type="text"
                     value={anonNameInput}
@@ -258,9 +262,9 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                   <button 
                     type="button"
                     onClick={() => setAnonNameInput('Voice' + Math.floor(10 + Math.random() * 900))}
-                    className="px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-[12.5px] font-display font-bold cursor-pointer"
+                    className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-[12.5px] font-display font-bold cursor-pointer transition-all active:scale-95 text-center shrink-0"
                   >
-                    🎲 Roll
+                    🎲 Generate Name
                   </button>
                 </div>
                 <p className="text-[11px] text-gray-400 font-medium pt-1">
@@ -268,74 +272,189 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                 </p>
               </div>
 
-              {/* Toggles Options checklist */}
-              <div className="hh-surface rounded-2.5xl p-4.5 space-y-4">
-                
-                {/* Heart Status */}
-                <div className="flex items-center justify-between pb-3.5 border-b border-gray-50">
-                  <div className="space-y-0.5 max-w-[75%]">
-                    <span className="text-[13px] font-bold text-gray-800 block">Show heart status on profile</span>
-                    <p className="text-[11px] text-gray-400 font-semibold leading-normal">
-                      Allows companion groups and match coaches to view your selected mood choice tag.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowHeartStatus(!showHeartStatus)}
-                    className={`w-12 h-6.5 rounded-full p-0.5 transition-colors cursor-pointer ${showHeartStatus ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
-                  >
-                    <div className={`w-5.5 h-5.5 rounded-full bg-white shadow-sm transition-transform transform ${showHeartStatus ? 'translate-x-5.5' : 'translate-x-0'}`} />
-                  </button>
-                </div>
-
-                {/* Activity log */}
-                <div className="flex items-center justify-between pb-3.5 border-b border-gray-50">
-                  <div className="space-y-0.5 max-w-[75%]">
-                    <span className="text-[13px] font-bold text-gray-800 block">Show activity in support rooms</span>
-                    <p className="text-[11px] text-gray-400 font-semibold leading-normal">
-                      Lets other active minds celebrate or reply to your shared thoughts in streams.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowActivity(!showActivity)}
-                    className={`w-12 h-6.5 rounded-full p-0.5 transition-colors cursor-pointer ${showActivity ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
-                  >
-                    <div className={`w-5.5 h-5.5 rounded-full bg-white shadow-sm transition-transform transform ${showActivity ? 'translate-x-5.5' : 'translate-x-0'}`} />
-                  </button>
-                </div>
-
-                {/* Nearby Results */}
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5 max-w-[75%]">
-                    <span className="text-[13px] font-bold text-gray-800 block">Show nearby results lookup</span>
-                    <p className="text-[11px] text-gray-400 font-semibold leading-normal">
-                      Exposes approximate local matching to find close peer group hubs under exact limits.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowNearbyResults(!showNearbyResults)}
-                    className={`w-12 h-6.5 rounded-full p-0.5 transition-colors cursor-pointer ${showNearbyResults ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
-                  >
-                    <div className={`w-5.5 h-5.5 rounded-full bg-white shadow-sm transition-transform transform ${showNearbyResults ? 'translate-x-5.5' : 'translate-x-0'}`} />
-                  </button>
-                </div>
-
-              </div>
-
-              {/* Actions */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Actions for edit-profile */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setSubStage('profile')}
-                  className="w-full py-3 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[13px] rounded-xl cursor-pointer"
+                  className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[13px] rounded-xl cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  onClick={handleSavePrivacy}
-                  className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-xl cursor-pointer shadow-xs"
+                  onClick={() => {
+                    if (!anonNameInput.trim()) {
+                      alert("Name cannot be empty.");
+                      return;
+                    }
+                    onChangeName(anonNameInput);
+                    alert("Display name updated safely!");
+                    setSubStage('profile');
+                  }}
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-xl cursor-pointer shadow-xs"
                 >
-                  Save Privacy Settings
+                  Save Profile
+                </button>
+              </div>
+
+            </motion.div>
+          )}
+
+          {/* SCREEN 24: PRIVACY SETTINGS SCREEN */}
+          {subStage === 'privacy' && (
+            <motion.div
+              key="privacy-settings"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="space-y-4 max-w-md mx-auto mt-1 sm:mt-2"
+            >
+              <div className="text-center space-y-1">
+                <div className="text-[28px]">🔒</div>
+                <h3 className="font-display font-black text-gray-800 text-[19px]">
+                  You control what you share
+                </h3>
+                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed px-4">
+                  Choose what others can see. Your private notes, phone number, and exact location are never shown.
+                </p>
+              </div>
+
+              {/* Toggles Options checklist */}
+              <div className="hh-surface rounded-2.5xl p-4.5 space-y-4 text-left">
+                
+                {/* Toggle 1: Basics */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">👤 Show my profile basics</span>
+                    <p className="text-[11px] text-gray-450 font-semibold leading-normal">
+                      Allows others to see your display name, role, language, and listening style.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowBasics(!showBasics)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${showBasics ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${showBasics ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+                {/* Toggle 2: Mood status */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">🧡 Show my mood status</span>
+                    <p className="text-[11px] text-gray-450 font-semibold leading-normal">
+                      Allows matched listeners to see your selected mood tag.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowHeartStatus(!showHeartStatus)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${showHeartStatus ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${showHeartStatus ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+                {/* Toggle 3: Support activity */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">💬 Show support room activity</span>
+                    <p className="text-[11px] text-gray-450 font-semibold leading-normal">
+                      Allows others to see when you reply inside support rooms.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowActivity(!showActivity)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${showActivity ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${showActivity ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+                {/* Toggle 4: Nearby match */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">📍 Use approximate nearby matching</span>
+                    <p className="text-[11px] text-gray-455 font-semibold leading-normal">
+                      Uses approximate distance only. Exact location is never shown.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setUseApproximateNearby(!useApproximateNearby)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${useApproximateNearby ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${useApproximateNearby ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+                {/* Toggle 5: Story Sharing */}
+                <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">📖 Allow anonymous story sharing</span>
+                    <p className="text-[11px] text-gray-455 font-semibold leading-normal">
+                      Your story can be shown without name, phone number, or exact location.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setAllowStorySharing(!allowStorySharing)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${allowStorySharing ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${allowStorySharing ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+                {/* Toggle 6: Hide nearby */}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5 max-w-[75%]">
+                    <span className="text-[13px] font-bold text-gray-800 block">🔒 Hide from nearby suggestions</span>
+                    <p className="text-[11px] text-gray-455 font-semibold leading-normal">
+                      Your profile will not appear in nearby listener or support suggestions.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setHideNearbySuggestions(!hideNearbySuggestions)}
+                    type="button"
+                    className={`w-11 h-6 rounded-full p-0.5 transition-colors cursor-pointer shrink-0 ${hideNearbySuggestions ? 'bg-[#FF7527]' : 'bg-gray-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform transform ${hideNearbySuggestions ? 'translate-x-5' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+
+              </div>
+
+              {/* Privacy Promise Card */}
+              <div className="hh-surface rounded-2.5xl p-4 text-center space-y-1.5">
+                <span className="text-[12px] font-display font-black text-gray-800 block">
+                  🛡️ Your private information stays private
+                </span>
+                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed px-2">
+                  HopeHeart never shows your phone number, exact location, private notes, saved questions, or chat history to other users.
+                </p>
+              </div>
+
+              {/* Actions for privacy */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSubStage('profile')}
+                  className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[13px] rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    alert("Privacy preferences saved successfully!");
+                    setSubStage('profile');
+                  }}
+                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-xl cursor-pointer shadow-xs"
+                >
+                  Save Settings
                 </button>
               </div>
 
