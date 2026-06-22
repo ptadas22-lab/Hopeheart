@@ -30,7 +30,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   return (
     <div 
       onClick={onFinish}
-      className="flex flex-col items-center justify-between min-h-full bg-[#FCFAF5] p-5 sm:p-6 md:p-8 text-center select-none cursor-pointer w-full my-auto py-10 md:py-12"
+      className="flex flex-col items-center justify-between min-h-full bg-transparent p-5 sm:p-6 md:p-8 text-center select-none cursor-pointer w-full my-auto py-10 md:py-12"
     >
       {/* Spacer to push content to middle */}
       <div className="h-4" />

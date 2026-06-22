@@ -48,7 +48,7 @@ export default function HeartCheckScreen({
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] p-5 font-sans select-none justify-between">
+    <div className="flex flex-col min-h-full bg-transparent p-5 font-sans select-none justify-between">
       {/* Header bar */}
       <div className="flex items-center justify-between pb-3 border-b border-gray-100">
         <button 

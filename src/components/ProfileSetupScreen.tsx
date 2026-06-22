@@ -308,7 +308,7 @@ export default function ProfileSetupScreen({ initialNickname, onComplete }: Prof
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] justify-between font-sans select-none w-full">
+    <div className="flex flex-col min-h-full bg-transparent justify-between font-sans select-none w-full">
       {/* Top Header with Progress Dots and Back Button */}
       <div className="flex items-center justify-between py-3 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
         {currentStep > 0 ? (

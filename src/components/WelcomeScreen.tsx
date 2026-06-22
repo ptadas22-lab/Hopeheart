@@ -8,7 +8,7 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
-    <div className="flex flex-col justify-center items-center min-h-full bg-[#FCFAF5] p-5 sm:p-6 md:p-8 font-sans select-none w-full my-auto space-y-5 md:space-y-6">
+    <div className="flex flex-col justify-center items-center min-h-full bg-transparent p-5 sm:p-6 md:p-8 font-sans select-none w-full my-auto space-y-5 md:space-y-6">
       
       {/* Brand logo at the top for mobile */}
       <div className="block md:hidden text-center mb-1 shrink-0 w-full">

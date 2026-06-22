@@ -116,7 +116,7 @@ export default function HopeBuddyChatScreen({
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] font-sans select-none w-full my-auto">
+    <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full my-auto">
       {/* Header bar */}
       <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
         <button 

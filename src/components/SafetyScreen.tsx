@@ -36,7 +36,7 @@ export default function SafetyScreen({ onBack }: SafetyScreenProps) {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#FCFAF5] font-sans select-none overflow-y-auto scrollbar-thin w-full">
+    <div className="flex flex-col h-full bg-transparent font-sans select-none overflow-y-auto scrollbar-thin w-full">
       {/* Header bar */}
       <div className="flex items-center justify-between py-3 px-4 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
         <button 

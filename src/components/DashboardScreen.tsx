@@ -137,7 +137,7 @@ export default function DashboardScreen({
   }, [selectedMood.id]);
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] overflow-y-auto font-sans select-none scrollbar-none w-full relative">
+    <div className="flex flex-col min-h-full bg-transparent overflow-y-auto font-sans select-none scrollbar-none w-full relative">
       
       {/* Toast Notification */}
       <AnimatePresence>

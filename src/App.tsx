@@ -22,6 +22,89 @@ import ModerationAlertScreen from './components/ModerationAlertScreen';
 import { MascotSitting, BrandWordmark } from './components/Logo';
 import HopeBuddyWidget from './components/HopeBuddyWidget';
 
+function AppBackground({ currentScreen }: { currentScreen: ScreenId }) {
+  // Screen categorization
+  const isSplashWelcome = 
+    currentScreen === ScreenId.Splash || 
+    currentScreen === ScreenId.Welcome || 
+    currentScreen === ScreenId.Login || 
+    currentScreen === ScreenId.ProfileSetup;
+    
+  const isSafety = 
+    currentScreen === ScreenId.AISafety || 
+    currentScreen === ScreenId.ModerationBlock || 
+    currentScreen === ScreenId.Crisis;
+    
+  const isProfileSettings = 
+    currentScreen === ScreenId.Profile || 
+    currentScreen === ScreenId.PrivacySettings || 
+    currentScreen === ScreenId.Notifications || 
+    currentScreen === ScreenId.About || 
+    currentScreen === ScreenId.MedicalDisclaimer;
+    
+  const isHomeCommunityResources = !isSplashWelcome && !isSafety && !isProfileSettings;
+
+  // Gradients matching requirements
+  let gradientStyle = "from-[#FFF7ED] via-[#F8EFFF] to-[#EEF2FF]"; // Home, Community, Resources: Warm cream-to-lavender gradient
+  if (isSplashWelcome) {
+    // Slightly stronger soft gradient with floating blurred blobs
+    gradientStyle = "from-[#FFF7ED] via-[#F3E8FF] via-[#EDE9FE] to-[#EEF2FF]";
+  } else if (isSafety) {
+    // Calmer lavender/blue-tinted gradient, but keep it warm
+    gradientStyle = "from-[#EEF2FF] via-[#EDE9FE] to-[#FFF7ED]";
+  } else if (isProfileSettings) {
+    // Clean minimal gradient with very light decorative shapes
+    gradientStyle = "from-[#FFF7ED] via-[#FCFAF5] to-[#F8EFFF]";
+  }
+
+  return (
+    <div className={`absolute inset-0 -z-10 overflow-hidden pointer-events-none select-none transition-all duration-700 bg-gradient-to-tr ${gradientStyle}`}>
+      
+      {/* Subtle visual depth blobs for Splash & Welcome */}
+      {isSplashWelcome && (
+        <>
+          <div className="absolute -top-[10%] -left-[10%] w-[55%] h-[55%] rounded-full bg-orange-150/20 blur-3xl" />
+          <div className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[55%] rounded-full bg-purple-150/25 blur-3xl animate-pulse" style={{ animationDuration: '9s' }} />
+          <div className="absolute top-[25%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-150/15 blur-3xl animate-pulse" style={{ animationDuration: '12s' }} />
+        </>
+      )}
+
+      {/* Hearts and Chat Bubbles pattern overlay for Home, Community, Resources */}
+      {isHomeCommunityResources && (
+        <div 
+          className="absolute inset-0 opacity-[0.025] bg-[repeat] [background-size:72px_72px] transition-opacity duration-500" 
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cpath d='M 18,15 C 17.2,13.5 15.5,13.5 14.7,14.5 C 13.9,15.5 13.9,17.2 14.7,18.2 L 18,21.5 L 21.3,18.2 C 22.1,17.2 22.1,15.5 21.3,14.5 C 20.5,13.5 18.8,13.5 18,15 Z' fill='%23FF7527' /%3E%3Cpath d='M 50,14 H 58 C 59.1,14 60,14.9 60,16 V 20 C 60,21.1 59.1,22 58,22 H 54 L 51,25 V 22 H 50 C 48.9,22 48,21.1 48,20 V 16 C 48,14.9 48.9,14 50,14 Z' fill='%237BA655' /%3E%3Cpath d='M 54,51 C 53.2,49.5 51.5,49.5 50.7,50.5 C 49.9,51.5 49.9,53.2 50.7,54.2 L 54,57.5 L 57.3,54.2 C 58.1,53.2 58.1,51.5 57.3,50.5 C 56.5,49.5 54.8,49.5 54,51 Z' fill='%23FF7527' /%3E%3Cpath d='M 14,50 H 22 C 23.1,50 24,50.9 24,52 V 56 C 24,57.1 23.1,58 22,58 H 18 L 15,61 V 58 H 14 C 12.9,58 12,57.1 12,56 V 52 C 12,50.9 12.9,50 14,50 Z' fill='%237BA655' /%3E%3C/svg%3E")`
+          }}
+        />
+      )}
+
+      {/* Safety Screen gentle shapes */}
+      {isSafety && (
+        <>
+          <div className="absolute top-[10%] right-[10%] w-[35%] h-[35%] rounded-full bg-blue-100/30 blur-3xl" />
+          <div className="absolute bottom-[10%] left-[5%] w-[40%] h-[40%] rounded-full bg-indigo-100/20 blur-3xl" />
+          {/* Low contrast decorative vector outline - safe guard shield */}
+          <svg className="absolute top-[15%] left-[8%] w-16 h-16 text-indigo-200/20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.47 3.74-3.09 7.1-7 8.16v-8.16H5V6.69l7-3.11v8.41z" />
+          </svg>
+        </>
+      )}
+
+      {/* Profile & Settings minimal decorative shapes */}
+      {isProfileSettings && (
+        <>
+          <div className="absolute top-[12%] left-[8%] w-[25%] h-[25%] rounded-full bg-orange-50/15 blur-3xl animate-pulse" style={{ animationDuration: '7s' }} />
+          {/* Low contrast rings */}
+          <div className="absolute top-[20%] right-[15%] w-32 h-32 rounded-full border border-purple-100/15" />
+          <div className="absolute bottom-[25%] left-[10%] w-48 h-48 rounded-full border border-orange-100/10" />
+        </>
+      )}
+
+    </div>
+  );
+}
+
 const MOOD_CONFIGS: MoodConfig[] = [
   { id: 'calm', label: 'Calm', emoji: '😊', color: 'text-emerald-500', accentBg: '#EADFC9', bgLight: 'bg-[#F2FAF6]', buddyExpression: 'calm', tagline: 'You’re allowed to slow down. I’m here with you.' },
   { id: 'sad', label: 'Sad', emoji: '😔', color: 'text-blue-600', accentBg: '#E8F1FC', bgLight: 'bg-[#F4F8FD]', buddyExpression: 'lonely', tagline: 'A gray cloud passes over. I let myself feel it.' },
@@ -255,7 +338,7 @@ export default function App() {
                           currentScreen !== ScreenId.ProfileSetup;
 
   return (
-    <div className="min-h-screen w-full bg-[#FCFAF5] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">
+    <div className="min-h-screen w-full bg-[#FAF6EE] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">
       
       {/* 
         FULLY RESPONSIVE DASHBOARD AREA CONTAINER
@@ -263,11 +346,14 @@ export default function App() {
         Uses full-width on mobile viewports.
         Caps on tablet configurations, and handles spacious bento column grids for laptop displays.
       */}
-      <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[640px] sm:h-[min(780px,88vh)] bg-[#FCFAF5] rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
+      <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[640px] sm:h-[min(780px,88vh)] bg-transparent rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
         
+        {/* Dynamic Premium Background Layer */}
+        <AppBackground currentScreen={currentScreen} />
+
         {/* TOP Header and Navigation Bar */}
         {showNavChannels && (
-          <header className="flex h-[64px] sm:h-[68px] shrink-0 bg-white border-b border-[#ECE6D9] items-center justify-between px-4 sm:px-6 z-30 select-none">
+          <header className="flex h-[64px] sm:h-[68px] shrink-0 bg-white/70 backdrop-blur-md border-b border-[#ECE6D9] items-center justify-between px-4 sm:px-6 z-30 select-none">
             <div className="flex items-center gap-2.5">
               <MascotSitting size={36} className="shrink-0" />
               <div>
@@ -339,7 +425,7 @@ export default function App() {
         )}
 
         {/* Core viewport hosting active layouts */}
-        <div className="flex-1 overflow-y-auto relative flex flex-col bg-[#FCFAF5]">
+        <div className="flex-1 overflow-y-auto relative flex flex-col bg-transparent">
           <div className="flex-1 flex flex-col w-full">
             <AnimatePresence mode="wait">
               <motion.div
@@ -357,7 +443,7 @@ export default function App() {
 
           {/* Footer - visible when onboarding is complete */}
           {showNavChannels && (
-            <footer className="w-full bg-white sm:bg-[#FAF8F5] border-t border-[#ECE6D9] py-5 px-5 text-center mt-auto shrink-0 select-none">
+            <footer className="w-full bg-white/50 backdrop-blur-md sm:bg-transparent border-t border-[#ECE6D9] py-5 px-5 text-center mt-auto shrink-0 select-none">
               <div className="max-w-4xl mx-auto space-y-2">
                 <div className="flex flex-wrap justify-center gap-x-3 gap-y-1.5 text-[12px] font-bold text-gray-500">
                   <button onClick={() => alert("Terms & Conditions:\n\n1. HopeHeart is strictly for peer-to-peer emotional support.\n2. Do not share or ask for prescriptions, medical diagnoses, or clinical advice.\n3. Be kind, empathetic, and respectful.\n4. AI monitoring keeps this space safe and anonymous.")} className="hover:underline hover:text-[#FF7527] cursor-pointer">Terms & Conditions</button>
@@ -376,7 +462,7 @@ export default function App() {
 
         {/* MOBILE Safe Bottom Touch 5-Tab Navigation Bar - only on screens under 640px */}
         {showNavChannels && (
-          <nav className="sm:hidden h-[74px] shrink-0 bg-white border-t border-[#ECE6D9] flex items-center justify-around pb-safe z-30 shadow-[0_-3px_12px_rgba(43,29,18,0.015)] select-none">
+          <nav className="sm:hidden h-[74px] shrink-0 bg-white/70 backdrop-blur-md border-t border-[#ECE6D9] flex items-center justify-around pb-safe z-30 shadow-[0_-3px_12px_rgba(43,29,18,0.015)] select-none">
             
             {/* Tab 1: Home */}
             <button

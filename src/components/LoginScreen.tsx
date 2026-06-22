@@ -51,7 +51,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   ];
 
   return (
-    <div className="flex flex-col min-h-full bg-[#FCFAF5] justify-between p-5 md:p-8 font-sans select-none w-full">
+    <div className="flex flex-col min-h-full bg-transparent justify-between p-5 md:p-8 font-sans select-none w-full">
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center space-y-6 py-4">
         
         {/* Onboarding Progress Header */}
