@@ -8,6 +8,7 @@ interface ProfileUtilityScreenProps {
   onChangeName: (newName: string) => void;
   initialSubStage?: 'profile' | 'privacy';
   onNavigateTo?: (screenId: ScreenId) => void;
+  checkinCount?: number;
 }
 
 export default function ProfileUtilityScreen({ 
@@ -15,12 +16,25 @@ export default function ProfileUtilityScreen({
   userName, 
   onChangeName, 
   initialSubStage, 
-  onNavigateTo 
+  onNavigateTo,
+  checkinCount
 }: ProfileUtilityScreenProps) {
   const [subStage, setSubStage] = useState<'profile' | 'edit-profile' | 'privacy'>(
     initialSubStage === 'privacy' ? 'privacy' : 'profile'
   );
   const [anonNameInput, setAnonNameInput] = useState<string>(userName);
+
+  const [profileAgeGroup, setProfileAgeGroup] = useState(() => localStorage.getItem('hopeheart_profile_age_group') || '25–34');
+  const [profileLanguage, setProfileLanguage] = useState(() => localStorage.getItem('hopeheart_profile_language') || 'English');
+  const [profileSupportInterest, setProfileSupportInterest] = useState(() => localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
+
+  useEffect(() => {
+    if (subStage === 'profile') {
+      setProfileAgeGroup(localStorage.getItem('hopeheart_profile_age_group') || '25–34');
+      setProfileLanguage(localStorage.getItem('hopeheart_profile_language') || 'English');
+      setProfileSupportInterest(localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
+    }
+  }, [subStage]);
 
   useEffect(() => {
     if (initialSubStage) {
@@ -95,16 +109,16 @@ export default function ProfileUtilityScreen({
                 {/* Profile Details Chips */}
                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3.5 border-t border-gray-100 mt-2 text-left">
                   {[
-                    { label: 'Age Group', val: '25–34', icon: '🎂' },
+                    { label: 'Age Group', val: profileAgeGroup, icon: '🎂' },
                     { label: 'Gender', val: 'Prefer not to say', icon: '👤' },
                     { label: 'Role', val: 'Working Professional', icon: '💼' },
-                    { label: 'Languages', val: 'English • Hindi • Kannada', icon: '🗣️' },
-                    { label: 'Support Interest', val: 'Anxiety • Emotional Support', icon: '🧡' }
+                    { label: 'Language', val: profileLanguage, icon: '🗣️' },
+                    { label: 'Support Interest', val: profileSupportInterest, icon: '🧡' }
                   ].map((detail, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-[12px] text-gray-650 font-semibold bg-[#FFFDF9]/60 px-3 py-1.5 rounded-xl border border-gray-150/40">
                       <span className="text-sm shrink-0">{detail.icon}</span>
                       <span className="text-gray-400 font-bold uppercase text-[9px] tracking-tight">{detail.label}:</span>
-                      <span className="text-gray-700 font-extrabold leading-tight">{detail.val}</span>
+                      <span className="text-gray-700 font-extrabold leading-tight text-ellipsis overflow-hidden whitespace-nowrap">{detail.val}</span>
                     </div>
                   ))}
                 </div>
@@ -132,7 +146,7 @@ export default function ProfileUtilityScreen({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {[
                   { value: '7 Days', label: 'Safe Space Streak', emoji: '🛡️' },
-                  { value: '4 Check-ins', label: 'Mood Reflections', emoji: '🩺' },
+                  { value: `${checkinCount ?? 0} Check-ins`, label: 'Mood Reflections', emoji: '🩺' },
                   { value: '12 Hearts', label: 'Support Shared', emoji: '❤️' }
                 ].map((stat, idx) => (
                   <div key={idx} className="hh-surface rounded-2xl p-3 sm:p-4 text-center space-y-1">

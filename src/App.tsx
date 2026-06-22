@@ -136,9 +136,121 @@ export default function App() {
     return localStorage.getItem('hopeheart_mood') || 'calm';
   });
 
-  const handleMoodSelected = (moodId: string) => {
+  const [checkinCount, setCheckinCount] = useState<number>(() => {
+    const localCount = localStorage.getItem('hopeheart_checkin_count');
+    return localCount ? parseInt(localCount, 10) : 0;
+  });
+
+  const fetchCheckinCount = async (userId: string) => {
+    if (supabase) {
+      try {
+        const { count, error } = await supabase
+          .from('checkins')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId);
+        if (!error && count !== null) {
+          setCheckinCount(count);
+          localStorage.setItem('hopeheart_checkin_count', count.toString());
+        } else if (error) {
+          console.warn('[Checkin] Error counting check-ins from backend:', error.message);
+        }
+      } catch (err) {
+        console.warn('[Checkin] Error fetching checkin count:', err);
+      }
+    }
+  };
+
+  const mapMoodIdToSafeMood = (moodId: string): string => {
+    const map: Record<string, string> = {
+      calm: 'Calm',
+      sad: 'Low',
+      anxious: 'Anxious',
+      tired: 'Tired',
+      hopeful: 'Hopeful',
+      hurt: 'Low',
+      lonely: 'Low',
+      'need-support': 'Overwhelmed'
+    };
+    return map[moodId] || 'Calm';
+  };
+
+  const handleMoodSelected = async (moodId: string) => {
     setSelectedMoodId(moodId);
     localStorage.setItem('hopeheart_mood', moodId);
+
+    const safeMood = mapMoodIdToSafeMood(moodId);
+    const todayDateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+    let savedToBackend = false;
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          const { error } = await supabase
+            .from('checkins')
+            .upsert({
+              user_id: userId,
+              mood: safeMood,
+              checkin_date: todayDateStr,
+              created_at: new Date().toISOString()
+            }, {
+              onConflict: 'user_id,checkin_date'
+            });
+          if (error) {
+            console.warn('[Checkin] Failed to upsert check-in to backend:', error.message);
+          } else {
+            console.log('[Checkin] Upserted check-in successfully to backend.');
+            savedToBackend = true;
+            await fetchCheckinCount(userId);
+          }
+        }
+      } catch (err) {
+        console.warn('[Checkin] Error during backend check-in upsert:', err);
+      }
+    }
+
+    // Always update localStorage fallback keys
+    localStorage.setItem('hopeheart_last_checkin_mood', safeMood);
+    
+    const lastCheckinDate = localStorage.getItem('hopeheart_last_checkin_date');
+    localStorage.setItem('hopeheart_last_checkin_date', todayDateStr);
+
+    if (!savedToBackend) {
+      if (lastCheckinDate !== todayDateStr) {
+        const localCount = localStorage.getItem('hopeheart_checkin_count');
+        const currentCount = localCount ? parseInt(localCount, 10) : 0;
+        const nextCount = currentCount + 1;
+        localStorage.setItem('hopeheart_checkin_count', nextCount.toString());
+        setCheckinCount(nextCount);
+      }
+    }
+  };
+
+  const handleNameChange = async (newName: string) => {
+    setUserName(newName);
+    localStorage.setItem('hopeheart_profile_display_name', newName);
+
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          const { error } = await supabase
+            .from('profiles')
+            .upsert({
+              id: userId,
+              display_name: newName,
+              updated_at: new Date().toISOString()
+            });
+          if (error) {
+            console.warn('[Profile] Failed to update name on backend:', error.message);
+          }
+        }
+      } catch (err) {
+        console.warn('[Profile] Error updating name on backend:', err);
+      }
+    }
   };
   const [userName, setUserName] = useState<string>('Voice47');
   const [todayQuote, setTodayQuote] = useState<string>("Rest is productive too. You're allowed to slow down.");
@@ -211,6 +323,7 @@ export default function App() {
             console.warn('[Profile] Failed to save profile to backend:', error.message);
           } else {
             console.log('[Profile] Saved successfully to Supabase backend.');
+            await fetchCheckinCount(userId);
           }
         }
       } catch (err) {
@@ -255,6 +368,35 @@ export default function App() {
         // Update nickname
         const nickName = session.user.user_metadata?.full_name || session.user.email || 'Companion';
         setUserName(nickName);
+
+        // Load profile from backend if available
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('display_name, age_group, language, support_interest')
+            .eq('id', session.user.id)
+            .maybeSingle();
+          if (profile) {
+            localStorage.setItem('hopeheart_profile_display_name', profile.display_name || '');
+            localStorage.setItem('hopeheart_profile_age_group', profile.age_group || '25–34');
+            localStorage.setItem('hopeheart_profile_language', profile.language || 'English');
+            localStorage.setItem('hopeheart_profile_support_interest', profile.support_interest || '🌱 General Support');
+            localStorage.setItem('hopeheart_profile_basic_completed', 'true');
+            
+            setUserName(profile.display_name || nickName);
+            setIsProfileCompleted(true);
+          } else {
+            const localCompleted = localStorage.getItem('hopeheart_profile_basic_completed') === 'true';
+            setIsProfileCompleted(localCompleted);
+          }
+        } catch (err) {
+          console.warn('[Profile] Error loading profile from backend:', err);
+          const localCompleted = localStorage.getItem('hopeheart_profile_basic_completed') === 'true';
+          setIsProfileCompleted(localCompleted);
+        }
+
+        // Fetch checkin count
+        await fetchCheckinCount(session.user.id);
 
         // Always route directly to Home
         setCurrentScreen(ScreenId.Home);
@@ -478,9 +620,10 @@ export default function App() {
           <ProfileUtilityScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
             userName={userName}
-            onChangeName={(newName) => setUserName(newName)}
+            onChangeName={handleNameChange}
             initialSubStage={currentScreen === ScreenId.PrivacySettings ? 'privacy' : 'profile'}
             onNavigateTo={(scr) => setCurrentScreen(scr)}
+            checkinCount={checkinCount}
           />
         );
 
