@@ -54,7 +54,7 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
         <span className="text-[20px] select-none">👤</span>
       </div>
 
-      <div className="flex-1 max-w-2xl mx-auto w-full p-4 md:p-6 lg:p-8">
+      <div className="flex-1 max-w-2xl mx-auto w-full p-4 pt-6 sm:p-6 sm:pt-8 lg:p-8 lg:pt-10">
         <AnimatePresence mode="wait">
           
           {/* SCREEN 23: PROFILE SCREEN */}
@@ -67,45 +67,77 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               className="space-y-6"
             >
               {/* Profile Card Header */}
-              <div className="hh-surface rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center gap-5">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[28px] shrink-0 shadow-sm select-none">
-                  🦊
-                </div>
-                
-                <div className="text-center sm:text-left space-y-1 flex-1">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 justify-center sm:justify-start">
-                    <h3 className="font-display font-black text-gray-800 text-[18px]">
-                      {userName}
-                    </h3>
-                    <span className="px-2.5 py-0.5 bg-orange-50 text-[#FF7527] rounded-full text-[10px] font-mono font-extrabold uppercase w-fit mx-auto sm:mx-0">
-                      Anonymous Peer
-                    </span>
+              <div className="hh-surface rounded-3xl p-5 md:p-6 flex flex-col items-center gap-5 mt-2 sm:mt-4 text-center">
+                <div className="flex flex-col sm:flex-row items-center gap-5 w-full">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[28px] shrink-0 shadow-sm select-none">
+                    🦊
                   </div>
-                  <p className="text-[12px] text-gray-400 font-semibold">
-                    Member since June 2026 • Encrypted Secure Token Block
-                  </p>
+                  
+                  <div className="text-center sm:text-left space-y-1 flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 justify-center sm:justify-start">
+                      <h3 className="font-display font-black text-gray-800 text-[18px]">
+                        {userName || 'GoogleBuddy'}
+                      </h3>
+                      <span className="px-2.5 py-0.5 bg-orange-50 text-[#FF7527] rounded-full text-[10px] font-mono font-extrabold uppercase w-fit mx-auto sm:mx-0">
+                        Anonymous Peer
+                      </span>
+                    </div>
+                    <p className="text-[12.5px] text-[#FF7527] font-display font-black leading-tight">
+                      Your private HopeHeart profile
+                    </p>
+                    <p className="text-[11.5px] text-gray-400 font-bold uppercase tracking-tight">
+                      Member since June 2026
+                    </p>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSubStage('privacy')}
-                  className="px-4 py-2 bg-[#FAF8F5] hover:bg-[#FFF2EA] border border-[#ECE6D9] hover:border-[#FF7527] text-gray-700 hover:text-[#FF7527] rounded-xl text-[12px] font-display font-black cursor-pointer transition-colors"
-                >
-                  ⚙️ Edit Privacy
-                </button>
+                {/* Profile Details Chips */}
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3.5 border-t border-gray-100 mt-2 text-left">
+                  {[
+                    { label: 'Age Group', val: '25–34', icon: '🎂' },
+                    { label: 'Gender', val: 'Prefer not to say', icon: '👤' },
+                    { label: 'Role', val: 'Working Professional', icon: '💼' },
+                    { label: 'Languages', val: 'English • Hindi • Kannada', icon: '🗣️' },
+                    { label: 'Support Interest', val: 'Anxiety • Emotional Support', icon: '🧡' }
+                  ].map((detail, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-[12px] text-gray-650 font-semibold bg-[#FFFDF9]/60 px-3 py-1.5 rounded-xl border border-gray-150/40">
+                      <span className="text-sm shrink-0">{detail.icon}</span>
+                      <span className="text-gray-400 font-bold uppercase text-[9px] tracking-tight">{detail.label}:</span>
+                      <span className="text-gray-700 font-extrabold leading-tight">{detail.val}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Profile Card Actions */}
+                <div className="w-full flex flex-col sm:flex-row gap-2 pt-3.5 border-t border-gray-100 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSubStage('privacy')}
+                    className="flex-1 py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1.5"
+                  >
+                    <span>✏️</span> Edit Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSubStage('privacy')}
+                    className="flex-1 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1.5 shadow-3xs"
+                  >
+                    <span>🔒</span> Privacy Settings
+                  </button>
+                </div>
               </div>
 
               {/* Statistics Grid */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 {[
-                  { value: '7 Days', label: 'Safety Streak', emoji: '🛡️' },
-                  { value: '4 Times', label: 'Check-ins Done', emoji: '🩺' },
-                  { value: '12 Hearts', label: 'Warmth Shared', emoji: '❤️' }
+                  { value: '7 Days', label: 'Safe Space Streak', emoji: '🛡️' },
+                  { value: '4 Check-ins', label: 'Mood Reflections', emoji: '🩺' },
+                  { value: '12 Hearts', label: 'Support Shared', emoji: '❤️' }
                 ].map((stat, idx) => (
-                  <div key={idx} className="hh-surface rounded-2xl p-2.5 sm:p-4 text-center space-y-1">
+                  <div key={idx} className="hh-surface rounded-2xl p-3 sm:p-4 text-center space-y-1">
                     <span className="text-xl block">{stat.emoji}</span>
                     <h5 className="font-display font-black text-[#FF7527] text-[15px] sm:text-[16px]">{stat.value}</h5>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{stat.label}</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-tight">{stat.label}</p>
                   </div>
                 ))}
               </div>
@@ -113,18 +145,21 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
               {/* Utility List Menu */}
               <div className="hh-surface rounded-3xl p-4 divide-y divide-gray-100">
                 {[
-                  { label: 'Resource Logs', detail: 'View history of saved questions for professionals.', action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") },
-                  { label: 'Account Info', detail: 'Review security key tokens, backup codes, and active platforms.', action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") },
-                  { label: 'Security & Safety Toggles', detail: 'Adjust real-time AI moderation sensitivity levels.', action: () => setSubStage('privacy') },
-                  {
-                    label: 'Service Model & Financials',
-                    detail: 'Founder View: Explore HopeHeart sustainability ecosystem models.',
-                    action: () => {
-                      if (onNavigateTo) {
-                        onNavigateTo(ScreenId.Financials);
-                      }
-                    }
-                  }
+                  { 
+                    label: 'Saved Questions & Resources', 
+                    detail: 'View saved care questions, stories, guides, and resources.', 
+                    action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") 
+                  },
+                  { 
+                    label: 'Account & Login', 
+                    detail: 'Review login method, backup details, and account preferences.', 
+                    action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") 
+                  },
+                  { 
+                    label: 'Privacy & Safety Controls', 
+                    detail: 'Adjust privacy, reporting, and safe-space preferences.', 
+                    action: () => setSubStage('privacy') 
+                  },
                 ].map((item, id) => (
                   <button
                     key={id}
@@ -143,10 +178,45 @@ export default function ProfileUtilityScreen({ onBack, userName, onChangeName, i
                 ))}
               </div>
 
+              {/* Founder / Demo Section */}
+              <div className="space-y-2 mt-4">
+                <span className="text-[11px] font-mono font-extrabold text-gray-400 uppercase tracking-widest px-2 block">
+                  Founder / Demo
+                </span>
+                <div className="hh-surface rounded-3xl p-4">
+                  <button
+                    onClick={() => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.Financials);
+                      }
+                    }}
+                    type="button"
+                    className="w-full text-left py-2 px-2 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
+                  >
+                    <div className="space-y-0.5">
+                      <span className="text-[13.5px] font-display font-extrabold text-gray-800 block">
+                        Service Model & Financials
+                      </span>
+                      <span className="text-[11.5px] text-gray-500 font-medium leading-normal block">
+                        Founder View: Explore HopeHeart sustainability ecosystem models.
+                      </span>
+                    </div>
+                    <svg className="w-5 h-5 text-gray-400 stroke-current cursor-pointer" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Privacy Note */}
+              <p className="text-[11.5px] text-gray-450 font-semibold leading-relaxed text-center italic max-w-[340px] mx-auto pt-2 pb-2">
+                Your profile is private. HopeHeart never shows your exact location, phone number, or private notes to other users.
+              </p>
+
               {/* Verified Badge */}
               <div className="p-4 bg-orange-50/40 border border-orange-100 rounded-2xl text-center">
                 <span className="text-[12px] font-semibold text-[#FF7527] leading-relaxed block">
-                  🛡️ HopeHeart encrypts your connection. AI models inspect chats locally to block clinical medication exposures.
+                  🛡️ Private local storage in MVP. Secure encrypted storage planned for production. Safety rules help detect and block unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, and cure promises.
                 </span>
               </div>
 
