@@ -136,10 +136,64 @@ export default function App() {
     return localStorage.getItem('hopeheart_mood') || 'calm';
   });
 
+  const [previousMood, setPreviousMood] = useState<string | null>(() => {
+    return localStorage.getItem('hopeheart_previous_checkin_mood') || localStorage.getItem('hopeheart_last_checkin_mood');
+  });
+
+  const [checkinFeedback, setCheckinFeedback] = useState<string | null>(null);
+
   const [checkinCount, setCheckinCount] = useState<number>(() => {
     const localCount = localStorage.getItem('hopeheart_checkin_count');
     return localCount ? parseInt(localCount, 10) : 0;
   });
+
+  const getLocalPreviousMood = (): string | null => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const lastCheckinDate = localStorage.getItem('hopeheart_last_checkin_date');
+    if (lastCheckinDate === todayStr) {
+      return localStorage.getItem('hopeheart_previous_checkin_mood');
+    } else {
+      return localStorage.getItem('hopeheart_last_checkin_mood');
+    }
+  };
+
+  const fetchPreviousMood = async (userId: string) => {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('checkins')
+          .select('mood, checkin_date')
+          .eq('user_id', userId)
+          .order('checkin_date', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(2);
+        
+        if (!error && data) {
+          const todayStr = new Date().toISOString().split('T')[0];
+          if (data.length === 2) {
+            if (data[0].checkin_date === todayStr) {
+              setPreviousMood(data[1].mood);
+              localStorage.setItem('hopeheart_previous_checkin_mood', data[1].mood);
+            } else {
+              setPreviousMood(data[0].mood);
+              localStorage.setItem('hopeheart_previous_checkin_mood', data[0].mood);
+            }
+          } else if (data.length === 1) {
+            if (data[0].checkin_date !== todayStr) {
+              setPreviousMood(data[0].mood);
+              localStorage.setItem('hopeheart_previous_checkin_mood', data[0].mood);
+            } else {
+              setPreviousMood(null);
+            }
+          } else {
+            setPreviousMood(null);
+          }
+        }
+      } catch (err) {
+        console.warn('[Checkin] Error fetching previous mood:', err);
+      }
+    }
+  };
 
   const fetchCheckinCount = async (userId: string) => {
     if (supabase) {
@@ -174,12 +228,36 @@ export default function App() {
     return map[moodId] || 'Calm';
   };
 
+  const getMoodComparisonMessage = (prev: string, today: string): string => {
+    if (prev === today) {
+      return `You felt ${today} again today. HopeHeart is here with you.`;
+    }
+    if (prev === 'Anxious' && today === 'Calm') {
+      return `You moved from Anxious to Calm today. That's a gentle step.`;
+    }
+    if (prev === 'Low' && today === 'Tired') {
+      return `You felt Low last time and Tired today. Take today slowly.`;
+    }
+    return `You transitioned from ${prev} to ${today} today. Your feeling has been saved.`;
+  };
+
   const handleMoodSelected = async (moodId: string) => {
     setSelectedMoodId(moodId);
     localStorage.setItem('hopeheart_mood', moodId);
 
     const safeMood = mapMoodIdToSafeMood(moodId);
     const todayDateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+
+    // Determine what the previous mood was before this checkin
+    const prevMoodBeforeSubmission = previousMood || getLocalPreviousMood();
+
+    // Compute feedback message using neutral supportive transition language
+    if (prevMoodBeforeSubmission) {
+      const msg = getMoodComparisonMessage(prevMoodBeforeSubmission, safeMood);
+      setCheckinFeedback(msg);
+    } else {
+      setCheckinFeedback(`Your feeling has been saved. HopeHeart is here with you.`);
+    }
 
     let savedToBackend = false;
     if (supabase) {
@@ -203,6 +281,7 @@ export default function App() {
             console.log('[Checkin] Upserted check-in successfully to backend.');
             savedToBackend = true;
             await fetchCheckinCount(userId);
+            await fetchPreviousMood(userId);
           }
         }
       } catch (err) {
@@ -211,10 +290,21 @@ export default function App() {
     }
 
     // Always update localStorage fallback keys
-    localStorage.setItem('hopeheart_last_checkin_mood', safeMood);
-    
+    const lastCheckinMood = localStorage.getItem('hopeheart_last_checkin_mood');
     const lastCheckinDate = localStorage.getItem('hopeheart_last_checkin_date');
+
+    localStorage.setItem('hopeheart_last_checkin_mood', safeMood);
     localStorage.setItem('hopeheart_last_checkin_date', todayDateStr);
+
+    if (lastCheckinDate && lastCheckinDate !== todayDateStr) {
+      localStorage.setItem('hopeheart_previous_checkin_mood', lastCheckinMood || '');
+      if (lastCheckinMood) {
+        setPreviousMood(lastCheckinMood);
+      }
+    } else if (!lastCheckinDate && prevMoodBeforeSubmission) {
+      localStorage.setItem('hopeheart_previous_checkin_mood', prevMoodBeforeSubmission);
+      setPreviousMood(prevMoodBeforeSubmission);
+    }
 
     if (!savedToBackend) {
       if (lastCheckinDate !== todayDateStr) {
@@ -398,6 +488,9 @@ export default function App() {
         // Fetch checkin count
         await fetchCheckinCount(session.user.id);
 
+        // Fetch previous mood
+        await fetchPreviousMood(session.user.id);
+
         // Always route directly to Home
         setCurrentScreen(ScreenId.Home);
       }
@@ -408,6 +501,9 @@ export default function App() {
       if (guestSessionId) {
         const storedNick = localStorage.getItem('hopeheart_profile_nickname') || 'Companion';
         setUserName(storedNick);
+
+        // Load local previous mood
+        setPreviousMood(getLocalPreviousMood());
 
         // Always route directly to Home
         setCurrentScreen(ScreenId.Home);
@@ -523,6 +619,8 @@ export default function App() {
         return null;
 
       case ScreenId.Home:
+        const todayStr = new Date().toISOString().split('T')[0];
+        const hasCheckedInToday = localStorage.getItem('hopeheart_last_checkin_date') === todayStr;
         return (
           <DashboardScreen 
             userName={userName}
@@ -537,6 +635,10 @@ export default function App() {
               setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
               setShowProfileModal(true);
             }}
+            previousMood={previousMood}
+            hasCheckedInToday={hasCheckedInToday}
+            checkinFeedback={checkinFeedback}
+            onClearCheckinFeedback={() => setCheckinFeedback(null)}
           />
         );
 
@@ -638,6 +740,7 @@ export default function App() {
         return (
           <NotificationsScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
+            previousMood={previousMood}
           />
         );
 

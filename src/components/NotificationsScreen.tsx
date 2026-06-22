@@ -3,9 +3,10 @@ import { motion } from 'motion/react';
 
 interface NotificationsScreenProps {
   onBack: () => void;
+  previousMood?: string | null;
 }
 
-export default function NotificationsScreen({ onBack }: NotificationsScreenProps) {
+export default function NotificationsScreen({ onBack, previousMood }: NotificationsScreenProps) {
   // Alert category toggles
   const [notifyReplies, setNotifyReplies] = useState<boolean>(true);
   const [notifyRoom, setNotifyRoom] = useState<boolean>(true);
@@ -18,6 +19,13 @@ export default function NotificationsScreen({ onBack }: NotificationsScreenProps
   const [selectedChannel, setSelectedChannel] = useState<string>('In-app');
 
   const notificationsList = [
+    ...(previousMood ? [{
+      id: 'mood-reminder',
+      title: 'Daily Mood Check-in',
+      body: `Last time, you felt ${previousMood}. How are you feeling today?`,
+      time: 'Just now',
+      isRead: false
+    }] : []),
     { id: 'n1', title: '🧡 HopeBuddy Reminder', body: 'Time for a gentle check-in.', time: '2 hours ago', isRead: true },
     { id: 'n2', title: '💬 Listener Reply', body: 'A safe listener replied to your message.', time: '1 day ago', isRead: true },
     { id: 'n3', title: '🛡️ Safety Reminder', body: 'HopeHeart blocks diagnosis, prescriptions, dosage advice, and cure claims.', time: '3 days ago', isRead: true }

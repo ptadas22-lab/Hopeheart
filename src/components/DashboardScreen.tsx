@@ -14,6 +14,10 @@ interface DashboardScreenProps {
   onShareCheckIn?: () => void;
   isProfileIncomplete: boolean;
   onOpenProfileModal: () => void;
+  previousMood: string | null;
+  hasCheckedInToday: boolean;
+  checkinFeedback: string | null;
+  onClearCheckinFeedback: () => void;
 }
 
 // 1. Community Support Illustration (Anxious person holding phone, listening chat bubble)
@@ -121,13 +125,20 @@ export default function DashboardScreen({
   userName,
   selectedMood,
   onNavigateTo,
+  todayQuote,
+  onRefreshQuote,
   onMoodSelected,
   onShareCheckIn,
   isProfileIncomplete,
   onOpenProfileModal,
+  previousMood,
+  hasCheckedInToday,
+  checkinFeedback,
+  onClearCheckinFeedback,
 }: DashboardScreenProps) {
   const [showToast, setShowToast] = useState(true);
   const [showReminder, setShowReminder] = useState(true);
+  const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
 
   // Auto-dismiss the welcome toast after 4.5 seconds
@@ -226,12 +237,78 @@ export default function DashboardScreen({
         </div>
       )}
 
+      {/* Dynamic Checkin Feedback Banner */}
+      {checkinFeedback && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#F0FDF4] to-[#F5FFF6] border border-[#BBF7D0]/50 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[24px] shrink-0">🌱</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-[#166534] text-[13.5px]">
+                  Daily Reflection Saved
+                </h4>
+                <p className="text-[11.5px] text-[#1E3A1E] font-semibold leading-relaxed">
+                  {checkinFeedback}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onClearCheckinFeedback}
+              type="button"
+              className="w-7 h-7 rounded-full border border-[#BBF7D0] flex items-center justify-center text-gray-500 hover:text-[#166534] text-xs font-bold cursor-pointer shrink-0"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Daily Mood Check-In Reminder Banner */}
+      {previousMood && !hasCheckedInToday && !dismissedReminder && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#FFFDF9] to-[#FDFBF7] border border-[#ECE6D9] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[24px] shrink-0">🌤️</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Daily Mood Check-in
+                </h4>
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                  Last time, you felt <span className="font-bold text-[#FF7527]">{previousMood}</span>. How are you feeling today?
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setDismissedReminder(true)}
+                type="button"
+                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
+              >
+                Later
+              </button>
+              <button
+                onClick={() => {
+                  const card = document.getElementById('hopebuddy-checkin-card');
+                  if (card) {
+                    card.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                type="button"
+                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
+              >
+                Check in now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           
           {/* Component 1: 🧡 HopeBuddy Check-In Card */}
-          <div className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
+          <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🧡</span>
@@ -292,7 +369,6 @@ export default function DashboardScreen({
                 <button
                   onClick={() => {
                     onMoodSelected(currentMood);
-                    alert("Mood check-in updated successfully! HopeBuddy expressions synchronized.");
                   }}
                   type="button"
                   className="flex-1 py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
