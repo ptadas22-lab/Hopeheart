@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { MascotSitting } from './Logo';
 
 interface LoginScreenProps {
@@ -8,13 +8,14 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [agreed, setAgreed] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
 
   const handleLogin = (provider: 'google' | 'email' | 'guest') => {
-    if (!agreed) {
-      setShowWarning(true);
-      return;
-    }
+    if (!agreed) return;
+    
+    // Save consent status in localStorage with hopeheart_ prefix
+    localStorage.setItem('hopeheart_safe_rules_accepted', 'true');
+    localStorage.setItem('hopeheart_safe_rules_accepted_at', new Date().toISOString());
     
     // Set a default mock nickname based on selection
     let mockName = 'Voice47';
@@ -24,37 +25,11 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     onLoginSuccess(mockName);
   };
 
-  const handleContainerClick = () => {
-    if (!agreed) {
-      setShowWarning(true);
-    }
-  };
-
-  const allowed = [
-    'Feelings',
-    'Personal stories',
-    'Kind words',
-    'Lived experiences',
-    'Community support',
-    'Caregiver support',
-    'Hopeful moments'
-  ];
-
-  const prohibited = [
-    'Prescriptions',
-    'Medicine advice',
-    'Dosage advice',
-    'Diagnosis',
-    'Treatment instructions',
-    'Fake cure claims',
-    'Judgment or abuse'
-  ];
-
   return (
     <div className="flex flex-col min-h-full bg-transparent justify-between p-5 md:p-8 font-sans select-none w-full">
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center space-y-6 py-4">
         
-        {/* Onboarding Progress Header */}
+        {/* Onboarding Header */}
         <div className="text-center space-y-1.5">
           <motion.div
             animate={{ y: [0, -4, 0] }}
@@ -64,35 +39,118 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             <MascotSitting size={64} />
           </motion.div>
           <h1 className="font-display font-black text-[#2B1D12] text-[22px] md:text-[28px] tracking-tight leading-tight">
-            🔒 Enter a Safe Space
+            Welcome to HopeHeart
           </h1>
           <p className="text-[13px] text-gray-500 font-semibold max-w-md mx-auto leading-relaxed">
-            Choose how you want to continue. Your safety and privacy come first.
+            A safe, private, and peer-to-peer emotional support space.
           </p>
         </div>
 
-        {/* Form and Rules Split Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-          {/* Login Buttons Column */}
-          <div className="md:col-span-5 bg-white border border-[#EDE9DE] p-6 rounded-3xl space-y-5 shadow-2xs">
-            <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-              CHOOSE HOW TO ENTER
-            </span>
+        {/* Content Layout Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          
+          {/* Left Column: 3 Compact Helper Cards */}
+          <div className="space-y-4">
+            {/* Card 1: Share safely */}
+            <div className="hh-surface rounded-2.5xl p-4.5 flex items-start gap-4 text-left shadow-3xs">
+              <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-orange-50 text-[#FF7527] text-[20px] shrink-0 border border-orange-100/50">
+                🧡
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Share safely
+                </h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Talk about feelings, loneliness, stress, or support needs.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Meet support */}
+            <div className="hh-surface rounded-2.5xl p-4.5 flex items-start gap-4 text-left shadow-3xs">
+              <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-blue-50 text-blue-700 text-[20px] shrink-0 border border-blue-100/50">
+                👥
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Meet support
+                </h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Connect with listeners, rooms, and resources.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: Stay protected */}
+            <div className="hh-surface rounded-2.5xl p-4.5 flex items-start gap-4 text-left shadow-3xs">
+              <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-emerald-50 text-emerald-800 text-[20px] shrink-0 border border-emerald-100/50">
+                🛡️
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Stay protected
+                </h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  HopeHeart blocks unsafe medical advice and harmful content.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Safety Promise & Login actions */}
+          <div className="hh-surface rounded-3xl p-5 md:p-6 space-y-4 shadow-2xs">
             
-            {/* Login options wrapped to intercept click warning when disabled */}
-            <div onClick={handleContainerClick} className="space-y-2.5">
+            {/* Compact Safety Promise Card */}
+            <div className="p-4 bg-[#FFFDF9] border border-[#EDE9DE]/60 rounded-2xl text-left space-y-1.5">
+              <span className="text-[11px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">
+                Before you enter
+              </span>
+              <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                HopeHeart is a safe emotional support space.
+              </h4>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                You can share feelings, stories, and lived experiences. Please do not share prescriptions, diagnosis, dosage advice, cure claims, or harmful comments.
+              </p>
+            </div>
+
+            {/* Agreement Checkbox & Modal Link */}
+            <div className="space-y-2">
+              <label className="flex items-start gap-2.5 cursor-pointer text-left select-none">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
+                />
+                <span className="text-[12.5px] text-gray-650 font-bold leading-snug">
+                  I understand HopeHeart is for emotional support only.
+                </span>
+              </label>
+              <div className="pl-7 text-left">
+                <button
+                  type="button"
+                  onClick={() => setShowRulesModal(true)}
+                  className="text-[11.5px] text-[#FF7527] font-display font-black hover:underline cursor-pointer flex items-center gap-1"
+                >
+                  📖 View full safe rules
+                </button>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-150/40 my-3.5" />
+
+            {/* Login options (Google, Email, Guest - disabled unless checkbox is active) */}
+            <div className="space-y-2.5">
               {/* Guest */}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLogin('guest');
-                }}
+                onClick={() => handleLogin('guest')}
                 disabled={!agreed}
-                className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
+                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
                   agreed
-                    ? 'bg-[#EBF5FF] border border-[#C2E0FF] text-blue-800 hover:bg-[#D6EBFF] cursor-pointer shadow-3xs'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
+                    ? 'bg-[#EBF5FF] border border-[#C2E0FF] text-blue-800 hover:bg-[#D6EBFF] cursor-pointer shadow-3xs active:scale-[0.98]'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
                 }`}
               >
                 <svg className={`w-4 h-4 shrink-0 fill-none stroke-current ${agreed ? 'text-blue-500' : 'text-gray-400'}`} strokeWidth="2.5" viewBox="0 0 24 24">
@@ -104,15 +162,12 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               {/* Google */}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLogin('google');
-                }}
+                onClick={() => handleLogin('google')}
                 disabled={!agreed}
-                className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
+                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
                   agreed
-                    ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 cursor-pointer shadow-3xs'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
+                    ? 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 cursor-pointer shadow-3xs active:scale-[0.98]'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
                 }`}
               >
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -133,121 +188,126 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                   />
                 </svg>
-                Continue with Google
+                Continue with Google (Demo)
               </button>
 
               {/* Email */}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLogin('email');
-                }}
+                onClick={() => handleLogin('email')}
                 disabled={!agreed}
-                className={`w-full py-3.5 px-4 rounded-xl font-display font-bold text-[13.5px] transition-all flex items-center justify-center gap-2.5 ${
+                className={`w-full py-3 px-4 rounded-xl font-display font-black text-[13px] transition-all flex items-center justify-center gap-2.5 ${
                   agreed
-                    ? 'bg-white border border-[#FF7527]/30 text-gray-700 hover:border-[#FF7527]/60 hover:bg-[#FFFDF9] cursor-pointer shadow-3xs'
-                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed pointer-events-none'
+                    ? 'bg-white border border-[#FF7527]/30 text-gray-700 hover:border-[#FF7527]/60 hover:bg-[#FFFDF9] cursor-pointer shadow-3xs active:scale-[0.98]'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
                 }`}
               >
                 <svg className={`w-4 h-4 shrink-0 fill-none stroke-current ${agreed ? 'text-[#FF7527]' : 'text-gray-400'}`} strokeWidth="2.2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                 </svg>
-                Continue with Email
+                Continue with Email (Demo)
               </button>
             </div>
-            
-            {/* Agreement Checkbox (Moved to the bottom of the login card) */}
-            <div className="p-3.5 bg-[#FAF8F4] border border-[#EFEBE0] rounded-2xl select-none space-y-1.5">
-              <label className="flex items-start gap-2.5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => {
-                    setAgreed(e.target.checked);
-                    if (e.target.checked) setShowWarning(false);
-                  }}
-                  className="mt-0.5 w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]/30 cursor-pointer accent-[#FF7527]"
-                />
-                <span className="text-[12px] text-gray-650 font-semibold leading-tight">
-                  I agree to the Safe Space Rules
+
+            {/* Helper disclaimer */}
+            <p className="text-[10px] text-center text-gray-400 font-semibold leading-normal">
+              HopeHeart is strictly for peer emotional support. We do not diagnose, treat, or replace professional therapy.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Full Safe Rules Modal Overlay */}
+      <AnimatePresence>
+        {showRulesModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-xs select-none">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowRulesModal(false)}
+              className="absolute inset-0"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative w-full max-w-md hh-surface rounded-[32px] p-6 z-10 space-y-5 text-center"
+            >
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2.5">
+                <span className="font-display font-black text-[15px] text-gray-800 flex items-center gap-1.5">
+                  🛡️ HopeHeart Safe Rules
                 </span>
-              </label>
-              <div className="pl-7">
                 <button
+                  onClick={() => setShowRulesModal(false)}
                   type="button"
-                  onClick={() => alert("Terms & Conditions:\n\n1. HopeHeart is strictly for peer-to-peer emotional support.\n2. Do not share or ask for prescriptions, medical diagnoses, or clinical advice.\n3. Be kind, empathetic, and respectful of other members.\n4. AI monitoring keeps this space safe and anonymous.")}
-                  className="text-[11px] text-[#FF7527] font-bold hover:underline cursor-pointer"
+                  className="w-7 h-7 rounded-full border border-gray-250 flex items-center justify-center text-gray-400 hover:text-gray-655 text-xs font-bold cursor-pointer"
                 >
-                  Terms & Conditions
+                  ✕
                 </button>
               </div>
-            </div>
 
-            {/* Small helper line below the checkbox */}
-            <p className="text-[10px] text-center text-gray-400 font-semibold leading-normal">
-              By continuing, you agree that HopeHeart is for emotional support only.
-            </p>
+              <div className="grid grid-cols-2 gap-4 text-left">
+                {/* Allowed List */}
+                <div className="bg-emerald-50/40 border border-emerald-100 rounded-2.5xl p-4.5 space-y-2">
+                  <span className="text-[11px] font-mono font-black text-emerald-805 uppercase tracking-wider block">
+                    Allowed:
+                  </span>
+                  <ul className="space-y-1.5 text-[11.5px] font-bold text-gray-650">
+                    {[
+                      'Feelings',
+                      'Personal stories',
+                      'Kind words',
+                      'Lived experiences',
+                      'Caregiver support',
+                      'Emotional sharing'
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-1">
+                        <span className="text-emerald-500 leading-none mr-0.5">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            {/* Warning Message (Only visible when user tries to continue without checking the box) */}
-            {showWarning && !agreed && (
-              <p className="text-[11.5px] text-center text-red-500 font-bold leading-normal">
-                Please agree to the Safe Space Rules to continue.
-              </p>
-            )}
-          </div>
-
-          {/* Guidelines Column */}
-          <div className="md:col-span-7 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Allowed Card */}
-              <div className="bg-white border border-emerald-100 rounded-2xl p-4 shadow-2xs">
-                <h3 className="font-display font-extrabold text-emerald-800 text-[13.5px] uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-800 text-[10px] flex items-center justify-center font-bold">✓</span>
-                  Allowed Space
-                </h3>
-                <ul className="space-y-1.5 text-[12px] font-semibold text-gray-600">
-                  {allowed.map((item, id) => (
-                    <li key={id} className="flex items-center gap-2">
-                      <span className="text-emerald-500 shrink-0 text-[12px]">⭐</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                {/* Blocked List */}
+                <div className="bg-red-50/40 border border-red-100 rounded-2.5xl p-4.5 space-y-2">
+                  <span className="text-[11px] font-mono font-black text-red-805 uppercase tracking-wider block">
+                    Blocked:
+                  </span>
+                  <ul className="space-y-1.5 text-[11.5px] font-bold text-gray-650">
+                    {[
+                      'Prescriptions',
+                      'Dosage advice',
+                      'Diagnosis',
+                      'Cure claims',
+                      'Medicine changes',
+                      'Abuse or judgement'
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-1">
+                        <span className="text-red-500 leading-none mr-0.5">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
 
-              {/* Prohibited Card */}
-              <div className="bg-white border border-red-100 rounded-2xl p-4 shadow-2xs">
-                <h3 className="font-display font-extrabold text-red-800 text-[13.5px] uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-red-100 text-red-800 text-[10px] flex items-center justify-center font-bold">×</span>
-                  Not Allowed Here
-                </h3>
-                <ul className="space-y-1.5 text-[12px] font-semibold text-gray-600">
-                  {prohibited.map((item, id) => (
-                    <li key={id} className="flex items-center gap-2">
-                      <span className="text-red-500 shrink-0 font-bold text-[12px]">✦</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Core Mandate Banner */}
-            <div className="bg-amber-50/50 border border-amber-100/60 p-4 rounded-2xl text-center shadow-3xs">
-              <span className="text-[9px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block mb-0.5">
-                OUR CORE MANDATE
-              </span>
-              <p className="font-display font-extrabold text-gray-700 text-[13px] sm:text-[14px] leading-relaxed">
-                People support people. AI helps keep the space safe. Professionals provide medical care.
-              </p>
-            </div>
+              <button
+                type="button"
+                onClick={() => setShowRulesModal(false)}
+                className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-xs"
+              >
+                Got it
+              </button>
+            </motion.div>
           </div>
-        </div>
-
-
-
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
