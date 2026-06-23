@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId } from '../types';
+import { supabase } from '../lib/supabaseClient';
 
 interface ProfileUtilityScreenProps {
   onBack: () => void;
@@ -22,33 +23,167 @@ export default function ProfileUtilityScreen({
   const [subStage, setSubStage] = useState<'profile' | 'edit-profile' | 'privacy'>(
     initialSubStage === 'privacy' ? 'privacy' : 'profile'
   );
+  
+  // Safe Profile Fields
   const [anonNameInput, setAnonNameInput] = useState<string>(userName);
-
+  const [profileAvatar, setProfileAvatar] = useState(() => localStorage.getItem('hopeheart_profile_avatar') || '🦊');
   const [profileAgeGroup, setProfileAgeGroup] = useState(() => localStorage.getItem('hopeheart_profile_age_group') || '25–34');
+  const [profileGender, setProfileGender] = useState(() => localStorage.getItem('hopeheart_profile_gender') || 'Prefer not to say');
+  const [profileProfession, setProfileProfession] = useState(() => localStorage.getItem('hopeheart_profile_profession') || 'Working Professional');
   const [profileLanguage, setProfileLanguage] = useState(() => localStorage.getItem('hopeheart_profile_language') || 'English');
   const [profileSupportInterest, setProfileSupportInterest] = useState(() => localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
+  const [profileBestQuality, setProfileBestQuality] = useState(() => localStorage.getItem('hopeheart_profile_best_quality') || 'Good Listener');
+  const [profileNature, setProfileNature] = useState(() => localStorage.getItem('hopeheart_profile_nature') || 'Calm and Supportive');
+
+  // Authenticity Quiz States
+  const [quizPassed, setQuizPassed] = useState(() => localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true');
+  const [quizPassedAt, setQuizPassedAt] = useState(() => localStorage.getItem('hopeheart_authenticity_quiz_passed_at') || '');
+  
+  const [q1Answer, setQ1Answer] = useState<string>('');
+  const [q2Answer, setQ2Answer] = useState<string>('');
+  const [q3Answer, setQ3Answer] = useState<string>('');
+  const [quizError, setQuizError] = useState<string>('');
+  const [validatedOnce, setValidatedOnce] = useState<boolean>(false);
 
   useEffect(() => {
     if (subStage === 'profile') {
+      setAnonNameInput(localStorage.getItem('hopeheart_profile_display_name') || userName);
+      setProfileAvatar(localStorage.getItem('hopeheart_profile_avatar') || '🦊');
       setProfileAgeGroup(localStorage.getItem('hopeheart_profile_age_group') || '25–34');
+      setProfileGender(localStorage.getItem('hopeheart_profile_gender') || 'Prefer not to say');
+      setProfileProfession(localStorage.getItem('hopeheart_profile_profession') || 'Working Professional');
       setProfileLanguage(localStorage.getItem('hopeheart_profile_language') || 'English');
       setProfileSupportInterest(localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
+      setProfileBestQuality(localStorage.getItem('hopeheart_profile_best_quality') || 'Good Listener');
+      setProfileNature(localStorage.getItem('hopeheart_profile_nature') || 'Calm and Supportive');
+      setQuizPassed(localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true');
+      setQuizPassedAt(localStorage.getItem('hopeheart_authenticity_quiz_passed_at') || '');
     }
-  }, [subStage]);
+  }, [subStage, userName]);
 
   useEffect(() => {
     if (initialSubStage) {
       setSubStage(initialSubStage === 'privacy' ? 'privacy' : 'profile');
     }
   }, [initialSubStage]);
-  
-  // Toggle states
+
+  // Privacy toggles
   const [showBasics, setShowBasics] = useState<boolean>(true);
   const [showHeartStatus, setShowHeartStatus] = useState<boolean>(true);
   const [showActivity, setShowActivity] = useState<boolean>(true);
   const [useApproximateNearby, setUseApproximateNearby] = useState<boolean>(true);
   const [allowStorySharing, setAllowStorySharing] = useState<boolean>(true);
   const [hideNearbySuggestions, setHideNearbySuggestions] = useState<boolean>(false);
+
+  // Avatar Options (🦊 exactly once)
+  const AVATAR_OPTIONS = ['🦊', '🐱', '🐻', '🐼', '🦁', '🐯', '🐨', '🦄', '🦉', '🐶'];
+
+  // Calculate profile progress
+  const safeFields = [
+    anonNameInput,
+    profileAvatar,
+    profileAgeGroup,
+    profileGender,
+    profileProfession,
+    profileLanguage,
+    profileSupportInterest,
+    profileBestQuality,
+    profileNature
+  ];
+  const filledCount = safeFields.filter(f => f && f.trim() !== '' && f !== 'Prefer not to say').length;
+  const progressWeight = quizPassed ? 1 : 0;
+  const progressPercentage = Math.min(100, Math.round(((filledCount + progressWeight) / 10) * 100));
+
+  // Sync to Supabase helper
+  const syncProfileToBackend = async (data: any) => {
+    if (!supabase) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (userId) {
+        const { error } = await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            ...data,
+            updated_at: new Date().toISOString()
+          });
+        if (error) {
+          console.warn('[Profile] Supabase profile sync warning:', error.message);
+        }
+      }
+    } catch (err) {
+      console.warn('[Profile] Supabase profile sync exception:', err);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!anonNameInput.trim()) {
+      alert("Name cannot be empty.");
+      return;
+    }
+
+    // Save locally
+    localStorage.setItem('hopeheart_profile_display_name', anonNameInput);
+    localStorage.setItem('hopeheart_profile_avatar', profileAvatar);
+    localStorage.setItem('hopeheart_profile_age_group', profileAgeGroup);
+    localStorage.setItem('hopeheart_profile_gender', profileGender);
+    localStorage.setItem('hopeheart_profile_profession', profileProfession);
+    localStorage.setItem('hopeheart_profile_language', profileLanguage);
+    localStorage.setItem('hopeheart_profile_support_interest', profileSupportInterest);
+    localStorage.setItem('hopeheart_profile_best_quality', profileBestQuality);
+    localStorage.setItem('hopeheart_profile_nature', profileNature);
+    localStorage.setItem('hopeheart_profile_basic_completed', 'true');
+
+    // Notify parent
+    onChangeName(anonNameInput);
+
+    // Sync to Supabase
+    await syncProfileToBackend({
+      display_name: anonNameInput,
+      avatar_emoji: profileAvatar,
+      age_group: profileAgeGroup,
+      gender: profileGender,
+      profession: profileProfession,
+      language: profileLanguage,
+      support_interest: profileSupportInterest,
+      best_quality: profileBestQuality,
+      nature: profileNature
+    });
+
+    alert("Profile details saved safely!");
+    setSubStage('profile');
+  };
+
+  const handleQuizSubmit = async () => {
+    setValidatedOnce(true);
+    setQuizError('');
+
+    const isQ1Correct = q1Answer === 'Emotional support and resources';
+    const isQ2Correct = q2Answer === 'Encourage emergency help, trusted family/adult, or local emergency services';
+    const isQ3Correct = q3Answer === 'Diagnose, prescribe, or promise cures';
+
+    if (isQ1Correct && isQ2Correct && isQ3Correct) {
+      const timestamp = new Date().toISOString();
+      
+      // Save locally
+      localStorage.setItem('hopeheart_authenticity_quiz_passed', 'true');
+      localStorage.setItem('hopeheart_authenticity_quiz_passed_at', timestamp);
+      
+      setQuizPassed(true);
+      setQuizPassedAt(timestamp);
+
+      // Sync to Supabase
+      await syncProfileToBackend({
+        authenticity_quiz_passed: true,
+        authenticity_quiz_passed_at: timestamp
+      });
+
+      alert("🎉 Congratulations! You have earned your HopeHeart Trust Badge!");
+    } else {
+      setQuizError("Some answers are incorrect. Please check safety instructions and try again.");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
@@ -84,41 +219,68 @@ export default function ProfileUtilityScreen({
               {/* Profile Card Header */}
               <div className="hh-surface rounded-3xl p-5 md:p-6 flex flex-col items-center gap-5 mt-2 sm:mt-4 text-center">
                 <div className="flex flex-col sm:flex-row items-center gap-5 w-full">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[28px] shrink-0 shadow-sm select-none">
-                    🦊
+                  {/* Large Avatar container */}
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[40px] shrink-0 shadow-md select-none">
+                    {profileAvatar}
                   </div>
                   
                   <div className="text-center sm:text-left space-y-1 flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 justify-center sm:justify-start">
-                      <h3 className="font-display font-black text-gray-800 text-[18px]">
-                        {userName || 'GoogleBuddy'}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-center sm:justify-start">
+                      <h3 className="font-display font-black text-gray-800 text-[19px]">
+                        {anonNameInput || userName || 'GoogleBuddy'}
                       </h3>
-                      <span className="px-2.5 py-0.5 bg-orange-50 text-[#FF7527] rounded-full text-[10px] font-mono font-extrabold uppercase w-fit mx-auto sm:mx-0">
-                        Anonymous Peer
+                      <span className="px-2.5 py-0.5 bg-orange-50 text-[#FF7527] border border-orange-100 rounded-full text-[10px] font-mono font-extrabold uppercase w-fit mx-auto sm:mx-0">
+                        Peer Member
                       </span>
                     </div>
-                    <p className="text-[12.5px] text-[#FF7527] font-display font-black leading-tight">
-                      Your private HopeHeart profile
-                    </p>
-                    <p className="text-[11.5px] text-gray-400 font-bold uppercase tracking-tight">
-                      Member since June 2026
-                    </p>
+
+                    {/* Trust status indicators */}
+                    <div className="pt-1">
+                      {quizPassed ? (
+                        <div className="inline-flex items-center gap-1 bg-emerald-50 border border-emerald-250 text-emerald-800 text-[10px] font-extrabold px-3 py-1 rounded-full">
+                          <span>⭐</span> Trust Badge Earned — understands safety rules
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1 bg-amber-50 border border-amber-255 text-amber-800 text-[10px] font-extrabold px-3 py-1 rounded-full">
+                          <span>⚠️</span> Authenticity Pending — take safety quiz below
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Profile Details Chips */}
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 pt-3.5 border-t border-gray-100 mt-2 text-left">
+                {/* Profile Completion Progress Bar */}
+                <div className="w-full pt-3 border-t border-gray-100">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-tight block mb-1">
+                    <span>Profile Completion Progress</span>
+                    <span className="text-[#FF7527] font-extrabold">{progressPercentage}%</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#FF7527] transition-all duration-500" 
+                      style={{ width: `${progressPercentage}%` }} 
+                    />
+                  </div>
+                </div>
+
+                {/* Personal Details Grid */}
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3.5 border-t border-gray-100 mt-2 text-left">
                   {[
+                    { label: 'Display Name', val: anonNameInput, icon: '👤' },
                     { label: 'Age Group', val: profileAgeGroup, icon: '🎂' },
-                    { label: 'Gender', val: 'Prefer not to say', icon: '👤' },
-                    { label: 'Role', val: 'Working Professional', icon: '💼' },
+                    { label: 'Gender', val: profileGender, icon: '🌈' },
+                    { label: 'Profession', val: profileProfession, icon: '💼' },
                     { label: 'Language', val: profileLanguage, icon: '🗣️' },
-                    { label: 'Support Interest', val: profileSupportInterest, icon: '🧡' }
+                    { label: 'Support Interest', val: profileSupportInterest, icon: '🧡' },
+                    { label: 'Best Quality', val: profileBestQuality, icon: '⭐' },
+                    { label: 'Nature/Personality', val: profileNature, icon: '🌱' }
                   ].map((detail, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-[12px] text-gray-650 font-semibold bg-[#FFFDF9]/60 px-3 py-1.5 rounded-xl border border-gray-150/40">
-                      <span className="text-sm shrink-0">{detail.icon}</span>
-                      <span className="text-gray-400 font-bold uppercase text-[9px] tracking-tight">{detail.label}:</span>
-                      <span className="text-gray-700 font-extrabold leading-tight text-ellipsis overflow-hidden whitespace-nowrap">{detail.val}</span>
+                    <div key={idx} className="flex items-center gap-2.5 text-[12px] text-gray-650 font-semibold bg-[#FFFDF9]/60 px-3 py-2 rounded-xl border border-gray-150/40">
+                      <span className="text-base shrink-0">{detail.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-gray-400 font-bold uppercase text-[9px] tracking-tight block leading-none mb-0.5">{detail.label}</span>
+                        <span className="text-gray-700 font-extrabold text-[12.5px] leading-tight block truncate">{detail.val}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -155,6 +317,108 @@ export default function ProfileUtilityScreen({
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight leading-tight">{stat.label}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Authenticity Check Quiz Card */}
+              <div className="hh-surface rounded-3xl p-5 space-y-4 text-left">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div>
+                    <h4 className="font-display font-black text-gray-800 text-[14.5px]">🛡️ Authenticity Check</h4>
+                    <p className="text-[11.5px] text-gray-450 font-semibold mt-0.5">Complete a short safety quiz to earn your HopeHeart Trust Badge.</p>
+                  </div>
+                  {quizPassed && (
+                    <span className="text-[20px]" title="Quiz Passed">🏆</span>
+                  )}
+                </div>
+
+                {quizPassed ? (
+                  <div className="bg-emerald-50 border border-emerald-250 p-4 rounded-2xl space-y-2 text-center">
+                    <span className="text-emerald-800 font-extrabold text-[13px] block">✓ Trust Badge Earned</span>
+                    <p className="text-[11.5px] text-emerald-700 font-medium leading-relaxed">
+                      You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge to other community members.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4.5 pt-1">
+                    {/* Q1 */}
+                    <div className="space-y-1.5">
+                      <span className="text-[12px] font-bold text-gray-700 block">Q1: HopeHeart is mainly for:</span>
+                      <div className="flex flex-col gap-1.5 pl-1.5">
+                        {['Medical diagnosis', 'Emotional support and resources', 'Prescriptions'].map((opt) => (
+                          <label key={opt} className="flex items-center gap-2 text-[12px] text-gray-600 font-semibold cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="q1" 
+                              value={opt} 
+                              checked={q1Answer === opt} 
+                              onChange={(e) => setQ1Answer(e.target.value)}
+                              className="accent-[#FF7527] cursor-pointer" 
+                            />
+                            {opt}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q2 */}
+                    <div className="space-y-1.5">
+                      <span className="text-[12px] font-bold text-gray-700 block">Q2: If someone says they are in immediate danger, you should:</span>
+                      <div className="flex flex-col gap-1.5 pl-1.5">
+                        {[
+                          'Only send them to peer chat', 
+                          'Encourage emergency help, trusted family/adult, or local emergency services', 
+                          'Give medicine advice'
+                        ].map((opt) => (
+                          <label key={opt} className="flex items-center gap-2 text-[12px] text-gray-600 font-semibold cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="q2" 
+                              value={opt} 
+                              checked={q2Answer === opt} 
+                              onChange={(e) => setQ2Answer(e.target.value)}
+                              className="accent-[#FF7527] cursor-pointer" 
+                            />
+                            <span className="leading-snug">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Q3 */}
+                    <div className="space-y-1.5">
+                      <span className="text-[12px] font-bold text-gray-700 block">Q3: A peer listener should not:</span>
+                      <div className="flex flex-col gap-1.5 pl-1.5">
+                        {['Listen with care', 'Share what helped them personally', 'Diagnose, prescribe, or promise cures'].map((opt) => (
+                          <label key={opt} className="flex items-center gap-2 text-[12px] text-gray-600 font-semibold cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="q3" 
+                              value={opt} 
+                              checked={q3Answer === opt} 
+                              onChange={(e) => setQ3Answer(e.target.value)}
+                              className="accent-[#FF7527] cursor-pointer" 
+                            />
+                            {opt}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {quizError && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-[11px] font-semibold">
+                        ⚠️ {quizError}
+                      </div>
+                    )}
+
+                    <button
+                      onClick={handleQuizSubmit}
+                      type="button"
+                      className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-3xs"
+                    >
+                      Verify Answers
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Utility List Menu */}
@@ -233,11 +497,11 @@ export default function ProfileUtilityScreen({
               </div>
 
               {/* Privacy Note */}
-              <p className="text-[11.5px] text-gray-450 font-semibold leading-relaxed text-center italic max-w-[340px] mx-auto pt-2 pb-2">
-                Your profile is private. HopeHeart never shows your exact location, phone number, or private notes to other users.
+              <p className="text-[11.5px] text-gray-455 font-semibold leading-relaxed text-center italic max-w-[370px] mx-auto pt-2 pb-2">
+                Your profile is private. HopeHeart never shows your exact location, phone number, diagnosis, medication, or private notes.
               </p>
 
-              {/* Verified Badge */}
+              {/* Security Badge */}
               <div className="p-4 bg-orange-50/40 border border-orange-100 rounded-2xl text-center">
                 <span className="text-[12px] font-semibold text-[#FF7527] leading-relaxed block">
                   🛡️ Private local storage in MVP. Secure encrypted storage planned for production. Safety rules help detect and block unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, and cure promises.
@@ -257,7 +521,7 @@ export default function ProfileUtilityScreen({
               className="space-y-4 max-w-md mx-auto mt-1 sm:mt-2"
             >
               <div className="text-center space-y-1">
-                <div className="text-[28px]">👤</div>
+                <div className="text-[28px]">⚙️</div>
                 <h3 className="font-display font-black text-gray-800 text-[19px]">
                   Edit Profile
                 </h3>
@@ -266,33 +530,156 @@ export default function ProfileUtilityScreen({
                 </p>
               </div>
 
-              {/* Anon Display Name input panel */}
-              <div className="space-y-2 hh-surface rounded-2.5xl p-4.5">
-                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                  Anonymous Display Name
-                </span>
-                <p className="text-[11.5px] text-gray-550 font-semibold leading-normal">
-                  This is the name others see in support rooms and listener chats.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2 mt-1">
+              <div className="space-y-4 hh-surface rounded-2.5xl p-5 text-left">
+                {/* Avatar emoji picker */}
+                <div className="space-y-2">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Choose Avatar Emoji
+                  </span>
+                  <div className="flex flex-wrap gap-2.5 pt-1">
+                    {AVATAR_OPTIONS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setProfileAvatar(emoji)}
+                        className={`w-11 h-11 text-[24px] rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 ${
+                          profileAvatar === emoji 
+                            ? 'border-[#FF7527] bg-[#FFF2EA]' 
+                            : 'border-gray-200 bg-white hover:border-gray-300'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Display Name */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Anonymous Display Name
+                  </span>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={anonNameInput}
+                      onChange={(e) => setAnonNameInput(e.target.value)}
+                      placeholder="e.g. Voice47"
+                      className="flex-1 px-3.5 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setAnonNameInput('Voice' + Math.floor(10 + Math.random() * 900))}
+                      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-[12px] font-display font-bold cursor-pointer transition-all active:scale-95 text-center shrink-0"
+                    >
+                      🎲 Generate
+                    </button>
+                  </div>
+                </div>
+
+                {/* Age Group Selector (no exact age) */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Age Group
+                  </span>
+                  <select
+                    value={profileAgeGroup}
+                    onChange={(e) => setProfileAgeGroup(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  >
+                    {['18–24', '25–34', '35–44', '45–54', '55+'].map((group) => (
+                      <option key={group} value={group}>{group}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Gender Selector */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Gender
+                  </span>
+                  <select
+                    value={profileGender}
+                    onChange={(e) => setProfileGender(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  >
+                    {['Prefer not to say', 'Female', 'Male', 'Non-binary', 'Other'].map((g) => (
+                      <option key={g} value={g}>{g}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Profession Selector */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Profession
+                  </span>
                   <input
                     type="text"
-                    value={anonNameInput}
-                    onChange={(e) => setAnonNameInput(e.target.value)}
-                    placeholder="e.g. Voice47"
-                    className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-[13px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                    value={profileProfession}
+                    onChange={(e) => setProfileProfession(e.target.value)}
+                    placeholder="e.g. Caregiver guide"
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
                   />
-                  <button 
-                    type="button"
-                    onClick={() => setAnonNameInput('Voice' + Math.floor(10 + Math.random() * 900))}
-                    className="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-[12.5px] font-display font-bold cursor-pointer transition-all active:scale-95 text-center shrink-0"
-                  >
-                    🎲 Generate Name
-                  </button>
                 </div>
-                <p className="text-[11px] text-gray-400 font-medium pt-1">
-                  We recommend generic, neutral numeric aliases to guarantee peak safety in Support Rooms.
-                </p>
+
+                {/* Languages */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Languages
+                  </span>
+                  <input
+                    type="text"
+                    value={profileLanguage}
+                    onChange={(e) => setProfileLanguage(e.target.value)}
+                    placeholder="e.g. English, Hindi"
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  />
+                </div>
+
+                {/* Support Interest Selector */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Support Interest
+                  </span>
+                  <select
+                    value={profileSupportInterest}
+                    onChange={(e) => setProfileSupportInterest(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  >
+                    {['🌱 General Support', '🧘 Anxiety Relief', '🤝 Peer Listening', '🩺 Clinical Resources'].map((ch) => (
+                      <option key={ch} value={ch}>{ch}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Best Quality */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Best Quality
+                  </span>
+                  <input
+                    type="text"
+                    value={profileBestQuality}
+                    onChange={(e) => setProfileBestQuality(e.target.value)}
+                    placeholder="e.g. Good Listener"
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  />
+                </div>
+
+                {/* Nature / Personality */}
+                <div className="space-y-1.5">
+                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                    Nature / Personality
+                  </span>
+                  <input
+                    type="text"
+                    value={profileNature}
+                    onChange={(e) => setProfileNature(e.target.value)}
+                    placeholder="e.g. Calm and Supportive"
+                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                  />
+                </div>
               </div>
 
               {/* Actions for edit-profile */}
@@ -306,15 +693,7 @@ export default function ProfileUtilityScreen({
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (!anonNameInput.trim()) {
-                      alert("Name cannot be empty.");
-                      return;
-                    }
-                    onChangeName(anonNameInput);
-                    alert("Display name updated safely!");
-                    setSubStage('profile');
-                  }}
+                  onClick={handleSaveProfile}
                   className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-xl cursor-pointer shadow-xs"
                 >
                   Save Profile
@@ -367,7 +746,7 @@ export default function ProfileUtilityScreen({
                 <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
                   <div className="space-y-0.5 max-w-[75%]">
                     <span className="text-[13px] font-bold text-gray-800 block">🧡 Show my mood status</span>
-                    <p className="text-[11px] text-gray-450 font-semibold leading-normal">
+                    <p className="text-[11px] text-gray-455 font-semibold leading-normal">
                       Allows matched listeners to see your selected mood tag.
                     </p>
                   </div>
@@ -384,7 +763,7 @@ export default function ProfileUtilityScreen({
                 <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
                   <div className="space-y-0.5 max-w-[75%]">
                     <span className="text-[13px] font-bold text-gray-800 block">💬 Show support room activity</span>
-                    <p className="text-[11px] text-gray-450 font-semibold leading-normal">
+                    <p className="text-[11px] text-gray-455 font-semibold leading-normal">
                       Allows others to see when you reply inside support rooms.
                     </p>
                   </div>

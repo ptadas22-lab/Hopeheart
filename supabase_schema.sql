@@ -407,4 +407,13 @@ insert into public.resource_items (id, title, category, summary, resource_type, 
   ('c1111111-1111-1111-1111-111111111115', 'Emergency Help', 'general', 'Contact local emergency services or nearest emergency care if you are in immediate danger.', 'Helpline', 'https://988lifeline.org', true)
 on conflict (id) do nothing;
 
+-- Alter profiles table to add new safety and profile fields safely if they don't exist
+alter table if exists public.profiles add column if not exists avatar_emoji text default '🦊';
+alter table if exists public.profiles add column if not exists profession text default 'Working Professional';
+alter table if exists public.profiles add column if not exists gender text default 'Prefer not to say';
+alter table if exists public.profiles add column if not exists best_quality text default 'Good Listener';
+alter table if exists public.profiles add column if not exists nature text default 'Calm and Supportive';
+alter table if exists public.profiles add column if not exists authenticity_quiz_passed boolean default false;
+alter table if exists public.profiles add column if not exists authenticity_quiz_passed_at timestamp with time zone;
+
 
