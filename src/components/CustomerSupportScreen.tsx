@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { ScreenId } from '../types';
 import { supabase } from '../lib/supabaseClient';
@@ -10,6 +10,8 @@ interface CustomerSupportScreenProps {
   onNavigateTo: (screenId: ScreenId) => void;
   onOpenSafetyReport: () => void;
   onOpenCrisisScreen?: () => void;
+  initialIssueType?: string;
+  initialMessage?: string;
 }
 
 export default function CustomerSupportScreen({
@@ -17,13 +19,25 @@ export default function CustomerSupportScreen({
   onNavigateTo,
   onOpenSafetyReport,
   onOpenCrisisScreen,
+  initialIssueType,
+  initialMessage,
 }: CustomerSupportScreenProps) {
-  const [issueType, setIssueType] = useState('Account issue');
-  const [message, setMessage] = useState('');
+  const [issueType, setIssueType] = useState(initialIssueType || 'Account issue');
+  const [message, setMessage] = useState(initialMessage || '');
   const [contactEmail, setContactEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    if (initialIssueType) {
+      setIssueType(initialIssueType);
+    }
+    if (initialMessage) {
+      setMessage(initialMessage);
+    }
+  }, [initialIssueType, initialMessage]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

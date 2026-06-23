@@ -436,6 +436,7 @@ export default function App() {
   const [shareToast, setShareToast] = useState<string | null>(null);
   const [showShareTextPreview, setShowShareTextPreview] = useState(false);
   const [safetyReportDirectOpen, setSafetyReportDirectOpen] = useState(false);
+  const [supportPrefill, setSupportPrefill] = useState<{ issueType: string; message: string } | null>(null);
 
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -913,6 +914,7 @@ export default function App() {
           <SafetyScreen 
             onBack={() => {
               setSafetyReportDirectOpen(false);
+              setSupportPrefill(null);
               setCurrentScreen(ScreenId.Home);
             }}
             initialShowReport={safetyReportDirectOpen}
@@ -924,10 +926,12 @@ export default function App() {
           <CustomerSupportScreen
             onBack={() => {
               setSafetyReportDirectOpen(false);
+              setSupportPrefill(null);
               setCurrentScreen(ScreenId.Home);
             }}
             onNavigateTo={(scr) => {
               setSafetyReportDirectOpen(false);
+              setSupportPrefill(null);
               setCurrentScreen(scr as ScreenId);
             }}
             onOpenSafetyReport={() => {
@@ -935,6 +939,8 @@ export default function App() {
               setCurrentScreen(ScreenId.AISafety);
             }}
             onOpenCrisisScreen={() => setOverlayType('crisis')}
+            initialIssueType={supportPrefill?.issueType}
+            initialMessage={supportPrefill?.message}
           />
         );
 
@@ -947,6 +953,13 @@ export default function App() {
             onChangeName={handleNameChange}
             initialSubStage={currentScreen === ScreenId.PrivacySettings ? 'privacy' : 'profile'}
             onNavigateTo={(scr) => setCurrentScreen(scr)}
+            onRequestAccountDataDeletion={() => {
+              setSupportPrefill({
+                issueType: 'Privacy concern',
+                message: 'I want to request deletion of my HopeHeart account data.'
+              });
+              setCurrentScreen(ScreenId.CustomerSupport);
+            }}
             checkinCount={checkinCount}
           />
         );
