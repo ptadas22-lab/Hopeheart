@@ -966,6 +966,7 @@ export default function App() {
           <NotificationsScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
             previousMood={previousMood}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
           />
         );
 

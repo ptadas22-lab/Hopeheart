@@ -4,9 +4,10 @@ import { motion } from 'motion/react';
 interface NotificationsScreenProps {
   onBack: () => void;
   previousMood?: string | null;
+  onNavigateTo?: (screenId: string) => void;
 }
 
-export default function NotificationsScreen({ onBack, previousMood }: NotificationsScreenProps) {
+export default function NotificationsScreen({ onBack, previousMood, onNavigateTo }: NotificationsScreenProps) {
   // Alert category toggles
   const [notifyReplies, setNotifyReplies] = useState<boolean>(true);
   const [notifyRoom, setNotifyRoom] = useState<boolean>(true);
@@ -17,6 +18,8 @@ export default function NotificationsScreen({ onBack, previousMood }: Notificati
   const [quietHours, setQuietHours] = useState<boolean>(false);
   const [selectedStyle, setSelectedStyle] = useState<string>('Gentle');
   const [selectedChannel, setSelectedChannel] = useState<string>('In-app');
+
+  const isProfileCompleted = localStorage.getItem('hopeheart_profile_basic_completed') === 'true';
 
   const notificationsList = [
     ...(previousMood ? [{
@@ -207,10 +210,49 @@ export default function NotificationsScreen({ onBack, previousMood }: Notificati
           {/* Notifications log history */}
           <div className="space-y-3">
             <span className="text-[11px] font-mono font-extrabold text-[#A29985] tracking-widest block uppercase px-1">
-              Recent Notifications ({notificationsList.length})
+              Recent Notifications ({notificationsList.length + 1})
             </span>
 
             <div className="space-y-2.5">
+              {/* Profile Completion Notification Card */}
+              <div 
+                className={`p-4 hh-surface rounded-2xl flex items-center justify-between gap-4 border ${
+                  !isProfileCompleted ? 'border-amber-200 bg-amber-50/20' : 'border-gray-150/40 bg-[#FCFAF5]/65'
+                }`}
+              >
+                <div className="flex-1">
+                  <h4 className={`text-[13px] font-extrabold ${!isProfileCompleted ? 'text-amber-950' : 'text-gray-800'}`}>
+                    {!isProfileCompleted ? 'Complete your Safe Profile' : 'Your Safe Profile is ready.'}
+                  </h4>
+                  <p className="text-[12px] text-gray-500 font-medium leading-relaxed mt-0.5">
+                    {!isProfileCompleted 
+                      ? 'Add a few safe details to improve support matching.' 
+                      : 'Your anonymous profile basics are configured for matching.'}
+                  </p>
+                  <span className="text-[10px] text-gray-400 block font-mono mt-1.5">System Alert</span>
+                </div>
+                {!isProfileCompleted ? (
+                  <button
+                    onClick={() => {
+                      if (onNavigateTo) {
+                        onNavigateTo('profile'); // ScreenId.Profile is 'profile'
+                      }
+                    }}
+                    type="button"
+                    className="w-10 h-10 flex items-center justify-center hover:bg-orange-50 rounded-xl transition-all cursor-pointer text-[#FF7527] shrink-0 border border-transparent hover:border-orange-200"
+                    title="Go to Profile Settings"
+                  >
+                    <svg className="w-6 h-6 stroke-current" fill="none" strokeWidth="2.2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                ) : (
+                  <span className="w-6 h-6 flex items-center justify-center text-emerald-600 shrink-0 text-[18px] font-bold" title="Profile Complete">
+                    ✓
+                  </span>
+                )}
+              </div>
+
               {notificationsList.map((notify) => (
                 <div 
                   key={notify.id}
