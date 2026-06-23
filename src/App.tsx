@@ -813,9 +813,8 @@ export default function App() {
         const todayStr = new Date().toISOString().split('T')[0];
         const hasCheckedInToday = localStorage.getItem('hopeheart_last_checkin_date') === todayStr;
         return (
-          <>
-            <DashboardScreen 
-              userName={userName}
+          <DashboardScreen 
+            userName={userName}
               selectedMood={selectedMood}
               onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
               todayQuote={todayQuote}
@@ -832,13 +831,6 @@ export default function App() {
               checkinFeedback={checkinFeedback}
               onClearCheckinFeedback={() => setCheckinFeedback(null)}
             />
-            <button
-              onClick={() => openSupportPopup("general-support")}
-              className="fixed bottom-24 right-4 z-[9999] bg-[#FF7527] text-white px-4 py-2.5 rounded-2xl text-[13px] font-display font-black shadow-lg cursor-pointer hover:bg-[#E55D13] active:scale-95 transition-all"
-            >
-              🛠️ Test Support Popup
-            </button>
-          </>
         );
 
       case ScreenId.HopeBuddyChat:
@@ -1063,12 +1055,7 @@ export default function App() {
             <div className="flex items-center gap-1.5">
               <button 
                 onClick={() => {
-                  if (!isProfileCompleted) {
-                    setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
-                    setShowProfileModal(true);
-                  } else {
-                    setCurrentScreen(ScreenId.Notifications);
-                  }
+                  setCurrentScreen(ScreenId.Notifications);
                 }}
                 className="w-10 h-10 rounded-full border border-gray-100 hover:bg-gray-50 flex items-center justify-center text-[18px] cursor-pointer relative"
                 title="Notifications Alert"
