@@ -396,6 +396,50 @@ const SITUATIONS: Situation[] = [
   }
 ];
 
+interface DemoSupportPerson {
+  displayName: string;
+  role: string;
+  languages: string;
+  supportFocus: string;
+  availability: string;
+  isVerified: boolean;
+}
+
+const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
+  {
+    displayName: "Anjali M.",
+    role: "Peer Listener",
+    languages: "Hindi, English",
+    supportFocus: "General support, anxiety mitigation, daily stress management",
+    availability: "Available (Evening)",
+    isVerified: true
+  },
+  {
+    displayName: "David K.",
+    role: "Caregiver Guide",
+    languages: "English",
+    supportFocus: "Caregiver burnout, family support coordination",
+    availability: "Available (Weekends)",
+    isVerified: true
+  },
+  {
+    displayName: "Sarah P.",
+    role: "Community Volunteer",
+    languages: "English, Spanish",
+    supportFocus: "Quiet reality validation, reality grounding",
+    availability: "Available (Afternoons)",
+    isVerified: true
+  },
+  {
+    displayName: "Dr. Marcus T.",
+    role: "Verified Professional",
+    languages: "English",
+    supportFocus: "Cognitive guidance, coping check-ins, specialist consultation",
+    availability: "By Appointment",
+    isVerified: true
+  }
+];
+
 function getResourceIcon(illustration: string): string {
   switch (illustration) {
     case 'crisis-phone': return '📞';
@@ -1638,6 +1682,73 @@ export default function CareBridgeScreen({
                           </div>
                         );
                       })}
+                    </div>
+                  </div>
+
+                  {/* Connect with Real Support People */}
+                  <div className={`space-y-3 pt-4 border-t border-gray-150 sm:block ${mobileSection === 'hopeheart-support' ? 'block' : 'hidden'}`}>
+                    <div>
+                      <h4 className="font-display font-black text-gray-800 text-[15px] flex items-center gap-1.5">
+                        👥 Connect with Real Support People
+                      </h4>
+                      <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                        Find peer listeners, caregivers, community volunteers, and verified professionals who can support you safely.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {DEMO_SUPPORT_PEOPLE.map((person, idx) => (
+                        <div 
+                          key={idx}
+                          className="hh-surface rounded-2xl p-4 flex flex-col justify-between gap-3 transition-all"
+                        >
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9.5px] font-mono font-bold text-[#FF7527] bg-[#FFF2EA] px-2 py-0.5 rounded-md uppercase">
+                                {person.role}
+                              </span>
+                              {person.isVerified && (
+                                <span className="text-[9.5px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase flex items-center gap-1">
+                                  ✓ Verified
+                                </span>
+                              )}
+                            </div>
+
+                            <h5 className="font-display font-black text-gray-800 text-[14px] leading-tight">
+                              {person.displayName}
+                            </h5>
+
+                            <div className="space-y-1 text-[11.5px] text-gray-650 font-semibold">
+                              <div>
+                                <span className="text-gray-400 font-medium">Languages:</span> {person.languages}
+                              </div>
+                              <div>
+                                <span className="text-gray-400 font-medium">Focus:</span> {person.supportFocus}
+                              </div>
+                              <div>
+                                <span className="text-gray-400 font-medium">Availability:</span> {person.availability}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <button
+                              onClick={() => {
+                                alert(`Request support from ${person.displayName} (${person.role})? Connect feature coming soon!`);
+                              }}
+                              className="w-full py-2 bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EDE9DE] hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center"
+                            >
+                              Request Support
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="bg-[#FAF7F0] border border-[#ECE6D9] p-3.5 rounded-2xl">
+                      <p className="text-[11px] text-gray-500 font-medium leading-relaxed italic">
+                        ℹ️ <strong>Note:</strong> Real support profiles will be shown only after consent and verification.
+                      </p>
                     </div>
                   </div>
 
