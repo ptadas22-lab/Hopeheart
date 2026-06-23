@@ -10,6 +10,7 @@ interface CareBridgeScreenProps {
   onAddQuestion: (text: string) => void;
   onDeleteQuestion: (id: string) => void;
   onCategorySelected?: (catId: string) => void;
+  isProfileCompleted: boolean;
 }
 
 type SubScreen = 'suggestions' | 'questions' | 'saved_resources';
@@ -55,6 +56,7 @@ interface SupportCategory {
       | 'hallucination-grounding'
       | 'emotional-recovery';
     caption?: string;
+    type?: 'coach' | 'peer_listener' | 'emotional_wellness_professional' | 'doctor' | 'medical_specialist' | 'helpline' | 'resource_guide';
   }[];
 }
 
@@ -92,7 +94,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Helpline • 100% Free',
         mode: 'Text Support',
         illustration: 'crisis-phone',
-        caption: 'Support is one text away.'
+        caption: 'Support is one text away.',
+        type: 'helpline'
       },
       {
         name: 'BetterHelp Therapy',
@@ -102,7 +105,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Resource • Paid Directory',
         mode: 'Online Therapy',
         illustration: 'therapy-professional',
-        caption: 'Connect with professionals online.'
+        caption: 'Connect with professionals online.',
+        type: 'emotional_wellness_professional'
       },
       {
         name: 'NAMI Anxiety Guide',
@@ -112,7 +116,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Directory • Free Info',
         mode: 'Directories & Guides',
         illustration: 'guide-folder',
-        caption: 'Explore guides & directories.'
+        caption: 'Explore guides & directories.',
+        type: 'resource_guide'
       }
     ]
   },
@@ -149,7 +154,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Helpline • 100% Free',
         mode: 'Phone Support',
         illustration: 'parkinsons-support',
-        caption: 'Walking together with care.'
+        caption: 'Walking together with care.',
+        type: 'helpline'
       },
       {
         name: 'Family Caregiver Alliance',
@@ -159,7 +165,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Directory • Free Help',
         mode: 'Toolkits & Groups',
         illustration: 'guide-folder',
-        caption: 'Explore guides & directories.'
+        caption: 'Explore guides & directories.',
+        type: 'resource_guide'
       },
       {
         name: 'Davis Phinney Foundation',
@@ -169,7 +176,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Resource • Free Info',
         mode: 'Action Guides',
         illustration: 'parkinsons-support',
-        caption: 'Walking together with care.'
+        caption: 'Walking together with care.',
+        type: 'resource_guide'
       }
     ]
   },
@@ -206,7 +214,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Support • Free Info',
         mode: 'Helpline Call',
         illustration: 'hallucination-grounding',
-        caption: 'Soothing presence and clarity.'
+        caption: 'Soothing presence and clarity.',
+        type: 'helpline'
       },
       {
         name: 'Mental Health America Guide',
@@ -216,7 +225,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Resource • Free Info',
         mode: 'Educational Guides',
         illustration: 'guide-folder',
-        caption: 'Explore guides & directories.'
+        caption: 'Explore guides & directories.',
+        type: 'resource_guide'
       },
       {
         name: 'Geriatric Psychiatry Finder',
@@ -226,7 +236,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Directory • Insurance',
         mode: 'Medical Directory',
         illustration: 'therapy-professional',
-        caption: 'Connect with professionals online.'
+        caption: 'Connect with professionals online.',
+        type: 'medical_specialist'
       }
     ]
   },
@@ -263,7 +274,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Registry • Search Free',
         mode: 'Local Groups',
         illustration: 'emotional-recovery',
-        caption: 'Nurturing recovery at your own pace.'
+        caption: 'Nurturing recovery at your own pace.',
+        type: 'coach'
       },
       {
         name: 'Burnout Recovery Guide',
@@ -273,7 +285,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Resource • Free Guides',
         mode: 'Worksheets & Tips',
         illustration: 'emotional-recovery',
-        caption: 'Nurturing recovery at your own pace.'
+        caption: 'Nurturing recovery at your own pace.',
+        type: 'resource_guide'
       },
       {
         name: 'Crisis Response Line',
@@ -283,7 +296,8 @@ const SUPPORT_CATEGORIES: SupportCategory[] = [
         boundary: 'External Helpline • 100% Free',
         mode: 'Text / Call Line',
         illustration: 'crisis-phone',
-        caption: 'Support is one text away.'
+        caption: 'Support is one text away.',
+        type: 'helpline'
       }
     ]
   }
@@ -404,6 +418,7 @@ interface DemoSupportPerson {
   supportFocus: string;
   availability: string;
   isVerified: boolean;
+  type?: 'coach' | 'peer_listener' | 'emotional_wellness_professional' | 'doctor' | 'medical_specialist';
 }
 
 const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
@@ -413,7 +428,8 @@ const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
     languages: "Hindi, English",
     supportFocus: "General support, anxiety mitigation, daily stress management",
     availability: "Available (Evening)",
-    isVerified: true
+    isVerified: true,
+    type: 'peer_listener'
   },
   {
     displayName: "David K.",
@@ -421,7 +437,8 @@ const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
     languages: "English",
     supportFocus: "Caregiver burnout, family support coordination",
     availability: "Available (Weekends)",
-    isVerified: true
+    isVerified: true,
+    type: 'coach'
   },
   {
     displayName: "Sarah P.",
@@ -429,7 +446,8 @@ const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
     languages: "English, Spanish",
     supportFocus: "Quiet reality validation, reality grounding",
     availability: "Available (Afternoons)",
-    isVerified: true
+    isVerified: true,
+    type: 'peer_listener'
   },
   {
     displayName: "Dr. Marcus T.",
@@ -437,7 +455,8 @@ const DEMO_SUPPORT_PEOPLE: DemoSupportPerson[] = [
     languages: "English",
     supportFocus: "Cognitive guidance, coping check-ins, specialist consultation",
     availability: "By Appointment",
-    isVerified: true
+    isVerified: true,
+    type: 'doctor'
   }
 ];
 
@@ -845,6 +864,7 @@ export default function CareBridgeScreen({
   onAddQuestion,
   onDeleteQuestion,
   onCategorySelected,
+  isProfileCompleted,
 }: CareBridgeScreenProps) {
   const [subScreen, setSubScreen] = useState<SubScreen>('suggestions');
   const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
@@ -853,6 +873,10 @@ export default function CareBridgeScreen({
   const [viewingStories, setViewingStories] = useState<boolean>(false);
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<string>('All');
   const [mobileSection, setMobileSection] = useState<'what-happening' | 'support-path' | 'hopeheart-support' | 'external-resources'>('what-happening');
+
+  const [doctorGateModalOpen, setDoctorGateModalOpen] = useState(false);
+  const [gateCheckboxChecked, setGateCheckboxChecked] = useState(false);
+  const [pendingDoctorAction, setPendingDoctorAction] = useState<(() => void) | null>(null);
 
   const [dbResources, setDbResources] = useState<any[]>([]);
   const [savedBookmarks, setSavedBookmarks] = useState<any[]>([]);
@@ -870,6 +894,7 @@ export default function CareBridgeScreen({
     let illustration = 'guide-folder';
     let note: string | null = null;
     let icon: any = null;
+    let type = dbRes.resource_type || 'resource_guide';
 
     switch (dbRes.resource_type?.toLowerCase()) {
       case 'helpline':
@@ -904,72 +929,84 @@ export default function CareBridgeScreen({
         boundary = 'External Helpline • 100% Free';
         mode = 'Text Support';
         illustration = 'crisis-phone';
+        type = 'helpline';
         break;
       case 'c1111111-1111-1111-1111-111111111102':
         badge = 'Professional Therapy';
         boundary = 'External Resource • Paid Directory';
         mode = 'Online Therapy';
         illustration = 'therapy-professional';
+        type = 'emotional_wellness_professional';
         break;
       case 'c1111111-1111-1111-1111-111111111103':
         badge = 'Resource Finder';
         boundary = 'External Directory • Free Info';
         mode = 'Directories & Guides';
         illustration = 'guide-folder';
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111104':
         badge = 'National Helpline';
         boundary = 'External Helpline • 100% Free';
         mode = 'Phone Support';
         illustration = 'parkinsons-support';
+        type = 'helpline';
         break;
       case 'c1111111-1111-1111-1111-111111111105':
         badge = 'Caregiver Support';
         boundary = 'External Directory • Free Help';
         mode = 'Toolkits & Groups';
         illustration = 'guide-folder';
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111106':
         badge = 'Living Tools';
         boundary = 'External Resource • Free Info';
         mode = 'Action Guides';
         illustration = 'parkinsons-support';
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111107':
         badge = 'Support Line';
         boundary = 'External Support • Free Info';
         mode = 'Helpline Call';
         illustration = 'hallucination-grounding';
+        type = 'helpline';
         break;
       case 'c1111111-1111-1111-1111-111111111108':
         badge = 'Guides & Articles';
         boundary = 'External Resource • Free Info';
         mode = 'Educational Guides';
         illustration = 'guide-folder';
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111109':
         badge = 'Specialist Finder';
         boundary = 'External Directory • Insurance';
         mode = 'Medical Directory';
         illustration = 'therapy-professional';
+        type = 'medical_specialist';
         break;
       case 'c1111111-1111-1111-1111-111111111110':
         badge = 'Recovery Directory';
         boundary = 'External Registry • Search Free';
         mode = 'Local Groups';
         illustration = 'emotional-recovery';
+        type = 'coach';
         break;
       case 'c1111111-1111-1111-1111-111111111111':
         badge = 'Burnout Info';
         boundary = 'External Resource • Free Guides';
         mode = 'Worksheets & Tips';
         illustration = 'emotional-recovery';
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111112':
         badge = '24/7 Helpline';
         boundary = 'External Helpline • 100% Free';
         mode = 'Text / Call Line';
         illustration = 'crisis-phone';
+        type = 'helpline';
         break;
       case 'c1111111-1111-1111-1111-111111111113':
         badge = 'Directory';
@@ -977,6 +1014,7 @@ export default function CareBridgeScreen({
         mode = 'Search Finder';
         illustration = 'therapy-professional';
         icon = <DirectoryIcon />;
+        type = 'emotional_wellness_professional';
         break;
       case 'c1111111-1111-1111-1111-111111111114':
         badge = 'Guides';
@@ -984,6 +1022,7 @@ export default function CareBridgeScreen({
         mode = 'PDF / Info';
         illustration = 'guide-folder';
         icon = <EduGuidesIcon />;
+        type = 'resource_guide';
         break;
       case 'c1111111-1111-1111-1111-111111111115':
         badge = 'Immediate Help';
@@ -992,6 +1031,7 @@ export default function CareBridgeScreen({
         illustration = 'crisis-phone';
         icon = <EmergencyIcon />;
         note = 'Contact local emergency services or nearest emergency care if you are in immediate danger.';
+        type = 'helpline';
         break;
     }
 
@@ -1009,7 +1049,8 @@ export default function CareBridgeScreen({
       actionText: dbRes.external_url ? 'Open Resource →' : 'View Details →',
       targetLink: dbRes.external_url,
       icon,
-      note
+      note,
+      type
     };
   };
 
@@ -1110,7 +1151,8 @@ export default function CareBridgeScreen({
         actionText: 'Open Resource →',
         targetLink: res.link,
         illustration: res.illustration,
-        note: null
+        note: null,
+        type: res.type
       };
     });
 
@@ -1125,7 +1167,8 @@ export default function CareBridgeScreen({
         actionText: 'Open Directory →',
         targetLink: 'https://www.psychologytoday.com',
         illustration: 'therapy-professional',
-        note: null
+        note: null,
+        type: 'emotional_wellness_professional'
       },
       {
         id: 'static-educational-guides',
@@ -1137,7 +1180,8 @@ export default function CareBridgeScreen({
         actionText: 'View Guides →',
         targetLink: 'https://www.mhanational.org',
         illustration: 'guide-folder',
-        note: null
+        note: null,
+        type: 'resource_guide'
       },
       {
         id: 'static-emergency-help',
@@ -1149,7 +1193,8 @@ export default function CareBridgeScreen({
         actionText: 'View Help Options →',
         targetLink: 'https://988lifeline.org',
         illustration: 'crisis-phone',
-        note: 'Contact local emergency services or nearest emergency care if you are in immediate danger.'
+        note: 'Contact local emergency services or nearest emergency care if you are in immediate danger.',
+        type: 'helpline'
       }
     ];
 
@@ -1241,7 +1286,8 @@ export default function CareBridgeScreen({
       boundary: resource.boundary,
       note: resource.note,
       savedRecordId,
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
+      type: resource.type
     };
     const updatedLocal = [...savedLocal, newItem];
     localStorage.setItem('hopeheart_saved_resources', JSON.stringify(updatedLocal));
@@ -1297,7 +1343,44 @@ export default function CareBridgeScreen({
     setQuestionInput('');
   };
 
-  const handleOpenResource = (resource: { name: string; link?: string }) => {
+  const handleConnectSupportPerson = (person: DemoSupportPerson) => {
+    if (person.type === 'doctor' || person.type === 'medical_specialist') {
+      const isGateConfirmed = localStorage.getItem('hopeheart_doctor_gate_confirmed') === 'true';
+      const isRulesAccepted = localStorage.getItem('hopeheart_safe_rules_accepted') === 'true';
+      if (!isProfileCompleted || !isRulesAccepted || !isGateConfirmed) {
+        setPendingDoctorAction(() => () => {
+          alert(`Request support from ${person.displayName} (${person.role})? Connect feature coming soon!`);
+        });
+        setDoctorGateModalOpen(true);
+        return;
+      }
+    }
+    
+    alert(`Request support from ${person.displayName} (${person.role})? Connect feature coming soon!`);
+  };
+
+  const handleOpenResource = (resource: { name: string; link?: string; type?: string }) => {
+    if (resource.type === 'doctor' || resource.type === 'medical_specialist') {
+      const isGateConfirmed = localStorage.getItem('hopeheart_doctor_gate_confirmed') === 'true';
+      const isRulesAccepted = localStorage.getItem('hopeheart_safe_rules_accepted') === 'true';
+      if (!isProfileCompleted || !isRulesAccepted || !isGateConfirmed) {
+        setPendingDoctorAction(() => () => {
+          if (!resource.link) {
+            alert(`This is an internal resource on HopeHeart.`);
+            return;
+          }
+          const confirmLeave = window.confirm(
+            `You are now leaving HopeHeart to visit ${resource.name}.\n\nDisclaimer: External resources are for general support information. HopeHeart does not provide diagnosis, prescriptions, or treatment advice.\n\nDo you wish to proceed?`
+          );
+          if (confirmLeave) {
+            window.open(resource.link, '_blank', 'noopener,noreferrer');
+          }
+        });
+        setDoctorGateModalOpen(true);
+        return;
+      }
+    }
+
     if (!resource.link) {
       alert(`This is an internal resource on HopeHeart.`);
       return;
@@ -1737,9 +1820,7 @@ export default function CareBridgeScreen({
 
                           <div className="space-y-2">
                             <button
-                              onClick={() => {
-                                alert(`Request support from ${person.displayName} (${person.role})? Connect feature coming soon!`);
-                              }}
+                              onClick={() => handleConnectSupportPerson(person)}
                               className="w-full py-2 bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EDE9DE] hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer text-center"
                             >
                               Request Support
@@ -1807,7 +1888,7 @@ export default function CareBridgeScreen({
                               </div>
                               <div className="flex gap-2">
                                 <button
-                                  onClick={() => handleOpenResource({ name: res.name, link: res.targetLink })}
+                                  onClick={() => handleOpenResource({ name: res.name, link: res.targetLink, type: res.type })}
                                   className="flex-1 py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
                                 >
                                   {res.actionText}
@@ -2152,7 +2233,7 @@ export default function CareBridgeScreen({
 
                           <div className="flex gap-2">
                             <button
-                              onClick={() => handleOpenResource({ name: bookmark.name, link: bookmark.targetLink })}
+                              onClick={() => handleOpenResource({ name: bookmark.name, link: bookmark.targetLink, type: bookmark.type })}
                               className="flex-1 py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-gray-200 hover:border-emerald-250 text-gray-700 hover:text-[#065f46] font-display font-extrabold text-[11.5px] rounded-xl cursor-pointer transition-all text-center"
                             >
                               Open Resource →
@@ -2195,6 +2276,104 @@ export default function CareBridgeScreen({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Doctor Gate Modal */}
+      {doctorGateModalOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs select-none">
+          <div className="bg-white border border-[#EDE9DE] rounded-[32px] p-6 max-w-md w-full shadow-2xl relative space-y-5 text-left">
+            <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+              <span className="text-xl">🩺</span>
+              <h3 className="font-display font-black text-gray-800 text-[16px] tracking-tight">
+                Doctor & Medical Consultation Gate
+              </h3>
+            </div>
+            
+            <p className="text-[13px] text-gray-600 font-semibold leading-relaxed">
+              Before connecting with a doctor, please complete your Safe Profile and confirm that you understand HopeHeart is for emotional support and resources only. HopeHeart does not provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims.
+            </p>
+
+            {/* Profile Status */}
+            <div className="p-3.5 rounded-2xl border font-semibold text-[12px] flex items-center justify-between gap-3 bg-[#FCFBF8] border-gray-150">
+              <div className="space-y-0.5">
+                <span className="text-gray-400 font-medium block">Safe Profile Status</span>
+                <span className={isProfileCompleted ? "text-emerald-700 font-extrabold" : "text-amber-700 font-extrabold"}>
+                  {isProfileCompleted ? "✓ Completed" : "⚠️ Incomplete"}
+                </span>
+              </div>
+              {!isProfileCompleted && (
+                <button
+                  onClick={() => {
+                    setDoctorGateModalOpen(false);
+                    onNavigateTo('profile');
+                  }}
+                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 rounded-xl text-[11px] font-display font-black cursor-pointer transition-all"
+                >
+                  Complete Profile
+                </button>
+              )}
+            </div>
+
+            {/* Quiz / Trust Badge Status */}
+            <div className="p-3.5 rounded-2xl border font-semibold text-[12px] flex items-center justify-between gap-3 bg-[#FCFBF8] border-gray-150">
+              <div className="space-y-0.5">
+                <span className="text-gray-400 font-medium block">Authenticity Trust Badge</span>
+                <span className={localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true' ? "text-emerald-700 font-extrabold" : "text-gray-550 font-extrabold"}>
+                  {localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true' ? "🛡️ Trust Badge Earned" : "⏳ Authenticity Pending"}
+                </span>
+              </div>
+              {localStorage.getItem('hopeheart_authenticity_quiz_passed') !== 'true' && (
+                <span className="text-[10px] text-gray-400 font-medium max-w-[150px] leading-tight text-right">
+                  You can earn a Trust Badge via the authenticity quiz on your profile.
+                </span>
+              )}
+            </div>
+
+            {/* Rules acceptance check */}
+            <div className="p-3 bg-emerald-50 border border-emerald-150 rounded-xl font-semibold text-[11.5px] text-emerald-800">
+              {localStorage.getItem('hopeheart_safe_rules_accepted') === 'true' ? (
+                <span>✓ You accepted the HopeHeart Safety Consent boundaries.</span>
+              ) : (
+                <span className="text-amber-800">⚠️ Please review and accept boundaries in settings first.</span>
+              )}
+            </div>
+
+            {/* Gating confirmation Checkbox */}
+            {isProfileCompleted && (
+              <label className="flex items-start gap-2.5 text-[12px] text-gray-600 font-semibold cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={gateCheckboxChecked}
+                  onChange={(e) => setGateCheckboxChecked(e.target.checked)}
+                  className="mt-0.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527]"
+                />
+                <span>
+                  I confirm that HopeHeart is for emotional support only and does not offer clinical diagnosis or prescriptions.
+                </span>
+              </label>
+            )}
+
+            {/* CTAs */}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setDoctorGateModalOpen(false);
+                  setPendingDoctorAction(null);
+                }}
+                className="flex-1 py-2.5 bg-white hover:bg-gray-50 border border-gray-255 text-gray-700 font-display font-bold text-[12.5px] rounded-xl cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleProceedDoctorGate}
+                disabled={!isProfileCompleted || !gateCheckboxChecked}
+                className="flex-1 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-display font-black text-[12.5px] rounded-xl cursor-pointer transition-all shadow-xs"
+              >
+                Agree & Proceed
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

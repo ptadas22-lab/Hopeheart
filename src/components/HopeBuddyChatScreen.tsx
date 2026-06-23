@@ -146,6 +146,29 @@ export default function HopeBuddyChatScreen({
     }, 1200);
   };
 
+  const handleSaveReflection = () => {
+    const userTexts = messages
+      .filter(msg => msg.sender === 'user')
+      .map(msg => msg.text);
+
+    if (userTexts.length === 0) {
+      alert("No reflection content to save yet. Write a message to HopeBuddy first.");
+      return;
+    }
+
+    const compiledReflection = userTexts.join('\n\n');
+    
+    const currentRefs = JSON.parse(localStorage.getItem('hopeheart_saved_reflections') || '[]');
+    const newRef = {
+      id: 'ref-' + Date.now(),
+      text: compiledReflection,
+      created_at: new Date().toISOString()
+    };
+    localStorage.setItem('hopeheart_saved_reflections', JSON.stringify([newRef, ...currentRefs]));
+    
+    alert("✓ Reflection saved safely in your private local journal!");
+  };
+
   const handleSubmitForm = (e: React.FormEvent) => {
     e.preventDefault();
     handleSend(inputText);
@@ -168,9 +191,13 @@ export default function HopeBuddyChatScreen({
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
           HopeBuddy Chat
         </span>
-        <div className="w-8 h-8 rounded-full bg-[#FFEFE5] border border-[#FF7527] flex items-center justify-center overflow-hidden">
-          <MascotSitting size={26} />
-        </div>
+        <button
+          onClick={handleSaveReflection}
+          type="button"
+          className="px-3.5 py-2 flex items-center gap-1 bg-amber-50 hover:bg-amber-100 border border-amber-255 rounded-full text-[#FF7527] font-display font-black text-[12px] cursor-pointer"
+        >
+          💾 Save Reflection
+        </button>
       </div>
 
       {/* Main chat viewport */}

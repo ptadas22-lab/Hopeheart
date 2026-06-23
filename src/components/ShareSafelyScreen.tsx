@@ -6,14 +6,20 @@ interface ShareSafelyScreenProps {
   onBack: () => void;
   onPostSuccess: () => void;
   onRequireProfileCompletion?: (onSuccess: () => void) => void;
+  onShareCheckIn?: () => void;
+  onAddQuestion?: (text: string) => void;
+  onOpenCrisisScreen?: () => void;
 }
 
 export default function ShareSafelyScreen({ 
   onBack, 
   onPostSuccess,
-  onRequireProfileCompletion
+  onRequireProfileCompletion,
+  onShareCheckIn,
+  onAddQuestion,
+  onOpenCrisisScreen
 }: ShareSafelyScreenProps) {
-  const [subStage, setSubStage] = useState<'write' | 'moment'>('write');
+  const [subStage, setSubStage] = useState<'hub' | 'private-reflection' | 'saved-question' | 'write' | 'moment'>('hub');
   
   // Custom states
   const [textRelease, setTextRelease] = useState<string>('');
@@ -26,6 +32,10 @@ export default function ShareSafelyScreen({
   const [privacyOption, setPrivacyOption] = useState<string>('Share anonymously');
   const [aiScreeningMessage, setAiScreeningMessage] = useState<string>('');
   
+  // Custom Hub states
+  const [privateText, setPrivateText] = useState<string>('');
+  const [questionText, setQuestionText] = useState<string>('');
+  
   const moodTags = ['Calm', 'Hopeful', 'Heavy', 'Lonely', 'Healing', 'Grateful'];
   const privacySettings = ['Share anonymously', 'Keep private', 'Share with support room'];
 
@@ -37,6 +47,17 @@ export default function ShareSafelyScreen({
     { name: 'peaceful_lake', emoji: '🌅', label: 'Quiet Sunset', url: 'Soft lavender pink skies reflecting off fresh calm lake water.' }
   ];
 
+  // Helper check for crisis/self-harm keywords
+  const checkHighRiskText = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
+    if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
+      onOpenCrisisScreen?.();
+      return true;
+    }
+    return false;
+  };
+
   const handleMicSimulate = () => {
     if (isListeningMic) {
       setIsListeningMic(false);
@@ -46,7 +67,10 @@ export default function ShareSafelyScreen({
     }
   };
 
+  // Submit anonymous story
   const handleShareSubmit = () => {
+    if (checkHighRiskText(momentCaption)) return;
+
     const action = async () => {
       // Show automated image scanning disclaimer
       setAiScreeningMessage('🛡️ HopeHeart Safe AI is scanning your moment image... Clear of prescriptions/IDs! Approved.');
@@ -74,6 +98,7 @@ export default function ShareSafelyScreen({
             createdAt: new Date().toISOString()
           };
           localStorage.setItem('hopeheart_pending_stories', JSON.stringify([...localQueue, newStory]));
+          localStorage.setItem('hopeheart_has_shared_story', 'true');
         } catch (e) {
           console.warn('[Stories] Error saving story locally:', e);
         }
@@ -94,6 +119,8 @@ export default function ShareSafelyScreen({
           if (error) {
             console.warn('[Stories] Failed to insert story into Supabase:', error.message);
             saveStoryLocally();
+          } else {
+            localStorage.setItem('hopeheart_has_shared_story', 'true');
           }
         } catch (err) {
           console.warn('[Stories] Error saving story in Supabase:', err);
@@ -108,6 +135,7 @@ export default function ShareSafelyScreen({
         onPostSuccess();
       }, 1800);
     };
+
     if (onRequireProfileCompletion) {
       onRequireProfileCompletion(action);
     } else {
@@ -115,12 +143,63 @@ export default function ShareSafelyScreen({
     }
   };
 
+  // Save private journaling reflection locally
+  const handleSavePrivateReflection = () => {
+    if (!privateText.trim()) return;
+    if (checkHighRiskText(privateText)) return;
+
+    try {
+      const currentRefs = JSON.parse(localStorage.getItem('hopeheart_saved_reflections') || '[]');
+      const newRef = {
+        id: 'ref-' + Date.now(),
+        text: privateText,
+        created_at: new Date().toISOString()
+      };
+      localStorage.setItem('hopeheart_saved_reflections', JSON.stringify([newRef, ...currentRefs]));
+      localStorage.setItem('hopeheart_has_reflected', 'true');
+      localStorage.setItem('hopeheart_has_shared_story', 'true');
+      
+      alert("✓ Reflection saved safely in your private local journal!");
+      setPrivateText('');
+      setSubStage('hub');
+    } catch (e) {
+      console.warn('[Reflection] Local write failed:', e);
+    }
+  };
+
+  // Save consultation question
+  const handleSaveQuestion = () => {
+    if (!questionText.trim()) return;
+    if (checkHighRiskText(questionText)) return;
+
+    if (onAddQuestion) {
+      onAddQuestion(questionText.trim());
+    } else {
+      // Fallback local save
+      const currentLocal = JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]');
+      const newQ = {
+        id: 'local-q-' + Date.now(),
+        text: questionText.trim(),
+        createdAt: 'Just now'
+      };
+      localStorage.setItem('hopeheart_care_questions', JSON.stringify([newQ, ...currentLocal]));
+    }
+    localStorage.setItem('hopeheart_has_explored_resources', 'true');
+    alert("✓ Care question saved safely in your Care Notebook!");
+    setQuestionText('');
+    setSubStage('hub');
+  };
+
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
       {/* Header bar */}
       <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
         <button 
-          onClick={subStage === 'moment' ? () => setSubStage('write') : onBack}
+          onClick={
+            subStage === 'moment' ? () => setSubStage('write') : 
+            subStage !== 'hub' ? () => setSubStage('hub') : 
+            onBack
+          }
           className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
         >
           <svg className="w-5 h-5 stroke-current cursor-pointer" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -128,7 +207,11 @@ export default function ShareSafelyScreen({
           </svg>
         </button>
         <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
-          {subStage === 'write' ? 'Release Today' : 'Share A Hope Moment'}
+          {subStage === 'hub' && 'Share Safely'}
+          {subStage === 'private-reflection' && 'Private Reflection'}
+          {subStage === 'saved-question' && 'Save Care Question'}
+          {subStage === 'write' && 'Release Today'}
+          {subStage === 'moment' && 'Share A Hope Moment'}
         </span>
         <span className="text-[20px] select-none">📸</span>
       </div>
@@ -136,10 +219,10 @@ export default function ShareSafelyScreen({
       <div className="flex-1 max-w-2xl mx-auto w-full p-4 md:p-6 lg:p-8">
         <AnimatePresence mode="wait">
           
-          {/* STAGE 10: SHARE SAFELY FORM */}
-          {subStage === 'write' && (
+          {/* STAGE 0: HUB VIEW */}
+          {subStage === 'hub' && (
             <motion.div
-              key="share-safely-form"
+              key="share-hub"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
@@ -147,6 +230,194 @@ export default function ShareSafelyScreen({
             >
               <div className="text-center md:text-left space-y-1">
                 <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[24px]">
+                  Express Yourself Safely
+                </h2>
+                <p className="text-[13px] text-gray-500 font-semibold">
+                  HopeHeart is a safe place to share. Choose how you want to release your feelings today.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* 1. Private Reflection */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 flex flex-col justify-between gap-4 shadow-3xs">
+                  <div className="space-y-1.5 text-left">
+                    <span className="text-[24px]">📓</span>
+                    <h4 className="font-display font-black text-gray-800 text-[14px]">
+                      Private Reflection
+                    </h4>
+                    <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                      Journal privately on your device. Everything is saved offline only.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSubStage('private-reflection')}
+                    className="w-full py-2 bg-[#FCFAF5] hover:bg-orange-50/50 border border-[#EDE9DE] hover:border-orange-200 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+                  >
+                    Write Reflection
+                  </button>
+                </div>
+
+                {/* 2. Share Card */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 flex flex-col justify-between gap-4 shadow-3xs">
+                  <div className="space-y-1.5 text-left">
+                    <span className="text-[24px]">📸</span>
+                    <h4 className="font-display font-black text-gray-800 text-[14px]">
+                      Mood Share Card
+                    </h4>
+                    <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                      Generate a beautiful card of your current mood to save or share.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => onShareCheckIn?.()}
+                    className="w-full py-2 bg-[#FCFAF5] hover:bg-orange-50/50 border border-[#EDE9DE] hover:border-orange-200 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+                  >
+                    Generate Card
+                  </button>
+                </div>
+
+                {/* 3. Anonymous Story Draft */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 flex flex-col justify-between gap-4 shadow-3xs">
+                  <div className="space-y-1.5 text-left">
+                    <span className="text-[24px]">👥</span>
+                    <h4 className="font-display font-black text-gray-800 text-[14px]">
+                      Anonymous Story
+                    </h4>
+                    <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                      Share your lived experiences anonymously on the community feed.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSubStage('write')}
+                    className="w-full py-2 bg-[#FCFAF5] hover:bg-orange-50/50 border border-[#EDE9DE] hover:border-orange-200 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+                  >
+                    Write Story
+                  </button>
+                </div>
+
+                {/* 4. Saved Question */}
+                <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 flex flex-col justify-between gap-4 shadow-3xs">
+                  <div className="space-y-1.5 text-left">
+                    <span className="text-[24px]">❓</span>
+                    <h4 className="font-display font-black text-gray-800 text-[14px]">
+                      Prepare Consultation Question
+                    </h4>
+                    <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                      Write down care questions privately to prepare for your next consultation.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSubStage('saved-question')}
+                    className="w-full py-2 bg-[#FCFAF5] hover:bg-orange-50/50 border border-[#EDE9DE] hover:border-orange-200 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+                  >
+                    Add Question
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STAGE A: PRIVATE REFLECTION VIEW */}
+          {subStage === 'private-reflection' && (
+            <motion.div
+              key="private-reflection-form"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="space-y-6 text-left"
+            >
+              <div className="space-y-1">
+                <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
+                  Write Private Reflection
+                </h3>
+                <p className="text-[12.5px] text-gray-555 font-semibold">
+                  Express how you feel right now. Everything stays secure on your device.
+                </p>
+              </div>
+
+              <textarea
+                placeholder="Today I want to reflect on..."
+                rows={6}
+                value={privateText}
+                onChange={(e) => setPrivateText(e.target.value)}
+                className="w-full p-4 border border-gray-200 rounded-3xl text-[13.5px] bg-[#FCFCFA] focus:ring-1 focus:ring-[#FF7527] focus:outline-none font-semibold leading-relaxed"
+              />
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSubStage('hub')}
+                  className="flex-1 py-3 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-bold text-[13px] rounded-2xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSavePrivateReflection}
+                  className="flex-1 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-2xl cursor-pointer shadow-xs"
+                >
+                  Save Reflection
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STAGE B: SAVED QUESTION VIEW */}
+          {subStage === 'saved-question' && (
+            <motion.div
+              key="saved-question-form"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="space-y-6 text-left"
+            >
+              <div className="space-y-1">
+                <h3 className="font-display font-black text-[#2B1D12] text-[18px]">
+                  Save Care Question
+                </h3>
+                <p className="text-[12.5px] text-gray-555 font-semibold">
+                  Write down any questions you want to remember when speaking with caregivers or doctors.
+                </p>
+              </div>
+
+              <textarea
+                placeholder="e.g. What are daily exercises that help with movement tremors?"
+                rows={4}
+                value={questionText}
+                onChange={(e) => setQuestionText(e.target.value)}
+                className="w-full p-4 border border-gray-200 rounded-3xl text-[13.5px] bg-[#FCFCFA] focus:ring-1 focus:ring-[#FF7527] focus:outline-none font-semibold leading-relaxed"
+              />
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSubStage('hub')}
+                  className="flex-1 py-3 bg-white hover:bg-gray-50 border border-gray-255 text-gray-700 font-display font-bold text-[13px] rounded-2xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveQuestion}
+                  className="flex-1 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-2xl cursor-pointer shadow-xs"
+                >
+                  Save Question
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* STAGE 1: ANONYMOUS STORY DRAFT */}
+          {subStage === 'write' && (
+            <motion.div
+              key="share-safely-form"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="space-y-6 text-left"
+            >
+              <div className="space-y-1">
+                <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[22px]">
                   What do you want to release today?
                 </h2>
                 <p className="text-[13px] text-gray-500 font-semibold">
@@ -232,6 +503,7 @@ export default function ShareSafelyScreen({
               {/* Next Step trigger */}
               <button
                 onClick={() => {
+                  if (checkHighRiskText(textRelease)) return;
                   if (!textRelease.trim() && !selectedPhoto) {
                     alert("Please write down some thoughts or choose a photo template above first.");
                     return;
@@ -248,18 +520,18 @@ export default function ShareSafelyScreen({
             </motion.div>
           )}
 
-          {/* STAGE 11: MOMENT SHARE DETAIL CONFIRMS */}
+          {/* STAGE 2: MOMENT SHARE DETAIL CONFIRMS */}
           {subStage === 'moment' && (
             <motion.div
               key="moment-share-details"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-5"
+              className="space-y-5 text-left"
             >
-              <div className="text-center md:text-left space-y-1">
+              <div className="space-y-1">
                 <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">STAGE 2 of 2</span>
-                <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[24px]">
+                <h2 className="font-display font-black text-[#2B1D12] text-[20px] md:text-[22px]">
                   Share a Hope Moment
                 </h2>
                 <p className="text-[13px] text-gray-500 font-semibold">
@@ -309,7 +581,7 @@ export default function ShareSafelyScreen({
                         onClick={() => setSelectedMoodTag(tag)}
                         type="button"
                         className={`px-3 py-2 text-[12px] font-display font-bold rounded-xl border transition-colors cursor-pointer ${
-                          isT ? 'bg-[#FF7527] text-white border-[#FF7527]' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                          isT ? 'bg-[#FF7527] text-white border-[#FF7527]' : 'bg-white border-gray-200 text-gray-655 hover:bg-gray-50'
                         }`}
                       >
                         ✨ {tag}

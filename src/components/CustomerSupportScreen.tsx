@@ -9,12 +9,14 @@ interface CustomerSupportScreenProps {
   onBack: () => void;
   onNavigateTo: (screenId: ScreenId) => void;
   onOpenSafetyReport: () => void;
+  onOpenCrisisScreen?: () => void;
 }
 
 export default function CustomerSupportScreen({
   onBack,
   onNavigateTo,
   onOpenSafetyReport,
+  onOpenCrisisScreen,
 }: CustomerSupportScreenProps) {
   const [issueType, setIssueType] = useState('Account issue');
   const [message, setMessage] = useState('');
@@ -28,6 +30,13 @@ export default function CustomerSupportScreen({
     if (!message.trim()) {
       setFormError("Please enter your support request message.");
       return;
+    }
+
+    // Check for high-risk crisis keywords
+    const lower = message.toLowerCase();
+    const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
+    if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
+      onOpenCrisisScreen?.();
     }
 
     setIsSubmitting(true);

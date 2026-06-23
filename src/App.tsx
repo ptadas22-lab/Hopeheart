@@ -875,6 +875,9 @@ export default function App() {
             onBack={() => setCurrentScreen(ScreenId.Home)}
             onPostSuccess={() => setCurrentScreen(ScreenId.Home)}
             onRequireProfileCompletion={handleRequireProfileCompletion}
+            onShareCheckIn={() => setShowShareModal(true)}
+            onAddQuestion={handleAddQuestion}
+            onOpenCrisisScreen={() => setOverlayType('crisis')}
           />
         );
 
@@ -901,6 +904,7 @@ export default function App() {
             onAddQuestion={handleAddQuestion}
             onDeleteQuestion={handleDeleteQuestion}
             onCategorySelected={openSupportPopup}
+            isProfileCompleted={isProfileCompleted}
           />
         );
 
@@ -930,6 +934,7 @@ export default function App() {
               setSafetyReportDirectOpen(true);
               setCurrentScreen(ScreenId.AISafety);
             }}
+            onOpenCrisisScreen={() => setOverlayType('crisis')}
           />
         );
 

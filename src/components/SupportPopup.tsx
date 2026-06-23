@@ -163,13 +163,23 @@ export default function SupportPopup({
     }
   };
 
-  const getProfessionalDetails = () => {
-    // Verified professional demo card
+  const getCoachDetails = () => {
+    return {
+      name: "Coach Clara J.",
+      role: "Certified Coach",
+      languages: "English",
+      focus: "Stress management, emotional wellness, daily habit coaching",
+      availability: "Available Online",
+      isVerified: true
+    };
+  };
+
+  const getDoctorDetails = () => {
     return {
       name: "Dr. Marcus T.",
-      role: "Verified Professional",
+      role: "Medical Specialist",
       languages: "English",
-      focus: "Cognitive guidance, coping check-ins, specialist consultation",
+      focus: "Cognitive guidance, medical consultation, specialist check-ins",
       availability: "By Appointment",
       isVerified: true
     };
@@ -224,7 +234,8 @@ export default function SupportPopup({
   };
 
   const listenerDetails = getPeerListenerDetails();
-  const professionalDetails = getProfessionalDetails();
+  const coachDetails = getCoachDetails();
+  const doctorDetails = getDoctorDetails();
   const roomDetails = getSupportRoomDetails();
   const guideDetails = getGuideDetails();
 
@@ -276,11 +287,30 @@ export default function SupportPopup({
           </button>
         </div>
 
-        {/* Support Grid Cards list */}
         <div className="p-5 space-y-4 flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Card 1: Peer Listener */}
+            {/* Card 1: HopeBuddy Reflection */}
+            <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
+              <div className="space-y-1.5">
+                <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md uppercase align-middle inline-block">
+                  HopeBuddy Companion
+                </span>
+                <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
+                  Talk to HopeBuddy first
+                </h5>
+                <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                  Take a quiet moment to reflect on your current mood with HopeBuddy.
+                </p>
+              </div>
+              <button
+                onClick={() => handleAction('hopebuddy-chat')}
+                className="w-full py-2 bg-[#FCFAF5] hover:bg-amber-50/50 border border-[#EDE9DE] hover:border-amber-200 text-gray-700 hover:text-amber-800 transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+              >
+                Start Reflection
+              </button>
+            </div>
+
+            {/* Card 2: Peer Listener */}
             <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
@@ -294,10 +324,10 @@ export default function SupportPopup({
                 <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
                   Talk to a peer listener
                 </h5>
-                <div className="space-y-0.5 text-[11px] text-gray-500 font-semibold leading-relaxed">
-                  <p><span className="text-gray-400 font-medium">Name:</span> {listenerDetails.name}</p>
-                  <p><span className="text-gray-400 font-medium">Languages:</span> {listenerDetails.languages}</p>
-                  <p><span className="text-gray-400 font-medium">Focus:</span> {listenerDetails.focus}</p>
+                <div className="space-y-0.5 text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                  <p><span className="text-gray-400 font-medium font-bold">Name:</span> {listenerDetails.name}</p>
+                  <p><span className="text-gray-400 font-medium font-bold">Languages:</span> {listenerDetails.languages}</p>
+                  <p><span className="text-gray-400 font-medium font-bold">Focus:</span> {listenerDetails.focus}</p>
                   <p className="italic text-emerald-600">● {listenerDetails.availability}</p>
                 </div>
               </div>
@@ -306,35 +336,6 @@ export default function SupportPopup({
                 className="w-full py-2 bg-[#FCFAF5] hover:bg-[#FFF2EA] border border-[#EDE9DE] hover:border-[#FF7527]/30 text-gray-700 hover:text-[#FF7527] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
               >
                 Request Support
-              </button>
-            </div>
-
-            {/* Card 2: Coach / Professional */}
-            <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="text-[9px] font-mono font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md uppercase">
-                    {professionalDetails.role}
-                  </span>
-                  <span className="text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
-                    ✓ Verified
-                  </span>
-                </div>
-                <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
-                  Check with a verified coach or professional
-                </h5>
-                <div className="space-y-0.5 text-[11px] text-gray-500 font-semibold leading-relaxed">
-                  <p><span className="text-gray-400 font-medium">Name:</span> {professionalDetails.name}</p>
-                  <p><span className="text-gray-400 font-medium">Languages:</span> {professionalDetails.languages}</p>
-                  <p><span className="text-gray-400 font-medium">Focus:</span> {professionalDetails.focus}</p>
-                  <p className="italic text-gray-400">● {professionalDetails.availability}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => handleAction('doctor-suggestions')}
-                className="w-full py-2 bg-[#FCFAF5] hover:bg-emerald-50 border border-[#EDE9DE] hover:border-emerald-250 text-gray-700 hover:text-[#065f46] transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
-              >
-                View Available Guides
               </button>
             </div>
 
@@ -347,7 +348,7 @@ export default function SupportPopup({
                 <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
                   Join a support room
                 </h5>
-                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
+                <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
                   <strong>{roomDetails.name}</strong>: {roomDetails.description}
                 </p>
               </div>
@@ -359,7 +360,35 @@ export default function SupportPopup({
               </button>
             </div>
 
-            {/* Card 4: Helpful Guide */}
+            {/* Card 4: Coach / emotional wellness professional */}
+            <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md uppercase">
+                    {coachDetails.role}
+                  </span>
+                  <span className="text-[9px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md uppercase">
+                    ✓ Verified
+                  </span>
+                </div>
+                <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
+                  Connect with a wellness coach
+                </h5>
+                <div className="space-y-0.5 text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                  <p><span className="text-gray-400 font-medium font-bold">Name:</span> {coachDetails.name}</p>
+                  <p><span className="text-gray-400 font-medium font-bold">Focus:</span> {coachDetails.focus}</p>
+                  <p className="italic text-teal-600">● {coachDetails.availability}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => handleAction('doctor-suggestions')}
+                className="w-full py-2 bg-[#FCFAF5] hover:bg-teal-50 border border-[#EDE9DE] hover:border-teal-200 text-gray-700 hover:text-teal-800 transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+              >
+                Find Coaches
+              </button>
+            </div>
+
+            {/* Card 5: Helpful Guide */}
             <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
               <div className="space-y-1.5">
                 <span className="text-[9px] font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md uppercase align-middle inline-block">
@@ -368,7 +397,7 @@ export default function SupportPopup({
                 <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
                   Read a helpful guide
                 </h5>
-                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
+                <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
                   <strong>{guideDetails.title}</strong>: {guideDetails.summary}
                 </p>
               </div>
@@ -380,7 +409,7 @@ export default function SupportPopup({
               </button>
             </div>
 
-            {/* Card 5: Care Question */}
+            {/* Card 6: Save Care Question */}
             <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
               <div className="space-y-1.5">
                 <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md uppercase align-middle inline-block">
@@ -389,8 +418,8 @@ export default function SupportPopup({
                 <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
                   Save a care question
                 </h5>
-                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
-                  Quickly save care questions to prepare for your next consultation. Everything stays strictly private on your device.
+                <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                  Quickly save care questions to prepare for your next consultation. Everything stays private on your device.
                 </p>
               </div>
               <button
@@ -401,55 +430,60 @@ export default function SupportPopup({
               </button>
             </div>
 
-            {/* Card 6: HopeHeart Support */}
-            <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3">
+            {/* Card 7: Doctor consultation */}
+            <div className="bg-[#FCFAF5] border border-[#EDE9DE] rounded-2xl p-4 flex flex-col justify-between gap-3 col-span-1 md:col-span-2">
               <div className="space-y-1.5">
-                <span className="text-[9px] font-mono font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md uppercase align-middle inline-block">
-                  Customer Care
-                </span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] font-mono font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-md uppercase">
+                    {doctorDetails.role}
+                  </span>
+                  <span className="text-[9px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md uppercase">
+                    🔒 Safety Gate Required
+                  </span>
+                </div>
                 <h5 className="font-display font-black text-gray-800 text-[13px] leading-tight">
-                  Need app or safety help?
+                  Consult a licensed medical doctor or specialist
                 </h5>
-                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
-                  Reach out directly to the HopeHeart team for account safety, bugs, email support, or privacy questions.
-                </p>
+                <div className="space-y-0.5 text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                  <p><span className="text-gray-400 font-medium font-bold">Name:</span> {doctorDetails.name}</p>
+                  <p><span className="text-gray-400 font-medium font-bold">Focus:</span> {doctorDetails.focus}</p>
+                  <p className="text-amber-800 font-bold">⚠️ Connection requires profile completion and safety gate confirmation.</p>
+                </div>
               </div>
               <button
-                onClick={() => handleAction('customer-support')}
-                className="w-full py-2 bg-[#FCFAF5] hover:bg-rose-50/50 border border-[#EDE9DE] hover:border-rose-200 text-gray-700 hover:text-rose-800 transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
+                onClick={() => handleAction('doctor-suggestions')}
+                className="w-full py-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 transition-all font-display font-extrabold text-[11px] rounded-xl cursor-pointer text-center"
               >
-                Contact Support
-              </button>
-            </div>
-
-          </div>
-
-          {/* Safety Disclaimer and Suppression Checkbox Footer bar */}
-          <div className="bg-[#FEFBF7] border border-amber-100 rounded-2xl p-4 space-y-3 mt-2">
-            <p className="text-[11px] text-[#A16207] font-semibold leading-relaxed">
-              ⚠️ <strong>Safety Statement:</strong> HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
-            </p>
-            
-            <div className="border-t border-amber-100/50 pt-2.5 flex items-center justify-between gap-3 flex-wrap">
-              <label className="flex items-center gap-2 text-[11.5px] text-gray-500 font-bold cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={dontShowAgain}
-                  onChange={(e) => setDontShowAgain(e.target.checked)}
-                  className="rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527] cursor-pointer"
-                />
-                Don’t show again today
-              </label>
-
-              <button
-                onClick={handleDismiss}
-                className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-[11.5px] font-display font-black transition-all cursor-pointer shadow-3xs"
-              >
-                Not now
+                Access Doctor Gateway
               </button>
             </div>
           </div>
+        </div>
 
+        {/* Safety Disclaimer and Suppression Checkbox Footer bar */}
+        <div className="bg-[#FEFBF7] border border-amber-100 rounded-2xl p-4 space-y-3 mt-2 mx-5 mb-5">
+          <p className="text-[11px] text-[#A16207] font-semibold leading-relaxed">
+            ⚠️ <strong>Safety Statement:</strong> HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+          </p>
+          
+          <div className="border-t border-amber-100/50 pt-2.5 flex items-center justify-between gap-3 flex-wrap">
+            <label className="flex items-center gap-2 text-[11.5px] text-gray-500 font-bold cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={dontShowAgain}
+                onChange={(e) => setDontShowAgain(e.target.checked)}
+                className="rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527] cursor-pointer"
+              />
+              Don’t show again today
+            </label>
+
+            <button
+              onClick={handleDismiss}
+              className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-[11.5px] font-display font-black transition-all cursor-pointer shadow-3xs"
+            >
+              Not now
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>

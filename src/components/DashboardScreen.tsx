@@ -420,6 +420,80 @@ export default function DashboardScreen({
         </div>
       )}
 
+      {/* 💛 Your Emotional Support Journey Stepper */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="bg-white/80 border border-[#EDE9DE] rounded-[24px] p-5 space-y-4 shadow-3xs backdrop-blur-xs select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+            <div>
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Your Trust Path</span>
+              <h4 className="font-display font-black text-gray-800 text-[14px]">
+                Your Emotional Support Journey 💛
+              </h4>
+            </div>
+            <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
+              Explore step-by-step to build comfort and find the right support.
+            </p>
+          </div>
+
+          {/* Steps Horizontal Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
+            {[
+              { 
+                step: 1, 
+                label: 'Mood Check-in', 
+                emoji: '🌤️', 
+                done: hasCheckedInToday, 
+                desc: 'How do you feel today?' 
+              },
+              { 
+                step: 2, 
+                label: 'HopeBuddy Reflection', 
+                emoji: '💬', 
+                done: localStorage.getItem('hopeheart_has_reflected') === 'true', 
+                desc: 'Take a quiet moment to reflect.' 
+              },
+              { 
+                step: 3, 
+                label: 'Explore & Share', 
+                emoji: '📓', 
+                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0), 
+                desc: 'Save questions or draft reflections.' 
+              },
+              { 
+                step: 4, 
+                label: 'Peer & Community', 
+                emoji: '👥', 
+                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true', 
+                desc: 'Connect with circles and professional guides.' 
+              }
+            ].map((st) => {
+              return (
+                <div key={st.step} className={`p-3 rounded-2xl border transition-all flex flex-col justify-between gap-1.5 ${
+                  st.done 
+                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800' 
+                    : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
+                }`}>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[12px] font-mono font-bold uppercase tracking-wider block">Step {st.step}</span>
+                    <span className="text-[14px]">
+                      {st.done ? '✅' : st.emoji}
+                    </span>
+                  </div>
+                  <div className="space-y-0.5 text-left">
+                    <h5 className="font-display font-black text-[12px] leading-tight text-gray-800">
+                      {st.label}
+                    </h5>
+                    <p className="text-[10px] text-gray-550 font-semibold leading-normal">
+                      {st.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
