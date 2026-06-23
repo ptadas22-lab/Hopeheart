@@ -140,6 +140,7 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
+  const [activeMoodLift, setActiveMoodLift] = useState<string | null>(null);
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -154,6 +155,28 @@ export default function DashboardScreen({
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const humTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+
+  const funnyMoodLiftCards = [
+    { emoji: '🐧', title: 'Tiny penguin energy', body: 'Imagine a penguin confidently waddling into Monday like it has a meeting to lead.' },
+    { emoji: '🍞', title: 'Toast update', body: 'A piece of toast finally popped up and said, “I needed space, but I’m ready now.”' },
+    { emoji: '🧦', title: 'Sock mystery', body: 'One sock is always missing because it joined a tiny laundry adventure club.' }
+  ];
+
+  const interestMoodLiftCards: Record<string, { emoji: string; title: string; body: string }[]> = {
+    bikes: [
+      { emoji: '🚲', title: 'Easy ride corner', body: 'Share favorite routes, bike photos, or gentle weekend ride ideas.' },
+      { emoji: '🛠️', title: 'Fix-it chat', body: 'Light talk about tune-ups, bells, baskets, and beginner-friendly gear.' }
+    ],
+    movies: [
+      { emoji: '🎬', title: 'Comfort movie nook', body: 'Swap cozy, low-pressure movie picks and scenes that feel familiar.' },
+      { emoji: '🍿', title: 'Soft watchlist', body: 'Keep a small list of films for quiet evenings or rainy days.' }
+    ],
+    pets: [
+      { emoji: '🐾', title: 'Pet comfort corner', body: 'Share gentle pet stories, cute routines, or favorite animal moments.' },
+      { emoji: '🐱', title: 'Tiny animal smiles', body: 'A light space for cat loafs, sleepy dogs, and peaceful pet photos.' }
+    ]
+  };
 
   const getLyricsForMoodId = (moodId: string): string => {
     const lyricsMap: Record<string, string> = {
@@ -494,6 +517,134 @@ export default function DashboardScreen({
         </div>
       </div>
 
+      {/* Mood Lift: softer first step before heavier support */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="hh-surface rounded-[28px] p-5 space-y-4 border border-[#F4E7D8]/80">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
+              <h3 className="font-display font-black text-[#2B1D12] text-[18px] leading-tight">Mood Lift</h3>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Not ready to talk? Try something light first.</p>
+            </div>
+            <span className="text-[28px] self-start sm:self-auto">🌤️</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            {[
+              { id: 'funny', label: 'Something funny', emoji: '😄' },
+              { id: 'sound', label: 'Calming sound', emoji: '🎵' },
+              { id: 'bikes', label: 'Bike lovers', emoji: '🚲' },
+              { id: 'movies', label: 'Movie comfort', emoji: '🎬' },
+              { id: 'pets', label: 'Pet comfort', emoji: '🐾' },
+              { id: 'write', label: 'Write privately', emoji: '📝' },
+              { id: 'talk', label: 'Talk when ready', emoji: '🤝' }
+            ].map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  if (option.id === 'sound') {
+                    setActiveMoodLift('sound');
+                    if (isHumming) {
+                      stopWebAudioHum();
+                    } else {
+                      startWebAudioHum();
+                    }
+                    return;
+                  }
+                  if (option.id === 'write') {
+                    onNavigateTo(ScreenId.ShareSafely);
+                    return;
+                  }
+                  if (option.id === 'talk') {
+                    onNavigateTo(ScreenId.SafeListener);
+                    return;
+                  }
+                  setActiveMoodLift(activeMoodLift === option.id ? null : option.id);
+                }}
+                className={`min-h-[74px] rounded-2xl border p-2.5 text-center transition-all cursor-pointer active:scale-95 ${
+                  activeMoodLift === option.id
+                    ? 'bg-[#FFF2EA] border-[#FF7527]/40 text-[#C75414] shadow-3xs'
+                    : 'bg-[#FFFDF9] border-gray-150 text-gray-650 hover:border-orange-200 hover:bg-[#FFF8F2]'
+                }`}
+              >
+                <span className="text-[20px] block mb-1">{option.emoji}</span>
+                <span className="text-[11.5px] font-display font-black leading-tight block">{option.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {activeMoodLift === 'funny' && (
+              <motion.div
+                key="mood-lift-funny"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"
+              >
+                {funnyMoodLiftCards.map((card) => (
+                  <div key={card.title} className="bg-white/80 border border-orange-100/70 rounded-2xl p-3.5 space-y-1.5">
+                    <span className="text-[22px]">{card.emoji}</span>
+                    <h4 className="font-display font-black text-gray-800 text-[13px]">{card.title}</h4>
+                    <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">{card.body}</p>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+
+            {activeMoodLift === 'sound' && (
+              <motion.div
+                key="mood-lift-sound"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="bg-[#FFFDF9] border border-orange-100/70 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              >
+                <div>
+                  <h4 className="font-display font-black text-gray-800 text-[13px]">HopeBuddy hum</h4>
+                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                    {isHumming ? 'A gentle hum is playing for a few seconds.' : 'Tap Calming sound again when you want the gentle hum.'}
+                  </p>
+                  {audioError && <p className="text-[11px] text-red-600 font-semibold mt-1">⚠️ {audioError}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={isHumming ? stopWebAudioHum : startWebAudioHum}
+                  className="px-4 py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95"
+                >
+                  {isHumming ? 'Stop hum' : 'Play hum'}
+                </button>
+              </motion.div>
+            )}
+
+            {(activeMoodLift === 'bikes' || activeMoodLift === 'movies' || activeMoodLift === 'pets') && (
+              <motion.div
+                key={`mood-lift-${activeMoodLift}`}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"
+              >
+                {interestMoodLiftCards[activeMoodLift].map((card) => (
+                  <button
+                    key={card.title}
+                    type="button"
+                    onClick={() => onNavigateTo(ScreenId.SupportRooms)}
+                    className="bg-white/80 hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl p-3.5 text-left space-y-1.5 cursor-pointer transition-all active:scale-[0.99]"
+                  >
+                    <span className="text-[22px]">{card.emoji}</span>
+                    <h4 className="font-display font-black text-gray-800 text-[13px]">{card.title}</h4>
+                    <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">{card.body}</p>
+                    <span className="text-[10.5px] font-bold text-[#FF7527] uppercase tracking-wide">Open gentle circles →</span>
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
@@ -705,15 +856,15 @@ export default function DashboardScreen({
               <CommunityIllustration />
               <div className="space-y-1 text-center sm:text-left">
                 <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Community Support
+                  Optional Community
                 </h4>
                 <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Find peer listeners and support circles where people listen without judgement.
+                  Browse gentle spaces or talk with a listener only when you feel ready.
                 </p>
               </div>
             </div>
             <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              Enter Safe Space →
+              Explore When Ready →
             </span>
           </motion.button>
 
