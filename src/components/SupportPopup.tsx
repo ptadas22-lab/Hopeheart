@@ -67,12 +67,17 @@ export default function SupportPopup({
           setDbRoom(rooms[0]);
         }
 
-        // Fetch resource guide matching activeCategory
+        // Fetch resource guide matching normalized category
+        const dbCategory = 
+          activeCategory === 'emotional-support' ? 'emotional-recovery' :
+          activeCategory === 'general-support' ? 'general' :
+          activeCategory;
+
         const { data: resources } = await supabase
           .from('resource_items')
           .select('*')
           .eq('is_active', true)
-          .eq('category', activeCategory)
+          .eq('category', dbCategory)
           .limit(1);
         if (resources && resources.length > 0) {
           setDbGuide(resources[0]);
@@ -87,6 +92,12 @@ export default function SupportPopup({
 
   if (!isOpen) return null;
 
+  // Resolve normalized category for fallback mock details
+  const normalizedCategory =
+    activeCategory === 'emotional-support' ? 'emotional-recovery' :
+    activeCategory === 'general-support' ? 'general' :
+    activeCategory;
+
   // Resolve safe details based on category (Fallbacks)
   const getPeerListenerDetails = () => {
     if (dbListener) {
@@ -100,7 +111,7 @@ export default function SupportPopup({
       };
     }
     // Safe mock fallbacks
-    switch (activeCategory) {
+    switch (normalizedCategory) {
       case 'anxiety':
         return {
           name: "Anjali M.",
@@ -128,6 +139,18 @@ export default function SupportPopup({
           availability: "Available (Afternoons)",
           isVerified: true
         };
+      case 'emotional-recovery':
+      case 'emotional-support':
+        return {
+          name: "Michael H.",
+          role: "Peer Listener",
+          languages: "English",
+          focus: "Grief recovery, emotional burnout, life transitions",
+          availability: "Available Online",
+          isVerified: true
+        };
+      case 'general':
+      case 'general-support':
       default:
         return {
           name: "Companion",
@@ -159,15 +182,20 @@ export default function SupportPopup({
         description: dbRoom.description || 'Support circle chat room'
       };
     }
-    switch (activeCategory) {
+    switch (normalizedCategory) {
       case 'anxiety':
         return { name: "Anxiety Support Circles", description: "Join group rooms centered on stress and overthinking support." };
       case 'parkinsons':
         return { name: "Parkinson's Circles", description: "Join rooms where families share somatic tremor tips and wins." };
       case 'hallucinations':
         return { name: "Quiet Sharing Circles", description: "Slow-paced rooms for talking through confusion or fears." };
-      default:
+      case 'emotional-recovery':
+      case 'emotional-support':
         return { name: "Burnout & Loss Circles", description: "Weekly sharing circles for mutual recovery during transitions." };
+      case 'general':
+      case 'general-support':
+      default:
+        return { name: "General Support Lounge", description: "Open-ended support room for sharing daily experiences and finding calm." };
     }
   };
 
@@ -178,13 +206,18 @@ export default function SupportPopup({
         summary: dbGuide.summary
       };
     }
-    switch (activeCategory) {
+    switch (normalizedCategory) {
       case 'anxiety':
         return { title: "NAMI Anxiety Guide", summary: "Educational resources, guides on panic attacks, and family help guides." };
       case 'parkinsons':
         return { title: "Family Caregiver Alliance", summary: "Offers caregiver checklists, online classes, and regional advocacy groups." };
       case 'hallucinations':
         return { title: "Lewy Body Dementia Line", summary: "Specialized support for hallucinations and caregiver confusion." };
+      case 'general':
+      case 'general-support':
+        return { title: "Educational Guides", summary: "Read simple guides about anxiety, grief, Parkinson's support, and recovery." };
+      case 'emotional-recovery':
+      case 'emotional-support':
       default:
         return { title: "Burnout Recovery Guide", summary: "Self-assessments, stress reduction worksheets, and directories." };
     }
@@ -213,7 +246,7 @@ export default function SupportPopup({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/45 backdrop-blur-xs select-none">
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/45 backdrop-blur-xs select-none">
       {/* Backdrop click close handler */}
       <div className="absolute inset-0 cursor-default" onClick={handleDismiss} />
 
@@ -222,7 +255,7 @@ export default function SupportPopup({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 120 }}
         transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-        className="w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto bg-white border border-t-[#EDE9DE] sm:border-[#EDE9DE] rounded-t-[32px] rounded-b-none sm:rounded-[32px] relative z-50 text-left flex flex-col shadow-xl select-none scrollbar-none"
+        className="w-full sm:max-w-xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto bg-white border border-t-[#EDE9DE] sm:border-[#EDE9DE] rounded-t-[32px] rounded-b-none sm:rounded-[32px] relative z-[9999] text-left flex flex-col shadow-xl select-none scrollbar-none"
       >
         {/* Header section */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-start bg-[#FCFAF5] sticky top-0 z-20">

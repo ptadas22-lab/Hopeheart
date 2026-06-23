@@ -319,13 +319,15 @@ export default function App() {
     }
 
     // Trigger popup based on mood category
-    let popupCat = 'general';
-    if (moodId === 'anxious') {
+    let popupCat = 'general-support';
+    if (moodId === 'anxious' || moodId === 'overwhelmed') {
       popupCat = 'anxiety';
-    } else if (moodId === 'hurt' || moodId === 'sad' || moodId === 'lonely' || moodId === 'tired') {
-      popupCat = 'emotional-recovery';
+    } else if (moodId === 'sad' || moodId === 'hurt' || moodId === 'lonely' || moodId === 'tired' || moodId === 'low') {
+      popupCat = 'emotional-support';
+    } else if (moodId === 'hopeful' || moodId === 'calm' || moodId === 'need-support') {
+      popupCat = 'general-support';
     }
-    triggerSupportPopup(popupCat);
+    openSupportPopup(popupCat);
   };
 
   const handleNameChange = async (newName: string) => {
@@ -358,7 +360,8 @@ export default function App() {
   const [showSupportPopup, setShowSupportPopup] = useState<boolean>(false);
   const [popupCategory, setPopupCategory] = useState<string>('general');
 
-  const triggerSupportPopup = (category: string) => {
+  const openSupportPopup = (category: string) => {
+    console.log("Support popup dismissed date:", localStorage.getItem("hopeheart_support_popup_dismissed_date"));
     const dismissedDate = localStorage.getItem('hopeheart_support_popup_dismissed_date');
     const todayDateStr = new Date().toISOString().split('T')[0];
     if (dismissedDate === todayDateStr) {
@@ -810,24 +813,32 @@ export default function App() {
         const todayStr = new Date().toISOString().split('T')[0];
         const hasCheckedInToday = localStorage.getItem('hopeheart_last_checkin_date') === todayStr;
         return (
-          <DashboardScreen 
-            userName={userName}
-            selectedMood={selectedMood}
-            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
-            todayQuote={todayQuote}
-            onRefreshQuote={handleRefreshQuote}
-            onMoodSelected={handleMoodSelected}
-            onShareCheckIn={() => setShowShareModal(true)}
-            isProfileIncomplete={!isProfileCompleted}
-            onOpenProfileModal={() => {
-              setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
-              setShowProfileModal(true);
-            }}
-            previousMood={previousMood}
-            hasCheckedInToday={hasCheckedInToday}
-            checkinFeedback={checkinFeedback}
-            onClearCheckinFeedback={() => setCheckinFeedback(null)}
-          />
+          <>
+            <DashboardScreen 
+              userName={userName}
+              selectedMood={selectedMood}
+              onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+              todayQuote={todayQuote}
+              onRefreshQuote={handleRefreshQuote}
+              onMoodSelected={handleMoodSelected}
+              onShareCheckIn={() => setShowShareModal(true)}
+              isProfileIncomplete={!isProfileCompleted}
+              onOpenProfileModal={() => {
+                setTempDisplayName(userName !== 'Companion' && userName !== 'Voice47' ? userName : '');
+                setShowProfileModal(true);
+              }}
+              previousMood={previousMood}
+              hasCheckedInToday={hasCheckedInToday}
+              checkinFeedback={checkinFeedback}
+              onClearCheckinFeedback={() => setCheckinFeedback(null)}
+            />
+            <button
+              onClick={() => openSupportPopup("general-support")}
+              className="fixed bottom-24 right-4 z-[9999] bg-[#FF7527] text-white px-4 py-2.5 rounded-2xl text-[13px] font-display font-black shadow-lg cursor-pointer hover:bg-[#E55D13] active:scale-95 transition-all"
+            >
+              🛠️ Test Support Popup
+            </button>
+          </>
         );
 
       case ScreenId.HopeBuddyChat:
@@ -894,7 +905,7 @@ export default function App() {
             savedQuestions={savedQuestions}
             onAddQuestion={handleAddQuestion}
             onDeleteQuestion={handleDeleteQuestion}
-            onCategorySelected={triggerSupportPopup}
+            onCategorySelected={openSupportPopup}
           />
         );
 
