@@ -24,6 +24,7 @@ import ModerationAlertScreen from './components/ModerationAlertScreen';
 import FinancialsScreen from './components/FinancialsScreen';
 import { MascotSitting, BrandWordmark } from './components/Logo';
 import HopeBuddyWidget from './components/HopeBuddyWidget';
+import SupportPopup from './components/SupportPopup';
 
 function AppBackground({ currentScreen }: { currentScreen: ScreenId }) {
   // Screen categorization
@@ -316,6 +317,15 @@ export default function App() {
         setCheckinCount(nextCount);
       }
     }
+
+    // Trigger popup based on mood category
+    let popupCat = 'general';
+    if (moodId === 'anxious') {
+      popupCat = 'anxiety';
+    } else if (moodId === 'hurt' || moodId === 'sad' || moodId === 'lonely' || moodId === 'tired') {
+      popupCat = 'emotional-recovery';
+    }
+    triggerSupportPopup(popupCat);
   };
 
   const handleNameChange = async (newName: string) => {
@@ -345,6 +355,19 @@ export default function App() {
   };
   const [userName, setUserName] = useState<string>('Voice47');
   const [todayQuote, setTodayQuote] = useState<string>("Rest is productive too. You're allowed to slow down.");
+  const [showSupportPopup, setShowSupportPopup] = useState<boolean>(false);
+  const [popupCategory, setPopupCategory] = useState<string>('general');
+
+  const triggerSupportPopup = (category: string) => {
+    const dismissedDate = localStorage.getItem('hopeheart_support_popup_dismissed_date');
+    const todayDateStr = new Date().toISOString().split('T')[0];
+    if (dismissedDate === todayDateStr) {
+      console.log("[Popup] Support popup suppressed today per user preference.");
+      return;
+    }
+    setPopupCategory(category);
+    setShowSupportPopup(true);
+  };
   const [savedQuestions, setSavedQuestions] = useState<DoctorQuestion[]>(() => {
     const local = localStorage.getItem('hopeheart_care_questions');
     if (local) {
@@ -871,6 +894,7 @@ export default function App() {
             savedQuestions={savedQuestions}
             onAddQuestion={handleAddQuestion}
             onDeleteQuestion={handleDeleteQuestion}
+            onCategorySelected={triggerSupportPopup}
           />
         );
 
@@ -1579,6 +1603,13 @@ export default function App() {
           </div>
         )}
       </AnimatePresence>
+
+      <SupportPopup
+        isOpen={showSupportPopup}
+        onClose={() => setShowSupportPopup(false)}
+        activeCategory={popupCategory}
+        onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+      />
 
     </div>
   );

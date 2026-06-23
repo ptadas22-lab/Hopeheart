@@ -9,6 +9,7 @@ interface CareBridgeScreenProps {
   savedQuestions: DoctorQuestion[];
   onAddQuestion: (text: string) => void;
   onDeleteQuestion: (id: string) => void;
+  onCategorySelected?: (catId: string) => void;
 }
 
 type SubScreen = 'suggestions' | 'questions' | 'saved_resources';
@@ -843,6 +844,7 @@ export default function CareBridgeScreen({
   savedQuestions,
   onAddQuestion,
   onDeleteQuestion,
+  onCategorySelected,
 }: CareBridgeScreenProps) {
   const [subScreen, setSubScreen] = useState<SubScreen>('suggestions');
   const [activeCategoryId, setActiveCategoryId] = useState<string>('anxiety');
@@ -1407,6 +1409,7 @@ export default function CareBridgeScreen({
                           onClick={() => {
                             setSelectedSymptomId(btn.id);
                             setActiveCategoryId(btn.catId);
+                            onCategorySelected?.(btn.catId);
                           }}
                           whileHover={{ scale: 1.015, y: -0.5 }}
                           whileTap={{ scale: 0.985 }}
@@ -1490,6 +1493,7 @@ export default function CareBridgeScreen({
                         key={cat.id}
                         onClick={() => {
                           setActiveCategoryId(cat.id);
+                          onCategorySelected?.(cat.id);
                           // Auto-highlight corresponding symptom button
                           if (cat.id === 'anxiety') {
                             setSelectedSymptomId('overthinking');
