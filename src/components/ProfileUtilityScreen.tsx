@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId } from '../types';
 import { supabase } from '../lib/supabaseClient';
+import WhatsAppRemindersConfig from './WhatsAppRemindersConfig';
 
 interface ProfileUtilityScreenProps {
   onBack: () => void;
@@ -828,6 +829,9 @@ export default function ProfileUtilityScreen({
                 </div>
 
               </div>
+
+              {/* WhatsApp Reminders Config */}
+              <WhatsAppRemindersConfig />
 
               {/* Privacy Promise Card */}
               <div className="hh-surface rounded-2.5xl p-4 text-center space-y-1.5">

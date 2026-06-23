@@ -416,4 +416,10 @@ alter table if exists public.profiles add column if not exists nature text defau
 alter table if exists public.profiles add column if not exists authenticity_quiz_passed boolean default false;
 alter table if exists public.profiles add column if not exists authenticity_quiz_passed_at timestamp with time zone;
 
+-- Alter profiles table to add WhatsApp preference fields safely if they don't exist
+alter table if exists public.profiles add column if not exists whatsapp_reminders_enabled boolean default false;
+alter table if exists public.profiles add column if not exists whatsapp_number text;
+alter table if exists public.profiles add column if not exists whatsapp_reminder_time text default 'Morning';
+alter table if exists public.profiles add column if not exists whatsapp_reminder_frequency text default 'Daily';
+
 

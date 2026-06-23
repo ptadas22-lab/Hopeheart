@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
+import WhatsAppRemindersConfig from './WhatsAppRemindersConfig';
 
 interface NotificationsScreenProps {
   onBack: () => void;
@@ -206,6 +207,9 @@ export default function NotificationsScreen({ onBack, previousMood, onNavigateTo
               </div>
             </div>
           </div>
+
+          {/* WhatsApp Reminders Config */}
+          <WhatsAppRemindersConfig />
 
           {/* Notifications log history */}
           <div className="space-y-3">
