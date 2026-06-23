@@ -135,6 +135,7 @@ function RoomIllustration({ type }: { type: 'anxiety' | 'emotional-recovery' | '
 interface SupportRoomsScreenProps {
   onBack: () => void;
   onOpenModerationBlock?: () => void; // Trigger for Screen 21
+  onOpenCrisisScreen?: () => void; // Trigger for Screen 22
   onRequireProfileCompletion?: (onSuccess: () => void) => void;
 }
 
@@ -292,6 +293,7 @@ const SUPPORT_ROOMS_DATA: RoomCard[] = [
 export default function SupportRoomsScreen({ 
   onBack, 
   onOpenModerationBlock,
+  onOpenCrisisScreen,
   onRequireProfileCompletion
 }: SupportRoomsScreenProps) {
   const [selectedRoom, setSelectedRoom] = useState<RoomCard | null>(null);
@@ -543,17 +545,36 @@ export default function SupportRoomsScreen({
     e.preventDefault();
     if (!selectedRoom || !postInput.trim()) return;
 
-    // Direct AI prescription scan simulation
     const lower = postInput.toLowerCase();
-    const rxKeywords = ['mg', 'pfizer', 'paracetamol', 'dosage', 'prescription', 'doctor says', 'cure', 'diagnose', 'take pill', 'xanax', 'prozac'];
-    const blocksText = rxKeywords.some(kw => lower.includes(kw));
 
-    if (blocksText) {
+    // High-risk trigger check
+    const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
+    if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
+      if (onOpenCrisisScreen) {
+        onOpenCrisisScreen();
+        return;
+      }
+    }
+
+    // Unsafe advice checks
+    const unsafePhrases = [
+      'take this medicine', 'increase dosage', 'stop medication',
+      'you are cured', 'you have this diagnosis', 'self-harm encouragement',
+      'abuse', 'bullying', 'harassment',
+      'prescription', 'dosage', 'prescribe', 'diagnose', 
+      'mg', 'milligram', 'treatment', 'medication', 'medicine', 
+      'pill', 'xanax', 'paracetamol', 'prozac', 'cure', 'diagnosis',
+      'pfizer', 'doctor says', 'take pill'
+    ];
+
+    const containsUnsafe = unsafePhrases.some(word => lower.includes(word));
+
+    if (containsUnsafe) {
       if (onOpenModerationBlock) {
         onOpenModerationBlock();
         return;
       }
-      alert("⚠️ HopeHeart AI Alert: Medical advice, prescriptions, or treatments detected. Please post emotional support only.");
+      alert("⚠️ HopeHeart AI Alert: HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.");
       return;
     }
 
@@ -733,7 +754,7 @@ export default function SupportRoomsScreen({
               {/* Safety Note Footer */}
               <div className="bg-[#FEFAF0] border border-[#F3E2C4] p-4 rounded-2xl text-center shadow-xs">
                 <p className="text-[11.5px] text-gray-600 font-semibold leading-relaxed">
-                  ⚠️ <strong>Rooms are for emotional support only.</strong> Please do not share prescriptions, dosage advice, diagnosis, or personal contact details.
+                  ⚠️ HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
                 </p>
               </div>
             </motion.div>
@@ -859,6 +880,32 @@ export default function SupportRoomsScreen({
                 <p className="text-[10px] text-center text-gray-400 font-bold italic uppercase tracking-wider">
                   ⚠️ AI Filter Alert: No prescriptions or treatment guidance allowed. Lived experiences only.
                 </p>
+              </div>
+
+              {/* Community Guidance */}
+              <div className="bg-[#FCFAF5] border border-[#ECE6D9]/60 rounded-2xl p-4 text-[11px] space-y-2.5">
+                <div className="font-display font-black text-gray-800 text-[11.5px] flex items-center gap-1">
+                  <span>📜</span> Support Room Guidance:
+                </div>
+                <div className="grid grid-cols-2 gap-3.5 leading-normal">
+                  <div className="space-y-1">
+                    <span className="text-emerald-700 font-bold">✓ Allowed (Peer Comfort):</span>
+                    <ul className="list-disc pl-3 text-gray-500 font-medium space-y-0.5">
+                      <li>"This helped me."</li>
+                      <li>"I felt supported when..."</li>
+                      <li>"You may want to speak with a professional."</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-rose-700 font-bold">✗ Not Allowed (Clinical):</span>
+                    <ul className="list-disc pl-3 text-gray-500 font-medium space-y-0.5">
+                      <li>"This will cure you."</li>
+                      <li>"You have this diagnosis."</li>
+                      <li>"Take this medicine."</li>
+                      <li>"Stop your medication."</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
 
             </motion.div>

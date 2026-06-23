@@ -297,8 +297,13 @@ export default function NearbyCommunityScreen({
               </div>
 
               {/* Safety banner caution */}
-              <div className="p-3.5 bg-yellow-50 border border-yellow-100 rounded-2xl text-[11.5px] text-yellow-850 font-semibold leading-relaxed text-center">
-                ⚠️ <strong>Safety Warning:</strong> Meet only in verified public spaces. Do not share your private address or highly sensitive personal financial details with other circle members.
+              <div className="p-3.5 bg-yellow-50 border border-yellow-100 rounded-2xl text-[11.5px] text-yellow-850 font-semibold leading-relaxed text-center space-y-2">
+                <p>
+                  ⚠️ <strong>Safety Warning:</strong> Meet only in verified public spaces. Do not share your private address or highly sensitive personal financial details with other circle members.
+                </p>
+                <p className="text-[10px] text-gray-500 font-bold border-t border-yellow-200/50 pt-2">
+                  HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+                </p>
               </div>
 
             </motion.div>

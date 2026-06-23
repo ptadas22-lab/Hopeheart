@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabaseClient';
 
@@ -90,12 +90,118 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
   const [showReportForm, setShowReportForm] = useState(initialShowReport || false);
 
   const [reportWhatHappened, setReportWhatHappened] = useState('');
-  const [reportWhereHappened, setReportWhereHappened] = useState('');
+  const [reportConcernType, setReportConcernType] = useState('Unsafe Medical Advice');
+  const [reportRelatedArea, setReportRelatedArea] = useState('Community');
   const [reportOptionalNote, setReportOptionalNote] = useState('');
+
+  // Unsafe keyword testing filter sandbox states
+  const [testFilterInput, setTestFilterInput] = useState('');
+  const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
+  const [safetyAckDate, setSafetyAckDate] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  // Local unsafe content validation phrases
+  const UNSAFE_PHRASES = [
+    "take this medicine",
+    "increase dosage",
+    "stop medication",
+    "you are cured",
+    "you have this diagnosis"
+  ];
+
+  const containsUnsafeContent = (text: string) => {
+    const lower = text.toLowerCase();
+    return UNSAFE_PHRASES.some(phrase => lower.includes(phrase));
+  };
+
+  // Check safety acknowledgement state and sync with Supabase for authenticated users
+  useEffect(() => {
+    const syncAcknowledgement = async () => {
+      const localAck = localStorage.getItem('hopeheart_safety_acknowledged') === 'true';
+      const localDate = localStorage.getItem('hopeheart_safety_acknowledged_at');
+      
+      setSafetyAcknowledged(localAck);
+      setSafetyAckDate(localDate);
+
+      if (!supabase) return;
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const user = session?.user || null;
+        setCurrentUser(user);
+
+        if (user) {
+          const { data, error } = await supabase
+            .from('safety_acknowledgements')
+            .select('acknowledged, acknowledged_at')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (data) {
+            if (data.acknowledged) {
+              setSafetyAcknowledged(true);
+              setSafetyAckDate(data.acknowledged_at);
+              localStorage.setItem('hopeheart_safety_acknowledged', 'true');
+              localStorage.setItem('hopeheart_safety_acknowledged_at', data.acknowledged_at);
+            } else if (localAck && localDate) {
+              // Sync local acknowledgement to Supabase
+              await supabase.from('safety_acknowledgements').upsert({
+                user_id: user.id,
+                acknowledged: true,
+                acknowledged_at: localDate
+              });
+            }
+          } else if (localAck && localDate) {
+            // Seed DB if local is true but DB record is missing
+            await supabase.from('safety_acknowledgements').upsert({
+              user_id: user.id,
+              acknowledged: true,
+              acknowledged_at: localDate
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("[Safety] Error syncing safety acknowledgement with backend:", err);
+      }
+    };
+
+    syncAcknowledgement();
+  }, []);
+
+  const handleAcknowledgementToggle = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    const nowIso = new Date().toISOString();
+
+    setSafetyAcknowledged(checked);
+    setSafetyAckDate(checked ? nowIso : null);
+
+    if (checked) {
+      localStorage.setItem('hopeheart_safety_acknowledged', 'true');
+      localStorage.setItem('hopeheart_safety_acknowledged_at', nowIso);
+    } else {
+      localStorage.setItem('hopeheart_safety_acknowledged', 'false');
+      localStorage.removeItem('hopeheart_safety_acknowledged_at');
+    }
+
+    if (currentUser && supabase) {
+      try {
+        const { error } = await supabase.from('safety_acknowledgements').upsert({
+          user_id: currentUser.id,
+          acknowledged: checked,
+          acknowledged_at: nowIso
+        });
+        if (error) {
+          console.warn("[Safety] Failed to sync safety acknowledgement to database:", error.message);
+        }
+      } catch (err) {
+        console.warn("[Safety] Error syncing safety acknowledgement to database:", err);
+      }
+    }
+  };
 
   const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reportWhatHappened.trim() || !reportWhereHappened.trim()) return;
+    if (!reportWhatHappened.trim()) return;
 
     let userId = null;
     if (supabase) {
@@ -107,40 +213,40 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
       }
     }
 
-    const messageContent = `What: ${reportWhatHappened.trim()}\nWhere: ${reportWhereHappened.trim()}\nNote: ${reportOptionalNote.trim()}`;
+    const payload = {
+      user_id: userId,
+      concern_type: reportConcernType,
+      message: reportOptionalNote.trim() 
+        ? `${reportWhatHappened.trim()}\n\nAdditional Note: ${reportOptionalNote.trim()}`
+        : reportWhatHappened.trim(),
+      related_area: reportRelatedArea,
+      status: 'new',
+      created_at: new Date().toISOString()
+    };
 
     try {
       if (!supabase) throw new Error("Supabase is not configured");
 
-      const { error } = await supabase.from('safety_concerns').insert({
-        user_id: userId,
-        concern_type: 'General Safety Concern',
-        message: messageContent,
-        created_at: new Date().toISOString()
-      });
+      const { error } = await supabase.from('safety_concerns').insert(payload);
 
       if (error) throw error;
-      alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+      alert(`Your concern has been submitted safely. HopeHeart will review it.`);
     } catch (err) {
       console.warn('[Safety] Supabase concern insert failed, saving locally:', err);
       try {
         const pending = JSON.parse(localStorage.getItem('hopeheart_pending_safety_concerns') || '[]');
-        pending.push({
-          user_id: userId,
-          concern_type: 'General Safety Concern',
-          message: messageContent,
-          created_at: new Date().toISOString()
-        });
+        pending.push(payload);
         localStorage.setItem('hopeheart_pending_safety_concerns', JSON.stringify(pending));
-        alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+        alert(`Your concern has been saved locally. Please contact support if urgent.`);
       } catch (localErr) {
         console.error('[Safety] Local storage concern save failed:', localErr);
-        alert(`Thank you for helping keep HopeHeart safe. Our AI safety moderators will review this concern immediately.`);
+        alert(`Your concern has been saved locally. Please contact support if urgent.`);
       }
     } finally {
       setReportWhatHappened('');
-      setReportWhereHappened('');
       setReportOptionalNote('');
+      setReportConcernType('Unsafe Medical Advice');
+      setReportRelatedArea('Community');
       setShowReportForm(false);
     }
   };
@@ -180,11 +286,14 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
             </button>
           </div>
 
-          <div className="text-center space-y-2 max-w-2xl mx-auto pt-6 sm:pt-0 pr-8 sm:pr-0">
+          <div className="text-center space-y-3 max-w-2xl mx-auto pt-6 sm:pt-0 pr-8 sm:pr-0">
             <h2 className="font-display font-black text-[#2B1D12] text-[20px] sm:text-[23px] leading-tight">
               How HopeHeart Protects You
             </h2>
-            <p className="text-[12px] sm:text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+            <p className="text-[12.5px] text-[#A16207] bg-[#FEFAF0] border border-[#F3E2C4] p-3 rounded-2xl font-semibold leading-relaxed text-left sm:text-center shadow-3xs">
+              HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+            </p>
+            <p className="text-[12px] sm:text-[12.5px] text-gray-500 font-semibold leading-relaxed font-sans">
               HopeHeart uses safety filters, community rules, and reporting tools to keep support kind, private, and free from unsafe medical advice.
             </p>
           </div>
@@ -203,6 +312,25 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
           <p className="text-[12px] sm:text-[12.5px] text-gray-600 font-semibold leading-relaxed">
             HopeHeart checks conversations for unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, cure promises, abuse, or harmful content.
           </p>
+
+          {/* Unsafe filter testing playground */}
+          <div className="mt-3 pt-3 border-t border-orange-100/50 space-y-2.5">
+            <label className="text-[11px] font-bold text-gray-500 block">
+              💡 Test the safety checker (Try typing: "take this medicine" or "you are cured"):
+            </label>
+            <input
+              type="text"
+              value={testFilterInput}
+              onChange={(e) => setTestFilterInput(e.target.value)}
+              placeholder="Type a test phrase..."
+              className="w-full px-3 py-1.5 rounded-xl border border-gray-200 text-[12px] bg-white focus:outline-none focus:border-[#FF7527] font-semibold"
+            />
+            {testFilterInput.trim() && containsUnsafeContent(testFilterInput) && (
+              <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-[11px] text-red-800 font-semibold leading-relaxed">
+                ⚠️ HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Section 2 & 3: Allowed and Blocked */}
@@ -299,6 +427,34 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
           </div>
         </div>
 
+        {/* Safety Acknowledgement Card */}
+        <div className="hh-surface border border-orange-100 p-5 rounded-3xl space-y-3.5">
+          <div className="flex items-start gap-3">
+            <div className="pt-0.5">
+              <input
+                id="checkbox-safety-ack"
+                type="checkbox"
+                checked={safetyAcknowledged}
+                onChange={handleAcknowledgementToggle}
+                className="w-4.5 h-4.5 rounded border-gray-300 text-[#FF7527] focus:ring-[#FF7527] cursor-pointer"
+              />
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="checkbox-safety-ack" className="font-display font-black text-gray-850 text-[13px] cursor-pointer select-none">
+                Acknowledge Safety Rules
+              </label>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                I understand that HopeHeart is for emotional support only. I agree not to give or ask for diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims.
+              </p>
+            </div>
+          </div>
+          {safetyAcknowledged && safetyAckDate && (
+            <p className="text-[10px] text-emerald-600 font-bold italic pl-7.5">
+              ✓ Safety rules acknowledged on {new Date(safetyAckDate).toLocaleString()}
+            </p>
+          )}
+        </div>
+
         {/* Section 5 & 6: Report a Concern & Response policy */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Section 5: Report a Concern */}
@@ -338,28 +494,48 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
                 >
                   <div className="space-y-1">
                     <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                      What happened?
+                      Type of Concern
                     </label>
-                    <input
-                      type="text"
-                      value={reportWhatHappened}
-                      onChange={(e) => setReportWhatHappened(e.target.value)}
-                      placeholder="Brief summary of the safety issue..."
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
-                      required
-                    />
+                    <select
+                      value={reportConcernType}
+                      onChange={(e) => setReportConcernType(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12.5px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                    >
+                      <option value="Unsafe Medical Advice">Unsafe Medical Advice</option>
+                      <option value="Unsafe Community Behavior">Unsafe Community Behavior</option>
+                      <option value="App Safety Concern">App Safety Concern</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                      Where did it happen?
+                      Where in the app?
                     </label>
-                    <input
-                      type="text"
-                      value={reportWhereHappened}
-                      onChange={(e) => setReportWhereHappened(e.target.value)}
-                      placeholder="e.g. Chat with user Alex, or Group support room..."
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                    <select
+                      value={reportRelatedArea}
+                      onChange={(e) => setReportRelatedArea(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12.5px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                    >
+                      <option value="Community">Community</option>
+                      <option value="Listener profile">Listener profile</option>
+                      <option value="Support room">Support room</option>
+                      <option value="Resources">Resources</option>
+                      <option value="Chat preview">Chat preview</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                      What happened?
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={reportWhatHappened}
+                      onChange={(e) => setReportWhatHappened(e.target.value)}
+                      placeholder="Describe the safety issue (do not share diagnosis, medication, phone, or exact location)..."
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12.5px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                       required
                     />
                   </div>
@@ -373,9 +549,15 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
                       value={reportOptionalNote}
                       onChange={(e) => setReportOptionalNote(e.target.value)}
                       placeholder="Any extra details you want to add..."
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-[12.5px] bg-[#FCFCFA] focus:outline-none focus:border-[#FF7527] font-semibold"
                     />
                   </div>
+
+                  {(containsUnsafeContent(reportWhatHappened) || containsUnsafeContent(reportOptionalNote)) && (
+                    <div className="p-3 bg-amber-50 border border-amber-250 rounded-xl text-[11px] text-amber-800 font-semibold leading-relaxed">
+                      ⚠️ <strong>Safety Warning:</strong> HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.
+                    </div>
+                  )}
 
                   <div className="flex gap-2 pt-1">
                     <button
@@ -389,8 +571,9 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
                       onClick={() => {
                         setShowReportForm(false);
                         setReportWhatHappened('');
-                        setReportWhereHappened('');
                         setReportOptionalNote('');
+                        setReportConcernType('Unsafe Medical Advice');
+                        setReportRelatedArea('Community');
                       }}
                       className="px-3 py-2 border border-gray-200 hover:bg-gray-50 text-gray-500 font-display font-bold text-[12px] rounded-xl cursor-pointer"
                     >
@@ -448,14 +631,9 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
               <h3 className="font-display font-black text-[18px] text-gray-800">
                 Urgent Help
               </h3>
-              <p className="text-[13px] text-gray-600 font-semibold leading-relaxed">
-                If you or someone else is in immediate danger, contact your local emergency service or go to the nearest hospital/emergency care center.
+              <p className="text-[13.5px] text-gray-600 font-semibold leading-relaxed">
+                HopeHeart is not an emergency or medical service. If you or someone else is in immediate danger, contact local emergency services or go to the nearest emergency care center.
               </p>
-              <div className="py-2 px-3 bg-red-50/50 rounded-xl">
-                <p className="text-[11.5px] text-red-700 font-bold">
-                  HopeHeart is not an emergency service.
-                </p>
-              </div>
               <button
                 onClick={() => setShowUrgentModal(false)}
                 className="w-full py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-display font-bold text-[13px] rounded-xl transition-colors cursor-pointer"

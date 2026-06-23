@@ -692,6 +692,13 @@ export default function DashboardScreen({
           </div>
 
         </div>
+
+        {/* Safe Platform Boundary Disclaimer Footer */}
+        <div className="mt-8 mb-6 text-center max-w-2xl mx-auto px-4">
+          <p className="text-[11px] text-gray-400 font-bold leading-normal">
+            HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+          </p>
+        </div>
       </div>
     </div>
   );

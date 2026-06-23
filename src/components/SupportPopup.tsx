@@ -427,7 +427,7 @@ export default function SupportPopup({
           {/* Safety Disclaimer and Suppression Checkbox Footer bar */}
           <div className="bg-[#FEFBF7] border border-amber-100 rounded-2xl p-4 space-y-3 mt-2">
             <p className="text-[11px] text-[#A16207] font-semibold leading-relaxed">
-              ⚠️ <strong>Safety Statement:</strong> HopeHeart offers emotional support and guidance only. It does not provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims.
+              ⚠️ <strong>Safety Statement:</strong> HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
             </p>
             
             <div className="border-t border-amber-100/50 pt-2.5 flex items-center justify-between gap-3 flex-wrap">

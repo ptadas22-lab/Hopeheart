@@ -355,8 +355,13 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
             </div>
 
             {/* Helper disclaimer */}
-            <p className="text-[10px] text-center text-gray-450 font-semibold leading-normal">
-              HopeHeart is strictly for peer emotional support. We do not diagnose, treat, or replace professional therapy.
+            <p className="text-[10.5px] text-center text-gray-450 font-semibold leading-normal">
+              HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+            </p>
+
+            {/* Platform age gate statement */}
+            <p className="text-[10.5px] text-center text-[#FF7527] font-black leading-normal mt-1 uppercase tracking-wider">
+              🔞 HopeHeart MVP is intended for users 18+.
             </p>
           </div>
 

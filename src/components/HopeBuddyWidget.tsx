@@ -165,6 +165,9 @@ export default function HopeBuddyWidget({
                 <p className="text-[13px] font-semibold text-gray-750 px-2 leading-relaxed">
                   Want to capture how you’re doing today?
                 </p>
+                <p className="text-[10px] text-gray-450 font-bold px-2 leading-normal italic">
+                  HopeBuddy can help you reflect and find support options, but it is not a therapist, doctor, or emergency responder.
+                </p>
               </div>
 
               <div className="flex flex-col gap-2 pt-2 border-t border-gray-100">

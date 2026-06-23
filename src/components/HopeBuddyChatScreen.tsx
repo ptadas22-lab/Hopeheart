@@ -16,6 +16,8 @@ interface HopeBuddyChatScreenProps {
   userName: string;
   selectedMood: MoodConfig;
   onNavigateTo: (screenId: string) => void;
+  onOpenCrisisScreen?: () => void;
+  onOpenModerationBlock?: () => void;
 }
 
 export default function HopeBuddyChatScreen({
@@ -23,6 +25,8 @@ export default function HopeBuddyChatScreen({
   userName,
   selectedMood,
   onNavigateTo,
+  onOpenCrisisScreen,
+  onOpenModerationBlock,
 }: HopeBuddyChatScreenProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -84,6 +88,38 @@ export default function HopeBuddyChatScreen({
 
   const handleSend = (text: string) => {
     if (!text.trim()) return;
+
+    const lower = text.toLowerCase();
+
+    // High-risk trigger check
+    const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
+    if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
+      if (onOpenCrisisScreen) {
+        onOpenCrisisScreen();
+        return;
+      }
+    }
+
+    // Unsafe advice checks
+    const unsafePhrases = [
+      'take this medicine', 'increase dosage', 'stop medication',
+      'you are cured', 'you have this diagnosis', 'self-harm encouragement',
+      'abuse', 'bullying', 'harassment',
+      'prescription', 'dosage', 'prescribe', 'diagnose', 
+      'mg', 'milligram', 'treatment', 'medication', 'medicine', 
+      'pill', 'xanax', 'paracetamol', 'prozac', 'cure', 'diagnosis'
+    ];
+
+    const containsUnsafe = unsafePhrases.some(word => lower.includes(word));
+
+    if (containsUnsafe) {
+      if (onOpenModerationBlock) {
+        onOpenModerationBlock();
+        return;
+      }
+      alert("⚠️ HopeHeart AI Alert: HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.");
+      return;
+    }
 
     const userMsg: Message = {
       id: 'user-' + Date.now(),
@@ -241,9 +277,12 @@ export default function HopeBuddyChatScreen({
         </form>
 
         {/* Bottom Safety Disclaimer */}
-        <div className="text-center pt-1.5">
-          <p className="text-[10px] text-gray-400 font-semibold leading-relaxed max-w-md mx-auto">
-            HopeBuddy provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.
+        <div className="text-center pt-1.5 space-y-1.5 max-w-md mx-auto">
+          <p className="text-[10px] text-gray-400 font-semibold leading-relaxed">
+            HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
+          </p>
+          <p className="text-[10px] text-[#FF7527] font-bold leading-relaxed italic">
+            HopeBuddy can help you reflect and find support options, but it is not a therapist, doctor, or emergency responder.
           </p>
         </div>
 

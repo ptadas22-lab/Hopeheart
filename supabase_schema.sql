@@ -212,8 +212,14 @@ create table if not exists public.safety_concerns (
   message text not null,
   related_listener_id text,
   related_room_id text,
+  related_area text,
+  status text not null default 'new',
   created_at timestamp with time zone not null default now()
 );
+
+-- Safe alter table statements for existing database instances
+alter table public.safety_concerns add column if not exists related_area text;
+alter table public.safety_concerns add column if not exists status text not null default 'new';
 
 -- Enable Row Level Security (RLS)
 alter table public.safety_concerns enable row level security;
@@ -229,6 +235,35 @@ create policy "Users can view their own safety concerns"
   on public.safety_concerns
   for select
   using (auth.uid() = user_id);
+
+-- Create safety_acknowledgements table
+create table if not exists public.safety_acknowledgements (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade unique,
+  acknowledged boolean not null default false,
+  acknowledged_at timestamp with time zone not null,
+  created_at timestamp with time zone default now()
+);
+
+-- Enable RLS for safety_acknowledgements
+alter table public.safety_acknowledgements enable row level security;
+
+-- Policies for safety_acknowledgements
+create policy "Users can insert their own acknowledgement"
+  on public.safety_acknowledgements
+  for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can select their own acknowledgement"
+  on public.safety_acknowledgements
+  for select
+  using (auth.uid() = user_id);
+
+create policy "Users can update their own acknowledgement"
+  on public.safety_acknowledgements
+  for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- Seed community_listeners
 insert into public.community_listeners (id, display_name, role, listening_style, languages, support_focus, availability, trust_score, is_verified) values

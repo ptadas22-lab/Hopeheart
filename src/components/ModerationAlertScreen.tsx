@@ -21,8 +21,8 @@ export default function ModerationAlertScreen({ type, onNavigateTo, onClose }: M
               <h2 className="font-display font-black text-amber-950 text-[20px] md:text-[22px] tracking-tight">
                 Suggested Change
               </h2>
-              <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
-                Our Safe AI protection model detected medication terms, dosages, or private clinical health diagnostics in your draft. HopeHeart is for emotional support, not clinical treatment.
+              <p className="text-[13px] text-gray-700 font-semibold leading-relaxed p-4 bg-amber-50/50 border border-amber-200 rounded-3xl text-left sm:text-center">
+                HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.
               </p>
             </div>
 
@@ -72,59 +72,22 @@ export default function ModerationAlertScreen({ type, onNavigateTo, onClose }: M
         {type === 'crisis' && (
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <div className="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center text-[28px] mx-auto animate-pulse">
+              <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-[28px] mx-auto animate-pulse shadow-inner">
                 🚨
               </div>
               <h2 className="font-display font-black text-red-950 text-[20px] md:text-[22.5px] tracking-tight">
-                Immediate support is available
+                Crisis Safety Notice
               </h2>
-              <p className="text-[13px] text-gray-500 font-semibold leading-relaxed">
-                If you feel unsafe, in danger, or are managing severe clinical crises, please call these verified, immediate emergency helplines. Peer listeners cannot replace professional response teams.
+              <p className="text-[13.5px] text-gray-700 font-semibold leading-relaxed text-left sm:text-center p-5 bg-red-50/50 border border-red-200 rounded-3xl">
+                HopeHeart is not an emergency service. If you or someone else is in immediate danger, contact local emergency services, go to the nearest emergency care center, or reach out to a trusted family member/adult immediately.
               </p>
-            </div>
-
-            {/* Hotline contacts cards */}
-            <div className="bg-white border border-red-150 rounded-3xl p-5 space-y-3.5 shadow-sm">
-              <div className="flex justify-between items-center pb-2.5 border-b border-gray-100 text-[13px]">
-                <div>
-                  <span className="font-display font-black text-gray-800 block">USA & Canada Crisis Line</span>
-                  <span className="text-xs text-gray-400 font-semibold">Free, anonymous support of therapists, 24/7.</span>
-                </div>
-                <a 
-                  href="tel:988"
-                  className="px-3.5 py-1.5 bg-red-650 hover:bg-red-750 text-white rounded-lg text-[11px] font-display font-black cursor-pointer shadow-xs whitespace-nowrap"
-                >
-                  📞 Dial 988
-                </a>
-              </div>
-
-              <div className="flex justify-between items-center pb-2.5 border-b border-gray-100 text-[13px]">
-                <div>
-                  <span className="font-display font-black text-gray-800 block">Crisis Text Line</span>
-                  <span className="text-xs text-gray-400 font-semibold">Text HOME to connect safely.</span>
-                </div>
-                <a 
-                  href="sms:741741"
-                  className="px-3.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-800 rounded-lg text-[11px] font-display font-black cursor-pointer whitespace-nowrap"
-                >
-                  💬 Text 741741
-                </a>
-              </div>
-
-              {/* Grounding Checklist */}
-              <div className="space-y-1.5 pt-1.5 font-sans leading-normal text-[11.5px] text-red-900 font-semibold">
-                <span className="text-[10px] uppercase font-mono tracking-wider font-extrabold text-red-800 block">Grounding breathing step:</span>
-                <p>1. Place your bare feet flatly on the support floor.</p>
-                <p>2. Inhale quiet, fresh air for 4 slow seconds.</p>
-                <p>3. Exhale slow warm air for 6 seconds.</p>
-              </div>
             </div>
 
             {/* CTAs */}
             <div className="space-y-3.5 pt-2">
               <button
                 onClick={onClose}
-                className="w-full py-4 bg-[#1E1E1A] hover:bg-black text-[15px] text-white font-display font-black rounded-2.5xl cursor-pointer text-center"
+                className="w-full py-4 bg-[#1E1E1A] hover:bg-black text-[15px] text-white font-display font-black rounded-2.5xl cursor-pointer text-center transition-colors"
               >
                 Back to Safe App
               </button>
@@ -133,7 +96,7 @@ export default function ModerationAlertScreen({ type, onNavigateTo, onClose }: M
                   onClose();
                   onNavigateTo('doctor-suggestions');
                 }}
-                className="w-full py-3 bg-[#FCFAF5] hover:bg-white text-gray-700 border border-gray-200 rounded-xl text-[13px] font-display font-bold text-center cursor-pointer"
+                className="w-full py-3 bg-[#FCFAF5] hover:bg-white text-gray-700 border border-gray-200 rounded-xl text-[13px] font-display font-bold text-center cursor-pointer transition-colors"
               >
                 Open Professional Resources
               </button>

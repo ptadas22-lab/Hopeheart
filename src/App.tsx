@@ -848,6 +848,8 @@ export default function App() {
             userName={userName}
             selectedMood={selectedMood}
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+            onOpenCrisisScreen={() => setOverlayType('crisis')}
+            onOpenModerationBlock={() => setOverlayType('moderation')}
           />
         );
 
@@ -869,6 +871,7 @@ export default function App() {
           <SupportRoomsScreen 
             onBack={() => setCurrentScreen(ScreenId.Home)}
             onOpenModerationBlock={() => setOverlayType('moderation')}
+            onOpenCrisisScreen={() => setOverlayType('crisis')}
             onRequireProfileCompletion={handleRequireProfileCompletion}
           />
         );

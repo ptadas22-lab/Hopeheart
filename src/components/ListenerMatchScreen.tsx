@@ -595,18 +595,32 @@ export default function ListenerMatchScreen({
     ]);
   };
 
-  // Safe checks for unallowed health words
+  // Safe checks for unallowed health words and crisis detection
   const handleCheckAndSend = (textToSend: string) => {
     if (!textToSend.trim() || !activeListener) return;
 
     const lower = textToSend.toLowerCase();
-    const unsafeKeywords = [
+
+    // High-risk trigger check
+    const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
+    if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
+      if (onOpenCrisisScreen) {
+        onOpenCrisisScreen();
+        return;
+      }
+    }
+
+    // Unsafe advice checks
+    const unsafePhrases = [
+      'take this medicine', 'increase dosage', 'stop medication',
+      'you are cured', 'you have this diagnosis', 'self-harm encouragement',
+      'abuse', 'bullying', 'harassment',
       'prescription', 'dosage', 'prescribe', 'diagnose', 
       'mg', 'milligram', 'treatment', 'medication', 'medicine', 
       'pill', 'xanax', 'paracetamol', 'prozac', 'cure', 'diagnosis'
     ];
 
-    const containsUnsafe = unsafeKeywords.some(word => lower.includes(word));
+    const containsUnsafe = unsafePhrases.some(word => lower.includes(word));
 
     if (containsUnsafe) {
       if (onOpenModerationBlock) {
@@ -619,7 +633,7 @@ export default function ListenerMatchScreen({
         id: Date.now().toString() + '-blocked',
         sender: 'bot',
         senderName: 'HopeHeart AI Protection',
-        content: '⚠️ This message may include medical advice or treatment guidance. HopeHeart allows emotional support only. Please remove medical advice.',
+        content: '⚠️ HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.',
         timestamp: 'Blocked'
       };
       setChatMessages(prev => [...prev, errorMsg]);
@@ -781,10 +795,9 @@ export default function ListenerMatchScreen({
       {isChatActive && activeListener ? (
         /* SCREEN 7: SAFE CHAT CLIENT SCREEN */
         <div className="flex-1 flex flex-col justify-between h-[calc(100vh-140px)] md:h-[650px] bg-[#F7F4EC] relative overflow-hidden w-full max-w-4xl mx-auto border-x border-[#EDE9DE]">
-          
           {/* Safety Banner */}
           <div className="bg-amber-50 border-b border-amber-100 p-3.5 text-center text-amber-800 text-[11px] font-semibold leading-relaxed shrink-0">
-            🛡️ <strong>Safety Banner:</strong> Share feelings only. Do not share prescriptions, dosage, diagnosis, or treatment advice. Community users are peer listeners, not clinical professionals.
+            🛡️ <strong>Safety Banner:</strong> HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
           </div>
 
           {/* Listener Profile Card & Status Badges */}
@@ -939,6 +952,32 @@ export default function ListenerMatchScreen({
               </div>
             </div>
             
+            {/* Community Guidance */}
+            <div className="bg-[#FCFAF5] border border-[#ECE6D9]/50 rounded-xl p-3 text-[10.5px] space-y-1.5 mt-1.5 text-left">
+              <div className="font-display font-black text-gray-700 text-[11px] flex items-center gap-1">
+                <span>📜</span> Chat Guidance:
+              </div>
+              <div className="grid grid-cols-2 gap-3 leading-normal">
+                <div className="space-y-0.5">
+                  <span className="text-emerald-700 font-extrabold">✓ Allowed:</span>
+                  <ul className="list-disc pl-3 text-gray-500 font-semibold space-y-0.5">
+                    <li>“This helped me.”</li>
+                    <li>“I felt supported when...”</li>
+                    <li>“You may want to speak with a professional.”</li>
+                  </ul>
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-rose-700 font-extrabold">✗ Not Allowed:</span>
+                  <ul className="list-disc pl-3 text-gray-500 font-semibold space-y-0.5">
+                    <li>“This will cure you.”</li>
+                    <li>“You have this diagnosis.”</li>
+                    <li>“Take this medicine.”</li>
+                    <li>“Stop your medication.”</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <div className="text-[10px] text-center text-gray-400 font-semibold italic mt-1">
               Type keywords like " Xanax, cure, prescription, dosage " to trigger safety block simulation!
             </div>
