@@ -309,10 +309,10 @@ export default function DashboardScreen({
               <span className="text-[24px] shrink-0">🔔</span>
               <div className="space-y-0.5">
                 <h4 className="font-display font-black text-gray-800 text-[13.5px]">
-                  Complete your Safe Profile
+                  Personalize your safe space
                 </h4>
                 <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
-                  Add a few details so HopeHeart can match you better.
+                  Add a few details so HopeHeart can feel more personal to you.
                 </p>
               </div>
             </div>
@@ -322,14 +322,14 @@ export default function DashboardScreen({
                 type="button"
                 className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
               >
-                Later
+                Add later
               </button>
               <button
                 onClick={onOpenProfileModal}
                 type="button"
                 className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
               >
-                Complete Now
+                Personalize
               </button>
             </div>
           </div>
@@ -402,18 +402,18 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* 💛 Your Emotional Support Journey Stepper */}
+      {/* 💛 Gentle support path stepper */}
       <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
         <div className="bg-white/80 border border-[#EDE9DE] rounded-[24px] p-5 space-y-4 shadow-3xs backdrop-blur-xs select-none">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
             <div>
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Your Trust Path</span>
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
               <h4 className="font-display font-black text-gray-800 text-[14px]">
-                Your Emotional Support Journey 💛
+                Your gentle support path
               </h4>
             </div>
             <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
-              Explore step-by-step to build comfort and find the right support.
+              Start privately. Connect only when you feel ready.
             </p>
           </div>
 
@@ -425,28 +425,28 @@ export default function DashboardScreen({
                 label: 'Mood Check-in',
                 emoji: '🌤️',
                 done: hasCheckedInToday,
-                desc: 'How do you feel today?'
+                desc: 'Notice how you feel.'
               },
               {
                 step: 2,
-                label: 'HopeBuddy Reflection',
-                emoji: '💬',
-                done: localStorage.getItem('hopeheart_has_reflected') === 'true',
-                desc: 'Take a quiet moment to reflect.'
+                label: 'Feel Good',
+                emoji: '🌤️',
+                done: localStorage.getItem('hopeheart_has_reflected') === 'true' || activeMoodLift !== null,
+                desc: 'Try something light first.'
               },
               {
                 step: 3,
-                label: 'Explore & Share',
-                emoji: '📓',
-                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0),
-                desc: 'Save questions or draft reflections.'
+                label: 'My Space',
+                emoji: '🌼',
+                done: (localStorage.getItem('hopeheart_private_diary') && JSON.parse(localStorage.getItem('hopeheart_private_diary') || '[]').length > 0) || (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0),
+                desc: 'Write privately or save memories.'
               },
               {
                 step: 4,
-                label: 'Memories & Resources',
-                emoji: '🌼',
-                done: (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0) || localStorage.getItem('hopeheart_has_explored_resources') === 'true',
-                desc: 'Save good moments or read gently.'
+                label: 'Optional Community',
+                emoji: '🤝',
+                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true',
+                desc: 'Browse quietly or connect when ready.'
               }
             ].map((st) => {
               return (
@@ -483,12 +483,12 @@ export default function DashboardScreen({
             <div className="space-y-1">
               <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
               <h3 className="font-display font-black text-[#2B1D12] text-[18px] leading-tight">Mood Lift</h3>
-              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Not ready to talk? Try something light first.</p>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">You don’t have to talk. Start with what feels easiest.</p>
             </div>
             <span className="text-[28px] self-start sm:self-auto">🌤️</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2.5">
             {[
               { id: 'smile', label: 'Make me smile', emoji: '😊' },
               { id: 'calm', label: 'Calm my mind', emoji: '🫧' },
@@ -526,14 +526,14 @@ export default function DashboardScreen({
                   }
                   setActiveMoodLift(activeMoodLift === option.id ? null : option.id);
                 }}
-                className={`min-h-[74px] rounded-2xl border p-2.5 text-center transition-all cursor-pointer active:scale-95 ${
+                className={`min-h-[92px] rounded-2xl border px-2.5 py-3 text-center transition-all cursor-pointer active:scale-95 flex flex-col items-center justify-center gap-1.5 ${
                   activeMoodLift === option.id
                     ? 'bg-[#FFF2EA] border-[#FF7527]/40 text-[#C75414] shadow-3xs'
                     : 'bg-[#FFFDF9] border-gray-150 text-gray-650 hover:border-orange-200 hover:bg-[#FFF8F2]'
                 }`}
               >
-                <span className="text-[20px] block mb-1">{option.emoji}</span>
-                <span className="text-[11.5px] font-display font-black leading-tight block">{option.label}</span>
+                <span className="text-[22px] leading-none block">{option.emoji}</span>
+                <span className="text-[11px] sm:text-[11.5px] font-display font-black leading-snug block max-w-[92px] mx-auto">{option.label}</span>
               </button>
             ))}
           </div>
