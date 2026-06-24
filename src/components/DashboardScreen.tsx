@@ -301,44 +301,33 @@ export default function DashboardScreen({
         </div>
       </div>
 
-      {/* Profile Completion Gentle Reminder Banner */}
-      {isProfileIncomplete && showReminder && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-          <div className="bg-gradient-to-r from-[#FFF5F0] to-[#FAF5FF] border border-[#FFD3B6]/50 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
-            <div className="flex items-center gap-3 text-left">
-              <span className="text-[24px] shrink-0">🔔</span>
-              <div className="space-y-0.5">
-                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
-                  Personalize your safe space
-                </h4>
-                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
-                  Add a few details so HopeHeart can feel more personal to you.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setShowReminder(false)}
-                type="button"
-                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
-              >
-                Add later
-              </button>
-              <button
-                onClick={onOpenProfileModal}
-                type="button"
-                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
-              >
-                Personalize
-              </button>
-            </div>
+      {/* Calm mood focus hero */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="hh-hero-surface rounded-[34px] p-6 sm:p-7 space-y-4 text-center border border-[#F4E7D8]/80">
+          <div className="space-y-2 max-w-xl mx-auto">
+            <span className="text-[34px] block">🌤️</span>
+            <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Daily Mood Check-in</span>
+            <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[30px] leading-tight">How are you feeling right now?</h1>
+            <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">Start with yourself. No pressure to share, explain, or talk before you are ready.</p>
           </div>
+          <button
+            onClick={() => {
+              const card = document.getElementById('hopebuddy-checkin-card');
+              if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            type="button"
+            className="px-5 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
+          >
+            Open mood check-in
+          </button>
         </div>
-      )}
+      </div>
 
       {/* Dynamic Checkin Feedback Banner */}
       {checkinFeedback && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
           <div className="bg-gradient-to-r from-[#F0FDF4] to-[#F5FFF6] border border-[#BBF7D0]/50 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-3xs">
             <div className="flex items-center gap-3 text-left">
               <span className="text-[24px] shrink-0">🌱</span>
@@ -365,14 +354,14 @@ export default function DashboardScreen({
       {/* Daily Mood Check-In Reminder Banner */}
       {previousMood && !hasCheckedInToday && !dismissedReminder && (
         <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-          <div className="bg-gradient-to-r from-[#FFFDF9] to-[#FDFBF7] border border-[#ECE6D9] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
+          <div className="bg-gradient-to-r from-[#FFFDF9] to-[#FDFBF7] border border-[#ECE6D9] rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-3xs">
             <div className="flex items-center gap-3 text-left">
               <span className="text-[24px] shrink-0">🌤️</span>
               <div className="space-y-0.5">
-                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                <h4 className="font-display font-black text-gray-800 text-[13px]">
                   Daily Mood Check-in
                 </h4>
-                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                <p className="text-[11px] text-gray-555 font-semibold leading-relaxed">
                   Last time, you felt <span className="font-bold text-[#FF7527]">{previousMood}</span>. How are you feeling today?
                 </p>
               </div>
@@ -402,83 +391,9 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* 💛 Gentle support path stepper */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-        <div className="bg-white/80 border border-[#EDE9DE] rounded-[24px] p-5 space-y-4 shadow-3xs backdrop-blur-xs select-none">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
-            <div>
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
-              <h4 className="font-display font-black text-gray-800 text-[14px]">
-                Your gentle support path
-              </h4>
-            </div>
-            <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
-              Start privately. Connect only when you feel ready.
-            </p>
-          </div>
-
-          {/* Steps Horizontal Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
-            {[
-              {
-                step: 1,
-                label: 'Mood Check-in',
-                emoji: '🌤️',
-                done: hasCheckedInToday,
-                desc: 'Notice how you feel.'
-              },
-              {
-                step: 2,
-                label: 'Feel Good',
-                emoji: '🌤️',
-                done: localStorage.getItem('hopeheart_has_reflected') === 'true' || activeMoodLift !== null,
-                desc: 'Try something light first.'
-              },
-              {
-                step: 3,
-                label: 'My Space',
-                emoji: '🌼',
-                done: (localStorage.getItem('hopeheart_private_diary') && JSON.parse(localStorage.getItem('hopeheart_private_diary') || '[]').length > 0) || (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0),
-                desc: 'Write privately or save memories.'
-              },
-              {
-                step: 4,
-                label: 'Optional Community',
-                emoji: '🤝',
-                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true',
-                desc: 'Browse quietly or connect when ready.'
-              }
-            ].map((st) => {
-              return (
-                <div key={st.step} className={`p-3 rounded-2xl border transition-all flex flex-col justify-between gap-1.5 ${
-                  st.done
-                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800'
-                    : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
-                }`}>
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-[12px] font-mono font-bold uppercase tracking-wider block">Step {st.step}</span>
-                    <span className="text-[14px]">
-                      {st.done ? '✅' : st.emoji}
-                    </span>
-                  </div>
-                  <div className="space-y-0.5 text-left">
-                    <h5 className="font-display font-black text-[12px] leading-tight text-gray-800">
-                      {st.label}
-                    </h5>
-                    <p className="text-[10px] text-gray-550 font-semibold leading-normal">
-                      {st.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* Mood Lift: softer first step before heavier support */}
       <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-        <div className="hh-surface rounded-[28px] p-5 space-y-4 border border-[#F4E7D8]/80">
+        <div className="hh-surface rounded-[32px] p-6 sm:p-7 space-y-5 border border-[#F4E7D8]/80">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
             <div className="space-y-1">
               <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
@@ -488,7 +403,7 @@ export default function DashboardScreen({
             <span className="text-[28px] self-start sm:self-auto">🌤️</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-2.5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
               { id: 'smile', label: 'Make me smile', emoji: '😊' },
               { id: 'calm', label: 'Calm my mind', emoji: '🫧' },
@@ -526,14 +441,14 @@ export default function DashboardScreen({
                   }
                   setActiveMoodLift(activeMoodLift === option.id ? null : option.id);
                 }}
-                className={`min-h-[92px] rounded-2xl border px-2.5 py-3 text-center transition-all cursor-pointer active:scale-95 flex flex-col items-center justify-center gap-1.5 ${
+                className={`min-h-[104px] rounded-2xl border px-3 py-4 text-center transition-all cursor-pointer active:scale-95 flex flex-col items-center justify-center gap-1.5 ${
                   activeMoodLift === option.id
                     ? 'bg-[#FFF2EA] border-[#FF7527]/40 text-[#C75414] shadow-3xs'
                     : 'bg-[#FFFDF9] border-gray-150 text-gray-650 hover:border-orange-200 hover:bg-[#FFF8F2]'
                 }`}
               >
                 <span className="text-[22px] leading-none block">{option.emoji}</span>
-                <span className="text-[11px] sm:text-[11.5px] font-display font-black leading-snug block max-w-[92px] mx-auto">{option.label}</span>
+                <span className="text-[11px] sm:text-[11.5px] font-display font-black leading-snug block max-w-[120px] mx-auto">{option.label}</span>
               </button>
             ))}
           </div>
@@ -585,18 +500,134 @@ export default function DashboardScreen({
         </div>
       </div>
 
+      {/* 💛 Gentle support path stepper */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="bg-white/70 border border-[#EDE9DE] rounded-[24px] p-4 space-y-3 shadow-3xs backdrop-blur-xs select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+            <div>
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
+              <h4 className="font-display font-black text-gray-800 text-[14px]">
+                Your gentle support path
+              </h4>
+            </div>
+            <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
+              Start privately. Connect only when you feel ready.
+            </p>
+          </div>
+
+          {/* Steps Horizontal Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
+            {[
+              {
+                step: 1,
+                label: 'Mood Check-in',
+                emoji: '🌤️',
+                done: hasCheckedInToday,
+                desc: 'Notice how you feel.'
+              },
+              {
+                step: 2,
+                label: 'Feel Good',
+                emoji: '🌤️',
+                done: localStorage.getItem('hopeheart_has_reflected') === 'true' || activeMoodLift !== null,
+                desc: 'Try something light first.'
+              },
+              {
+                step: 3,
+                label: 'My Space',
+                emoji: '🌼',
+                done: (localStorage.getItem('hopeheart_private_diary') && JSON.parse(localStorage.getItem('hopeheart_private_diary') || '[]').length > 0) || (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0),
+                desc: 'Write privately or save memories.'
+              },
+              {
+                step: 4,
+                label: 'Optional Community',
+                emoji: '🤝',
+                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true',
+                desc: 'Browse quietly or connect when ready.'
+              }
+            ].map((st) => {
+              return (
+                <div key={st.step} className={`p-2.5 rounded-2xl border transition-all flex flex-col justify-between gap-1 ${
+                  st.done
+                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800'
+                    : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
+                }`}>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[12px] font-mono font-bold uppercase tracking-wider block">Step {st.step}</span>
+                    <span className="text-[14px]">
+                      {st.done ? '✅' : st.emoji}
+                    </span>
+                  </div>
+                  <div className="space-y-0.5 text-left">
+                    <h5 className="font-display font-black text-[12px] leading-tight text-gray-800">
+                      {st.label}
+                    </h5>
+                    <p className="text-[10px] text-gray-550 font-semibold leading-normal">
+                      {st.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Profile Completion Gentle Reminder Banner */}
+      {isProfileIncomplete && showReminder && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#FFF5F0]/85 to-[#FAF5FF]/85 border border-[#FFD3B6]/40 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[20px] shrink-0">🔔</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Personalize your safe space
+                </h4>
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                  Add a few details so HopeHeart can feel more personal to you.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setShowReminder(false)}
+                type="button"
+                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
+              >
+                Add later
+              </button>
+              <button
+                onClick={onOpenProfileModal}
+                type="button"
+                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
+              >
+                Personalize
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
 
           {/* Component 1: 🧡 HopeBuddy Check-In Card */}
-          <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🧡</span>
-                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider uppercase">
-                  HopeBuddy Companion
-                </span>
+          <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[36px] p-6 sm:p-7 flex flex-col justify-between space-y-5 col-span-1 sm:col-span-2 lg:col-span-3">
+            <div className="space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🧡</span>
+                  <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider uppercase">
+                    Daily Mood Check-in
+                  </span>
+                </div>
+                <span className="text-[11px] text-gray-400 font-bold">Private to you</span>
+              </div>
+              <div className="space-y-1 text-center sm:text-left">
+                <h2 className="font-display font-black text-[#2B1D12] text-[23px] sm:text-[28px] leading-tight">How are you feeling right now?</h2>
+                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Choose the closest feeling. You can keep it private and move at your own pace.</p>
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="p-3 bg-[#FFFDF9] border border-dashed border-[#EDE9DE] rounded-2xl shadow-inner shrink-0">
@@ -760,30 +791,6 @@ export default function DashboardScreen({
             </div>
           </div>
 
-          {/* Component 2: 🛡️ Safety Guardrails Card */}
-          <motion.button
-            onClick={() => onNavigateTo('ai-safety')}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <SafetyIllustration />
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Safety Guardrails
-                </h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  AI helps keep conversations safe, respectful, and free from medical advice.
-                </p>
-              </div>
-            </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              View Rules & Guide →
-            </span>
-          </motion.button>
-
           {/* Component 3: 🌤️ Feel Good Card */}
           <motion.button
             onClick={() => onNavigateTo(ScreenId.FeelGood)}
@@ -880,6 +887,30 @@ export default function DashboardScreen({
               <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready. You can also just browse quietly.</p>
             </div>
             <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Browse Quietly →</span>
+          </motion.button>
+
+          {/* Component 2: 🛡️ Safety Guardrails Card */}
+          <motion.button
+            onClick={() => onNavigateTo('ai-safety')}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <SafetyIllustration />
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Safety Guardrails
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  AI helps keep conversations safe, respectful, and free from medical advice.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
+              View Rules & Guide →
+            </span>
           </motion.button>
 
           {/* Component 5: 🛟 Help & Support Card */}
