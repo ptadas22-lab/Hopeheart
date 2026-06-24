@@ -9,6 +9,11 @@ import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
 // import ProfileSetupScreen from './components/ProfileSetupScreen';
 import DashboardScreen from './components/DashboardScreen';
+import FeelGoodScreen from './components/FeelGoodScreen';
+import MoodScreen from './components/MoodScreen';
+import MySpaceScreen from './components/MySpaceScreen';
+import CommunityScreen from './components/CommunityScreen';
+import ResourcesScreen from './components/ResourcesScreen';
 import HopeBuddyChatScreen from './components/HopeBuddyChatScreen';
 import ListenerMatchScreen from './components/ListenerMatchScreen';
 import SupportRoomsScreen from './components/SupportRoomsScreen';
@@ -894,18 +899,41 @@ export default function App() {
         );
 
       case ScreenId.DoctorSuggestions:
-      case ScreenId.ProfessionalProfile:
-      case ScreenId.BookCare:
-      case ScreenId.SaveQuestions:
         return (
-          <CareBridgeScreen 
+          <ResourcesScreen
+            onBack={() => setCurrentScreen(ScreenId.Home)}
+          />
+        );
+
+      case ScreenId.FeelGood:
+        return (
+          <FeelGoodScreen
             onBack={() => setCurrentScreen(ScreenId.Home)}
             onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
-            savedQuestions={savedQuestions}
-            onAddQuestion={handleAddQuestion}
-            onDeleteQuestion={handleDeleteQuestion}
-            onCategorySelected={openSupportPopup}
-            isProfileCompleted={isProfileCompleted}
+          />
+        );
+
+      case ScreenId.Mood:
+        return (
+          <MoodScreen
+            onBack={() => setCurrentScreen(ScreenId.Home)}
+            selectedMood={selectedMood}
+            checkinCount={checkinCount}
+          />
+        );
+
+      case ScreenId.MySpace:
+        return (
+          <MySpaceScreen
+            onBack={() => setCurrentScreen(ScreenId.Home)}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+          />
+        );
+
+      case ScreenId.Community:
+        return (
+          <CommunityScreen
+            onBack={() => setCurrentScreen(ScreenId.Home)}
           />
         );
 
@@ -999,7 +1027,9 @@ export default function App() {
 
   // Nav highlighting helper states
   const isHomeActive = currentScreen === ScreenId.Home;
-  const isSupportActive = currentScreen === ScreenId.SupportRooms || currentScreen === ScreenId.SafeListener || currentScreen === ScreenId.SafeChat || currentScreen === ScreenId.RoomDetail || currentScreen === ScreenId.ShareSafely || currentScreen === ScreenId.MomentShare || currentScreen === ScreenId.NearbyAccess || currentScreen === ScreenId.NearbyResults || currentScreen === ScreenId.CommunityDetail || currentScreen === ScreenId.MeetSafely;
+  const isFeelGoodActive = currentScreen === ScreenId.FeelGood;
+  const isMoodActive = currentScreen === ScreenId.Mood;
+  const isMySpaceActive = currentScreen === ScreenId.MySpace || currentScreen === ScreenId.ShareSafely || currentScreen === ScreenId.MomentShare;
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
   const isSafetyActive = currentScreen === ScreenId.AISafety;
  
@@ -1045,12 +1075,28 @@ export default function App() {
                 <span>🏡</span> Home
               </button>
               <button
-                onClick={() => setCurrentScreen(ScreenId.SafeListener)}
+                onClick={() => setCurrentScreen(ScreenId.FeelGood)}
                 className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isSupportActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  isFeelGoodActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🤝</span> Community
+                <span>🌤️</span> Feel Good
+              </button>
+              <button
+                onClick={() => setCurrentScreen(ScreenId.Mood)}
+                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isMoodActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <span>🧡</span> Mood
+              </button>
+              <button
+                onClick={() => setCurrentScreen(ScreenId.MySpace)}
+                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isMySpaceActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <span>🌼</span> My Space
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.DoctorSuggestions)}
@@ -1061,12 +1107,20 @@ export default function App() {
                 <span>🩺</span> Resources
               </button>
               <button
-                onClick={() => setCurrentScreen(ScreenId.AISafety)}
+                onClick={() => setCurrentScreen(ScreenId.Community)}
                 className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isSafetyActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  currentScreen === ScreenId.Community ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🛡️</span> Safety
+                <span>🤝</span> Community
+              </button>
+              <button
+                onClick={() => setCurrentScreen(ScreenId.Profile)}
+                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
+                  currentScreen === ScreenId.Profile ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <span>👤</span> Profile
               </button>
             </nav>
 
@@ -1151,58 +1205,75 @@ export default function App() {
               <span className="text-[17px] mb-0.5 select-none leading-none">🏡</span>
               <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Home</span>
               {isHomeActive && (
-                <motion.div 
+                <motion.div
                   layoutId="activeTabIndicator"
                   className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
                 />
               )}
             </button>
 
-            {/* Tab 2: Support */}
+            {/* Tab 2: Feel Good */}
             <button
-              onClick={() => setCurrentScreen(ScreenId.SafeListener)}
+              onClick={() => setCurrentScreen(ScreenId.FeelGood)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isSupportActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
+                isFeelGoodActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              <span className="text-[17px] mb-0.5 select-none leading-none">🤝</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Community</span>
-              {isSupportActive && (
-                <motion.div 
+              <span className="text-[17px] mb-0.5 select-none leading-none">🌤️</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Feel Good</span>
+              {isFeelGoodActive && (
+                <motion.div
                   layoutId="activeTabIndicator"
                   className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
                 />
               )}
             </button>
  
-            {/* Tab 4: Care */}
+            {/* Tab 3: Mood */}
             <button
-              onClick={() => setCurrentScreen(ScreenId.DoctorSuggestions)}
+              onClick={() => setCurrentScreen(ScreenId.Mood)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isCareActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
+                isMoodActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              <span className="text-[17px] mb-0.5 select-none leading-none">🩺</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Resources</span>
-              {isCareActive && (
-                <motion.div 
+              <span className="text-[17px] mb-0.5 select-none leading-none">🧡</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Mood</span>
+              {isMoodActive && (
+                <motion.div
                   layoutId="activeTabIndicator"
                   className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
                 />
               )}
             </button>
  
-            {/* Tab 5: Safety */}
+            {/* Tab 4: My Space */}
             <button
-              onClick={() => setCurrentScreen(ScreenId.AISafety)}
+              onClick={() => setCurrentScreen(ScreenId.MySpace)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isSafetyActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
+                isMySpaceActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
-              <span className="text-[17px] mb-0.5 select-none leading-none">🛡️</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Safety</span>
-              {isSafetyActive && (
-                <motion.div 
+              <span className="text-[17px] mb-0.5 select-none leading-none">🌼</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">My Space</span>
+              {isMySpaceActive && (
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
+                />
+              )}
+            </button>
+
+            {/* Tab 5: Profile */}
+            <button
+              onClick={() => setCurrentScreen(ScreenId.Profile)}
+              className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
+                currentScreen === ScreenId.Profile ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              <span className="text-[17px] mb-0.5 select-none leading-none">👤</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Profile</span>
+              {currentScreen === ScreenId.Profile && (
+                <motion.div
                   layoutId="activeTabIndicator"
                   className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
                 />

@@ -367,7 +367,7 @@ export default function ProfileUtilityScreen({
                   <div className="bg-emerald-50 border border-emerald-250 p-4 rounded-2xl space-y-2 text-center">
                     <span className="text-emerald-800 font-extrabold text-[13px] block">✓ Trust Badge Earned</span>
                     <p className="text-[11.5px] text-emerald-700 font-medium leading-relaxed">
-                      You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge to other community members.
+                      You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge in HopeHeart spaces.
                     </p>
                   </div>
                 ) : (
@@ -458,13 +458,21 @@ export default function ProfileUtilityScreen({
                 {[
                   { 
                     label: 'Saved Questions & Resources', 
-                    detail: 'View saved care questions, stories, guides, and resources.', 
-                    action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") 
+                    detail: 'View saved care questions, guides, and resources.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.DoctorSuggestions);
+                      }
+                    }
                   },
                   { 
                     label: 'Account & Login', 
-                    detail: 'Review login method, backup details, and account preferences.', 
-                    action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") 
+                    detail: 'Review your sign-in method and account help options.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.CustomerSupport);
+                      }
+                    }
                   },
                   { 
                     label: 'Privacy & Safety Controls', 
@@ -472,6 +480,15 @@ export default function ProfileUtilityScreen({
                     action: () => setSubStage('privacy') 
                   },
                   { 
+                    label: 'Optional Community',
+                    detail: 'Browse quietly or connect only when you feel ready.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.Community);
+                      }
+                    }
+                  },
+                  {
                     label: 'Customer Support', 
                     detail: 'Contact our support team for account, privacy, safety, or app-related issues.', 
                     action: () => {
@@ -794,9 +811,9 @@ export default function ProfileUtilityScreen({
                 {/* Toggle 3: Support activity */}
                 <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
                   <div className="space-y-0.5 max-w-[75%]">
-                    <span className="text-[13px] font-bold text-gray-800 block">💬 Show support room activity</span>
+                    <span className="text-[13px] font-bold text-gray-800 block">💬 Show shared activity</span>
                     <p className="text-[11px] text-gray-455 font-semibold leading-normal">
-                      Allows others to see when you reply inside support rooms.
+                      Allows shared HopeHeart activity indicators where available.
                     </p>
                   </div>
                   <button
