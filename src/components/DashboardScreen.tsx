@@ -373,12 +373,12 @@ export default function DashboardScreen({
                 </button>
               </div>
 
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
-                  { title: 'Feel better', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
-                  { title: 'Write privately', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
-                  { title: 'Remember myself', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
-                  { title: 'Get help', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) }
+                  { title: 'Feel better', description: 'Small steps to lift your mood.', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
+                  { title: 'Write privately', description: 'Let it out in a safe space.', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Remember myself', description: 'Reconnect with what matters.', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Get help', description: 'Reach out when you need support.', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) }
                 ].map((item) => (
                   <button
                     key={item.title}
@@ -387,27 +387,34 @@ export default function DashboardScreen({
                       setShowShortcutSheet(false);
                       item.action();
                     }}
-                    className="min-h-[78px] rounded-2xl bg-[#FFF8F2] hover:bg-[#FFF2EA] border border-orange-100/80 flex flex-col items-center justify-center gap-1.5 text-center cursor-pointer transition-all active:scale-95 px-2"
+                    className="min-h-[112px] rounded-2xl bg-[#FFF8F2] hover:bg-[#FFF2EA] border border-orange-100/80 shadow-3xs flex items-start gap-3 text-left cursor-pointer transition-all active:scale-[0.98] p-3.5 group"
                   >
-                    <span className="text-[24px] leading-none">{item.icon}</span>
-                    <span className="text-[10.5px] font-display font-black text-gray-700 leading-tight">{item.title}</span>
+                    <span className="w-10 h-10 rounded-full bg-white border border-orange-100 flex items-center justify-center text-[21px] leading-none shrink-0">{item.icon}</span>
+                    <span className="flex-1 min-w-0 space-y-1">
+                      <span className="block text-[13px] font-display font-black text-gray-800 leading-tight">{item.title}</span>
+                      <span className="block text-[11.5px] text-gray-500 font-semibold leading-relaxed">{item.description}</span>
+                    </span>
+                    <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors pt-1">→</span>
                   </button>
                 ))}
               </div>
 
-              <div className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-2 text-center">
-                <p className="text-[11px] text-gray-500 font-semibold leading-relaxed">
-                  Community: Connect only when you feel ready. You can also just browse quietly.
-                </p>
+              <div className="bg-white/75 border border-orange-100/70 rounded-2xl p-3.5 space-y-2 text-left shadow-3xs">
+                <div className="space-y-1">
+                  <h3 className="text-[12.5px] font-display font-black text-gray-800 leading-tight">Community is optional.</h3>
+                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                    Browse quietly if you want. You’re in control. No pressure to post or reply.
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
                     setShowShortcutSheet(false);
                     onNavigateTo(ScreenId.Community);
                   }}
-                  className="text-[11px] font-display font-black text-[#C75414] hover:underline cursor-pointer"
+                  className="text-[11.5px] font-display font-black text-[#C75414] hover:underline cursor-pointer"
                 >
-                  Browse optional community
+                  Browse optional community →
                 </button>
               </div>
             </motion.div>
