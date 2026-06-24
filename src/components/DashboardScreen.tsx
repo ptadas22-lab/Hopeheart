@@ -116,6 +116,20 @@ export default function DashboardScreen({
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
 
+  const handleContinueLastPrivateSpace = () => {
+    if (localStorage.getItem('hopeheart_has_explored_resources') === 'true') {
+      onNavigateTo(ScreenId.DoctorSuggestions);
+      return;
+    }
+
+    if (localStorage.getItem('hopeheart_has_joined_room') === 'true') {
+      onNavigateTo(ScreenId.Community);
+      return;
+    }
+
+    onNavigateTo(ScreenId.MySpace);
+  };
+
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
   const [isHumming, setIsHumming] = useState(false);
@@ -474,6 +488,32 @@ export default function DashboardScreen({
 
       {/* Calm lower Home cards */}
       <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <button
+            onClick={() => onNavigateTo(ScreenId.MySpace)}
+            type="button"
+            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
+          >
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Today’s gentle suggestion</h4>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Write one line about what your heart needs today.</p>
+            </div>
+            <span className="text-[11px] font-display font-black text-[#C75414]">Open My Space →</span>
+          </button>
+
+          <button
+            onClick={handleContinueLastPrivateSpace}
+            type="button"
+            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
+          >
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Continue where you left off</h4>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Return to your last private space when you’re ready.</p>
+            </div>
+            <span className="text-[11px] font-display font-black text-[#C75414]">Continue →</span>
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button
             onClick={() => onNavigateTo(ScreenId.MySpace)}
