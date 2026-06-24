@@ -127,33 +127,108 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
         <span className="text-[20px] select-none">🌼</span>
       </div>
 
-      <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 lg:p-8 space-y-5">
-        <div className="hh-hero-surface rounded-[32px] p-5 text-center space-y-2">
-          <h2 className="font-display font-black text-[#2B1D12] text-[22px] leading-tight">Private space for you</h2>
-          <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Diary, memories, photos, and Remember Me data stay local for this MVP and are not shared with Community.</p>
+      <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 space-y-5">
+        <div className="hh-hero-surface rounded-[32px] p-5 sm:p-6 text-left overflow-hidden relative">
+          <div className="absolute -top-12 -right-10 w-32 h-32 bg-[#FFB98A]/20 rounded-full blur-2xl" />
+          <div className="absolute -bottom-14 -left-10 w-36 h-36 bg-[#F8C8DC]/20 rounded-full blur-2xl" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="w-14 h-14 rounded-3xl bg-white/80 border border-orange-100 flex items-center justify-center text-[28px] shrink-0 shadow-3xs">🔒</div>
+            <div className="space-y-1">
+              <h2 className="font-display font-black text-[#2B1D12] text-[22px] leading-tight">Private space for you</h2>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Diary, memories, photos, and Remember Me data stay local for this MVP and are not shared with Community.</p>
+            </div>
+          </div>
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Private Diary</h3>
-          <input value={diaryTitle} onChange={(e) => setDiaryTitle(e.target.value)} placeholder="Title optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <input value={diaryMood} onChange={(e) => setDiaryMood(e.target.value)} placeholder="Mood optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <textarea value={diaryText} onChange={(e) => setDiaryText(e.target.value)} rows={4} placeholder="Write privately..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
-          <button onClick={saveDiary} type="button" className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save diary entry</button>
+        <div className="hh-surface rounded-3xl p-5 space-y-4">
+          <div className="space-y-1">
+            <h3 className="font-display font-black text-gray-800 text-[16px]">Private Diary</h3>
+            <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Write freely. Your words stay with you.</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {[
+              ['📝', 'Start a new entry', 'Write whatever is on your mind.'],
+              ['🔒', '100% private', 'Only you can see your diary.'],
+              ['🌿', 'Keep it in the moment', 'Capture your thoughts, feelings, and moments.']
+            ].map(([icon, title, text]) => (
+              <div key={title} className="bg-[#FFFDF9] border border-orange-100/70 rounded-2xl p-3 space-y-1.5">
+                <span className="text-[18px] block">{icon}</span>
+                <h4 className="text-[11.5px] font-display font-black text-gray-800 leading-tight">{title}</h4>
+                <p className="text-[10.5px] text-gray-500 font-semibold leading-relaxed">{text}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white/70 border border-orange-100/60 rounded-2xl p-3.5 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <label className="space-y-1">
+                <span className="text-[11px] font-display font-black text-gray-700">Title optional</span>
+                <input value={diaryTitle} onChange={(e) => setDiaryTitle(e.target.value)} placeholder="A quiet title..." className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+              </label>
+              <label className="space-y-1">
+                <span className="text-[11px] font-display font-black text-gray-700">Mood optional</span>
+                <input value={diaryMood} onChange={(e) => setDiaryMood(e.target.value)} placeholder="How it feels..." className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+              </label>
+            </div>
+            <label className="space-y-1 block">
+              <span className="text-[11px] font-display font-black text-gray-700">Write privately</span>
+              <textarea value={diaryText} onChange={(e) => setDiaryText(e.target.value)} rows={4} placeholder="Let your thoughts land here..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
+            </label>
+            <button onClick={saveDiary} type="button" className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save diary entry</button>
+          </div>
           {diaryEntries.slice(0, 2).map((entry) => <p key={entry.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{entry.title || 'Untitled'} — {new Date(entry.savedAt).toLocaleString()}</p>)}
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Memories</h3>
-          <input value={memoryTitle} onChange={(e) => setMemoryTitle(e.target.value)} placeholder="Memory title" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <textarea value={memoryStory} onChange={(e) => setMemoryStory(e.target.value)} rows={4} placeholder="Memory story" className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input value={memoryType} onChange={(e) => setMemoryType(e.target.value)} placeholder="Memory type" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryDateOrAge} onChange={(e) => setMemoryDateOrAge(e.target.value)} placeholder="Date or age optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryPeople} onChange={(e) => setMemoryPeople(e.target.value)} placeholder="People optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryPlace} onChange={(e) => setMemoryPlace(e.target.value)} placeholder="Place optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryFeeling} onChange={(e) => setMemoryFeeling(e.target.value)} placeholder="Feeling connected to memory" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryWhy} onChange={(e) => setMemoryWhy(e.target.value)} placeholder="Why this memory matters" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+        <div className="hh-surface rounded-3xl p-5 space-y-4">
+          <div className="space-y-1">
+            <h3 className="font-display font-black text-gray-800 text-[16px]">Memories</h3>
+            <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Capture moments that matter to you.</p>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Memory title</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Name this moment.</span>
+              <input value={memoryTitle} onChange={(e) => setMemoryTitle(e.target.value)} placeholder="Memory title" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Small good moment</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Choose or describe the memory type.</span>
+              <input value={memoryType} onChange={(e) => setMemoryType(e.target.value)} placeholder="Memory type" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="sm:col-span-2 bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Your memory</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Write the story in your own words.</span>
+              <textarea value={memoryStory} onChange={(e) => setMemoryStory(e.target.value)} rows={4} placeholder="Memory story" className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
+            </label>
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Date or age</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Optional, if you remember.</span>
+              <input value={memoryDateOrAge} onChange={(e) => setMemoryDateOrAge(e.target.value)} placeholder="Date or age optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">People</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Who was part of it?</span>
+              <input value={memoryPeople} onChange={(e) => setMemoryPeople(e.target.value)} placeholder="People optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Place</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">Where did it happen?</span>
+              <input value={memoryPlace} onChange={(e) => setMemoryPlace(e.target.value)} placeholder="Place optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Feeling connected to memory</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">What feeling does it bring?</span>
+              <input value={memoryFeeling} onChange={(e) => setMemoryFeeling(e.target.value)} placeholder="Feeling connected to memory" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+            <label className="sm:col-span-2 bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+              <span className="text-[11px] font-display font-black text-gray-700">Why this memory matters</span>
+              <span className="block text-[10.5px] text-gray-400 font-semibold">A sentence is enough.</span>
+              <input value={memoryWhy} onChange={(e) => setMemoryWhy(e.target.value)} placeholder="Why this memory matters" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+            </label>
+          </div>
+
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImagePreview(e.target.files?.[0])} />
           {imagePreview && <div className="rounded-2xl overflow-hidden border border-gray-150"><img src={imagePreview} alt="Local-only memory preview" className="w-full max-h-56 object-cover" /><p className="text-[10.5px] text-gray-400 font-bold p-2 text-center">Preview only — not uploaded.</p></div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -163,26 +238,39 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
           {memories.slice(0, 2).map((memory) => <p key={memory.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{memory.title} — {memory.type}</p>)}
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Remember Me</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="hh-surface rounded-3xl p-5 space-y-4">
+          <div className="space-y-1">
+            <h3 className="font-display font-black text-gray-800 text-[16px]">Remember Me</h3>
+            <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Revisit what makes you, you.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              ['My strengths', strengths, setStrengths],
-              ['My interests', interests, setInterests],
-              ['Things that calm me', calmingThings, setCalmingThings],
-              ['Favourite food', favoriteFood, setFavoriteFood],
-              ['Favourite music', favoriteMusic, setFavoriteMusic],
-              ['Favourite comfort activity', comfortActivity, setComfortActivity],
-              ['Safe place', safePlace, setSafePlace],
-              ['Memory that reminds me I survived', survivalMemory, setSurvivalMemory]
-            ].map(([label, value, setter]) => (
-              <input key={label as string} value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} placeholder={label as string} className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+              ['My strengths', 'What helps you keep going?', strengths, setStrengths],
+              ['My interests', 'Things that feel like you.', interests, setInterests],
+              ['Things that calm me', 'Small comforts that help.', calmingThings, setCalmingThings],
+              ['Favourite food', 'A taste that comforts you.', favoriteFood, setFavoriteFood],
+              ['Favourite music', 'Sounds that feel safe.', favoriteMusic, setFavoriteMusic],
+              ['Favourite comfort activity', 'Something gentle you like.', comfortActivity, setComfortActivity],
+              ['Safe place', 'A place your mind can rest.', safePlace, setSafePlace],
+              ['Memory that reminds me I survived', 'A reminder of your strength.', survivalMemory, setSurvivalMemory]
+            ].map(([label, helper, value, setter]) => (
+              <label key={label as string} className="bg-white/70 border border-orange-100/60 rounded-2xl p-3 space-y-1">
+                <span className="text-[11px] font-display font-black text-gray-700">{label as string}</span>
+                <span className="block text-[10.5px] text-gray-400 font-semibold">{helper as string}</span>
+                <input value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} placeholder={label as string} className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+              </label>
             ))}
           </div>
           <button onClick={saveRememberMe} type="button" className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save Remember Me</button>
         </div>
 
-        <button onClick={() => onNavigateTo(ScreenId.DoctorSuggestions)} type="button" className="w-full py-3 bg-white hover:bg-[#FFF8F2] border border-orange-100 rounded-2xl text-[#FF7527] font-display font-black text-[13px] cursor-pointer">Open Gentle Resources</button>
+        <button onClick={() => onNavigateTo(ScreenId.DoctorSuggestions)} type="button" className="w-full bg-white hover:bg-[#FFF8F2] border border-orange-100 rounded-2xl p-4 text-left cursor-pointer transition-all flex items-center justify-between gap-3">
+          <span>
+            <span className="block text-[13px] text-[#FF7527] font-display font-black">Open Gentle Resources</span>
+            <span className="block text-[11.5px] text-gray-500 font-semibold leading-relaxed">Explore calming and supportive resources.</span>
+          </span>
+          <span className="text-[#FF7527] font-black">→</span>
+        </button>
       </div>
     </div>
   );
