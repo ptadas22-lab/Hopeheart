@@ -115,6 +115,7 @@ export default function DashboardScreen({
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
   const [activeMoodLift, setActiveMoodLift] = useState<string | null>(null);
+  const [showShortcutSheet, setShowShortcutSheet] = useState(false);
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -307,57 +308,98 @@ export default function DashboardScreen({
           <div className="space-y-2 max-w-xl mx-auto">
             <span className="text-[34px] block">🌤️</span>
             <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Daily Mood Check-in</span>
-            <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[30px] leading-tight">How are you feeling right now?</h1>
-            <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">Start with yourself. No pressure to share, explain, or talk before you are ready.</p>
+            <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[30px] leading-tight">How is your heart today?</h1>
+            <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">No need to explain. Just check in with yourself.</p>
           </div>
-          <button
-            onClick={() => {
-              const card = document.getElementById('hopebuddy-checkin-card');
-              if (card) {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }}
-            type="button"
-            className="px-5 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
-          >
-            Open mood check-in
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            <button
+              onClick={() => {
+                const card = document.getElementById('hopebuddy-checkin-card');
+                if (card) {
+                  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }}
+              type="button"
+              className="px-5 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
+            >
+              Check in gently
+            </button>
+            <button
+              onClick={() => setShowShortcutSheet(true)}
+              type="button"
+              className="px-5 py-2.5 bg-white/85 hover:bg-[#FFF8F2] border border-orange-100 text-[#C75414] rounded-2xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
+            >
+              Need something small?
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Home hub shortcuts */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
-        <div className="hh-surface rounded-[30px] p-5 sm:p-6 space-y-4 border border-[#F4E7D8]/80">
-          <div className="space-y-1 text-center sm:text-left">
-            <h2 className="font-display font-black text-[#2B1D12] text-[19px] leading-tight">What do you need right now?</h2>
-            <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Choose one small thing. No pressure.</p>
-          </div>
-          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-3 sm:gap-3.5">
-            {[
-              { title: 'Mood', helper: 'Feel', icon: '🌤️', action: () => onNavigateTo(ScreenId.Mood) },
-              { title: 'Feel Good', helper: 'Light', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
-              { title: 'Write privately', helper: 'Private', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Memories', helper: 'Save', icon: '🌸', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Remember Me', helper: 'Strengths', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Gentle Resources', helper: 'Read', icon: '📚', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
-              { title: 'Safety', helper: 'Support', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) },
-              { title: 'Optional Community', helper: 'Browse', icon: '🤝', action: () => onNavigateTo(ScreenId.Community) }
-            ].map((item) => (
-              <button
-                key={item.title}
-                type="button"
-                onClick={item.action}
-                className="min-h-[92px] bg-[#FFFDF9] hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl px-2.5 py-3 text-center transition-all cursor-pointer active:scale-[0.98] flex flex-col items-center justify-center gap-1.5 shadow-3xs"
-                aria-label={item.title}
-              >
-                <span className="text-[25px] leading-none">{item.icon}</span>
-                <span className="font-display font-black text-gray-800 text-[10.5px] sm:text-[11px] leading-tight">{item.title}</span>
-                <span className="text-[9px] text-gray-400 font-bold leading-none hidden sm:block">{item.helper}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <AnimatePresence>
+        {showShortcutSheet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2B1D12]/30 backdrop-blur-[3px] flex items-end sm:items-center justify-center p-3 sm:p-5"
+            onClick={() => setShowShortcutSheet(false)}
+          >
+            <motion.div
+              initial={{ y: 28, scale: 0.98, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 18, scale: 0.98, opacity: 0 }}
+              transition={{ type: 'spring', damping: 24, stiffness: 240 }}
+              className="w-full max-w-md bg-[#FFFDF9] border border-orange-100 rounded-t-[30px] sm:rounded-[30px] p-5 shadow-xl space-y-4"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <h2 className="font-display font-black text-[#2B1D12] text-[19px] leading-tight">What would help right now?</h2>
+                  <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Pick one small thing. No pressure.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowShortcutSheet(false)}
+                  className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 flex items-center justify-center text-[12px] font-black cursor-pointer"
+                  aria-label="Close shortcuts"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-4 gap-3">
+                {[
+                  { title: 'Mood', icon: '🌤️', action: () => onNavigateTo(ScreenId.Mood) },
+                  { title: 'Feel Good', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
+                  { title: 'Write', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Memories', icon: '🌸', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Strengths', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Resources', icon: '📚', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
+                  { title: 'Safety', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) },
+                  { title: 'Community', icon: '🤝', action: () => onNavigateTo(ScreenId.Community) }
+                ].map((item) => (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => {
+                      setShowShortcutSheet(false);
+                      item.action();
+                    }}
+                    className="min-h-[74px] rounded-2xl bg-[#FFF8F2] hover:bg-[#FFF2EA] border border-orange-100/80 flex flex-col items-center justify-center gap-1.5 text-center cursor-pointer transition-all active:scale-95"
+                  >
+                    <span className="text-[24px] leading-none">{item.icon}</span>
+                    <span className="text-[10.5px] font-display font-black text-gray-700 leading-tight">{item.title}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-[11px] text-gray-500 font-semibold leading-relaxed bg-white/70 border border-orange-100/60 rounded-2xl p-3 text-center">
+                Community: Connect only when you feel ready. You can also just browse quietly.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Dynamic Checkin Feedback Banner */}
       {checkinFeedback && (
