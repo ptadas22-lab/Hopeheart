@@ -473,7 +473,7 @@ export default function DashboardScreen({
       </div>
 
       {/* Calm lower Home cards */}
-      <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1">
+      <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 flex-1">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button
             onClick={() => onNavigateTo(ScreenId.MySpace)}
@@ -516,6 +516,35 @@ export default function DashboardScreen({
               <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready.</p>
             </div>
           </motion.button>
+        </div>
+
+        <div className="mt-4 hh-surface rounded-[24px] p-4 border border-[#F1E7D8] bg-white/70 space-y-3">
+          <div className="space-y-0.5">
+            <h3 className="font-display font-black text-gray-800 text-[14px] leading-tight">Need help or information?</h3>
+            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Support, safety, and privacy are always nearby.</p>
+          </div>
+          <div className="divide-y divide-orange-100/60">
+            {[
+              { icon: '🛟', title: 'Customer Support', text: 'Reach out if you need help using HopeHeart.', action: () => onNavigateTo(ScreenId.CustomerSupport) },
+              { icon: '🛡️', title: 'Safety Guide', text: 'Know what HopeHeart can and cannot do.', action: () => onNavigateTo(ScreenId.AISafety) },
+              { icon: '📚', title: 'Comfort Resources', text: 'Read gentle support when you feel ready.', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
+              { icon: '🔒', title: 'Privacy & Data Protection', text: 'Manage your privacy and data choices.', action: () => onNavigateTo(ScreenId.PrivacySettings) }
+            ].map((item) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={item.action}
+                className="w-full py-3 flex items-center gap-3 text-left cursor-pointer group"
+              >
+                <span className="w-8 h-8 rounded-full bg-[#FFF8F2] border border-orange-100 flex items-center justify-center text-[15px] shrink-0">{item.icon}</span>
+                <span className="flex-1 min-w-0">
+                  <span className="block font-display font-black text-gray-800 text-[12.5px] leading-tight">{item.title}</span>
+                  <span className="block text-[11px] text-gray-500 font-semibold leading-relaxed">{item.text}</span>
+                </span>
+                <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors">→</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <button
