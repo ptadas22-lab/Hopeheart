@@ -134,7 +134,10 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="w-14 h-14 rounded-3xl bg-white/80 border border-orange-100 flex items-center justify-center text-[28px] shrink-0 shadow-3xs">🔒</div>
             <div className="space-y-1">
-              <h2 className="font-display font-black text-[#2B1D12] text-[22px] leading-tight">Private space for you</h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="font-display font-black text-[#2B1D12] text-[22px] leading-tight">Private space for you</h2>
+                <span className="px-2 py-0.5 rounded-full bg-[#FFF8F2] border border-orange-100 text-[10px] font-mono font-black text-[#C75414] uppercase tracking-wider">Updated My Space</span>
+              </div>
               <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Diary, memories, photos, and Remember Me data stay local for this MVP and are not shared with Community.</p>
             </div>
           </div>
