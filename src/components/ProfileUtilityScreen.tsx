@@ -10,6 +10,7 @@ interface ProfileUtilityScreenProps {
   onChangeName: (newName: string) => void;
   initialSubStage?: 'profile' | 'privacy';
   onNavigateTo?: (screenId: ScreenId) => void;
+  onRequestAccountDataDeletion?: () => void;
   checkinCount?: number;
 }
 
@@ -19,6 +20,7 @@ export default function ProfileUtilityScreen({
   onChangeName, 
   initialSubStage, 
   onNavigateTo,
+  onRequestAccountDataDeletion,
   checkinCount
 }: ProfileUtilityScreenProps) {
   const [subStage, setSubStage] = useState<'profile' | 'edit-profile' | 'privacy'>(
@@ -75,6 +77,35 @@ export default function ProfileUtilityScreen({
   const [useApproximateNearby, setUseApproximateNearby] = useState<boolean>(true);
   const [allowStorySharing, setAllowStorySharing] = useState<boolean>(true);
   const [hideNearbySuggestions, setHideNearbySuggestions] = useState<boolean>(false);
+  const [showDeleteLocalDataModal, setShowDeleteLocalDataModal] = useState<boolean>(false);
+
+  const dataProtectionLocalStorageKeys = [
+    'hopeheart_last_checkin_mood',
+    'hopeheart_last_checkin_date',
+    'hopeheart_checkin_count',
+    'hopeheart_saved_reflections',
+    'hopeheart_care_questions',
+    'hopeheart_saved_resources',
+    'hopeheart_pending_support_requests',
+    'hopeheart_pending_safety_concerns',
+    'hopeheart_whatsapp_reminders_enabled',
+    'hopeheart_whatsapp_number',
+    'hopeheart_whatsapp_reminder_time',
+    'hopeheart_whatsapp_reminder_frequency'
+  ];
+
+  const handleViewStoredData = () => {
+    const storedDataSummary = dataProtectionLocalStorageKeys
+      .map((key) => `${key}: ${localStorage.getItem(key) === null ? 'Not saved on this device' : 'Saved on this device'}`)
+      .join('\n');
+    alert(`HopeHeart local MVP data on this device:\n\n${storedDataSummary}`);
+  };
+
+  const handleDeleteLocalData = () => {
+    dataProtectionLocalStorageKeys.forEach((key) => localStorage.removeItem(key));
+    setShowDeleteLocalDataModal(false);
+    alert('Local HopeHeart data was deleted from this device. Your auth/session was not changed.');
+  };
 
   // Avatar Options (🦊 exactly once)
   const AVATAR_OPTIONS = ['🦊', '🐱', '🐻', '🐼', '🦁', '🐯', '🐨', '🦄', '🦉', '🐶'];
@@ -336,7 +367,7 @@ export default function ProfileUtilityScreen({
                   <div className="bg-emerald-50 border border-emerald-250 p-4 rounded-2xl space-y-2 text-center">
                     <span className="text-emerald-800 font-extrabold text-[13px] block">✓ Trust Badge Earned</span>
                     <p className="text-[11.5px] text-emerald-700 font-medium leading-relaxed">
-                      You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge to other community members.
+                      You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge in HopeHeart spaces.
                     </p>
                   </div>
                 ) : (
@@ -427,13 +458,21 @@ export default function ProfileUtilityScreen({
                 {[
                   { 
                     label: 'Saved Questions & Resources', 
-                    detail: 'View saved care questions, stories, guides, and resources.', 
-                    action: () => alert("Redirecting to logs... Select Resources on the bottom menu to view verified professional resources.") 
+                    detail: 'View saved care questions, guides, and resources.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.DoctorSuggestions);
+                      }
+                    }
                   },
                   { 
                     label: 'Account & Login', 
-                    detail: 'Review login method, backup details, and account preferences.', 
-                    action: () => alert("HopeHeart accounts are completely offline and locally managed via secure indexedDB. Your backup code is #GP-47712.") 
+                    detail: 'Review your sign-in method and account help options.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.CustomerSupport);
+                      }
+                    }
                   },
                   { 
                     label: 'Privacy & Safety Controls', 
@@ -441,6 +480,15 @@ export default function ProfileUtilityScreen({
                     action: () => setSubStage('privacy') 
                   },
                   { 
+                    label: 'Optional Community',
+                    detail: 'Browse quietly or connect only when you feel ready.',
+                    action: () => {
+                      if (onNavigateTo) {
+                        onNavigateTo(ScreenId.Community);
+                      }
+                    }
+                  },
+                  {
                     label: 'Customer Support', 
                     detail: 'Contact our support team for account, privacy, safety, or app-related issues.', 
                     action: () => {
@@ -763,9 +811,9 @@ export default function ProfileUtilityScreen({
                 {/* Toggle 3: Support activity */}
                 <div className="flex items-center justify-between pb-3.5 border-b border-gray-150/40">
                   <div className="space-y-0.5 max-w-[75%]">
-                    <span className="text-[13px] font-bold text-gray-800 block">💬 Show support room activity</span>
+                    <span className="text-[13px] font-bold text-gray-800 block">💬 Show shared activity</span>
                     <p className="text-[11px] text-gray-455 font-semibold leading-normal">
-                      Allows others to see when you reply inside support rooms.
+                      Allows shared HopeHeart activity indicators where available.
                     </p>
                   </div>
                   <button
@@ -843,6 +891,57 @@ export default function ProfileUtilityScreen({
                 </p>
               </div>
 
+              {/* Data Protection Center */}
+              <div className="hh-surface rounded-2.5xl p-4.5 space-y-4 text-left">
+                <div className="text-center space-y-1 border-b border-gray-100 pb-3">
+                  <span className="text-[22px] block">🛡️</span>
+                  <h4 className="font-display font-black text-gray-800 text-[15px]">Data Protection Center</h4>
+                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                    HopeHeart protects your emotional privacy. We collect only what is needed to support your experience.
+                  </p>
+                </div>
+
+                <div className="grid gap-3">
+                  <div className="bg-[#FFFDF9] border border-orange-100/70 rounded-2xl p-3.5 space-y-2">
+                    <h5 className="text-[12.5px] font-display font-black text-gray-800">What HopeHeart stores</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      {['Mood check-ins', 'Basic profile details', 'Saved resources', 'Care questions', 'Support requests', 'Safety reports', 'Reminder preferences'].map((item) => (
+                        <span key={item} className="text-[11.5px] text-gray-600 font-semibold flex items-center gap-1.5"><span className="text-[#FF7527]">•</span>{item}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-emerald-50/40 border border-emerald-100 rounded-2xl p-3.5 space-y-2">
+                    <h5 className="text-[12.5px] font-display font-black text-gray-800">What HopeHeart never stores publicly</h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                      {['Diagnosis', 'Medication', 'Exact location', 'Phone number publicly', 'Medical history', 'Private chat history', 'Private notes without user action'].map((item) => (
+                        <span key={item} className="text-[11.5px] text-gray-600 font-semibold flex items-center gap-1.5"><span className="text-emerald-600">✓</span>{item}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h5 className="text-[12.5px] font-display font-black text-gray-800">Data controls</h5>
+                  <div className="grid grid-cols-1 gap-2">
+                    <button type="button" onClick={handleViewStoredData} className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[12.5px] rounded-xl cursor-pointer transition-all active:scale-95">View My Stored Data</button>
+                    <button type="button" onClick={() => setShowDeleteLocalDataModal(true)} className="w-full py-2.5 bg-[#FFF2EA] hover:bg-[#FFE5D2] border border-orange-100 text-[#C75414] font-display font-extrabold text-[12.5px] rounded-xl cursor-pointer transition-all active:scale-95">Delete Local Data</button>
+                    <button type="button" onClick={onRequestAccountDataDeletion} className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12.5px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs">Request Account Data Deletion</button>
+                  </div>
+                </div>
+
+                <div className="bg-[#FCFBF8] border border-gray-150 rounded-2xl p-3.5 space-y-2">
+                  <h5 className="text-[12.5px] font-display font-black text-gray-800">Security checklist</h5>
+                  {['Private tables use Row Level Security', 'Service role keys are not stored in frontend', 'WhatsApp reminders require consent', 'Images are previewed locally only', 'Full chats are not saved automatically'].map((item) => (
+                    <div key={item} className="text-[11.5px] text-gray-600 font-semibold flex items-start gap-2"><span className="text-emerald-600 shrink-0">✓</span><span>{item}</span></div>
+                  ))}
+                </div>
+
+                <p className="text-[11px] text-amber-800 bg-amber-50 border border-amber-100 rounded-2xl p-3 font-semibold leading-relaxed text-center">
+                  Some MVP fallback data may be saved on this device. You can delete it anytime from Data Protection Center.
+                </p>
+              </div>
+
               {/* Actions for privacy */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
@@ -869,6 +968,24 @@ export default function ProfileUtilityScreen({
 
         </AnimatePresence>
       </div>
+
+      {showDeleteLocalDataModal && (
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-5 max-w-sm w-full shadow-xl border border-orange-100 text-center space-y-4">
+            <div className="text-[28px]">🧹</div>
+            <p className="text-[14px] font-display font-black text-gray-800 leading-snug">
+              Are you sure you want to delete local HopeHeart data from this device?
+            </p>
+            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+              This will not delete your auth/session. Use logout separately if you want to end your session.
+            </p>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button type="button" onClick={() => setShowDeleteLocalDataModal(false)} className="py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[12.5px] rounded-xl cursor-pointer">Cancel</button>
+              <button type="button" onClick={handleDeleteLocalData} className="py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12.5px] rounded-xl cursor-pointer">Delete Local Data</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

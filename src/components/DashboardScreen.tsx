@@ -20,32 +20,6 @@ interface DashboardScreenProps {
   onClearCheckinFeedback: () => void;
 }
 
-// 1. Community Support Illustration (Anxious person holding phone, listening chat bubble)
-function CommunityIllustration() {
-  return (
-    <svg className="w-16 h-16 shrink-0" viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="45" fill="#FFF2EA" />
-      <circle cx="50" cy="50" r="40" fill="#FFFDF9" stroke="#FFE4D6" strokeWidth="1.5" />
-      {/* Head */}
-      <circle cx="42" cy="38" r="7" fill="#E08C5E" />
-      {/* Hair */}
-      <path d="M34 38c0-5 3-9 8-9s8 4 8 9c0 1-1 3-2 4h-12c-1-1-2-3-2-4z" fill="#4A3B32" />
-      {/* Body */}
-      <path d="M26 68c0-10 6-16 16-16s16 6 16 16H26z" fill="#D36B3B" />
-      {/* Phone */}
-      <rect x="52" y="46" width="10" height="18" rx="2" fill="#2B1D12" />
-      <rect x="53" y="48" width="8" height="14" rx="1" fill="#FFF" />
-      <circle cx="57" cy="63" r="0.8" fill="#FF7527" />
-      {/* Hand */}
-      <path d="M48 58c1-1 4 0 5 2l-2 3c-1 0-2-1-3-1l-2-2c1-1 1-2 2-2z" fill="#E08C5E" />
-      {/* Soft chat bubble showing listening status */}
-      <path d="M62 38c0-6 7-10 15-10s15 4 15 10c0 5-6 9-13 10l-4 4v-4c-7-1-13-5-13-10z" fill="#EBF5FF" stroke="#C2E0FF" strokeWidth="1" />
-      {/* Heart inside bubble */}
-      <path d="M77 39c-1-1-2.5 0-2.5 0s1.2 1.8 2.5 2.8c1.3-1 2.5-2.8 2.5-2.8s-1.5-1-2.5 0z" fill="#FF7527" />
-    </svg>
-  );
-}
-
 // 2. Trusted Resources Illustration (Person calmly reading guide/map, floating cards)
 function ResourcesIllustration() {
   return (
@@ -140,6 +114,7 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
+  const [activeMoodLift, setActiveMoodLift] = useState<string | null>(null);
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -154,6 +129,13 @@ export default function DashboardScreen({
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const humTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+
+  const funnyMoodLiftCards = [
+    { emoji: '🐧', title: 'Tiny penguin energy', body: 'Imagine a penguin confidently waddling into Monday like it has a meeting to lead.' },
+    { emoji: '🍞', title: 'Toast update', body: 'A piece of toast finally popped up and said, “I needed space, but I’m ready now.”' },
+    { emoji: '🧦', title: 'Sock mystery', body: 'One sock is always missing because it joined a tiny laundry adventure club.' }
+  ];
 
   const getLyricsForMoodId = (moodId: string): string => {
     const lyricsMap: Record<string, string> = {
@@ -171,7 +153,7 @@ export default function DashboardScreen({
 
   const stopWebAudioHum = () => {
     setIsHumming(false);
-    
+
     if (humTimerRef.current) {
       clearTimeout(humTimerRef.current);
       humTimerRef.current = null;
@@ -273,7 +255,7 @@ export default function DashboardScreen({
 
   return (
     <div className="flex flex-col min-h-full bg-transparent overflow-y-auto font-sans select-none scrollbar-none w-full relative">
-      
+
       {/* Toast Notification */}
       <AnimatePresence>
         {showToast && (
@@ -289,7 +271,7 @@ export default function DashboardScreen({
               <p className="text-[12px] sm:text-[12.5px] font-semibold leading-normal text-left text-gray-200">
                 Welcome, {userName} 👋 HopeBuddy is ready when you need support.
               </p>
-              <button 
+              <button
                 onClick={() => setShowToast(false)}
                 type="button"
                 className="ml-auto text-gray-400 hover:text-white text-xs cursor-pointer flex items-center justify-center w-5 h-5 rounded-full hover:bg-white/10"
@@ -438,39 +420,39 @@ export default function DashboardScreen({
           {/* Steps Horizontal Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
             {[
-              { 
-                step: 1, 
-                label: 'Mood Check-in', 
-                emoji: '🌤️', 
-                done: hasCheckedInToday, 
-                desc: 'How do you feel today?' 
+              {
+                step: 1,
+                label: 'Mood Check-in',
+                emoji: '🌤️',
+                done: hasCheckedInToday,
+                desc: 'How do you feel today?'
               },
-              { 
-                step: 2, 
-                label: 'HopeBuddy Reflection', 
-                emoji: '💬', 
-                done: localStorage.getItem('hopeheart_has_reflected') === 'true', 
-                desc: 'Take a quiet moment to reflect.' 
+              {
+                step: 2,
+                label: 'HopeBuddy Reflection',
+                emoji: '💬',
+                done: localStorage.getItem('hopeheart_has_reflected') === 'true',
+                desc: 'Take a quiet moment to reflect.'
               },
-              { 
-                step: 3, 
-                label: 'Explore & Share', 
-                emoji: '📓', 
-                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0), 
-                desc: 'Save questions or draft reflections.' 
+              {
+                step: 3,
+                label: 'Explore & Share',
+                emoji: '📓',
+                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0),
+                desc: 'Save questions or draft reflections.'
               },
-              { 
-                step: 4, 
-                label: 'Peer & Community', 
-                emoji: '👥', 
-                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true', 
-                desc: 'Connect with circles and professional guides.' 
+              {
+                step: 4,
+                label: 'Memories & Resources',
+                emoji: '🌼',
+                done: (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0) || localStorage.getItem('hopeheart_has_explored_resources') === 'true',
+                desc: 'Save good moments or read gently.'
               }
             ].map((st) => {
               return (
                 <div key={st.step} className={`p-3 rounded-2xl border transition-all flex flex-col justify-between gap-1.5 ${
-                  st.done 
-                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800' 
+                  st.done
+                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800'
                     : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
                 }`}>
                   <div className="flex items-center justify-between gap-1">
@@ -494,10 +476,119 @@ export default function DashboardScreen({
         </div>
       </div>
 
+      {/* Mood Lift: softer first step before heavier support */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="hh-surface rounded-[28px] p-5 space-y-4 border border-[#F4E7D8]/80">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
+              <h3 className="font-display font-black text-[#2B1D12] text-[18px] leading-tight">Mood Lift</h3>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Not ready to talk? Try something light first.</p>
+            </div>
+            <span className="text-[28px] self-start sm:self-auto">🌤️</span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+            {[
+              { id: 'smile', label: 'Make me smile', emoji: '😊' },
+              { id: 'calm', label: 'Calm my mind', emoji: '🫧' },
+              { id: 'sound', label: 'Play calming hum', emoji: '🎵' },
+              { id: 'write', label: 'Write privately', emoji: '📝' },
+              { id: 'memory', label: 'Save a good memory', emoji: '🌼' },
+              { id: 'read', label: 'Read something gentle', emoji: '📚' },
+              { id: 'strengths', label: 'Remember my strengths', emoji: '💛' },
+              { id: 'like', label: 'Do something I like', emoji: '✨' }
+            ].map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => {
+                  if (option.id === 'sound') {
+                    setActiveMoodLift('sound');
+                    if (isHumming) {
+                      stopWebAudioHum();
+                    } else {
+                      startWebAudioHum();
+                    }
+                    return;
+                  }
+                  if (option.id === 'calm') {
+                    onNavigateTo(ScreenId.Mood);
+                    return;
+                  }
+                  if (option.id === 'write' || option.id === 'memory' || option.id === 'strengths') {
+                    onNavigateTo(ScreenId.MySpace);
+                    return;
+                  }
+                  if (option.id === 'read') {
+                    onNavigateTo(ScreenId.DoctorSuggestions);
+                    return;
+                  }
+                  setActiveMoodLift(activeMoodLift === option.id ? null : option.id);
+                }}
+                className={`min-h-[74px] rounded-2xl border p-2.5 text-center transition-all cursor-pointer active:scale-95 ${
+                  activeMoodLift === option.id
+                    ? 'bg-[#FFF2EA] border-[#FF7527]/40 text-[#C75414] shadow-3xs'
+                    : 'bg-[#FFFDF9] border-gray-150 text-gray-650 hover:border-orange-200 hover:bg-[#FFF8F2]'
+                }`}
+              >
+                <span className="text-[20px] block mb-1">{option.emoji}</span>
+                <span className="text-[11.5px] font-display font-black leading-tight block">{option.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {(activeMoodLift === 'smile' || activeMoodLift === 'like') && (
+              <motion.div
+                key="mood-lift-smile"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"
+              >
+                {funnyMoodLiftCards.map((card) => (
+                  <div key={card.title} className="bg-white/80 border border-orange-100/70 rounded-2xl p-3.5 space-y-1.5">
+                    <span className="text-[22px]">{card.emoji}</span>
+                    <h4 className="font-display font-black text-gray-800 text-[13px]">{card.title}</h4>
+                    <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">{card.body}</p>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+
+            {activeMoodLift === 'sound' && (
+              <motion.div
+                key="mood-lift-sound"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                className="bg-[#FFFDF9] border border-orange-100/70 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              >
+                <div>
+                  <h4 className="font-display font-black text-gray-800 text-[13px]">HopeBuddy hum</h4>
+                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                    {isHumming ? 'A gentle hum is playing for a few seconds.' : 'Tap Calming sound again when you want the gentle hum.'}
+                  </p>
+                  {audioError && <p className="text-[11px] text-red-600 font-semibold mt-1">⚠️ {audioError}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={isHumming ? stopWebAudioHum : startWebAudioHum}
+                  className="px-4 py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95"
+                >
+                  {isHumming ? 'Stop hum' : 'Play hum'}
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
       {/* Main Layout Bento Grid */}
       <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-          
+
           {/* Component 1: 🧡 HopeBuddy Check-In Card */}
           <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
             <div className="space-y-4">
@@ -622,7 +713,7 @@ export default function DashboardScreen({
                       )}
 
                       {isHumming && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11.5px] font-bold"
@@ -693,27 +784,45 @@ export default function DashboardScreen({
             </span>
           </motion.button>
 
-          {/* Component 3: 🤝 Community Support Card */}
+          {/* Component 3: 🌤️ Feel Good Card */}
           <motion.button
-            onClick={() => onNavigateTo('safe-listener')}
+            onClick={() => onNavigateTo(ScreenId.FeelGood)}
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
             className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <CommunityIllustration />
+              <div className="w-16 h-16 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center text-[30px] shrink-0">🌤️</div>
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Feel Good</h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Smile, hum, write, remember strengths, or do something small you like.</p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Try Something Light →</span>
+          </motion.button>
+
+          {/* Component 3: 🌼 My Space Card */}
+          <motion.button
+            onClick={() => onNavigateTo(ScreenId.MySpace)}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <div className="w-16 h-16 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center text-[30px] shrink-0">🌼</div>
               <div className="space-y-1 text-center sm:text-left">
                 <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Community Support
+                  My Space
                 </h4>
                 <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Find peer listeners and support circles where people listen without judgement.
+                  Private diary, memories, Remember Me, and gentle resources in one place.
                 </p>
               </div>
             </div>
             <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              Enter Safe Space →
+              Open My Space →
             </span>
           </motion.button>
 
@@ -729,16 +838,48 @@ export default function DashboardScreen({
               <ResourcesIllustration />
               <div className="space-y-1 text-center sm:text-left">
                 <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Trusted Resources
+                  Comfort Resources
                 </h4>
                 <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Explore support pathways, external resources, and saved care questions.
+                  Read gentle emotional information when you are ready. Small steps only.
                 </p>
               </div>
             </div>
             <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              Explore Resources →
+              Read When Ready →
             </span>
+          </motion.button>
+
+          {/* Remember Me Strength Reminder Card */}
+          <motion.button
+            onClick={() => onNavigateTo(ScreenId.MySpace)}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="space-y-1 text-center sm:text-left">
+              <span className="text-[30px] block">💛</span>
+              <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Remember Me</h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Keep strengths, interests, comforts, safe places, and survival memories close.</p>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Remember My Strengths →</span>
+          </motion.button>
+
+          {/* Optional Community Card */}
+          <motion.button
+            onClick={() => onNavigateTo(ScreenId.Community)}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="space-y-1 text-center sm:text-left">
+              <span className="text-[30px] block">🤝</span>
+              <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Optional Community</h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready. You can also just browse quietly.</p>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Browse Quietly →</span>
           </motion.button>
 
           {/* Component 5: 🛟 Help & Support Card */}
