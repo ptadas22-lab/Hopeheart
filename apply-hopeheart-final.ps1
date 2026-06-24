@@ -1044,11 +1044,8 @@ export default function App() {
 
   // Nav highlighting helper states
   const isHomeActive = currentScreen === ScreenId.Home;
-  const isFeelGoodActive = currentScreen === ScreenId.FeelGood;
-  const isMoodActive = currentScreen === ScreenId.Mood;
   const isMySpaceActive = currentScreen === ScreenId.MySpace || currentScreen === ScreenId.ShareSafely || currentScreen === ScreenId.MomentShare;
   const isCareActive = currentScreen === ScreenId.DoctorSuggestions || currentScreen === ScreenId.ProfessionalProfile || currentScreen === ScreenId.BookCare || currentScreen === ScreenId.SaveQuestions;
-  const isSafetyActive = currentScreen === ScreenId.AISafety;
  
   // Bottom & Top Navigation is visible when the user advances past onboarding screens
   const showNavChannels = currentScreen !== ScreenId.Splash &&
@@ -1092,22 +1089,6 @@ export default function App() {
                 <span>🏡</span> Home
               </button>
               <button
-                onClick={() => setCurrentScreen(ScreenId.FeelGood)}
-                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isFeelGoodActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <span>🌤️</span> Feel Good
-              </button>
-              <button
-                onClick={() => setCurrentScreen(ScreenId.Mood)}
-                className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
-                  isMoodActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <span>🧡</span> Mood
-              </button>
-              <button
                 onClick={() => setCurrentScreen(ScreenId.MySpace)}
                 className={`px-3 py-2 rounded-xl font-display font-bold text-[12.5px] transition-all flex items-center gap-1.5 cursor-pointer ${
                   isMySpaceActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -1121,7 +1102,7 @@ export default function App() {
                   isCareActive ? 'bg-[#FFF2EA] text-[#FF7527]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🩺</span> Resources
+                <span>📚</span> Resources
               </button>
               <button
                 onClick={() => setCurrentScreen(ScreenId.Community)}
@@ -1229,41 +1210,7 @@ export default function App() {
               )}
             </button>
 
-            {/* Tab 2: Feel Good */}
-            <button
-              onClick={() => setCurrentScreen(ScreenId.FeelGood)}
-              className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isFeelGoodActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <span className="text-[17px] mb-0.5 select-none leading-none">🌤️</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Feel Good</span>
-              {isFeelGoodActive && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
-                />
-              )}
-            </button>
- 
-            {/* Tab 3: Mood */}
-            <button
-              onClick={() => setCurrentScreen(ScreenId.Mood)}
-              className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
-                isMoodActive ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              <span className="text-[17px] mb-0.5 select-none leading-none">🧡</span>
-              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Mood</span>
-              {isMoodActive && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
-                />
-              )}
-            </button>
- 
-            {/* Tab 4: My Space */}
+            {/* Tab 2: My Space */}
             <button
               onClick={() => setCurrentScreen(ScreenId.MySpace)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
@@ -1280,7 +1227,24 @@ export default function App() {
               )}
             </button>
 
-            {/* Tab 5: Profile */}
+            {/* Tab 3: Community */}
+            <button
+              onClick={() => setCurrentScreen(ScreenId.Community)}
+              className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
+                currentScreen === ScreenId.Community ? 'text-[#FF7527]' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              <span className="text-[17px] mb-0.5 select-none leading-none">🤝</span>
+              <span className="text-[9.5px] font-display font-black tracking-tight leading-none">Community</span>
+              {currentScreen === ScreenId.Community && (
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute bottom-[-2px] w-6 h-0.75 rounded-full bg-[#FF7527]"
+                />
+              )}
+            </button>
+
+            {/* Tab 4: Profile */}
             <button
               onClick={() => setCurrentScreen(ScreenId.Profile)}
               className={`flex flex-col items-center justify-center flex-1 h-[52px] rounded-xl transition-all relative cursor-pointer ${
@@ -1296,7 +1260,6 @@ export default function App() {
                 />
               )}
             </button>
- 
           </nav>
         )}
 
@@ -1924,7 +1887,21 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
-  const [activeMoodLift, setActiveMoodLift] = useState<string | null>(null);
+  const [showShortcutSheet, setShowShortcutSheet] = useState(false);
+
+  const handleContinueLastPrivateSpace = () => {
+    if (localStorage.getItem('hopeheart_has_explored_resources') === 'true') {
+      onNavigateTo(ScreenId.DoctorSuggestions);
+      return;
+    }
+
+    if (localStorage.getItem('hopeheart_has_joined_room') === 'true') {
+      onNavigateTo(ScreenId.Community);
+      return;
+    }
+
+    onNavigateTo(ScreenId.MySpace);
+  };
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -1940,12 +1917,6 @@ export default function DashboardScreen({
   const gainNodeRef = useRef<GainNode | null>(null);
   const humTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-
-  const funnyMoodLiftCards = [
-    { emoji: '🐧', title: 'Tiny penguin energy', body: 'Imagine a penguin confidently waddling into Monday like it has a meeting to lead.' },
-    { emoji: '🍞', title: 'Toast update', body: 'A piece of toast finally popped up and said, “I needed space, but I’m ready now.”' },
-    { emoji: '🧦', title: 'Sock mystery', body: 'One sock is always missing because it joined a tiny laundry adventure club.' }
-  ];
 
   const getLyricsForMoodId = (moodId: string): string => {
     const lyricsMap: Record<string, string> = {
@@ -2093,62 +2064,140 @@ export default function DashboardScreen({
         )}
       </AnimatePresence>
 
-      {/* Upper Brand / User bar */}
-      <div className="pt-4 pb-3 px-5 flex items-center justify-between hh-header-surface sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-10 h-10 rounded-full border border-[#FF7527] bg-[#FFEFE5] flex items-center justify-center p-0.5 overflow-hidden">
-              <MascotFace size={34} />
-            </div>
-            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
+      {/* Soft greeting card below the fixed app header */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="bg-white/70 border border-[#F1E7D8] rounded-[24px] px-4 py-3 flex items-center gap-3 shadow-3xs backdrop-blur-xs">
+          <div className="w-9 h-9 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center overflow-hidden shrink-0">
+            <MascotFace size={30} />
           </div>
-          <div>
-            <span className="text-[10px] text-[#FF7527] font-extrabold uppercase font-mono tracking-wider block leading-none mb-0.5">User Status</span>
-            <h3 className="font-display font-extrabold text-[#2B1D12] text-[16px] leading-tight">
-              Hi, {userName} 🌟
-            </h3>
+          <div className="space-y-0.5">
+            <h2 className="font-display font-black text-[#2B1D12] text-[15px] leading-tight">Hi, {userName || 'GoogleBuddy'} 🌼</h2>
+            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">You’re safe here.</p>
           </div>
         </div>
       </div>
 
-      {/* Profile Completion Gentle Reminder Banner */}
-      {isProfileIncomplete && showReminder && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-          <div className="bg-gradient-to-r from-[#FFF5F0] to-[#FAF5FF] border border-[#FFD3B6]/50 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
-            <div className="flex items-center gap-3 text-left">
-              <span className="text-[24px] shrink-0">🔔</span>
-              <div className="space-y-0.5">
-                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
-                  Complete your Safe Profile
-                </h4>
-                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
-                  Add a few details so HopeHeart can match you better.
-                </p>
-              </div>
+      {/* Main soft mood card */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFFDF9] via-[#FFF3EA] to-[#FFEAF3] border border-orange-100/70 shadow-3xs px-5 py-6 sm:px-7 sm:py-7 text-center">
+          <div className="absolute -top-14 -right-12 w-36 h-36 bg-[#FFB98A]/20 rounded-full blur-2xl" />
+          <div className="absolute -bottom-16 -left-12 w-40 h-40 bg-[#F8C8DC]/25 rounded-full blur-2xl" />
+          <div className="relative space-y-4 max-w-xl mx-auto">
+            <div className="space-y-2">
+              <span className="text-[30px] block">🌤️</span>
+              <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[29px] leading-tight">How is your heart today?</h1>
+              <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">No need to explain. Just check in with yourself.</p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
               <button
-                onClick={() => setShowReminder(false)}
+                onClick={() => {
+                  const card = document.getElementById('hopebuddy-checkin-card');
+                  if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }}
                 type="button"
-                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
+                className="px-5 py-2.5 bg-[#F9733D] hover:bg-[#E96630] text-white rounded-full text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
               >
-                Later
+                Check in gently
               </button>
               <button
-                onClick={onOpenProfileModal}
+                onClick={() => setShowShortcutSheet(true)}
                 type="button"
-                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
+                className="px-5 py-2.5 bg-white/80 hover:bg-white border border-[#F6CBB0] text-[#B95825] rounded-full text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
               >
-                Complete Now
+                I need something small
               </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      <AnimatePresence>
+        {showShortcutSheet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#2B1D12]/30 backdrop-blur-[3px] flex items-end justify-center p-0 sm:p-5"
+            onClick={() => setShowShortcutSheet(false)}
+          >
+            <motion.div
+              initial={{ y: 80, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 60, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 230 }}
+              className="w-full sm:max-w-md max-h-[58vh] overflow-y-auto bg-[#FFFDF9] border border-orange-100 rounded-t-[30px] sm:rounded-[30px] p-5 shadow-xl space-y-4"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="w-11 h-1.5 rounded-full bg-[#EADFC9] mx-auto" />
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <h2 className="font-display font-black text-[#2B1D12] text-[19px] leading-tight">What would help right now?</h2>
+                  <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Pick one small step. No pressure.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowShortcutSheet(false)}
+                  className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 flex items-center justify-center text-[12px] font-black cursor-pointer"
+                  aria-label="Close options"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[
+                  { title: 'Feel better', description: 'Small steps to lift your mood.', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
+                  { title: 'Write privately', description: 'Let it out in a safe space.', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Remember myself', description: 'Reconnect with what matters.', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
+                  { title: 'Get help', description: 'Reach out when you need support.', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) }
+                ].map((item) => (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => {
+                      setShowShortcutSheet(false);
+                      item.action();
+                    }}
+                    className="min-h-[112px] rounded-2xl bg-[#FFF8F2] hover:bg-[#FFF2EA] border border-orange-100/80 shadow-3xs flex items-start gap-3 text-left cursor-pointer transition-all active:scale-[0.98] p-3.5 group"
+                  >
+                    <span className="w-10 h-10 rounded-full bg-white border border-orange-100 flex items-center justify-center text-[21px] leading-none shrink-0">{item.icon}</span>
+                    <span className="flex-1 min-w-0 space-y-1">
+                      <span className="block text-[13px] font-display font-black text-gray-800 leading-tight">{item.title}</span>
+                      <span className="block text-[11.5px] text-gray-500 font-semibold leading-relaxed">{item.description}</span>
+                    </span>
+                    <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors pt-1">→</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="bg-white/75 border border-orange-100/70 rounded-2xl p-3.5 space-y-2 text-left shadow-3xs">
+                <div className="space-y-1">
+                  <h3 className="text-[12.5px] font-display font-black text-gray-800 leading-tight">Community is optional.</h3>
+                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
+                    Browse quietly if you want. You’re in control. No pressure to post or reply.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowShortcutSheet(false);
+                    onNavigateTo(ScreenId.Community);
+                  }}
+                  className="text-[11.5px] font-display font-black text-[#C75414] hover:underline cursor-pointer"
+                >
+                  Browse optional community →
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Dynamic Checkin Feedback Banner */}
       {checkinFeedback && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
           <div className="bg-gradient-to-r from-[#F0FDF4] to-[#F5FFF6] border border-[#BBF7D0]/50 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-3xs">
             <div className="flex items-center gap-3 text-left">
               <span className="text-[24px] shrink-0">🌱</span>
@@ -2172,551 +2221,159 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* Daily Mood Check-In Reminder Banner */}
-      {previousMood && !hasCheckedInToday && !dismissedReminder && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-          <div className="bg-gradient-to-r from-[#FFFDF9] to-[#FDFBF7] border border-[#ECE6D9] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
-            <div className="flex items-center gap-3 text-left">
-              <span className="text-[24px] shrink-0">🌤️</span>
-              <div className="space-y-0.5">
-                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
-                  Daily Mood Check-in
-                </h4>
-                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
-                  Last time, you felt <span className="font-bold text-[#FF7527]">{previousMood}</span>. How are you feeling today?
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setDismissedReminder(true)}
-                type="button"
-                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
-              >
-                Later
-              </button>
-              <button
-                onClick={() => {
-                  const card = document.getElementById('hopebuddy-checkin-card');
-                  if (card) {
-                    card.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-                type="button"
-                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
-              >
-                Check in now
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 💛 Your Emotional Support Journey Stepper */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-        <div className="bg-white/80 border border-[#EDE9DE] rounded-[24px] p-5 space-y-4 shadow-3xs backdrop-blur-xs select-none">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+      {/* Hidden anchor card for detailed mood check-in */}
+      <div id="hopebuddy-checkin-card" className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-[#F4E7D8]/80">
+          <div className="flex items-center justify-between gap-2">
             <div>
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Your Trust Path</span>
-              <h4 className="font-display font-black text-gray-800 text-[14px]">
-                Your Emotional Support Journey 💛
-              </h4>
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Private mood check-in</span>
+              <h3 className="font-display font-black text-gray-800 text-[15px] leading-tight">Choose the closest feeling.</h3>
             </div>
-            <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
-              Explore step-by-step to build comfort and find the right support.
-            </p>
+            <span className="text-[12px] text-gray-400 font-bold">Private to you</span>
           </div>
-
-          {/* Steps Horizontal Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
+          <div className="grid grid-cols-4 gap-2">
             {[
-              {
-                step: 1,
-                label: 'Mood Check-in',
-                emoji: '🌤️',
-                done: hasCheckedInToday,
-                desc: 'How do you feel today?'
-              },
-              {
-                step: 2,
-                label: 'HopeBuddy Reflection',
-                emoji: '💬',
-                done: localStorage.getItem('hopeheart_has_reflected') === 'true',
-                desc: 'Take a quiet moment to reflect.'
-              },
-              {
-                step: 3,
-                label: 'Explore & Share',
-                emoji: '📓',
-                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0),
-                desc: 'Save questions or draft reflections.'
-              },
-              {
-                step: 4,
-                label: 'Memories & Resources',
-                emoji: '🌼',
-                done: (localStorage.getItem('hopeheart_positive_memories') && JSON.parse(localStorage.getItem('hopeheart_positive_memories') || '[]').length > 0) || localStorage.getItem('hopeheart_has_explored_resources') === 'true',
-                desc: 'Save good moments or read gently.'
-              }
-            ].map((st) => {
+              { id: 'calm', label: 'Calm', emoji: '😊' },
+              { id: 'sad', label: 'Low', emoji: '😔' },
+              { id: 'anxious', label: 'Anxious', emoji: '😰' },
+              { id: 'tired', label: 'Tired', emoji: '😴' }
+            ].map((mood) => {
+              const isSelected = currentMood === mood.id;
               return (
-                <div key={st.step} className={`p-3 rounded-2xl border transition-all flex flex-col justify-between gap-1.5 ${
-                  st.done
-                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800'
-                    : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
-                }`}>
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-[12px] font-mono font-bold uppercase tracking-wider block">Step {st.step}</span>
-                    <span className="text-[14px]">
-                      {st.done ? '✅' : st.emoji}
-                    </span>
-                  </div>
-                  <div className="space-y-0.5 text-left">
-                    <h5 className="font-display font-black text-[12px] leading-tight text-gray-800">
-                      {st.label}
-                    </h5>
-                    <p className="text-[10px] text-gray-550 font-semibold leading-normal">
-                      {st.desc}
-                    </p>
-                  </div>
-                </div>
+                <button
+                  key={mood.id}
+                  onClick={() => setCurrentMood(mood.id)}
+                  type="button"
+                  className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
+                    isSelected
+                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
+                      : 'border-gray-150 bg-[#FCFBF8] text-gray-500 hover:border-gray-300'
+                  }`}
+                >
+                  <span className="text-[20px]">{mood.emoji}</span>
+                  <span className="text-[10px] font-bold">{mood.label}</span>
+                </button>
               );
             })}
           </div>
+          <button
+            onClick={() => onMoodSelected(currentMood)}
+            type="button"
+            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
+          >
+            Save check-in
+          </button>
         </div>
       </div>
 
-      {/* Mood Lift: softer first step before heavier support */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
-        <div className="hh-surface rounded-[28px] p-5 space-y-4 border border-[#F4E7D8]/80">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+      {/* Calm lower Home cards */}
+      <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <button
+            onClick={() => onNavigateTo(ScreenId.MySpace)}
+            type="button"
+            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
+          >
             <div className="space-y-1">
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Support without pressure</span>
-              <h3 className="font-display font-black text-[#2B1D12] text-[18px] leading-tight">Mood Lift</h3>
-              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Not ready to talk? Try something light first.</p>
+              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Today’s gentle suggestion</h4>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Write one line about what your heart needs today.</p>
             </div>
-            <span className="text-[28px] self-start sm:self-auto">🌤️</span>
-          </div>
+            <span className="text-[11px] font-display font-black text-[#C75414]">Open My Space →</span>
+          </button>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-            {[
-              { id: 'smile', label: 'Make me smile', emoji: '😊' },
-              { id: 'calm', label: 'Calm my mind', emoji: '🫧' },
-              { id: 'sound', label: 'Play calming hum', emoji: '🎵' },
-              { id: 'write', label: 'Write privately', emoji: '📝' },
-              { id: 'memory', label: 'Save a good memory', emoji: '🌼' },
-              { id: 'read', label: 'Read something gentle', emoji: '📚' },
-              { id: 'strengths', label: 'Remember my strengths', emoji: '💛' },
-              { id: 'like', label: 'Do something I like', emoji: '✨' }
-            ].map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => {
-                  if (option.id === 'sound') {
-                    setActiveMoodLift('sound');
-                    if (isHumming) {
-                      stopWebAudioHum();
-                    } else {
-                      startWebAudioHum();
-                    }
-                    return;
-                  }
-                  if (option.id === 'calm') {
-                    onNavigateTo(ScreenId.Mood);
-                    return;
-                  }
-                  if (option.id === 'write' || option.id === 'memory' || option.id === 'strengths') {
-                    onNavigateTo(ScreenId.MySpace);
-                    return;
-                  }
-                  if (option.id === 'read') {
-                    onNavigateTo(ScreenId.DoctorSuggestions);
-                    return;
-                  }
-                  setActiveMoodLift(activeMoodLift === option.id ? null : option.id);
-                }}
-                className={`min-h-[74px] rounded-2xl border p-2.5 text-center transition-all cursor-pointer active:scale-95 ${
-                  activeMoodLift === option.id
-                    ? 'bg-[#FFF2EA] border-[#FF7527]/40 text-[#C75414] shadow-3xs'
-                    : 'bg-[#FFFDF9] border-gray-150 text-gray-650 hover:border-orange-200 hover:bg-[#FFF8F2]'
-                }`}
-              >
-                <span className="text-[20px] block mb-1">{option.emoji}</span>
-                <span className="text-[11.5px] font-display font-black leading-tight block">{option.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <AnimatePresence mode="wait">
-            {(activeMoodLift === 'smile' || activeMoodLift === 'like') && (
-              <motion.div
-                key="mood-lift-smile"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1"
-              >
-                {funnyMoodLiftCards.map((card) => (
-                  <div key={card.title} className="bg-white/80 border border-orange-100/70 rounded-2xl p-3.5 space-y-1.5">
-                    <span className="text-[22px]">{card.emoji}</span>
-                    <h4 className="font-display font-black text-gray-800 text-[13px]">{card.title}</h4>
-                    <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">{card.body}</p>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-
-            {activeMoodLift === 'sound' && (
-              <motion.div
-                key="mood-lift-sound"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="bg-[#FFFDF9] border border-orange-100/70 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-              >
-                <div>
-                  <h4 className="font-display font-black text-gray-800 text-[13px]">HopeBuddy hum</h4>
-                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                    {isHumming ? 'A gentle hum is playing for a few seconds.' : 'Tap Calming sound again when you want the gentle hum.'}
-                  </p>
-                  {audioError && <p className="text-[11px] text-red-600 font-semibold mt-1">⚠️ {audioError}</p>}
-                </div>
-                <button
-                  type="button"
-                  onClick={isHumming ? stopWebAudioHum : startWebAudioHum}
-                  className="px-4 py-2 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95"
-                >
-                  {isHumming ? 'Stop hum' : 'Play hum'}
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <button
+            onClick={handleContinueLastPrivateSpace}
+            type="button"
+            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
+          >
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Continue where you left off</h4>
+              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Return to your last private space when you’re ready.</p>
+            </div>
+            <span className="text-[11px] font-display font-black text-[#C75414]">Continue →</span>
+          </button>
         </div>
-      </div>
 
-      {/* Main Layout Bento Grid */}
-      <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-
-          {/* Component 1: 🧡 HopeBuddy Check-In Card */}
-          <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🧡</span>
-                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider uppercase">
-                  HopeBuddy Companion
-                </span>
-              </div>
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="p-3 bg-[#FFFDF9] border border-dashed border-[#EDE9DE] rounded-2xl shadow-inner shrink-0">
-                  <Mascot expression={selectedMood.buddyExpression} size={110} />
-                </div>
-                <div className="flex-1 space-y-2 text-center sm:text-left">
-                  <h2 className="font-display font-black text-gray-800 text-[19px] md:text-[21px] leading-tight">
-                    You're feeling <span className="text-[#FF7527]">{selectedMood.label}</span> today.
-                  </h2>
-                  <p className="text-[12.5px] text-gray-500 font-semibold italic leading-relaxed">
-                    "{selectedMood.tagline}"
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-4 border-t border-dashed border-[#EDE9DE] space-y-3">
-              <div className="flex flex-col space-y-1">
-                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
-                  Daily Check-In
-                </span>
-                <span className="text-[13px] font-display font-black text-gray-700">
-                  How are you feeling now?
-                </span>
-              </div>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { id: 'calm', label: 'Calm', emoji: '😊' },
-                  { id: 'sad', label: 'Low', emoji: '😔' },
-                  { id: 'anxious', label: 'Anxious', emoji: '😰' },
-                  { id: 'tired', label: 'Tired', emoji: '😴' }
-                ].map((mood) => {
-                  const isSelected = currentMood === mood.id;
-                  return (
-                    <button
-                      key={mood.id}
-                      onClick={() => setCurrentMood(mood.id)}
-                      type="button"
-                      className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
-                        isSelected
-                          ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
-                          : 'border-gray-150 bg-[#FCFBF8] text-gray-500 hover:border-gray-300'
-                      }`}
-                    >
-                      <span className="text-[20px]">{mood.emoji}</span>
-                      <span className="text-[10px] font-bold">{mood.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    onMoodSelected(currentMood);
-                  }}
-                  type="button"
-                  className="flex-1 py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
-                >
-                  Update Check-In
-                </button>
-                <button
-                  onClick={onShareCheckIn}
-                  type="button"
-                  className="px-4 py-2.5 bg-[#FFF2EA] hover:bg-[#FFE4E6] text-[#FF7527] border border-[#FF7527]/20 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1"
-                  title="Share Check-In Card"
-                >
-                  <span>📸</span> Share
-                </button>
-              </div>
-
-              {/* HopeBuddy Song Section (shows when a mood is selected) */}
-              {currentMood && (
-                <div className="mt-3 pt-3 border-t border-dashed border-[#EDE9DE] flex flex-col items-center">
-                  <div className="flex items-center justify-between w-full">
-                    <button
-                      onClick={() => setIsSongCardExpanded(!isSongCardExpanded)}
-                      type="button"
-                      className="flex items-center gap-2 px-3.5 py-1.5 bg-[#FFF2EA] hover:bg-[#FFEAE1] text-[#FF7527] border border-[#FF7527]/15 rounded-full text-[12px] font-bold cursor-pointer transition-all active:scale-95 hover:scale-[1.02]"
-                    >
-                      <span className="w-5 h-5 rounded-full bg-[#FF7527] text-white flex items-center justify-center text-[10px] shadow-3xs font-sans">🎵</span>
-                      <span>HopeBuddy Song</span>
-                      <span className="text-[10px] text-[#FF7527]/70 transition-transform duration-200" style={{ transform: isSongCardExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-                        ▼
-                      </span>
-                    </button>
-                    {isHumming && (
-                      <div className="flex items-center gap-1.5 animate-pulse text-[11px] font-semibold text-gray-500">
-                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.1s' }}>🎵</span>
-                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.3s' }}>🎶</span>
-                        <span>Humming...</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {isSongCardExpanded && (
-                    <div className="w-full mt-3 bg-[#FFFDF9]/80 border border-[#EDE9DE]/50 rounded-2xl p-4 text-center relative overflow-hidden space-y-3 shadow-3xs">
-                      <div>
-                        <h4 className="font-display font-black text-gray-800 text-[13px] leading-tight mb-0.5">
-                          “HopeBuddy has a little song for you”
-                        </h4>
-                        <p className="text-[9.5px] text-gray-400 font-bold uppercase tracking-wider block">
-                          Based on your mood today.
-                        </p>
-                      </div>
-
-                      <p className="text-[12.5px] text-gray-600 font-semibold italic whitespace-pre-line leading-relaxed px-2 py-1">
-                        {getLyricsForMoodId(currentMood)}
-                      </p>
-
-                      {audioError && (
-                        <div className="py-1.5 px-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[11px] font-semibold text-center leading-normal">
-                          ⚠️ {audioError}
-                        </div>
-                      )}
-
-                      {isHumming && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11.5px] font-bold"
-                        >
-                          {isMuted ? 'HopeBuddy is muted 🎵' : 'HopeBuddy is humming for you 🎵'}
-                        </motion.div>
-                      )}
-
-                      {/* Song card actions */}
-                      <div className="flex flex-wrap gap-2 pt-1 justify-center">
-                        <button
-                          onClick={() => {
-                            if (isHumming) {
-                              stopWebAudioHum();
-                            } else {
-                              startWebAudioHum();
-                            }
-                          }}
-                          type="button"
-                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
-                        >
-                          <span>{isHumming ? '⏹️ Stop hum' : '🎵 Play HopeBuddy hum'}</span>
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            const nextMuted = !isMuted;
-                            setIsMuted(nextMuted);
-                            localStorage.setItem('hopeheart_music_muted', nextMuted ? 'true' : 'false');
-                            if (nextMuted) {
-                              stopWebAudioHum();
-                            }
-                          }}
-                          type="button"
-                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
-                        >
-                          <span>{isMuted ? '🔊 Unmute' : '🔇 Mute'}</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Component 2: 🛡️ Safety Guardrails Card */}
-          <motion.button
-            onClick={() => onNavigateTo('ai-safety')}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <SafetyIllustration />
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Safety Guardrails
-                </h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  AI helps keep conversations safe, respectful, and free from medical advice.
-                </p>
-              </div>
-            </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              View Rules & Guide →
-            </span>
-          </motion.button>
-
-          {/* Component 3: 🌤️ Feel Good Card */}
-          <motion.button
-            onClick={() => onNavigateTo(ScreenId.FeelGood)}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center text-[30px] shrink-0">🌤️</div>
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Feel Good</h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Smile, hum, write, remember strengths, or do something small you like.</p>
-              </div>
-            </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Try Something Light →</span>
-          </motion.button>
-
-          {/* Component 3: 🌼 My Space Card */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <motion.button
             onClick={() => onNavigateTo(ScreenId.MySpace)}
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
           >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center text-[30px] shrink-0">🌼</div>
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  My Space
-                </h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Private diary, memories, Remember Me, and gentle resources in one place.
-                </p>
-              </div>
+            <span className="text-[28px] block">📝</span>
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">My Space</h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Write privately and keep your thoughts safe.</p>
             </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              Open My Space →
-            </span>
           </motion.button>
 
-          {/* Component 4: 🌍 Trusted Resources Card */}
-          <motion.button
-            onClick={() => onNavigateTo('doctor-suggestions')}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <ResourcesIllustration />
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  Comfort Resources
-                </h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Read gentle emotional information when you are ready. Small steps only.
-                </p>
-              </div>
-            </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
-              Read When Ready →
-            </span>
-          </motion.button>
-
-          {/* Remember Me Strength Reminder Card */}
           <motion.button
             onClick={() => onNavigateTo(ScreenId.MySpace)}
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
           >
-            <div className="space-y-1 text-center sm:text-left">
-              <span className="text-[30px] block">💛</span>
-              <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Remember Me</h4>
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Keep strengths, interests, comforts, safe places, and survival memories close.</p>
+            <span className="text-[28px] block">🌸</span>
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">Memories</h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Save moments that remind you who you are.</p>
             </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Remember My Strengths →</span>
           </motion.button>
 
-          {/* Optional Community Card */}
           <motion.button
             onClick={() => onNavigateTo(ScreenId.Community)}
             whileHover={{ scale: 1.01, y: -1 }}
             whileTap={{ scale: 0.99 }}
             type="button"
-            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
           >
-            <div className="space-y-1 text-center sm:text-left">
-              <span className="text-[30px] block">🤝</span>
-              <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">Optional Community</h4>
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready. You can also just browse quietly.</p>
+            <span className="text-[28px] block">🤝</span>
+            <div className="space-y-1">
+              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">Optional Community</h4>
+              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready.</p>
             </div>
-            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">Browse Quietly →</span>
           </motion.button>
-
-          {/* Component 5: 🛟 Help & Support Card */}
-          <div
-            className="p-5 hh-surface rounded-[32px] text-left flex flex-col justify-between gap-4 col-span-1 sm:col-span-2 lg:col-span-1"
-          >
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
-              <SupportIllustration />
-              <div className="space-y-1 text-center sm:text-left">
-                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
-                  🛟 Help & Support
-                </h4>
-                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
-                  Need help using HopeHeart? Contact support or report an issue.
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => onNavigateTo(ScreenId.CustomerSupport)}
-              type="button"
-              className="w-full py-2.5 bg-[#FAF8F4] hover:bg-[#FFF2EA] hover:text-[#FF7527] border border-[#ECE6D9] hover:border-[#FF7527] text-gray-700 rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center mt-1"
-            >
-              Contact Support
-            </button>
-          </div>
-
         </div>
+
+        <div className="mt-4 hh-surface rounded-[24px] p-4 border border-[#F1E7D8] bg-white/70 space-y-3">
+          <div className="space-y-0.5">
+            <h3 className="font-display font-black text-gray-800 text-[14px] leading-tight">Need help or information?</h3>
+            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Support, safety, and privacy are always nearby.</p>
+          </div>
+          <div className="divide-y divide-orange-100/60">
+            {[
+              { icon: '🛟', title: 'Customer Support', text: 'Reach out if you need help using HopeHeart.', action: () => onNavigateTo(ScreenId.CustomerSupport) },
+              { icon: '🛡️', title: 'Safety Guide', text: 'Know what HopeHeart can and cannot do.', action: () => onNavigateTo(ScreenId.AISafety) },
+              { icon: '📚', title: 'Comfort Resources', text: 'Read gentle support when you feel ready.', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
+              { icon: '🔒', title: 'Privacy & Data Protection', text: 'Manage your privacy and data choices.', action: () => onNavigateTo(ScreenId.PrivacySettings) }
+            ].map((item) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={item.action}
+                className="w-full py-3 flex items-center gap-3 text-left cursor-pointer group"
+              >
+                <span className="w-8 h-8 rounded-full bg-[#FFF8F2] border border-orange-100 flex items-center justify-center text-[15px] shrink-0">{item.icon}</span>
+                <span className="flex-1 min-w-0">
+                  <span className="block font-display font-black text-gray-800 text-[12.5px] leading-tight">{item.title}</span>
+                  <span className="block text-[11px] text-gray-500 font-semibold leading-relaxed">{item.text}</span>
+                </span>
+                <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors">→</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          onClick={() => onNavigateTo(ScreenId.AISafety)}
+          type="button"
+          className="mt-4 w-full py-3 bg-white/60 hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl text-[12px] font-display font-black text-[#B95825] cursor-pointer transition-all"
+        >
+          🛡️ Safety is always available
+        </button>
 
         {/* Safe Platform Boundary Disclaimer Footer */}
         <div className="mt-8 mb-6 text-center max-w-2xl mx-auto px-4">
@@ -2955,66 +2612,158 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
         <span className="text-[20px] select-none">🌼</span>
       </div>
 
-      <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 lg:p-8 space-y-5">
-        <div className="hh-hero-surface rounded-[32px] p-5 text-center space-y-2">
-          <h2 className="font-display font-black text-[#2B1D12] text-[22px] leading-tight">Private space for you</h2>
-          <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Diary, memories, photos, and Remember Me data stay local for this MVP and are not shared with Community.</p>
+      <div className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-28 sm:pb-10 space-y-5">
+        <div className="hh-hero-surface rounded-[32px] p-5 sm:p-6 lg:p-8 text-left overflow-hidden relative border border-orange-100/70 shadow-3xs">
+          <div className="absolute -top-14 -right-10 w-40 h-40 bg-[#FFB98A]/20 rounded-full blur-2xl" />
+          <div className="absolute bottom-0 right-16 w-28 h-28 bg-[#F8C8DC]/20 rounded-full blur-2xl" />
+          <div className="relative grid grid-cols-1 sm:grid-cols-[1fr_210px] gap-5 sm:items-center">
+            <div className="space-y-3">
+              <h2 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[28px] leading-tight">Private space for you</h2>
+              <p className="text-[13px] sm:text-[14px] text-gray-600 font-semibold leading-relaxed max-w-md">Your diary, memories, photos, and Remember Me data stay local for this MVP and are not shared with Community.</p>
+            </div>
+            <div className="justify-self-center sm:justify-self-end relative w-40 h-32 sm:w-48 sm:h-36 rounded-[28px] bg-white/45 border border-white/70 flex items-center justify-center shadow-3xs">
+              <div className="absolute left-4 bottom-4 text-[28px]">🌿</div>
+              <div className="absolute right-4 top-4 text-[22px]">💛</div>
+              <div className="w-24 h-28 rounded-2xl bg-gradient-to-br from-[#FFD46B] to-[#FF9D45] border border-orange-200 shadow-sm flex items-center justify-center text-[36px] rotate-[-3deg]">🔒</div>
+              <div className="absolute right-8 bottom-3 text-[34px] rotate-12">✍️</div>
+            </div>
+          </div>
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Private Diary</h3>
-          <input value={diaryTitle} onChange={(e) => setDiaryTitle(e.target.value)} placeholder="Title optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <input value={diaryMood} onChange={(e) => setDiaryMood(e.target.value)} placeholder="Mood optional" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <textarea value={diaryText} onChange={(e) => setDiaryText(e.target.value)} rows={4} placeholder="Write privately..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
-          <button onClick={saveDiary} type="button" className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save diary entry</button>
+        <div className="hh-surface rounded-[30px] p-5 sm:p-6 space-y-5 border border-orange-100/70 shadow-3xs">
+          <div className="flex items-start gap-3">
+            <span className="w-12 h-12 rounded-2xl bg-[#FFF8F2] border border-orange-100 flex items-center justify-center text-[24px] shrink-0">📓</span>
+            <div className="space-y-1">
+              <h3 className="font-display font-black text-gray-800 text-[18px]">Private Diary</h3>
+              <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Write freely. Your words stay with you.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              ['📝', 'Start a new entry', 'Write whatever is on your mind.'],
+              ['🔒', '100% private', 'Only you can see your diary.'],
+              ['🌿', 'Keep it in the moment', 'Capture your thoughts, feelings, and moments.']
+            ].map(([icon, title, text]) => (
+              <div key={title} className="bg-[#FFFDF9] border border-orange-100/80 rounded-2xl p-3.5 flex items-start gap-2.5">
+                <span className="w-9 h-9 rounded-xl bg-white border border-orange-100 flex items-center justify-center text-[18px] shrink-0">{icon}</span>
+                <div className="space-y-0.5">
+                  <h4 className="text-[11.5px] font-display font-black text-gray-800 leading-tight">{title}</h4>
+                  <p className="text-[10.5px] text-gray-500 font-semibold leading-relaxed">{text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white/70 border border-orange-100/60 rounded-3xl p-3.5 sm:p-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className="space-y-1.5">
+                <span className="text-[11px] font-display font-black text-gray-700">Title optional</span>
+                <input value={diaryTitle} onChange={(e) => setDiaryTitle(e.target.value)} placeholder="A quiet title..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-orange-100/70 rounded-2xl text-[12.5px] font-semibold outline-none focus:border-[#FFB27A]" />
+              </label>
+              <label className="space-y-1.5">
+                <span className="text-[11px] font-display font-black text-gray-700">Mood optional</span>
+                <input value={diaryMood} onChange={(e) => setDiaryMood(e.target.value)} placeholder="How it feels..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-orange-100/70 rounded-2xl text-[12.5px] font-semibold outline-none focus:border-[#FFB27A]" />
+              </label>
+            </div>
+            <label className="space-y-1.5 block">
+              <span className="text-[11px] font-display font-black text-gray-700">Write privately</span>
+              <textarea value={diaryText} onChange={(e) => setDiaryText(e.target.value)} rows={4} placeholder="Let your thoughts land here..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-orange-100/70 rounded-2xl text-[12.5px] font-semibold resize-none outline-none focus:border-[#FFB27A]" />
+            </label>
+            <button onClick={saveDiary} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save diary entry</button>
+          </div>
           {diaryEntries.slice(0, 2).map((entry) => <p key={entry.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{entry.title || 'Untitled'} — {new Date(entry.savedAt).toLocaleString()}</p>)}
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Memories</h3>
-          <input value={memoryTitle} onChange={(e) => setMemoryTitle(e.target.value)} placeholder="Memory title" className="w-full px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-          <textarea value={memoryStory} onChange={(e) => setMemoryStory(e.target.value)} rows={4} placeholder="Memory story" className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-gray-200 rounded-2xl text-[12.5px] font-semibold resize-none" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input value={memoryType} onChange={(e) => setMemoryType(e.target.value)} placeholder="Memory type" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryDateOrAge} onChange={(e) => setMemoryDateOrAge(e.target.value)} placeholder="Date or age optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryPeople} onChange={(e) => setMemoryPeople(e.target.value)} placeholder="People optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryPlace} onChange={(e) => setMemoryPlace(e.target.value)} placeholder="Place optional" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryFeeling} onChange={(e) => setMemoryFeeling(e.target.value)} placeholder="Feeling connected to memory" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            <input value={memoryWhy} onChange={(e) => setMemoryWhy(e.target.value)} placeholder="Why this memory matters" className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+          <div className="rounded-[30px] p-4 sm:p-5 space-y-4 bg-gradient-to-br from-[#FFFDF9] via-[#FFF7F2] to-[#FFF0F4] border border-[#FFD9CC] shadow-3xs">
+            <div className="flex items-start gap-3">
+              <span className="w-12 h-12 rounded-2xl bg-[#FFF1F0] border border-[#FFD0C4] flex items-center justify-center text-[24px] shrink-0">🖼️</span>
+              <div className="space-y-1">
+                <h3 className="font-display font-black text-gray-800 text-[18px]">Memories</h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Capture moments that matter.</p>
+              </div>
+            </div>
+
+            <div className="space-y-2.5">
+              {[
+                ['♡', 'Memory title', 'Name this moment...', memoryTitle, setMemoryTitle, 'input'],
+                ['☀️', 'Small good moment', 'Choose or describe...', memoryType, setMemoryType, 'input'],
+                ['▤', 'Your memory', 'Write your memory...', memoryStory, setMemoryStory, 'textarea'],
+                ['🗓️', 'Date or age', 'Date or age...', memoryDateOrAge, setMemoryDateOrAge, 'input'],
+                ['🧑‍🤝‍🧑', 'People', 'People...', memoryPeople, setMemoryPeople, 'input'],
+                ['📍', 'Place', 'Place...', memoryPlace, setMemoryPlace, 'input'],
+                ['💛', 'Feeling connected to memory', 'Feeling connected to...', memoryFeeling, setMemoryFeeling, 'input'],
+                ['✨', 'Why this memory matters', 'Why this memory matters...', memoryWhy, setMemoryWhy, 'input']
+              ].map(([icon, label, placeholder, value, setter, kind]) => (
+                <label key={label as string} className="bg-white/78 border border-[#FFD9CC]/80 rounded-2xl px-3 py-2.5 flex items-start gap-2.5">
+                  <span className="w-8 h-8 rounded-xl bg-[#FFF8F2] flex items-center justify-center text-[15px] shrink-0">{icon as string}</span>
+                  <span className="flex-1 min-w-0 space-y-1">
+                    <span className="block text-[11px] font-display font-black text-gray-700">{label as string}</span>
+                    {kind === 'textarea' ? (
+                      <textarea value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} rows={3} placeholder={placeholder as string} className="w-full bg-transparent text-[12.5px] font-semibold text-gray-700 placeholder:text-gray-400 resize-none outline-none" />
+                    ) : (
+                      <input value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} placeholder={placeholder as string} className="w-full bg-transparent text-[12.5px] font-semibold text-gray-700 placeholder:text-gray-400 outline-none" />
+                    )}
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImagePreview(e.target.files?.[0])} />
+            {imagePreview && <div className="rounded-2xl overflow-hidden border border-[#FFD9CC]"><img src={imagePreview} alt="Local-only memory preview" className="w-full max-h-56 object-cover" /><p className="text-[10.5px] text-gray-400 font-bold p-2 text-center">Preview only — not uploaded.</p></div>}
+            <button onClick={() => fileInputRef.current?.click()} type="button" className="w-full py-3 bg-white border border-[#FFD9CC] rounded-2xl text-[12.5px] font-display font-black cursor-pointer hover:bg-[#FFF8F2] transition-all">📷 Preview local photo</button>
+            <button onClick={saveMemory} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save memory</button>
+            {memories.slice(0, 2).map((memory) => <p key={memory.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{memory.title} — {memory.type}</p>)}
           </div>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImagePreview(e.target.files?.[0])} />
-          {imagePreview && <div className="rounded-2xl overflow-hidden border border-gray-150"><img src={imagePreview} alt="Local-only memory preview" className="w-full max-h-56 object-cover" /><p className="text-[10.5px] text-gray-400 font-bold p-2 text-center">Preview only — not uploaded.</p></div>}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button onClick={() => fileInputRef.current?.click()} type="button" className="py-2.5 bg-white border border-gray-200 rounded-xl text-[12.5px] font-display font-black cursor-pointer">Preview local photo</button>
-            <button onClick={saveMemory} type="button" className="py-2.5 bg-[#FF7527] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save memory</button>
+
+          <div className="rounded-[30px] p-4 sm:p-5 space-y-4 bg-gradient-to-br from-[#FFFDF9] via-[#F8FBFF] to-[#EEF5FF] border border-[#D8E7FF] shadow-3xs">
+            <div className="flex items-start gap-3">
+              <span className="w-12 h-12 rounded-2xl bg-[#EEF5FF] border border-[#D8E7FF] flex items-center justify-center text-[24px] shrink-0">⭐</span>
+              <div className="space-y-1">
+                <h3 className="font-display font-black text-gray-800 text-[18px]">Remember Me</h3>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Revisit what makes you, you.</p>
+              </div>
+            </div>
+            <div className="space-y-2.5">
+              {[
+                ['⭐', 'My strengths', strengths, setStrengths],
+                ['🧡', 'My interests', interests, setInterests],
+                ['🌿', 'Things that calm me', calmingThings, setCalmingThings],
+                ['🍽️', 'Favourite food', favoriteFood, setFavoriteFood],
+                ['🎵', 'Favourite music', favoriteMusic, setFavoriteMusic],
+                ['🛋️', 'Favourite comfort activity', comfortActivity, setComfortActivity],
+                ['🏠', 'Safe place', safePlace, setSafePlace],
+                ['🛡️', 'Memory that reminds me I survived', survivalMemory, setSurvivalMemory]
+              ].map(([icon, label, value, setter]) => (
+                <label key={label as string} className="bg-white/78 border border-[#D8E7FF]/90 rounded-2xl px-3 py-2.5 flex items-center gap-2.5">
+                  <span className="w-8 h-8 rounded-xl bg-[#F5F9FF] flex items-center justify-center text-[15px] shrink-0">{icon as string}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-[11px] font-display font-black text-gray-700">{label as string}</span>
+                    <input value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} placeholder={`${label as string}...`} className="w-full bg-transparent text-[12.5px] font-semibold text-gray-700 placeholder:text-gray-400 outline-none" />
+                  </span>
+                </label>
+              ))}
+            </div>
+            <button onClick={saveRememberMe} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save Remember Me</button>
           </div>
-          {memories.slice(0, 2).map((memory) => <p key={memory.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{memory.title} — {memory.type}</p>)}
         </div>
 
-        <div className="hh-surface rounded-3xl p-5 space-y-3">
-          <h3 className="font-display font-black text-gray-800 text-[15px]">Remember Me</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {[
-              ['My strengths', strengths, setStrengths],
-              ['My interests', interests, setInterests],
-              ['Things that calm me', calmingThings, setCalmingThings],
-              ['Favourite food', favoriteFood, setFavoriteFood],
-              ['Favourite music', favoriteMusic, setFavoriteMusic],
-              ['Favourite comfort activity', comfortActivity, setComfortActivity],
-              ['Safe place', safePlace, setSafePlace],
-              ['Memory that reminds me I survived', survivalMemory, setSurvivalMemory]
-            ].map(([label, value, setter]) => (
-              <input key={label as string} value={value as string} onChange={(e) => (setter as (value: string) => void)(e.target.value)} placeholder={label as string} className="px-3.5 py-2.5 bg-[#FCFBF8] border border-gray-200 rounded-xl text-[12.5px] font-semibold" />
-            ))}
-          </div>
-          <button onClick={saveRememberMe} type="button" className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer">Save Remember Me</button>
-        </div>
-
-        <button onClick={() => onNavigateTo(ScreenId.DoctorSuggestions)} type="button" className="w-full py-3 bg-white hover:bg-[#FFF8F2] border border-orange-100 rounded-2xl text-[#FF7527] font-display font-black text-[13px] cursor-pointer">Open Gentle Resources</button>
+        <button onClick={() => onNavigateTo(ScreenId.DoctorSuggestions)} type="button" className="w-full bg-white/85 hover:bg-[#FFF8F2] border border-orange-100 rounded-[26px] p-4 text-left cursor-pointer transition-all flex items-center justify-between gap-3 shadow-3xs">
+          <span className="flex items-center gap-3">
+            <span className="w-11 h-11 rounded-2xl bg-[#FFF8E8] border border-orange-100 flex items-center justify-center text-[22px]">🪴</span>
+            <span>
+              <span className="block text-[14px] text-[#FF7527] font-display font-black">Open Gentle Resources</span>
+              <span className="block text-[11.5px] text-gray-500 font-semibold leading-relaxed">Explore calming and supportive resources.</span>
+            </span>
+          </span>
+          <span className="text-[#FF7527] font-black text-[20px]">›</span>
+        </button>
       </div>
     </div>
   );
 }
+
 '@
 
 Write-HopeHeartFile -RelativePath 'src/components/CommunityScreen.tsx' -Content @'
