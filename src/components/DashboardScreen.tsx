@@ -332,26 +332,27 @@ export default function DashboardScreen({
             <h2 className="font-display font-black text-[#2B1D12] text-[19px] leading-tight">What do you need right now?</h2>
             <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Choose one small thing. No pressure.</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-3 sm:gap-3.5">
             {[
-              { title: 'Mood', text: 'Notice how you feel.', icon: '🌤️', action: () => onNavigateTo(ScreenId.Mood) },
-              { title: 'Feel Good', text: 'Try something light first.', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
-              { title: 'Write privately', text: 'Open your private diary.', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Memories', text: 'Save a comforting moment.', icon: '🌼', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Remember Me', text: 'Return to your strengths.', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
-              { title: 'Gentle Resources', text: 'Read when you are ready.', icon: '📚', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
-              { title: 'Safety', text: 'View safety support.', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) },
-              { title: 'Optional Community', text: 'Connect only when you feel ready. You can also just browse quietly.', icon: '🤝', action: () => onNavigateTo(ScreenId.Community) }
+              { title: 'Mood', helper: 'Feel', icon: '🌤️', action: () => onNavigateTo(ScreenId.Mood) },
+              { title: 'Feel Good', helper: 'Light', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
+              { title: 'Write privately', helper: 'Private', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
+              { title: 'Memories', helper: 'Save', icon: '🌸', action: () => onNavigateTo(ScreenId.MySpace) },
+              { title: 'Remember Me', helper: 'Strengths', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
+              { title: 'Gentle Resources', helper: 'Read', icon: '📚', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
+              { title: 'Safety', helper: 'Support', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) },
+              { title: 'Optional Community', helper: 'Browse', icon: '🤝', action: () => onNavigateTo(ScreenId.Community) }
             ].map((item) => (
               <button
                 key={item.title}
                 type="button"
                 onClick={item.action}
-                className="min-h-[112px] bg-[#FFFDF9] hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl p-3.5 text-left transition-all cursor-pointer active:scale-[0.99] flex flex-col gap-2"
+                className="min-h-[92px] bg-[#FFFDF9] hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl px-2.5 py-3 text-center transition-all cursor-pointer active:scale-[0.98] flex flex-col items-center justify-center gap-1.5 shadow-3xs"
+                aria-label={item.title}
               >
-                <span className="text-[24px] leading-none">{item.icon}</span>
-                <span className="font-display font-black text-gray-800 text-[13px] leading-tight">{item.title}</span>
-                <span className="text-[11px] text-gray-500 font-semibold leading-snug">{item.text}</span>
+                <span className="text-[25px] leading-none">{item.icon}</span>
+                <span className="font-display font-black text-gray-800 text-[10.5px] sm:text-[11px] leading-tight">{item.title}</span>
+                <span className="text-[9px] text-gray-400 font-bold leading-none hidden sm:block">{item.helper}</span>
               </button>
             ))}
           </div>
