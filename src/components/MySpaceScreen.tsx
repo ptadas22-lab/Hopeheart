@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { ScreenId } from '../types';
+import { saveDiaryEntry, saveMemoryEntry, saveRememberMeDetails } from '../services/mySpaceData';
 
 interface MySpaceScreenProps {
   onBack: () => void;
@@ -61,9 +62,25 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
   const [safePlace, setSafePlace] = useState(() => localStorage.getItem('hopeheart_remember_safe_place') || '');
   const [survivalMemory, setSurvivalMemory] = useState(() => localStorage.getItem('hopeheart_remember_survival_memory') || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [diarySaveState, setDiarySaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
+  const [memorySaveState, setMemorySaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
+  const [rememberSaveState, setRememberSaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
 
-  const saveDiary = () => {
-    if (!diaryText.trim()) return;
+  const saveDiary = async () => {
+    if (!diaryText.trim() || diarySaveState.loading) return;
+
+    setDiarySaveState({ loading: true });
+    const result = await saveDiaryEntry({
+      title: diaryTitle.trim(),
+      moodText: diaryMood.trim(),
+      diaryText: diaryText.trim()
+    });
+
+    if (!result.ok) {
+      setDiarySaveState({ loading: false, type: 'error', message: "Couldn’t save right now. Please try again." });
+      return;
+    }
+
     const entry = { id: Date.now().toString(), title: diaryTitle.trim(), mood: diaryMood.trim(), text: diaryText.trim(), savedAt: new Date().toISOString() };
     const updated = [entry, ...diaryEntries];
     setDiaryEntries(updated);
@@ -71,10 +88,29 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
     setDiaryTitle('');
     setDiaryMood('');
     setDiaryText('');
+    setDiarySaveState({ loading: false, type: 'success', message: 'Your private diary entry is saved safely.' });
   };
 
-  const saveMemory = () => {
-    if (!memoryTitle.trim() || !memoryStory.trim()) return;
+  const saveMemory = async () => {
+    if (!memoryTitle.trim() || !memoryStory.trim() || memorySaveState.loading) return;
+
+    setMemorySaveState({ loading: true });
+    const result = await saveMemoryEntry({
+      memoryTitle: memoryTitle.trim(),
+      smallGoodMoment: memoryType.trim(),
+      memoryText: memoryStory.trim(),
+      dateOrAge: memoryDateOrAge.trim(),
+      people: memoryPeople.trim(),
+      place: memoryPlace.trim(),
+      feelingConnectedToMemory: memoryFeeling.trim(),
+      whyMemoryMatters: memoryWhy.trim()
+    });
+
+    if (!result.ok) {
+      setMemorySaveState({ loading: false, type: 'error', message: "Couldn’t save right now. Please try again." });
+      return;
+    }
+
     const entry = {
       id: Date.now().toString(),
       title: memoryTitle.trim(),
@@ -97,9 +133,29 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
     setMemoryPlace('');
     setMemoryFeeling('');
     setMemoryWhy('');
+    setMemorySaveState({ loading: false, type: 'success', message: 'Your memory is saved safely.' });
   };
 
-  const saveRememberMe = () => {
+  const saveRememberMe = async () => {
+    if (rememberSaveState.loading) return;
+
+    setRememberSaveState({ loading: true });
+    const result = await saveRememberMeDetails({
+      strengths,
+      interests,
+      calmingThings,
+      favouriteFood: favoriteFood,
+      favouriteMusic: favoriteMusic,
+      favouriteComfortActivity: comfortActivity,
+      safePlace,
+      survivalReminder: survivalMemory
+    });
+
+    if (!result.ok) {
+      setRememberSaveState({ loading: false, type: 'error', message: "Couldn’t save right now. Please try again." });
+      return;
+    }
+
     localStorage.setItem('hopeheart_remember_strengths', strengths);
     localStorage.setItem('hopeheart_remember_interests', interests);
     localStorage.setItem('hopeheart_remember_calming_things', calmingThings);
@@ -108,6 +164,7 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
     localStorage.setItem('hopeheart_remember_comfort_activity', comfortActivity);
     localStorage.setItem('hopeheart_remember_safe_place', safePlace);
     localStorage.setItem('hopeheart_remember_survival_memory', survivalMemory);
+    setRememberSaveState({ loading: false, type: 'success', message: 'Your Remember Me details are saved safely.' });
   };
 
   const handleImagePreview = (file?: File) => {
@@ -185,7 +242,10 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
               <span className="text-[11px] font-display font-black text-gray-700">Write privately</span>
               <textarea value={diaryText} onChange={(e) => setDiaryText(e.target.value)} rows={4} placeholder="Let your thoughts land here..." className="w-full px-3.5 py-3 bg-[#FCFBF8] border border-orange-100/70 rounded-2xl text-[12.5px] font-semibold resize-none outline-none focus:border-[#FFB27A]" />
             </label>
-            <button onClick={saveDiary} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save diary entry</button>
+            <button onClick={saveDiary} type="button" disabled={diarySaveState.loading} className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{diarySaveState.loading ? 'Saving…' : 'Save diary entry'}</button>
+            {diarySaveState.message && (
+              <p role="status" className={`text-[11.5px] font-bold text-center ${diarySaveState.type === 'success' ? 'text-emerald-700' : 'text-red-600'}`}>{diarySaveState.message}</p>
+            )}
           </div>
           {diaryEntries.slice(0, 2).map((entry) => <p key={entry.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{entry.title || 'Untitled'} — {new Date(entry.savedAt).toLocaleString()}</p>)}
         </div>
@@ -228,7 +288,10 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImagePreview(e.target.files?.[0])} />
             {imagePreview && <div className="rounded-2xl overflow-hidden border border-[#FFD9CC]"><img src={imagePreview} alt="Local-only memory preview" className="w-full max-h-56 object-cover" /><p className="text-[10.5px] text-gray-400 font-bold p-2 text-center">Preview only — not uploaded.</p></div>}
             <button onClick={() => fileInputRef.current?.click()} type="button" className="w-full py-3 bg-white border border-[#FFD9CC] rounded-2xl text-[12.5px] font-display font-black cursor-pointer hover:bg-[#FFF8F2] transition-all">📷 Preview local photo</button>
-            <button onClick={saveMemory} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save memory</button>
+            <button onClick={saveMemory} type="button" disabled={memorySaveState.loading} className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{memorySaveState.loading ? 'Saving…' : 'Save memory'}</button>
+            {memorySaveState.message && (
+              <p role="status" className={`text-[11.5px] font-bold text-center ${memorySaveState.type === 'success' ? 'text-emerald-700' : 'text-red-600'}`}>{memorySaveState.message}</p>
+            )}
             {memories.slice(0, 2).map((memory) => <p key={memory.id} className="text-[11.5px] text-gray-500 font-semibold bg-white/70 rounded-xl p-2">{memory.title} — {memory.type}</p>)}
           </div>
 
@@ -260,7 +323,10 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
                 </label>
               ))}
             </div>
-            <button onClick={saveRememberMe} type="button" className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99]">Save Remember Me</button>
+            <button onClick={saveRememberMe} type="button" disabled={rememberSaveState.loading} className="w-full py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{rememberSaveState.loading ? 'Saving…' : 'Save Remember Me'}</button>
+            {rememberSaveState.message && (
+              <p role="status" className={`text-[11.5px] font-bold text-center ${rememberSaveState.type === 'success' ? 'text-emerald-700' : 'text-red-600'}`}>{rememberSaveState.message}</p>
+            )}
           </div>
         </div>
 
