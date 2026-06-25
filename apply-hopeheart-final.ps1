@@ -2940,6 +2940,7 @@ export default function ProfileUtilityScreen({
   const [q3Answer, setQ3Answer] = useState<string>('');
   const [quizError, setQuizError] = useState<string>('');
   const [validatedOnce, setValidatedOnce] = useState<boolean>(false);
+  const [showQuiz, setShowQuiz] = useState<boolean>(false);
 
   useEffect(() => {
     if (subStage === 'profile') {
@@ -3129,7 +3130,7 @@ export default function ProfileUtilityScreen({
         <span className="text-[20px] select-none">👤</span>
       </div>
 
-      <div className="flex-1 max-w-5xl mx-auto w-full p-4 pt-6 sm:p-6 sm:pt-8 lg:p-8 lg:pt-10 pb-28 sm:pb-10">
+      <div className="flex-1 max-w-2xl mx-auto w-full p-4 pt-6 sm:p-6 sm:pt-8 lg:p-8 lg:pt-10 pb-28 sm:pb-10">
         <AnimatePresence mode="wait">
           
           {/* SCREEN 23: PROFILE SCREEN */}
@@ -3142,109 +3143,112 @@ export default function ProfileUtilityScreen({
               className="space-y-6"
             >
               {/* Profile Card Header */}
-              <div className="hh-surface rounded-[34px] p-5 sm:p-7 text-center overflow-hidden relative border border-orange-100/70 shadow-3xs">
-                <div className="absolute -right-10 top-24 w-44 h-44 rounded-full bg-[#FFE3D3]/55" />
-                <div className="absolute right-10 top-16 text-[22px] text-[#FFB95F]">✦</div>
-                <div className="absolute right-24 top-28 text-[28px] text-[#FFCA75]">✦</div>
-                <div className="absolute right-7 bottom-44 text-[44px] opacity-70">🪴</div>
+              <div className="hh-surface rounded-[34px] p-6 sm:p-8 text-center overflow-hidden relative border border-orange-100/70 shadow-3xs">
+                <div className="absolute -left-16 top-10 w-28 h-44 rounded-full bg-[#EAD9FF]/40 blur-sm" />
+                <div className="absolute -right-8 top-24 w-24 h-28 rounded-full bg-[#FFE3D3]/65" />
+                <div className="absolute left-20 top-20 text-[18px] text-[#FFCF8A]">✦</div>
+                <div className="absolute right-12 top-16 text-[18px] text-[#FFCF8A]">✦</div>
+                <div className="absolute right-8 top-28 text-[26px] text-[#FFB95F]">✦</div>
 
-                <div className="relative flex flex-col items-center space-y-3">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[42px] shrink-0 shadow-md select-none">
+                <div className="relative flex flex-col items-center space-y-4">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#FF7527] to-[#FFA14E] border-4 border-white flex items-center justify-center text-[50px] shrink-0 shadow-md select-none">
                     {profileAvatar}
                   </div>
                   <div className="space-y-1.5">
-                    <h3 className="font-display font-black text-[#10213D] text-[24px] leading-tight">{anonNameInput || userName || 'GoogleBuddy'}</h3>
+                    <h3 className="font-display font-black text-[#10213D] text-[28px] leading-tight">GoogleBuddy</h3>
                     <span className="inline-flex px-4 py-1 bg-orange-50 text-[#FF7527] border border-orange-100 rounded-full text-[10px] font-mono font-extrabold uppercase tracking-wider">Peer Member</span>
                   </div>
 
-                  {quizPassed ? (
-                    <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-[12px] font-extrabold px-4 py-2 rounded-xl">
-                      <span>⭐</span> Trust Badge Earned — understands safety rules
-                    </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-2 bg-[#FFF8EE] border border-[#FF9D45] text-[#9A4A12] text-[12px] font-extrabold px-4 py-2 rounded-xl">
-                      <span>⚠️</span> Authenticity Pending — take safety quiz below
-                    </div>
-                  )}
+                  <button type="button" onClick={() => setShowQuiz(true)} className="inline-flex items-center gap-2 bg-[#FFF8EE] border border-[#FF9D45] text-[#9A4A12] text-[12.5px] font-extrabold px-5 py-3 rounded-2xl cursor-pointer hover:bg-[#FFF2E2] transition-colors">
+                    <span>⚠️</span> Authenticity Pending — take safety quiz below
+                  </button>
                 </div>
 
-                <div className="relative w-full pt-6">
-                  <div className="flex items-center justify-between text-[11px] font-display font-black text-[#697386] uppercase tracking-tight mb-2">
-                    <span>Profile Completion Progress</span>
-                    <span className="text-[#FF7527] text-[15px]">70%</span>
+                <div className="relative w-full pt-6 max-w-md mx-auto">
+                  <div className="flex items-center justify-between text-[13px] font-semibold text-[#697386] mb-2">
+                    <span>Profile completion progress</span>
+                    <span className="text-[#FF7527] font-display font-black text-[20px]">70%</span>
                   </div>
                   <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                     <div className="h-full bg-[#FF7527] transition-all duration-500 rounded-full" style={{ width: '70%' }} />
                   </div>
                 </div>
 
-                <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 gap-0 pt-7 text-left">
-                  {[
-                    { label: 'Display Name', val: anonNameInput || 'GoogleBuddy', icon: '👤', tone: 'bg-[#FFEAF0]' },
-                    { label: 'Age Group', val: profileAgeGroup || '25–34', icon: '🦊', tone: 'bg-[#FFF1E6]' },
-                    { label: 'Gender', val: profileGender || 'Prefer not to say', icon: '🌈', tone: 'bg-[#EFFFF4]' },
-                    { label: 'Profession', val: profileProfession === 'Working Professional' ? 'Prefer not to say' : profileProfession, icon: '💼', tone: 'bg-[#FFF3E0]' },
-                    { label: 'Language', val: profileLanguage || 'English', icon: '💬', tone: 'bg-[#F0F8E8]' },
-                    { label: 'Support Interest', val: (profileSupportInterest || 'General Support').replace('🌱 ', ''), icon: '🧡', tone: 'bg-[#FFF5E8]' },
-                    { label: 'Best Quality', val: profileBestQuality || 'Good Listener', icon: '⭐', tone: 'bg-[#FFF5E8]' },
-                    { label: 'Nature/Personality', val: profileNature || 'Calm and Supportive', icon: '🌱', tone: 'bg-[#EFF8E8]' }
-                  ].map((detail, idx) => (
-                    <div key={idx} className="flex items-center gap-3 bg-white/74 border border-orange-100/70 px-4 py-3 min-h-[76px] first:rounded-t-2xl sm:first:rounded-tl-2xl sm:first:rounded-tr-none sm:[&:nth-child(2)]:rounded-tr-2xl sm:[&:nth-child(7)]:rounded-bl-2xl last:rounded-b-2xl sm:last:rounded-bl-none sm:last:rounded-br-2xl">
-                      <span className={`w-11 h-11 rounded-2xl ${detail.tone} flex items-center justify-center text-[22px] shrink-0`}>{detail.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-[#697386] font-display font-black uppercase text-[10px] tracking-tight block leading-none mb-1">{detail.label}</span>
-                        <span className="text-[#10213D] font-display font-black text-[14px] leading-tight block truncate">{detail.val}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pt-5">
-                  <button type="button" onClick={() => setSubStage('edit-profile')} className="py-3 bg-white hover:bg-[#FCFAF5] border border-gray-300 text-[#2B1D12] rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1.5">
+                <div className="relative w-full grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6 max-w-md mx-auto">
+                  <button type="button" onClick={() => setSubStage('edit-profile')} className="py-3 bg-white hover:bg-[#FCFAF5] border border-gray-300 text-[#2B1D12] rounded-2xl text-[14px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-2">
                     <span>✏️</span> Edit Profile
                   </button>
-                  <button type="button" onClick={() => setSubStage('privacy')} className="py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1.5 shadow-3xs">
+                  <button type="button" onClick={() => setSubStage('privacy')} className="py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[14px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-2 shadow-3xs">
                     <span>🔒</span> Privacy Settings
                   </button>
                 </div>
+              </div>
 
-                <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-3 pt-5">
+              {/* My Safe Identity */}
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-orange-100/70 shadow-3xs">
+                <h4 className="font-display font-black text-[#10213D] text-[18px]">My Safe Identity</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   {[
-                    { value: '7 Days', label: 'Safe Space Streak', emoji: '🛡️', tone: 'from-[#FFF0F3] to-[#FFF8F8]', text: 'text-[#B42318]' },
-                    { value: '3 Check-ins', label: 'Mood Reflections', emoji: '🌼', tone: 'from-[#EFFAF0] to-[#F8FFF8]', text: 'text-[#15803D]' },
-                    { value: '12 Hearts', label: 'Support Shared', emoji: '💜', tone: 'from-[#F7EEFF] to-[#FFFBFF]', text: 'text-[#7E22CE]' }
-                  ].map((stat, idx) => (
-                    <div key={idx} className={`rounded-2xl p-4 text-center space-y-1 bg-gradient-to-br ${stat.tone} border border-white/80 shadow-3xs`}>
-                      <span className="text-[24px] block">{stat.emoji}</span>
-                      <h5 className={`font-display font-black ${stat.text} text-[16px]`}>{stat.value}</h5>
-                      <p className="text-[10px] text-[#697386] font-bold uppercase tracking-tight leading-tight">{stat.label}</p>
+                    ['⭐', 'Good Listener', 'bg-[#FFF5D9]'],
+                    ['🌿', 'Calm & Supportive', 'bg-[#EDF8ED]'],
+                    ['💜', 'General Support', 'bg-[#F3E9FF]'],
+                    ['🌐', 'English', 'bg-[#EAF7FF]'],
+                    ['🗓️', '25–34', 'bg-[#FFF0D8]'],
+                    ['👤', 'Prefer not to say', 'bg-[#FFE8EE]']
+                  ].map(([icon, label, tone]) => (
+                    <div key={label} className="bg-white/78 border border-orange-100/70 rounded-2xl p-2.5 flex items-center gap-2.5 min-h-[58px]">
+                      <span className={`w-10 h-10 rounded-full ${tone} flex items-center justify-center text-[20px] shrink-0`}>{icon}</span>
+                      <span className="font-display font-black text-[#10213D] text-[12.5px] leading-tight">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* My activity */}
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-orange-100/70 shadow-3xs">
+                <h4 className="font-display font-black text-[#10213D] text-[18px]">My activity</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { value: '7', suffix: 'Days', label: 'Safe space streak', emoji: '🛡️', tone: 'from-[#FFF0E8] to-[#FFF8F2]', text: 'text-[#FF7527]' },
+                    { value: '3', suffix: 'Check-ins', label: 'Mood reflections', emoji: '✓', tone: 'from-[#F7EEFF] to-[#FFFBFF]', text: 'text-[#8B5CF6]' },
+                    { value: '12', suffix: 'Hearts', label: 'Support shared', emoji: '💗', tone: 'from-[#FFF0F4] to-[#FFF8FA]', text: 'text-[#EF5A72]' }
+                  ].map((stat) => (
+                    <div key={stat.label} className={`rounded-2xl p-4 text-center space-y-1 bg-gradient-to-br ${stat.tone} border border-orange-100/70 shadow-3xs`}>
+                      <span className={`text-[30px] block ${stat.text}`}>{stat.emoji}</span>
+                      <div className="flex items-end justify-center gap-1">
+                        <h5 className={`font-display font-black ${stat.text} text-[32px] leading-none`}>{stat.value}</h5>
+                        <span className={`font-display font-black ${stat.text} text-[13px] pb-1`}>{stat.suffix}</span>
+                      </div>
+                      <p className="text-[12px] text-[#697386] font-semibold leading-tight">{stat.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Authenticity Check Quiz Card */}
-              <div className="hh-surface rounded-[30px] p-5 space-y-4 text-left border border-orange-100/70 shadow-3xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-100/70 pb-3">
-                  <div className="flex items-start gap-3">
-                    <span className="w-12 h-12 rounded-2xl bg-[#FFF7E8] border border-orange-100 flex items-center justify-center text-[22px] shrink-0">🛡️</span>
-                    <div>
-                      <h4 className="font-display font-black text-[#2B1D12] text-[16px]">Authenticity Check</h4>
-                      <p className="text-[12px] text-gray-500 font-semibold mt-0.5">Complete a short safety quiz to earn your HopeHeart Trust Badge.</p>
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-orange-100/70 shadow-3xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-16 h-16 rounded-2xl bg-[#FFF7E8] border border-orange-100 flex items-center justify-center text-[36px] shrink-0">🛡️</span>
+                    <div className="space-y-1">
+                      <h4 className="font-display font-black text-[#10213D] text-[17px]">Authenticity Check</h4>
+                      <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Complete a short safety quiz to earn your HopeHeart Trust Badge.</p>
                     </div>
                   </div>
-                  <button type="button" className="px-5 py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs">Take Quiz</button>
+                  <button onClick={() => setShowQuiz((value) => !value)} type="button" className="px-5 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs shrink-0">
+                    Take safety quiz ›
+                  </button>
                 </div>
 
-                {quizPassed ? (
+                {showQuiz && (quizPassed ? (
                   <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl space-y-2 text-center">
                     <span className="text-emerald-800 font-extrabold text-[13px] block">✓ Trust Badge Earned</span>
                     <p className="text-[11.5px] text-emerald-700 font-medium leading-relaxed">You have passed the safety check on {new Date(quizPassedAt).toLocaleDateString()}. Your profile shows the trust verification badge in HopeHeart spaces.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4 pt-1">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                      <div className="space-y-2 lg:border-r lg:border-orange-100 lg:pr-4">
+                  <div className="space-y-4 pt-3 border-t border-orange-100/70">
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
                         <span className="text-[12px] font-display font-black text-[#10213D] block">Q1: HopeHeart is mainly for:</span>
                         <div className="flex flex-col gap-2">
                           {['Medical diagnosis', 'Emotional support and resources', 'Prescriptions'].map((opt) => (
@@ -3256,7 +3260,7 @@ export default function ProfileUtilityScreen({
                         </div>
                       </div>
 
-                      <div className="space-y-2 lg:border-r lg:border-orange-100 lg:pr-4">
+                      <div className="space-y-2">
                         <span className="text-[12px] font-display font-black text-[#10213D] block">Q2: If someone says they are in immediate danger, you should:</span>
                         <div className="flex flex-col gap-2">
                           {['Only send them to peer chat', 'Encourage emergency help, trusted family/adult, or local emergency services', 'Give medicine advice'].map((opt) => (
@@ -3282,59 +3286,60 @@ export default function ProfileUtilityScreen({
                     </div>
 
                     {quizError && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-[11px] font-semibold">⚠️ {quizError}</div>}
-                    <button onClick={handleQuizSubmit} type="button" className="w-full sm:w-80 mx-auto flex items-center justify-center py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-3xs">Verify Answers</button>
+                    <button onClick={handleQuizSubmit} type="button" className="w-full flex items-center justify-center py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-3xs">Verify Answers</button>
                   </div>
-                )}
+                ))}
               </div>
 
-              {/* Utility List Menu */}
-              <div className="hh-surface rounded-[30px] p-4 divide-y divide-orange-100/70 border border-orange-100/70 shadow-3xs">
-                {[
-                  { icon: '🔖', tone: 'bg-[#EAF7FF]', label: 'Saved Questions & Resources', detail: 'View saved care questions, guides, and resources.', action: () => onNavigateTo?.(ScreenId.DoctorSuggestions) },
-                  { icon: '👤', tone: 'bg-[#FFF0F3]', label: 'Account & Login', detail: 'Review your sign-in method and account help options.', action: () => onNavigateTo?.(ScreenId.CustomerSupport) },
-                  { icon: '🔒', tone: 'bg-[#FFF3E8]', label: 'Privacy & Safety Controls', detail: 'Adjust privacy, reporting, and safe-space preferences.', action: () => setSubStage('privacy') },
-                  { icon: '💬', tone: 'bg-[#FFF0F3]', label: 'Optional Community', detail: 'Browse quietly or connect only when you feel ready.', action: () => onNavigateTo?.(ScreenId.Community) },
-                  { icon: '🎧', tone: 'bg-[#F2F6FF]', label: 'Customer Support', detail: 'Contact our support team for account, privacy, safety, or app-related issues.', action: () => onNavigateTo?.(ScreenId.CustomerSupport) },
-                ].map((item, id) => (
-                  <button key={id} onClick={item.action} type="button" className="w-full text-left py-3 px-1 hover:bg-[#FFF8F2] transition-colors flex items-center justify-between first:pt-1 last:pb-3 cursor-pointer gap-3">
-                    <span className={`w-10 h-10 rounded-xl ${item.tone} flex items-center justify-center text-[20px] shrink-0`}>{item.icon}</span>
-                    <span className="flex-1 min-w-0 space-y-0.5">
-                      <span className="text-[13.5px] font-display font-black text-[#10213D] block">{item.label}</span>
-                      <span className="text-[11.5px] text-gray-500 font-medium leading-normal block">{item.detail}</span>
-                    </span>
-                    <svg className="w-5 h-5 text-gray-400 stroke-current cursor-pointer shrink-0" fill="none" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-                  </button>
-                ))}
-
-                <div className="pt-3">
-                  <span className="text-[11px] font-mono font-extrabold text-gray-400 uppercase tracking-widest px-1 block mb-1">Founder / Demo</span>
-                  <button onClick={() => onNavigateTo?.(ScreenId.Financials)} type="button" className="w-full text-left py-3 px-1 hover:bg-[#FFF8F2] transition-colors flex items-center justify-between cursor-pointer gap-3">
-                    <span className="w-10 h-10 rounded-xl bg-[#EFF8E8] flex items-center justify-center text-[20px] shrink-0">📊</span>
-                    <span className="flex-1 min-w-0 space-y-0.5">
-                      <span className="text-[13.5px] font-display font-black text-[#10213D] block">Service Model & Financials</span>
-                      <span className="text-[11.5px] text-gray-500 font-medium leading-normal block">Founder View: Explore HopeHeart sustainability ecosystem models.</span>
-                    </span>
-                    <svg className="w-5 h-5 text-gray-400 stroke-current cursor-pointer shrink-0" fill="none" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-                  </button>
+              {/* Tools & Support */}
+              <div className="hh-surface rounded-[28px] p-4 space-y-3 border border-orange-100/70 shadow-3xs">
+                <h4 className="font-display font-black text-[#10213D] text-[18px]">Tools & Support</h4>
+                <div className="rounded-2xl overflow-hidden border border-orange-100/70 bg-white/70 divide-y divide-orange-100/70">
+                  {[
+                    { icon: '🛡️', label: 'Privacy & Safety', action: () => setSubStage('privacy') },
+                    { icon: '📖', label: 'Saved Resources', action: () => onNavigateTo?.(ScreenId.DoctorSuggestions) },
+                    { icon: '🎧', label: 'Customer Support', action: () => onNavigateTo?.(ScreenId.CustomerSupport) },
+                    { icon: '👤', label: 'Account & Login', action: () => onNavigateTo?.(ScreenId.CustomerSupport) },
+                    { icon: '🤝', label: 'Optional Community', action: () => onNavigateTo?.(ScreenId.Community) },
+                    { icon: '📊', label: 'Service Model & Financials', action: () => onNavigateTo?.(ScreenId.Financials) },
+                  ].map((item) => (
+                    <button key={item.label} onClick={item.action} type="button" className="w-full text-left py-3 px-3 hover:bg-[#FFF8F2] transition-colors flex items-center justify-between cursor-pointer gap-3">
+                      <span className="flex items-center gap-3 min-w-0">
+                        <span className="w-9 h-9 rounded-xl bg-[#FFF8F2] flex items-center justify-center text-[18px] shrink-0">{item.icon}</span>
+                        <span className="text-[13.5px] font-display font-black text-[#10213D] block truncate">{item.label}</span>
+                      </span>
+                      <svg className="w-5 h-5 text-gray-400 stroke-current cursor-pointer shrink-0" fill="none" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                    </button>
+                  ))}
                 </div>
               </div>
 
               {/* Privacy Note */}
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed text-center italic max-w-[520px] mx-auto pt-1 pb-1">Your profile is private. HopeHeart never shows your exact location, phone number, diagnosis, medication, or private notes.</p>
+              <div className="p-4 bg-gradient-to-br from-[#FBF5FF] to-[#FFFDF9] border border-[#E7D7FF] rounded-[24px] flex items-center gap-3 shadow-3xs">
+                <span className="w-14 h-14 rounded-full bg-[#F6ECFF] border border-[#E7D7FF] flex items-center justify-center text-[26px] shrink-0">🔒</span>
+                <span className="text-left">
+                  <span className="block font-display font-black text-[#10213D] text-[13.5px]">Your profile is private.</span>
+                  <span className="block text-[12px] text-gray-600 font-semibold leading-relaxed">HopeHeart never shows your exact location, phone number, diagnosis, medication, or private notes.</span>
+                </span>
+                <span className="ml-auto text-[#B794F4] text-[20px] hidden sm:block">✦</span>
+              </div>
 
               {/* Security Badge */}
-              <div className="p-4 bg-[#FFF2E8]/80 border border-orange-100 rounded-[24px] text-center flex flex-col sm:flex-row items-center justify-center gap-3">
-                <span className="w-12 h-12 rounded-full bg-[#FFF8EE] border border-orange-100 flex items-center justify-center text-[23px] shrink-0">🛡️</span>
-                <span className="text-[12.5px] sm:text-[13px] font-display font-black text-[#FF5C1A] leading-relaxed block">Private local storage in MVP. Secure encrypted storage planned for production. Safety rules help detect and block unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, and cure promises.</span>
+              <div className="p-4 bg-[#FFF2E8]/80 border border-orange-100 rounded-[24px] text-left flex items-start gap-3 shadow-3xs">
+                <span className="w-14 h-14 rounded-full bg-[#FFF8EE] border border-orange-100 flex items-center justify-center text-[26px] shrink-0">🔐</span>
+                <span>
+                  <span className="block font-display font-black text-[#FF5C1A] text-[13.5px] mb-1">Private local storage in MVP.</span>
+                  <span className="text-[12px] font-semibold text-[#8A4B22] leading-relaxed block">Secure encrypted storage planned for production. Safety rules help detect and block unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, and cure promises.</span>
+                </span>
               </div>
 
               <footer className="text-center space-y-3 px-2 pb-2">
-                <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] sm:text-[13px] text-[#56657C] font-display font-black">
+                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] text-[#56657C] font-display font-black">
                   <button onClick={() => alert('Terms & Conditions\n\nHopeHeart is for emotional support. Be kind, respectful, and protect your privacy.')} type="button" className="hover:text-[#FF7527] hover:underline cursor-pointer">Terms & Conditions</button>
                   <button onClick={() => alert('Privacy Policy\n\nHopeHeart keeps MVP fallback data local on this device unless an existing app flow clearly says otherwise.')} type="button" className="hover:text-[#FF7527] hover:underline cursor-pointer">Privacy Policy</button>
                   <button onClick={() => alert('Emotional Support Disclaimer\n\nHopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.')} type="button" className="hover:text-[#FF7527] hover:underline cursor-pointer">Emotional Support Disclaimer</button>
                 </div>
-                <p className="max-w-xl mx-auto text-[12px] sm:text-[13px] text-[#6B7280] font-semibold leading-relaxed">HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.</p>
+                <p className="max-w-xl mx-auto text-[12px] text-[#6B7280] font-semibold leading-relaxed">HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.</p>
               </footer>
 
             </motion.div>
