@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import Mascot from './Mascot';
 import { MoodConfig, ScreenId } from '../types';
 import { MascotFace } from './Logo';
+import { saveHomeMoodCheckIn } from '../services/homeCheckins';
 
 interface DashboardScreenProps {
   userName: string;
@@ -10,7 +11,7 @@ interface DashboardScreenProps {
   onNavigateTo: (screenId: string) => void;
   todayQuote: string;
   onRefreshQuote: () => void;
-  onMoodSelected: (moodId: string) => void;
+  onMoodSelected: (moodId: string) => void | Promise<void>;
   onShareCheckIn?: () => void;
   isProfileIncomplete: boolean;
   onOpenProfileModal: () => void;
@@ -114,7 +115,45 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
+  const [isSavingHomeCheckIn, setIsSavingHomeCheckIn] = useState(false);
+  const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
+
+  const getHomeMoodLabel = (moodId: string) => {
+    const moodLabels: Record<string, string> = {
+      calm: 'Calm',
+      sad: 'Low',
+      low: 'Low',
+      anxious: 'Anxious',
+      tired: 'Tired'
+    };
+
+    return moodLabels[moodId] || 'Calm';
+  };
+
+  const handleSaveHomeCheckIn = async () => {
+    if (isSavingHomeCheckIn) return;
+
+    setIsSavingHomeCheckIn(true);
+    setHomeCheckInStatus(null);
+
+    const moodLabel = getHomeMoodLabel(currentMood);
+    const result = await saveHomeMoodCheckIn({ moodId: currentMood, moodLabel });
+
+    if (!result.ok) {
+      setHomeCheckInStatus({ type: 'error', message: "Couldn’t save right now. Please try again." });
+      setIsSavingHomeCheckIn(false);
+      return;
+    }
+
+    setHomeCheckInStatus({ type: 'success', message: 'Your check-in is saved safely.' });
+
+    try {
+      await onMoodSelected(currentMood);
+    } finally {
+      setIsSavingHomeCheckIn(false);
+    }
+  };
 
   const handleContinueLastPrivateSpace = () => {
     if (localStorage.getItem('hopeheart_has_explored_resources') === 'true') {
@@ -469,7 +508,10 @@ export default function DashboardScreen({
               return (
                 <button
                   key={mood.id}
-                  onClick={() => setCurrentMood(mood.id)}
+                  onClick={() => {
+                    setCurrentMood(mood.id);
+                    setHomeCheckInStatus(null);
+                  }}
                   type="button"
                   className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
                     isSelected
@@ -484,12 +526,23 @@ export default function DashboardScreen({
             })}
           </div>
           <button
-            onClick={() => onMoodSelected(currentMood)}
+            onClick={handleSaveHomeCheckIn}
             type="button"
-            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
+            disabled={isSavingHomeCheckIn}
+            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            Save check-in
+            {isSavingHomeCheckIn ? 'Saving…' : 'Save check-in'}
           </button>
+          {homeCheckInStatus && (
+            <p
+              role="status"
+              className={`text-[11.5px] font-bold leading-relaxed text-center ${
+                homeCheckInStatus.type === 'success' ? 'text-emerald-700' : 'text-red-600'
+              }`}
+            >
+              {homeCheckInStatus.message}
+            </p>
+          )}
         </div>
       </div>
 
