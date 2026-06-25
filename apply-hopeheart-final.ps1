@@ -2930,6 +2930,7 @@ export default function ProfileUtilityScreen({
   const [profileSupportInterest, setProfileSupportInterest] = useState(() => localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
   const [profileBestQuality, setProfileBestQuality] = useState(() => localStorage.getItem('hopeheart_profile_best_quality') || 'Good Listener');
   const [profileNature, setProfileNature] = useState(() => localStorage.getItem('hopeheart_profile_nature') || 'Calm and Supportive');
+  const [profileVibe, setProfileVibe] = useState(() => localStorage.getItem('hopeheart_profile_vibe') || '🤩');
 
   // Authenticity Quiz States
   const [quizPassed, setQuizPassed] = useState(() => localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true');
@@ -2953,6 +2954,7 @@ export default function ProfileUtilityScreen({
       setProfileSupportInterest(localStorage.getItem('hopeheart_profile_support_interest') || '🌱 General Support');
       setProfileBestQuality(localStorage.getItem('hopeheart_profile_best_quality') || 'Good Listener');
       setProfileNature(localStorage.getItem('hopeheart_profile_nature') || 'Calm and Supportive');
+      setProfileVibe(localStorage.getItem('hopeheart_profile_vibe') || '🤩');
       setQuizPassed(localStorage.getItem('hopeheart_authenticity_quiz_passed') === 'true');
       setQuizPassedAt(localStorage.getItem('hopeheart_authenticity_quiz_passed_at') || '');
     }
@@ -3059,6 +3061,7 @@ export default function ProfileUtilityScreen({
     localStorage.setItem('hopeheart_profile_support_interest', profileSupportInterest);
     localStorage.setItem('hopeheart_profile_best_quality', profileBestQuality);
     localStorage.setItem('hopeheart_profile_nature', profileNature);
+    localStorage.setItem('hopeheart_profile_vibe', profileVibe);
     localStorage.setItem('hopeheart_profile_basic_completed', 'true');
 
     // Notify parent
@@ -3352,186 +3355,164 @@ export default function ProfileUtilityScreen({
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-4 max-w-md mx-auto mt-1 sm:mt-2"
+              className="space-y-4 max-w-2xl mx-auto mt-1 sm:mt-2 pb-28 sm:pb-10"
             >
-              <div className="text-center space-y-1">
-                <div className="text-[28px]">⚙️</div>
-                <h3 className="font-display font-black text-gray-800 text-[19px]">
-                  Edit Profile
-                </h3>
-                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed px-4">
-                  Set your public presence. Remember, your personal details always remain private.
-                </p>
+              <div className="hh-hero-surface rounded-[30px] p-5 sm:p-7 text-left overflow-hidden relative border border-orange-100/70 shadow-3xs">
+                <div className="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-[#FFD7C2]/45 blur-2xl" />
+                <div className="absolute right-20 top-12 text-[#FF7527] text-[24px]">🧡</div>
+                <div className="absolute right-36 top-10 text-[#FFB95F] text-[18px]">✦</div>
+                <div className="relative grid grid-cols-1 sm:grid-cols-[1fr_220px] gap-4 sm:items-center">
+                  <div className="space-y-3">
+                    <h3 className="font-display font-black text-[#2B1D12] text-[30px] leading-[0.95]">Make it<br />uniquely <span className="text-[#FF7527]">you</span></h3>
+                    <p className="text-[14px] text-gray-500 font-bold leading-relaxed">Share what feels right.<br />You’re in control.</p>
+                  </div>
+                  <div className="justify-self-center sm:justify-self-end relative w-44 h-32 rounded-[28px] bg-white/45 flex items-center justify-center">
+                    <span className="absolute left-5 bottom-3 text-[36px]">🌼</span>
+                    <span className="absolute right-3 bottom-2 text-[42px]">✏️</span>
+                    <span className="text-[66px] drop-shadow-sm">🐧</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-4 hh-surface rounded-2.5xl p-5 text-left">
-                {/* Avatar emoji picker */}
-                <div className="space-y-2">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Choose Avatar Emoji
-                  </span>
-                  <div className="flex flex-wrap gap-2.5 pt-1">
-                    {AVATAR_OPTIONS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        type="button"
-                        onClick={() => setProfileAvatar(emoji)}
-                        className={`w-11 h-11 text-[24px] rounded-xl flex items-center justify-center transition-all cursor-pointer border-2 ${
-                          profileAvatar === emoji 
-                            ? 'border-[#FF7527] bg-[#FFF2EA]' 
-                            : 'border-gray-200 bg-white hover:border-gray-300'
-                        }`}
-                      >
-                        {emoji}
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-orange-100/70 shadow-3xs">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-12 h-12 rounded-2xl bg-[#EEE9FF] flex items-center justify-center text-[24px]">🖼️</span>
+                    <span>
+                      <span className="block font-display font-black text-[#2B1D12] text-[18px]">Add Photos</span>
+                      <span className="block text-[12.5px] text-gray-500 font-semibold">Help others get to know you</span>
+                    </span>
+                  </div>
+                  <span className="px-3 py-1.5 rounded-full bg-[#F0E9FF] text-[#6D5BD0] text-[12px] font-display font-black">0/4 added</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {['Main photo', 'Photo 2', 'Photo 3', 'Photo 4'].map((label) => (
+                    <div key={label} className="space-y-2 text-center">
+                      <button type="button" className="w-full aspect-square rounded-2xl border-2 border-dashed border-[#DCCFE8] bg-[#FFFDF9]/80 flex items-center justify-center cursor-pointer hover:bg-[#FBF6FF] transition-colors">
+                        <span className="w-10 h-10 rounded-full bg-[#F0E9FF] border border-[#C9BDF1] text-[#6D5BD0] flex items-center justify-center text-[26px]">+</span>
                       </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Display Name */}
-                <div className="space-y-1.5 pt-1">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Anonymous Display Name
-                  </span>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={anonNameInput}
-                      onChange={(e) => setAnonNameInput(e.target.value)}
-                      placeholder="e.g. Voice47"
-                      className="flex-1 px-3.5 py-2 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setAnonNameInput('Voice' + Math.floor(10 + Math.random() * 900))}
-                      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-[12px] font-display font-bold cursor-pointer transition-all active:scale-95 text-center shrink-0"
-                    >
-                      🎲 Generate
-                    </button>
-                  </div>
-                </div>
-
-                {/* Age Group Selector (no exact age) */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Age Group
-                  </span>
-                  <select
-                    value={profileAgeGroup}
-                    onChange={(e) => setProfileAgeGroup(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  >
-                    {['18–24', '25–34', '35–44', '45–54', '55+'].map((group) => (
-                      <option key={group} value={group}>{group}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Gender Selector */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Gender
-                  </span>
-                  <select
-                    value={profileGender}
-                    onChange={(e) => setProfileGender(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  >
-                    {['Prefer not to say', 'Female', 'Male', 'Non-binary', 'Other'].map((g) => (
-                      <option key={g} value={g}>{g}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Profession Selector */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Profession
-                  </span>
-                  <input
-                    type="text"
-                    value={profileProfession}
-                    onChange={(e) => setProfileProfession(e.target.value)}
-                    placeholder="e.g. Caregiver guide"
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  />
-                </div>
-
-                {/* Languages */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Languages
-                  </span>
-                  <input
-                    type="text"
-                    value={profileLanguage}
-                    onChange={(e) => setProfileLanguage(e.target.value)}
-                    placeholder="e.g. English, Hindi"
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  />
-                </div>
-
-                {/* Support Interest Selector */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Support Interest
-                  </span>
-                  <select
-                    value={profileSupportInterest}
-                    onChange={(e) => setProfileSupportInterest(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  >
-                    {['🌱 General Support', '🧘 Anxiety Relief', '🤝 Peer Listening', '🩺 Clinical Resources'].map((ch) => (
-                      <option key={ch} value={ch}>{ch}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Best Quality */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Best Quality
-                  </span>
-                  <input
-                    type="text"
-                    value={profileBestQuality}
-                    onChange={(e) => setProfileBestQuality(e.target.value)}
-                    placeholder="e.g. Good Listener"
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  />
-                </div>
-
-                {/* Nature / Personality */}
-                <div className="space-y-1.5">
-                  <span className="text-[11.5px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                    Nature / Personality
-                  </span>
-                  <input
-                    type="text"
-                    value={profileNature}
-                    onChange={(e) => setProfileNature(e.target.value)}
-                    placeholder="e.g. Calm and Supportive"
-                    className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-[12.5px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
-                  />
+                      <span className="block text-[12px] text-gray-500 font-semibold">{label}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Actions for edit-profile */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setSubStage('profile')}
-                  className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[13px] rounded-xl cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveProfile}
-                  className="w-full py-2.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[13px] rounded-xl cursor-pointer shadow-xs"
-                >
-                  Save Profile
-                </button>
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-emerald-100/80 shadow-3xs">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="w-12 h-12 rounded-2xl bg-[#DDFBE7] flex items-center justify-center text-[24px]">☺️</span>
+                    <span>
+                      <span className="block font-display font-black text-[#2B1D12] text-[18px]">Create Your Avatar</span>
+                      <span className="block text-[12.5px] text-gray-500 font-semibold">Pick a style that represents you</span>
+                    </span>
+                  </div>
+                  <button type="button" className="px-4 py-2 rounded-2xl bg-[#ECFFF2] border border-emerald-200 text-emerald-700 font-display font-black text-[12.5px] cursor-pointer">🪄 Customize</button>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {[
+                    ['🦊', 'Fox'],
+                    ['🐱', 'Cat'],
+                    ['🐻', 'Bear'],
+                    ['🐼', 'Panda'],
+                    ['🦄', 'Unicorn'],
+                    ['🦉', 'Owl']
+                  ].map(([emoji, label]) => (
+                    <button key={label} type="button" onClick={() => setProfileAvatar(emoji)} className="shrink-0 space-y-2 text-center cursor-pointer">
+                      <span className={`relative w-20 h-20 rounded-2xl bg-white border-2 flex items-center justify-center text-[38px] transition-all ${profileAvatar === emoji ? 'border-emerald-400 shadow-3xs' : 'border-gray-200 hover:border-gray-300'}`}>
+                        {emoji}
+                        {profileAvatar === emoji && <span className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full bg-emerald-400 text-white flex items-center justify-center text-[13px]">✓</span>}
+                      </span>
+                      <span className={`block text-[12px] font-display font-black ${profileAvatar === emoji ? 'text-emerald-700' : 'text-gray-500'}`}>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-yellow-100/80 shadow-3xs">
+                <div className="flex items-center gap-3">
+                  <span className="w-12 h-12 rounded-2xl bg-[#FFF1C7] flex items-center justify-center text-[26px]">😄</span>
+                  <span>
+                    <span className="block font-display font-black text-[#2B1D12] text-[18px]">Funny Emojis / Vibe</span>
+                    <span className="block text-[12.5px] text-gray-500 font-semibold">Choose emojis that match your vibe</span>
+                  </span>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {['🤩', '😎', '😜', '🥰', '😂', '🤔', '🎉'].map((emoji) => (
+                    <button key={emoji} type="button" onClick={() => setProfileVibe(emoji)} className={`relative w-16 h-16 shrink-0 rounded-2xl bg-white flex items-center justify-center text-[34px] border-2 cursor-pointer transition-all ${profileVibe === emoji ? 'border-[#FF7527] bg-[#FFF5EE] shadow-3xs' : 'border-gray-200 hover:border-orange-200'}`}>
+                      {emoji}
+                      {profileVibe === emoji && <span className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full bg-[#FF7527] text-white flex items-center justify-center text-[13px]">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-blue-100/80 shadow-3xs text-left">
+                <div className="flex items-center gap-3">
+                  <span className="w-12 h-12 rounded-2xl bg-[#EAF3FF] flex items-center justify-center text-[24px]">👤</span>
+                  <span>
+                    <span className="block font-display font-black text-[#2B1D12] text-[18px]">Tell Us More (Your Basics)</span>
+                    <span className="block text-[12.5px] text-gray-500 font-semibold">All fields are private and optional</span>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">👤 Anonymous Display Name</span>
+                    <input type="text" value={anonNameInput} onChange={(e) => setAnonNameInput(e.target.value)} placeholder="e.g. GoogleBuddy" className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]" />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">🗓️ Age Group</span>
+                    <select value={profileAgeGroup} onChange={(e) => setProfileAgeGroup(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]">
+                      {['18–24', '25–34', '35–44', '45–54', '55+'].map((group) => <option key={group} value={group}>{group}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">⚧ Gender</span>
+                    <select value={profileGender} onChange={(e) => setProfileGender(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]">
+                      {['Prefer not to say', 'Female', 'Male', 'Non-binary', 'Other'].map((g) => <option key={g} value={g}>{g}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">💼 Profession</span>
+                    <input type="text" value={profileProfession} onChange={(e) => setProfileProfession(e.target.value)} placeholder="Prefer not to say" className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]" />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">🌐 Languages</span>
+                    <input type="text" value={profileLanguage} onChange={(e) => setProfileLanguage(e.target.value)} placeholder="English" className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]" />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">🌱 Support Interest</span>
+                    <select value={profileSupportInterest} onChange={(e) => setProfileSupportInterest(e.target.value)} className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]">
+                      {['🌱 General Support', '🧘 Anxiety Relief', '🤝 Peer Listening', '🩺 Clinical Resources'].map((ch) => <option key={ch} value={ch}>{ch}</option>)}
+                    </select>
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">⭐ Best Quality</span>
+                    <input type="text" value={profileBestQuality} onChange={(e) => setProfileBestQuality(e.target.value)} placeholder="Good Listener" className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]" />
+                  </label>
+                  <label className="space-y-1.5">
+                    <span className="text-[12px] font-display font-black text-gray-500 flex items-center gap-1.5">🧡 Nature / Personality</span>
+                    <input type="text" value={profileNature} onChange={(e) => setProfileNature(e.target.value)} placeholder="Calm and Supportive" className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-[14px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <button type="button" onClick={() => setSubStage('profile')} className="w-full py-4 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 font-display font-extrabold text-[15px] rounded-2xl cursor-pointer shadow-3xs">Cancel</button>
+                <button type="button" onClick={handleSaveProfile} className="w-full py-4 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[15px] rounded-2xl cursor-pointer shadow-xs">Save Profile</button>
+              </div>
+
+              <div className="hh-surface rounded-[24px] p-4 border border-orange-100/70 text-left flex items-start gap-3">
+                <span className="w-12 h-12 rounded-full bg-[#FFF8EE] border border-orange-100 flex items-center justify-center text-[22px] shrink-0">🛡️</span>
+                <span className="space-y-2">
+                  <span className="block font-display font-black text-[#10213D] text-[13px]">Your safety and privacy come first.</span>
+                  <span className="block text-[12px] text-gray-500 font-semibold leading-relaxed">HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.</span>
+                  <span className="flex flex-wrap gap-x-5 gap-y-1 text-[11.5px] text-[#56657C] font-display font-black pt-1">
+                    <button type="button" onClick={() => alert('Terms & Conditions\n\nHopeHeart is for emotional support. Be kind, respectful, and protect your privacy.')} className="hover:text-[#FF7527] hover:underline cursor-pointer">Terms & Conditions</button>
+                    <button type="button" onClick={() => alert('Privacy Policy\n\nHopeHeart keeps MVP fallback data local on this device unless an existing app flow clearly says otherwise.')} className="hover:text-[#FF7527] hover:underline cursor-pointer">Privacy Policy</button>
+                    <button type="button" onClick={() => alert('Emotional Support Disclaimer\n\nHopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.')} className="hover:text-[#FF7527] hover:underline cursor-pointer">Emotional Support Disclaimer</button>
+                  </span>
+                </span>
               </div>
 
             </motion.div>
