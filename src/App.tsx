@@ -365,6 +365,14 @@ export default function App() {
   const [showSupportPopup, setShowSupportPopup] = useState<boolean>(false);
   const [popupCategory, setPopupCategory] = useState<string>('general');
 
+  const isProfileFlowActive = currentScreen === ScreenId.Profile || currentScreen === ScreenId.PrivacySettings;
+
+  useEffect(() => {
+    if (isProfileFlowActive && showSupportPopup) {
+      setShowSupportPopup(false);
+    }
+  }, [isProfileFlowActive, showSupportPopup]);
+
   const openSupportPopup = (category: string) => {
     console.log("Support popup dismissed date:", localStorage.getItem("hopeheart_support_popup_dismissed_date"));
     const dismissedDate = localStorage.getItem('hopeheart_support_popup_dismissed_date');
@@ -1659,7 +1667,7 @@ export default function App() {
       </AnimatePresence>
 
       <SupportPopup
-        isOpen={showSupportPopup}
+        isOpen={showSupportPopup && !isProfileFlowActive}
         onClose={() => setShowSupportPopup(false)}
         activeCategory={popupCategory}
         onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
