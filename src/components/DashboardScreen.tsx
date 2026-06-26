@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import Mascot from './Mascot';
 import { MoodConfig, ScreenId } from '../types';
 import { MascotFace } from './Logo';
-import { saveHomeMoodCheckIn } from '../services/homeCheckins';
 
 interface DashboardScreenProps {
   userName: string;
@@ -11,7 +10,7 @@ interface DashboardScreenProps {
   onNavigateTo: (screenId: string) => void;
   todayQuote: string;
   onRefreshQuote: () => void;
-  onMoodSelected: (moodId: string) => void | Promise<void>;
+  onMoodSelected: (moodId: string) => void;
   onShareCheckIn?: () => void;
   isProfileIncomplete: boolean;
   onOpenProfileModal: () => void;
@@ -19,6 +18,32 @@ interface DashboardScreenProps {
   hasCheckedInToday: boolean;
   checkinFeedback: string | null;
   onClearCheckinFeedback: () => void;
+}
+
+// 1. Community Support Illustration (Anxious person holding phone, listening chat bubble)
+function CommunityIllustration() {
+  return (
+    <svg className="w-16 h-16 shrink-0" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="45" fill="#FFF2EA" />
+      <circle cx="50" cy="50" r="40" fill="#FFFDF9" stroke="#FFE4D6" strokeWidth="1.5" />
+      {/* Head */}
+      <circle cx="42" cy="38" r="7" fill="#E08C5E" />
+      {/* Hair */}
+      <path d="M34 38c0-5 3-9 8-9s8 4 8 9c0 1-1 3-2 4h-12c-1-1-2-3-2-4z" fill="#4A3B32" />
+      {/* Body */}
+      <path d="M26 68c0-10 6-16 16-16s16 6 16 16H26z" fill="#D36B3B" />
+      {/* Phone */}
+      <rect x="52" y="46" width="10" height="18" rx="2" fill="#2B1D12" />
+      <rect x="53" y="48" width="8" height="14" rx="1" fill="#FFF" />
+      <circle cx="57" cy="63" r="0.8" fill="#FF7527" />
+      {/* Hand */}
+      <path d="M48 58c1-1 4 0 5 2l-2 3c-1 0-2-1-3-1l-2-2c1-1 1-2 2-2z" fill="#E08C5E" />
+      {/* Soft chat bubble showing listening status */}
+      <path d="M62 38c0-6 7-10 15-10s15 4 15 10c0 5-6 9-13 10l-4 4v-4c-7-1-13-5-13-10z" fill="#EBF5FF" stroke="#C2E0FF" strokeWidth="1" />
+      {/* Heart inside bubble */}
+      <path d="M77 39c-1-1-2.5 0-2.5 0s1.2 1.8 2.5 2.8c1.3-1 2.5-2.8 2.5-2.8s-1.5-1-2.5 0z" fill="#FF7527" />
+    </svg>
+  );
 }
 
 // 2. Trusted Resources Illustration (Person calmly reading guide/map, floating cards)
@@ -115,59 +140,6 @@ export default function DashboardScreen({
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
   const [currentMood, setCurrentMood] = useState(selectedMood.id);
-  const [isSavingHomeCheckIn, setIsSavingHomeCheckIn] = useState(false);
-  const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [showShortcutSheet, setShowShortcutSheet] = useState(false);
-
-  const getHomeMoodLabel = (moodId: string) => {
-    const moodLabels: Record<string, string> = {
-      calm: 'Calm',
-      sad: 'Low',
-      low: 'Low',
-      anxious: 'Anxious',
-      tired: 'Tired'
-    };
-
-    return moodLabels[moodId] || 'Calm';
-  };
-
-  const handleSaveHomeCheckIn = async () => {
-    if (isSavingHomeCheckIn) return;
-
-    setIsSavingHomeCheckIn(true);
-    setHomeCheckInStatus(null);
-
-    const moodLabel = getHomeMoodLabel(currentMood);
-    const result = await saveHomeMoodCheckIn({ moodId: currentMood, moodLabel });
-
-    if (!result.ok) {
-      setHomeCheckInStatus({ type: 'error', message: "Couldn’t save right now. Please try again." });
-      setIsSavingHomeCheckIn(false);
-      return;
-    }
-
-    setHomeCheckInStatus({ type: 'success', message: 'Your check-in is saved safely.' });
-
-    try {
-      await onMoodSelected(currentMood);
-    } finally {
-      setIsSavingHomeCheckIn(false);
-    }
-  };
-
-  const handleContinueLastPrivateSpace = () => {
-    if (localStorage.getItem('hopeheart_has_explored_resources') === 'true') {
-      onNavigateTo(ScreenId.DoctorSuggestions);
-      return;
-    }
-
-    if (localStorage.getItem('hopeheart_has_joined_room') === 'true') {
-      onNavigateTo(ScreenId.Community);
-      return;
-    }
-
-    onNavigateTo(ScreenId.MySpace);
-  };
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -182,7 +154,6 @@ export default function DashboardScreen({
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
   const humTimerRef = useRef<NodeJS.Timeout | null>(null);
-
 
   const getLyricsForMoodId = (moodId: string): string => {
     const lyricsMap: Record<string, string> = {
@@ -200,7 +171,7 @@ export default function DashboardScreen({
 
   const stopWebAudioHum = () => {
     setIsHumming(false);
-
+    
     if (humTimerRef.current) {
       clearTimeout(humTimerRef.current);
       humTimerRef.current = null;
@@ -302,7 +273,7 @@ export default function DashboardScreen({
 
   return (
     <div className="flex flex-col min-h-full bg-transparent overflow-y-auto font-sans select-none scrollbar-none w-full relative">
-
+      
       {/* Toast Notification */}
       <AnimatePresence>
         {showToast && (
@@ -318,7 +289,7 @@ export default function DashboardScreen({
               <p className="text-[12px] sm:text-[12.5px] font-semibold leading-normal text-left text-gray-200">
                 Welcome, {userName} 👋 HopeBuddy is ready when you need support.
               </p>
-              <button
+              <button 
                 onClick={() => setShowToast(false)}
                 type="button"
                 className="ml-auto text-gray-400 hover:text-white text-xs cursor-pointer flex items-center justify-center w-5 h-5 rounded-full hover:bg-white/10"
@@ -330,140 +301,62 @@ export default function DashboardScreen({
         )}
       </AnimatePresence>
 
-      {/* Soft greeting card below the fixed app header */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
-        <div className="bg-white/70 border border-[#F1E7D8] rounded-[24px] px-4 py-3 flex items-center gap-3 shadow-3xs backdrop-blur-xs">
-          <div className="w-9 h-9 rounded-full bg-[#FFF2EA] border border-orange-100 flex items-center justify-center overflow-hidden shrink-0">
-            <MascotFace size={30} />
+      {/* Upper Brand / User bar */}
+      <div className="pt-4 pb-3 px-5 flex items-center justify-between hh-header-surface sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <div className="w-10 h-10 rounded-full border border-[#FF7527] bg-[#FFEFE5] flex items-center justify-center p-0.5 overflow-hidden">
+              <MascotFace size={34} />
+            </div>
+            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white" />
           </div>
-          <div className="space-y-0.5">
-            <h2 className="font-display font-black text-[#2B1D12] text-[15px] leading-tight">Hi, {userName || 'GoogleBuddy'} 🌼</h2>
-            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">You’re safe here.</p>
+          <div>
+            <span className="text-[10px] text-[#FF7527] font-extrabold uppercase font-mono tracking-wider block leading-none mb-0.5">User Status</span>
+            <h3 className="font-display font-extrabold text-[#2B1D12] text-[16px] leading-tight">
+              Hi, {userName} 🌟
+            </h3>
           </div>
         </div>
       </div>
 
-      {/* Main soft mood card */}
-      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
-        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#FFFDF9] via-[#FFF3EA] to-[#FFEAF3] border border-orange-100/70 shadow-3xs px-5 py-6 sm:px-7 sm:py-7 text-center">
-          <div className="absolute -top-14 -right-12 w-36 h-36 bg-[#FFB98A]/20 rounded-full blur-2xl" />
-          <div className="absolute -bottom-16 -left-12 w-40 h-40 bg-[#F8C8DC]/25 rounded-full blur-2xl" />
-          <div className="relative space-y-4 max-w-xl mx-auto">
-            <div className="space-y-2">
-              <span className="text-[30px] block">🌤️</span>
-              <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[29px] leading-tight">How is your heart today?</h1>
-              <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">No need to explain. Just check in with yourself.</p>
+      {/* Profile Completion Gentle Reminder Banner */}
+      {isProfileIncomplete && showReminder && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#FFF5F0] to-[#FAF5FF] border border-[#FFD3B6]/50 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[24px] shrink-0">🔔</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Complete your Safe Profile
+                </h4>
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                  Add a few details so HopeHeart can match you better.
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={() => {
-                  const card = document.getElementById('hopebuddy-checkin-card');
-                  if (card) {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                }}
+                onClick={() => setShowReminder(false)}
                 type="button"
-                className="px-5 py-2.5 bg-[#F9733D] hover:bg-[#E96630] text-white rounded-full text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-3xs"
+                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
               >
-                Check in gently
+                Later
               </button>
               <button
-                onClick={() => setShowShortcutSheet(true)}
+                onClick={onOpenProfileModal}
                 type="button"
-                className="px-5 py-2.5 bg-white/80 hover:bg-white border border-[#F6CBB0] text-[#B95825] rounded-full text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
+                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
               >
-                I need something small
+                Complete Now
               </button>
             </div>
           </div>
         </div>
-      </div>
-
-      <AnimatePresence>
-        {showShortcutSheet && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#2B1D12]/30 backdrop-blur-[3px] flex items-end justify-center p-0 sm:p-5"
-            onClick={() => setShowShortcutSheet(false)}
-          >
-            <motion.div
-              initial={{ y: 80, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 230 }}
-              className="w-full sm:max-w-md max-h-[58vh] overflow-y-auto bg-[#FFFDF9] border border-orange-100 rounded-t-[30px] sm:rounded-[30px] p-5 shadow-xl space-y-4"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <div className="w-11 h-1.5 rounded-full bg-[#EADFC9] mx-auto" />
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <h2 className="font-display font-black text-[#2B1D12] text-[19px] leading-tight">What would help right now?</h2>
-                  <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">Pick one small step. No pressure.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowShortcutSheet(false)}
-                  className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 flex items-center justify-center text-[12px] font-black cursor-pointer"
-                  aria-label="Close options"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {[
-                  { title: 'Feel better', description: 'Small steps to lift your mood.', icon: '✨', action: () => onNavigateTo(ScreenId.FeelGood) },
-                  { title: 'Write privately', description: 'Let it out in a safe space.', icon: '📝', action: () => onNavigateTo(ScreenId.MySpace) },
-                  { title: 'Remember myself', description: 'Reconnect with what matters.', icon: '💛', action: () => onNavigateTo(ScreenId.MySpace) },
-                  { title: 'Get help', description: 'Reach out when you need support.', icon: '🛡️', action: () => onNavigateTo(ScreenId.AISafety) }
-                ].map((item) => (
-                  <button
-                    key={item.title}
-                    type="button"
-                    onClick={() => {
-                      setShowShortcutSheet(false);
-                      item.action();
-                    }}
-                    className="min-h-[112px] rounded-2xl bg-[#FFF8F2] hover:bg-[#FFF2EA] border border-orange-100/80 shadow-3xs flex items-start gap-3 text-left cursor-pointer transition-all active:scale-[0.98] p-3.5 group"
-                  >
-                    <span className="w-10 h-10 rounded-full bg-white border border-orange-100 flex items-center justify-center text-[21px] leading-none shrink-0">{item.icon}</span>
-                    <span className="flex-1 min-w-0 space-y-1">
-                      <span className="block text-[13px] font-display font-black text-gray-800 leading-tight">{item.title}</span>
-                      <span className="block text-[11.5px] text-gray-500 font-semibold leading-relaxed">{item.description}</span>
-                    </span>
-                    <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors pt-1">→</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="bg-white/75 border border-orange-100/70 rounded-2xl p-3.5 space-y-2 text-left shadow-3xs">
-                <div className="space-y-1">
-                  <h3 className="text-[12.5px] font-display font-black text-gray-800 leading-tight">Community is optional.</h3>
-                  <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">
-                    Browse quietly if you want. You’re in control. No pressure to post or reply.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowShortcutSheet(false);
-                    onNavigateTo(ScreenId.Community);
-                  }}
-                  className="text-[11.5px] font-display font-black text-[#C75414] hover:underline cursor-pointer"
-                >
-                  Browse optional community →
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
 
       {/* Dynamic Checkin Feedback Banner */}
       {checkinFeedback && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
           <div className="bg-gradient-to-r from-[#F0FDF4] to-[#F5FFF6] border border-[#BBF7D0]/50 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-3xs">
             <div className="flex items-center gap-3 text-left">
               <span className="text-[24px] shrink-0">🌱</span>
@@ -487,173 +380,392 @@ export default function DashboardScreen({
         </div>
       )}
 
-      {/* Hidden anchor card for detailed mood check-in */}
-      <div id="hopebuddy-checkin-card" className="mx-4 sm:mx-6 md:mx-8 mt-5">
-        <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-[#F4E7D8]/80">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Private mood check-in</span>
-              <h3 className="font-display font-black text-gray-800 text-[15px] leading-tight">Choose the closest feeling.</h3>
+      {/* Daily Mood Check-In Reminder Banner */}
+      {previousMood && !hasCheckedInToday && !dismissedReminder && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+          <div className="bg-gradient-to-r from-[#FFFDF9] to-[#FDFBF7] border border-[#ECE6D9] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-3xs">
+            <div className="flex items-center gap-3 text-left">
+              <span className="text-[24px] shrink-0">🌤️</span>
+              <div className="space-y-0.5">
+                <h4 className="font-display font-black text-gray-800 text-[13.5px]">
+                  Daily Mood Check-in
+                </h4>
+                <p className="text-[11.5px] text-gray-555 font-semibold leading-relaxed">
+                  Last time, you felt <span className="font-bold text-[#FF7527]">{previousMood}</span>. How are you feeling today?
+                </p>
+              </div>
             </div>
-            <span className="text-[12px] text-gray-400 font-bold">Private to you</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setDismissedReminder(true)}
+                type="button"
+                className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-250 text-gray-700 font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95"
+              >
+                Later
+              </button>
+              <button
+                onClick={() => {
+                  const card = document.getElementById('hopebuddy-checkin-card');
+                  if (card) {
+                    card.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                type="button"
+                className="px-3.5 py-1.5 bg-[#FF7527] hover:bg-[#E55D13] text-white font-display font-black text-[12px] rounded-xl cursor-pointer transition-all active:scale-95 shadow-3xs"
+              >
+                Check in now
+              </button>
+            </div>
           </div>
-          <div className="grid grid-cols-4 gap-2">
+        </div>
+      )}
+
+      {/* 💛 Your Emotional Support Journey Stepper */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-4">
+        <div className="bg-white/80 border border-[#EDE9DE] rounded-[24px] p-5 space-y-4 shadow-3xs backdrop-blur-xs select-none">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
+            <div>
+              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Your Trust Path</span>
+              <h4 className="font-display font-black text-gray-800 text-[14px]">
+                Your Emotional Support Journey 💛
+              </h4>
+            </div>
+            <p className="text-[11.5px] text-gray-550 font-semibold leading-relaxed">
+              Explore step-by-step to build comfort and find the right support.
+            </p>
+          </div>
+
+          {/* Steps Horizontal Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-1">
             {[
-              { id: 'calm', label: 'Calm', emoji: '😊' },
-              { id: 'sad', label: 'Low', emoji: '😔' },
-              { id: 'anxious', label: 'Anxious', emoji: '😰' },
-              { id: 'tired', label: 'Tired', emoji: '😴' }
-            ].map((mood) => {
-              const isSelected = currentMood === mood.id;
+              { 
+                step: 1, 
+                label: 'Mood Check-in', 
+                emoji: '🌤️', 
+                done: hasCheckedInToday, 
+                desc: 'How do you feel today?' 
+              },
+              { 
+                step: 2, 
+                label: 'HopeBuddy Reflection', 
+                emoji: '💬', 
+                done: localStorage.getItem('hopeheart_has_reflected') === 'true', 
+                desc: 'Take a quiet moment to reflect.' 
+              },
+              { 
+                step: 3, 
+                label: 'Explore & Share', 
+                emoji: '📓', 
+                done: localStorage.getItem('hopeheart_has_explored_resources') === 'true' || localStorage.getItem('hopeheart_has_shared_story') === 'true' || (localStorage.getItem('hopeheart_care_questions') && JSON.parse(localStorage.getItem('hopeheart_care_questions') || '[]').length > 0), 
+                desc: 'Save questions or draft reflections.' 
+              },
+              { 
+                step: 4, 
+                label: 'Peer & Community', 
+                emoji: '👥', 
+                done: localStorage.getItem('hopeheart_has_joined_room') === 'true' || localStorage.getItem('hopeheart_has_matched_listener') === 'true', 
+                desc: 'Connect with circles and professional guides.' 
+              }
+            ].map((st) => {
               return (
-                <button
-                  key={mood.id}
-                  onClick={() => {
-                    setCurrentMood(mood.id);
-                    setHomeCheckInStatus(null);
-                  }}
-                  type="button"
-                  className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
-                    isSelected
-                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
-                      : 'border-gray-150 bg-[#FCFBF8] text-gray-500 hover:border-gray-300'
-                  }`}
-                >
-                  <span className="text-[20px]">{mood.emoji}</span>
-                  <span className="text-[10px] font-bold">{mood.label}</span>
-                </button>
+                <div key={st.step} className={`p-3 rounded-2xl border transition-all flex flex-col justify-between gap-1.5 ${
+                  st.done 
+                    ? 'bg-[#EAF7F0] border-emerald-200 text-emerald-800' 
+                    : 'bg-[#FCFBF8] border-gray-150 text-gray-500'
+                }`}>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[12px] font-mono font-bold uppercase tracking-wider block">Step {st.step}</span>
+                    <span className="text-[14px]">
+                      {st.done ? '✅' : st.emoji}
+                    </span>
+                  </div>
+                  <div className="space-y-0.5 text-left">
+                    <h5 className="font-display font-black text-[12px] leading-tight text-gray-800">
+                      {st.label}
+                    </h5>
+                    <p className="text-[10px] text-gray-550 font-semibold leading-normal">
+                      {st.desc}
+                    </p>
+                  </div>
+                </div>
               );
             })}
           </div>
-          <button
-            onClick={handleSaveHomeCheckIn}
-            type="button"
-            disabled={isSavingHomeCheckIn}
-            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            {isSavingHomeCheckIn ? 'Saving…' : 'Save check-in'}
-          </button>
-          {homeCheckInStatus && (
-            <p
-              role="status"
-              className={`text-[11.5px] font-bold leading-relaxed text-center ${
-                homeCheckInStatus.type === 'success' ? 'text-emerald-700' : 'text-red-600'
-              }`}
-            >
-              {homeCheckInStatus.message}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* Calm lower Home cards */}
-      <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 flex-1">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-          <button
-            onClick={() => onNavigateTo(ScreenId.MySpace)}
-            type="button"
-            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
-          >
-            <div className="space-y-1">
-              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Today’s gentle suggestion</h4>
-              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Write one line about what your heart needs today.</p>
-            </div>
-            <span className="text-[11px] font-display font-black text-[#C75414]">Open My Space →</span>
-          </button>
-
-          <button
-            onClick={handleContinueLastPrivateSpace}
-            type="button"
-            className="hh-surface rounded-[24px] p-4 text-left transition-all cursor-pointer hover:bg-[#FFF8F2] space-y-2"
-          >
-            <div className="space-y-1">
-              <h4 className="font-display font-black text-gray-800 text-[13.5px] leading-tight">Continue where you left off</h4>
-              <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Return to your last private space when you’re ready.</p>
-            </div>
-            <span className="text-[11px] font-display font-black text-[#C75414]">Continue →</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <motion.button
-            onClick={() => onNavigateTo(ScreenId.MySpace)}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
-          >
-            <span className="text-[28px] block">📝</span>
-            <div className="space-y-1">
-              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">My Space</h4>
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Write privately and keep your thoughts safe.</p>
-            </div>
-          </motion.button>
-
-          <motion.button
-            onClick={() => onNavigateTo(ScreenId.MySpace)}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
-          >
-            <span className="text-[28px] block">🌸</span>
-            <div className="space-y-1">
-              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">Memories</h4>
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Save moments that remind you who you are.</p>
-            </div>
-          </motion.button>
-
-          <motion.button
-            onClick={() => onNavigateTo(ScreenId.Community)}
-            whileHover={{ scale: 1.01, y: -1 }}
-            whileTap={{ scale: 0.99 }}
-            type="button"
-            className="p-5 hh-surface rounded-[28px] text-left transition-all cursor-pointer space-y-3"
-          >
-            <span className="text-[28px] block">🤝</span>
-            <div className="space-y-1">
-              <h4 className="font-display font-black text-gray-800 text-[15px] leading-tight">Optional Community</h4>
-              <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">Connect only when you feel ready.</p>
-            </div>
-          </motion.button>
-        </div>
-
-        <div className="mt-4 hh-surface rounded-[24px] p-4 border border-[#F1E7D8] bg-white/70 space-y-3">
-          <div className="space-y-0.5">
-            <h3 className="font-display font-black text-gray-800 text-[14px] leading-tight">Need help or information?</h3>
-            <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed">Support, safety, and privacy are always nearby.</p>
-          </div>
-          <div className="divide-y divide-orange-100/60">
-            {[
-              { icon: '🛟', title: 'Customer Support', text: 'Reach out if you need help using HopeHeart.', action: () => onNavigateTo(ScreenId.CustomerSupport) },
-              { icon: '🛡️', title: 'Safety Guide', text: 'Know what HopeHeart can and cannot do.', action: () => onNavigateTo(ScreenId.AISafety) },
-              { icon: '📚', title: 'Comfort Resources', text: 'Read gentle support when you feel ready.', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
-              { icon: '🔒', title: 'Privacy & Data Protection', text: 'Manage your privacy and data choices.', action: () => onNavigateTo(ScreenId.PrivacySettings) }
-            ].map((item) => (
-              <button
-                key={item.title}
-                type="button"
-                onClick={item.action}
-                className="w-full py-3 flex items-center gap-3 text-left cursor-pointer group"
-              >
-                <span className="w-8 h-8 rounded-full bg-[#FFF8F2] border border-orange-100 flex items-center justify-center text-[15px] shrink-0">{item.icon}</span>
-                <span className="flex-1 min-w-0">
-                  <span className="block font-display font-black text-gray-800 text-[12.5px] leading-tight">{item.title}</span>
-                  <span className="block text-[11px] text-gray-500 font-semibold leading-relaxed">{item.text}</span>
+      {/* Main Layout Bento Grid */}
+      <div className="max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8 flex-1 flex flex-col justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          
+          {/* Component 1: 🧡 HopeBuddy Check-In Card */}
+          <div id="hopebuddy-checkin-card" className="hh-hero-surface rounded-[32px] p-5 flex flex-col justify-between space-y-4 col-span-1 sm:col-span-2 lg:col-span-2">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🧡</span>
+                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] tracking-wider uppercase">
+                  HopeBuddy Companion
                 </span>
-                <span className="text-[14px] text-gray-300 group-hover:text-[#FF7527] transition-colors">→</span>
-              </button>
-            ))}
-          </div>
-        </div>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className="p-3 bg-[#FFFDF9] border border-dashed border-[#EDE9DE] rounded-2xl shadow-inner shrink-0">
+                  <Mascot expression={selectedMood.buddyExpression} size={110} />
+                </div>
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <h2 className="font-display font-black text-gray-800 text-[19px] md:text-[21px] leading-tight">
+                    You're feeling <span className="text-[#FF7527]">{selectedMood.label}</span> today.
+                  </h2>
+                  <p className="text-[12.5px] text-gray-500 font-semibold italic leading-relaxed">
+                    "{selectedMood.tagline}"
+                  </p>
+                </div>
+              </div>
+            </div>
 
-        <button
-          onClick={() => onNavigateTo(ScreenId.AISafety)}
-          type="button"
-          className="mt-4 w-full py-3 bg-white/60 hover:bg-[#FFF8F2] border border-orange-100/70 rounded-2xl text-[12px] font-display font-black text-[#B95825] cursor-pointer transition-all"
-        >
-          🛡️ Safety is always available
-        </button>
+            <div className="mt-4 pt-4 border-t border-dashed border-[#EDE9DE] space-y-3">
+              <div className="flex flex-col space-y-1">
+                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider">
+                  Daily Check-In
+                </span>
+                <span className="text-[13px] font-display font-black text-gray-700">
+                  How are you feeling now?
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { id: 'calm', label: 'Calm', emoji: '😊' },
+                  { id: 'sad', label: 'Low', emoji: '😔' },
+                  { id: 'anxious', label: 'Anxious', emoji: '😰' },
+                  { id: 'tired', label: 'Tired', emoji: '😴' }
+                ].map((mood) => {
+                  const isSelected = currentMood === mood.id;
+                  return (
+                    <button
+                      key={mood.id}
+                      onClick={() => setCurrentMood(mood.id)}
+                      type="button"
+                      className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
+                          : 'border-gray-150 bg-[#FCFBF8] text-gray-500 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="text-[20px]">{mood.emoji}</span>
+                      <span className="text-[10px] font-bold">{mood.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    onMoodSelected(currentMood);
+                  }}
+                  type="button"
+                  className="flex-1 py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs"
+                >
+                  Update Check-In
+                </button>
+                <button
+                  onClick={onShareCheckIn}
+                  type="button"
+                  className="px-4 py-2.5 bg-[#FFF2EA] hover:bg-[#FFE4E6] text-[#FF7527] border border-[#FF7527]/20 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center flex items-center justify-center gap-1"
+                  title="Share Check-In Card"
+                >
+                  <span>📸</span> Share
+                </button>
+              </div>
+
+              {/* HopeBuddy Song Section (shows when a mood is selected) */}
+              {currentMood && (
+                <div className="mt-3 pt-3 border-t border-dashed border-[#EDE9DE] flex flex-col items-center">
+                  <div className="flex items-center justify-between w-full">
+                    <button
+                      onClick={() => setIsSongCardExpanded(!isSongCardExpanded)}
+                      type="button"
+                      className="flex items-center gap-2 px-3.5 py-1.5 bg-[#FFF2EA] hover:bg-[#FFEAE1] text-[#FF7527] border border-[#FF7527]/15 rounded-full text-[12px] font-bold cursor-pointer transition-all active:scale-95 hover:scale-[1.02]"
+                    >
+                      <span className="w-5 h-5 rounded-full bg-[#FF7527] text-white flex items-center justify-center text-[10px] shadow-3xs font-sans">🎵</span>
+                      <span>HopeBuddy Song</span>
+                      <span className="text-[10px] text-[#FF7527]/70 transition-transform duration-200" style={{ transform: isSongCardExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                        ▼
+                      </span>
+                    </button>
+                    {isHumming && (
+                      <div className="flex items-center gap-1.5 animate-pulse text-[11px] font-semibold text-gray-500">
+                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.1s' }}>🎵</span>
+                        <span className="inline-block animate-bounce text-xs font-sans" style={{ animationDelay: '0.3s' }}>🎶</span>
+                        <span>Humming...</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {isSongCardExpanded && (
+                    <div className="w-full mt-3 bg-[#FFFDF9]/80 border border-[#EDE9DE]/50 rounded-2xl p-4 text-center relative overflow-hidden space-y-3 shadow-3xs">
+                      <div>
+                        <h4 className="font-display font-black text-gray-800 text-[13px] leading-tight mb-0.5">
+                          “HopeBuddy has a little song for you”
+                        </h4>
+                        <p className="text-[9.5px] text-gray-400 font-bold uppercase tracking-wider block">
+                          Based on your mood today.
+                        </p>
+                      </div>
+
+                      <p className="text-[12.5px] text-gray-600 font-semibold italic whitespace-pre-line leading-relaxed px-2 py-1">
+                        {getLyricsForMoodId(currentMood)}
+                      </p>
+
+                      {audioError && (
+                        <div className="py-1.5 px-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-[11px] font-semibold text-center leading-normal">
+                          ⚠️ {audioError}
+                        </div>
+                      )}
+
+                      {isHumming && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="py-1.5 px-3 bg-[#FFEFE5] text-[#FF7527] border border-[#FF7527]/10 rounded-xl text-[11.5px] font-bold"
+                        >
+                          {isMuted ? 'HopeBuddy is muted 🎵' : 'HopeBuddy is humming for you 🎵'}
+                        </motion.div>
+                      )}
+
+                      {/* Song card actions */}
+                      <div className="flex flex-wrap gap-2 pt-1 justify-center">
+                        <button
+                          onClick={() => {
+                            if (isHumming) {
+                              stopWebAudioHum();
+                            } else {
+                              startWebAudioHum();
+                            }
+                          }}
+                          type="button"
+                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
+                        >
+                          <span>{isHumming ? '⏹️ Stop hum' : '🎵 Play HopeBuddy hum'}</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            const nextMuted = !isMuted;
+                            setIsMuted(nextMuted);
+                            localStorage.setItem('hopeheart_music_muted', nextMuted ? 'true' : 'false');
+                            if (nextMuted) {
+                              stopWebAudioHum();
+                            }
+                          }}
+                          type="button"
+                          className="py-1.5 px-3.5 bg-white border border-gray-250 text-gray-700 font-display font-black text-[11.5px] rounded-xl cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-1.5 shadow-3xs"
+                        >
+                          <span>{isMuted ? '🔊 Unmute' : '🔇 Mute'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Component 2: 🛡️ Safety Guardrails Card */}
+          <motion.button
+            onClick={() => onNavigateTo('ai-safety')}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <SafetyIllustration />
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Safety Guardrails
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  AI helps keep conversations safe, respectful, and free from medical advice.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
+              View Rules & Guide →
+            </span>
+          </motion.button>
+
+          {/* Component 3: 🤝 Community Support Card */}
+          <motion.button
+            onClick={() => onNavigateTo('safe-listener')}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <CommunityIllustration />
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Community Support
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Find peer listeners and support circles where people listen without judgement.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
+              Enter Safe Space →
+            </span>
+          </motion.button>
+
+          {/* Component 4: 🌍 Trusted Resources Card */}
+          <motion.button
+            onClick={() => onNavigateTo('doctor-suggestions')}
+            whileHover={{ scale: 1.01, y: -1 }}
+            whileTap={{ scale: 0.99 }}
+            type="button"
+            className="p-5 hh-surface rounded-[32px] text-left transition-all cursor-pointer flex flex-col justify-between gap-4 col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <ResourcesIllustration />
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  Trusted Resources
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Explore support pathways, external resources, and saved care questions.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold text-[#FF7527] uppercase tracking-wide cursor-pointer hover:underline">
+              Explore Resources →
+            </span>
+          </motion.button>
+
+          {/* Component 5: 🛟 Help & Support Card */}
+          <div
+            className="p-5 hh-surface rounded-[32px] text-left flex flex-col justify-between gap-4 col-span-1 sm:col-span-2 lg:col-span-1"
+          >
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <SupportIllustration />
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="font-display font-black text-gray-800 text-[16px] leading-tight">
+                  🛟 Help & Support
+                </h4>
+                <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                  Need help using HopeHeart? Contact support or report an issue.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => onNavigateTo(ScreenId.CustomerSupport)}
+              type="button"
+              className="w-full py-2.5 bg-[#FAF8F4] hover:bg-[#FFF2EA] hover:text-[#FF7527] border border-[#ECE6D9] hover:border-[#FF7527] text-gray-700 rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center mt-1"
+            >
+              Contact Support
+            </button>
+          </div>
+
+        </div>
 
         {/* Safe Platform Boundary Disclaimer Footer */}
         <div className="mt-8 mb-6 text-center max-w-2xl mx-auto px-4">

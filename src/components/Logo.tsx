@@ -216,18 +216,22 @@ export function MascotSitting({ size = 110, className = '' }: { size?: number; c
 
 export function BrandWordmark({ size = 'text-[24px]', color = 'text-[#2B1D12]', className = '' }: { size?: string; color?: string; className?: string }) {
   return (
-    <span className={`font-heading font-extrabold tracking-tight select-none inline-flex items-center gap-1.5 ${size} ${color} ${className}`}>
-      <span>HopeHeart</span>
-      <svg className="w-[0.9em] h-[0.82em] shrink-0 translate-y-[0.04em]" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path
-          d="M 10 16.5 L 18.5 7.5 A 5.5 5.5 0 0 0 10 1 L 10 16.5 Z"
-          fill="#FF7527"
-        />
-        <path
-          d="M 10 16.5 L 1.5 7.5 A 5.5 5.5 0 0 1 10 1 L 10 16.5 Z"
-          fill="#FF7527"
-        />
-      </svg>
+    <span className={`font-heading font-extrabold tracking-tight select-none flex items-center ${size} ${color} ${className}`}>
+      <span>H</span>
+      <span className="inline-flex items-center justify-center mx-[1.5px] transform translate-y-[2px]">
+        {/* Cute heart replacing 'o' */}
+        <svg width="17" height="15" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M 10 16.5 L 18.5 7.5 A 5.5 5.5 0 0 0 10 1 L 10 16.5 Z"
+            fill="#FF7527"
+          />
+          <path
+            d="M 10 16.5 L 1.5 7.5 A 5.5 5.5 0 0 1 10 1 L 10 16.5 Z"
+            fill="#FF7527"
+          />
+        </svg>
+      </span>
+      <span>peHeart</span>
     </span>
   );
 }

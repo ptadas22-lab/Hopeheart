@@ -94,6 +94,8 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
   const [reportRelatedArea, setReportRelatedArea] = useState('Community');
   const [reportOptionalNote, setReportOptionalNote] = useState('');
 
+  // Unsafe keyword testing filter sandbox states
+  const [testFilterInput, setTestFilterInput] = useState('');
   const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
   const [safetyAckDate, setSafetyAckDate] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -310,6 +312,25 @@ export default function SafetyScreen({ onBack, initialShowReport }: SafetyScreen
           <p className="text-[12px] sm:text-[12.5px] text-gray-600 font-semibold leading-relaxed">
             HopeHeart checks conversations for unsafe medical advice, prescriptions, dosage guidance, diagnosis claims, cure promises, abuse, or harmful content.
           </p>
+
+          {/* Unsafe filter testing playground */}
+          <div className="mt-3 pt-3 border-t border-orange-100/50 space-y-2.5">
+            <label className="text-[11px] font-bold text-gray-500 block">
+              💡 Test the safety checker (Try typing: "take this medicine" or "you are cured"):
+            </label>
+            <input
+              type="text"
+              value={testFilterInput}
+              onChange={(e) => setTestFilterInput(e.target.value)}
+              placeholder="Type a test phrase..."
+              className="w-full px-3 py-1.5 rounded-xl border border-gray-200 text-[12px] bg-white focus:outline-none focus:border-[#FF7527] font-semibold"
+            />
+            {testFilterInput.trim() && containsUnsafeContent(testFilterInput) && (
+              <div className="p-3 bg-red-50 border border-red-100 rounded-xl text-[11px] text-red-800 font-semibold leading-relaxed">
+                ⚠️ HopeHeart cannot provide diagnosis, prescriptions, dosage advice, treatment instructions, or cure claims. Please speak with a qualified professional.
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Section 2 & 3: Allowed and Blocked */}
