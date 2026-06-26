@@ -9,6 +9,10 @@ interface LoginScreenProps {
   onNavigateTo?: (screenId: ScreenId) => void;
 }
 
+type LoginMethod = 'guest' | 'email';
+
+const LIVE_APP_URL = 'https://hopeheart-lake.vercel.app';
+
 export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScreenProps) {
   const [agreed, setAgreed] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
@@ -17,22 +21,29 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
   const [email, setEmail] = useState('');
   const [emailLoading, setEmailLoading] = useState(false);
 
-  // Helper login function handling guest, google, and email flows
-  const handleLogin = async (entryMethod: 'guest' | 'google' | 'email') => {
-    setInfoMessage(null);
+  const getEmailRedirectUrl = () => {
+    if (typeof window === 'undefined') return LIVE_APP_URL;
 
-    // Save local consent cache & pending entry method (Stage 1)
+    // For demo safety, magic links should open the live Vercel app instead of a local laptop URL.
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return LIVE_APP_URL;
+    }
+
+    return window.location.origin || LIVE_APP_URL;
+  };
+
+  const handleLogin = async (entryMethod: LoginMethod) => {
+    setInfoMessage(null);
     saveSafeRulesConsentLocal(entryMethod);
 
     try {
-      // 1. Guest flow
       if (entryMethod === 'guest') {
         const guestSessionId = 'guest_' + Date.now();
         localStorage.setItem('hopeheart_guest_session_id', guestSessionId);
 
         if (supabase) {
           try {
-            const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously();
+            const { error: anonError } = await supabase.auth.signInAnonymously();
             if (anonError) {
               console.warn('[Consent] Supabase anonymous auth failed:', anonError.message);
             } else {
@@ -42,8 +53,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
             console.warn('[Consent] Anonymous auth check encountered error:', e);
           }
         }
-        
-        // Guest mode goes directly to Home
+
         onLoginSuccess('Companion');
         if (onNavigateTo) {
           onNavigateTo(ScreenId.Home);
@@ -51,45 +61,22 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
         return;
       }
 
-      // 2. Google OAuth flow
-      if (entryMethod === 'google') {
-        if (supabase) {
-          const { error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              scopes: 'email profile', // Request only basic profile and email
-              redirectTo: window.location.origin
-            }
-          });
-          if (error) {
-            setInfoMessage("Login could not continue. Please try again.");
-            console.error('Google OAuth error:', error.message);
-          }
-        } else {
-          // Demo fallback
-          onLoginSuccess('GoogleBuddy');
-        }
-        return;
-      }
-
-      // 3. Email Magic Link flow
       if (entryMethod === 'email') {
         if (supabase) {
           setShowEmailInput(true);
         } else {
-          setInfoMessage("Email login is coming soon!");
+          setInfoMessage('Email access is not configured yet. Continue as Guest for now.');
         }
-        return;
       }
     } catch (err) {
-      setInfoMessage("Login could not continue. Please try again.");
+      setInfoMessage('Login could not continue. Please try again.');
       console.error('Login method failed:', err);
     }
   };
 
-  const handleButtonClick = (method: 'guest' | 'google' | 'email') => {
+  const handleButtonClick = (method: LoginMethod) => {
     if (!agreed) {
-      setInfoMessage("Please accept the emotional-support agreement to continue.");
+      setInfoMessage('Please accept the emotional-support agreement to continue.');
       return;
     }
     handleLogin(method);
@@ -97,27 +84,33 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
 
   const handleSendEmailLink = async () => {
     if (!agreed) {
-      setInfoMessage("Please accept the emotional-support agreement to continue.");
+      setInfoMessage('Please accept the emotional-support agreement to continue.');
       return;
     }
-    if (!email.trim() || !supabase) return;
+
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !supabase) return;
+
     setEmailLoading(true);
     setInfoMessage(null);
+    saveSafeRulesConsentLocal('email');
+
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
+        email: cleanEmail,
         options: {
-          emailRedirectTo: window.location.origin
+          emailRedirectTo: getEmailRedirectUrl()
         }
       });
+
       if (error) {
-        setInfoMessage("Login could not continue. Please try again.");
+        setInfoMessage('Email link could not be sent. Please check your email and try again.');
         console.error('Email Magic Link error:', error.message);
       } else {
-        setInfoMessage("Magic link sent safely! Please check your inbox.");
+        setInfoMessage('Email link sent safely. Open the link to continue into HopeHeart.');
       }
     } catch (err) {
-      setInfoMessage("Login could not continue. Please try again.");
+      setInfoMessage('Email link could not be sent. Please try again.');
       console.error('Email Magic Link error:', err);
     } finally {
       setEmailLoading(false);
@@ -136,7 +129,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
       <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[420px] max-w-2xl rounded-full bg-[radial-gradient(circle_at_center,rgba(255,190,118,0.18),transparent_66%)] blur-2xl" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[560px] flex-col items-center space-y-7 pb-10">
-        {/* Onboarding Header */}
         <div className="text-center space-y-4 pt-1">
           <motion.div
             animate={{ y: [0, -5, 0] }}
@@ -158,7 +150,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
           </div>
         </div>
 
-        {/* Main Safety & Login Card */}
         <div className="w-full rounded-[30px] border border-orange-200/70 bg-[#FFFDF8]/92 p-6 text-left shadow-[0_20px_55px_rgba(181,111,45,0.16)] backdrop-blur-sm sm:rounded-[34px] sm:p-8">
           <div className="space-y-5">
             <div className="space-y-3">
@@ -173,14 +164,12 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               </p>
             </div>
 
-            {/* Visual alert message block */}
             {infoMessage && (
               <div className="py-3 px-4 bg-amber-50 text-amber-900 border border-amber-150 rounded-2xl text-[13px] font-bold text-center leading-normal">
                 {infoMessage}
               </div>
             )}
 
-            {/* Action views (Toggles email forms or standard choices) */}
             <AnimatePresence mode="wait">
               {!showEmailInput ? (
                 <motion.div
@@ -190,7 +179,17 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                   exit={{ opacity: 0, y: -3 }}
                   className="space-y-3 pt-1"
                 >
-                  {/* Guest */}
+                  <button
+                    type="button"
+                    onClick={() => handleButtonClick('email')}
+                    className="w-full min-h-[62px] px-5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-[18px] font-display font-black text-[18px] cursor-pointer transition-all active:scale-[0.98] shadow-[0_10px_22px_rgba(255,117,39,0.20)] flex items-center justify-center gap-4"
+                  >
+                    <svg className="w-7 h-7 shrink-0 fill-none stroke-current" strokeWidth="2.1" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                    Continue with Email
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => handleButtonClick('guest')}
@@ -202,32 +201,9 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                     Continue as Guest
                   </button>
 
-                  {/* Google */}
-                  <button
-                    type="button"
-                    onClick={() => handleButtonClick('google')}
-                    className="w-full min-h-[62px] px-5 bg-white border border-gray-200 text-[#1F2937] hover:bg-gray-50 hover:border-gray-300 rounded-[18px] font-display font-black text-[18px] cursor-pointer transition-all active:scale-[0.98] shadow-[0_8px_18px_rgba(43,29,18,0.08)] flex items-center justify-center gap-4"
-                  >
-                    <svg className="w-7 h-7 shrink-0" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                    </svg>
-                    Continue with Google
-                  </button>
-
-                  {/* Email */}
-                  <button
-                    type="button"
-                    onClick={() => handleButtonClick('email')}
-                    className="w-full min-h-[62px] px-5 bg-white border border-orange-200 text-[#1F2937] hover:border-[#FF7527]/60 hover:bg-[#FFF8F2] rounded-[18px] font-display font-black text-[18px] cursor-pointer transition-all active:scale-[0.98] shadow-[0_8px_18px_rgba(43,29,18,0.08)] flex items-center justify-center gap-4"
-                  >
-                    <svg className="w-7 h-7 shrink-0 fill-none stroke-current text-[#FF7527]" strokeWidth="2.1" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                    </svg>
-                    Continue with Email
-                  </button>
+                  <p className="text-[12.5px] text-center text-gray-500 font-bold leading-relaxed">
+                    Google sign-in is paused for this demo. Email access and Guest access are available.
+                  </p>
                 </motion.div>
               ) : (
                 <motion.div
@@ -241,7 +217,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                     Enter your Email
                   </span>
                   <p className="text-[13px] text-gray-555 font-semibold leading-relaxed">
-                    We will send a magic link directly to your inbox for passwordless entry.
+                    We will send a safe passwordless link. Open the link to continue into HopeHeart.
                   </p>
                   <div className="flex flex-col gap-3">
                     <input
@@ -268,7 +244,7 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                         disabled={emailLoading || !email.trim()}
                         className="flex-1 py-3 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[13px] font-display font-black cursor-pointer transition-all active:scale-95 text-center shadow-xs disabled:bg-gray-150 disabled:text-gray-400 disabled:cursor-not-allowed"
                       >
-                        {emailLoading ? 'Sending...' : 'Send Magic Link'}
+                        {emailLoading ? 'Sending...' : 'Send Email Link'}
                       </button>
                     </div>
                   </div>
@@ -276,7 +252,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               )}
             </AnimatePresence>
 
-            {/* Agreement Checkbox & Modal Link */}
             <div className="space-y-3 pt-2">
               <label className="flex items-start gap-3 cursor-pointer text-left select-none">
                 <input
@@ -303,19 +278,16 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               </div>
             </div>
 
-            {/* Helper disclaimer */}
             <p className="text-[14px] text-[#374151] font-semibold leading-relaxed pt-1">
               HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
             </p>
 
-            {/* Platform age gate statement */}
             <p className="text-[13px] text-center text-[#FF5A1F] font-black leading-normal pt-1 uppercase tracking-[0.16em]">
               HopeHeart MVP is intended for users 18+.
             </p>
           </div>
         </div>
 
-        {/* Bottom cards */}
         <div className="w-full space-y-3.5">
           {[
             { icon: '🧡', title: 'Share safely', text: 'Talk about feelings, loneliness, stress, or support needs.', tint: 'bg-orange-50 text-[#FF7527]' },
@@ -339,11 +311,9 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
         </div>
       </div>
 
-      {/* Full Safe Rules Modal Overlay */}
       <AnimatePresence>
         {showRulesModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-xs select-none">
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -352,7 +322,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               className="absolute inset-0"
             />
 
-            {/* Modal Box */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -373,7 +342,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-left">
-                {/* Allowed List */}
                 <div className="bg-emerald-50/40 border border-emerald-100 rounded-2.5xl p-4.5 space-y-2">
                   <span className="text-[11px] font-mono font-black text-emerald-805 uppercase tracking-wider block">
                     Allowed:
@@ -395,7 +363,6 @@ export default function LoginScreen({ onLoginSuccess, onNavigateTo }: LoginScree
                   </ul>
                 </div>
 
-                {/* Blocked List */}
                 <div className="bg-red-50/40 border border-red-100 rounded-2.5xl p-4.5 space-y-2">
                   <span className="text-[11px] font-mono font-black text-red-805 uppercase tracking-wider block">
                     Blocked:
