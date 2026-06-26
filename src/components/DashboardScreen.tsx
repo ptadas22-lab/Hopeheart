@@ -118,6 +118,8 @@ export default function DashboardScreen({
   const [isSavingHomeCheckIn, setIsSavingHomeCheckIn] = useState(false);
   const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
+  const [showMoodReminderCard, setShowMoodReminderCard] = useState(hasCheckedInToday);
+  const [selectedReminderPanel, setSelectedReminderPanel] = useState<{ title: string; message: string } | null>(null);
 
   const getHomeMoodLabel = (moodId: string) => {
     const moodLabels: Record<string, string> = {
@@ -129,6 +131,13 @@ export default function DashboardScreen({
     };
 
     return moodLabels[moodId] || 'Calm';
+  };
+
+  const getMoodReminderLine = (moodId: string) => {
+    if (moodId === 'anxious') return 'First, help your body feel a little safer.';
+    if (moodId === 'sad' || moodId === 'low') return 'Start with one small thing that still feels like you.';
+    if (moodId === 'tired') return 'Choose something easy. Rest counts too.';
+    return 'Save this calm moment or explore gently.';
   };
 
   const handleSaveHomeCheckIn = async () => {
@@ -147,6 +156,8 @@ export default function DashboardScreen({
     }
 
     setHomeCheckInStatus({ type: 'success', message: 'Your check-in is saved safely.' });
+    setShowMoodReminderCard(true);
+    setSelectedReminderPanel(null);
 
     try {
       await onMoodSelected(currentMood);
@@ -168,6 +179,39 @@ export default function DashboardScreen({
 
     onNavigateTo(ScreenId.MySpace);
   };
+
+  const reminderActions = [
+    {
+      title: 'Favourite food',
+      text: 'Think of something you love eating.',
+      icon: '🍲',
+      action: () => setSelectedReminderPanel({ title: 'Favourite food', message: 'Maybe order or prepare something that feels comforting today.' })
+    },
+    {
+      title: 'Comfort music',
+      text: 'Play something that feels familiar.',
+      icon: '🎧',
+      action: () => setSelectedReminderPanel({ title: 'Comfort music', message: 'Play something familiar for a few minutes.' })
+    },
+    {
+      title: 'Save a memory',
+      text: 'Write one small moment from today.',
+      icon: '📝',
+      action: () => onNavigateTo(ScreenId.MySpace)
+    },
+    {
+      title: 'Join quiet circles',
+      text: 'Explore gently, only if you want.',
+      icon: '🌙',
+      action: () => onNavigateTo(ScreenId.Community)
+    },
+    {
+      title: 'Chat only if you want',
+      text: 'No pressure. You control the pace.',
+      icon: '💬',
+      action: () => onNavigateTo(ScreenId.HopeBuddyChat)
+    }
+  ];
 
   // HopeBuddy Song states
   const [isSongCardExpanded, setIsSongCardExpanded] = useState(false);
@@ -511,6 +555,8 @@ export default function DashboardScreen({
                   onClick={() => {
                     setCurrentMood(mood.id);
                     setHomeCheckInStatus(null);
+                    setShowMoodReminderCard(false);
+                    setSelectedReminderPanel(null);
                   }}
                   type="button"
                   className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
@@ -545,6 +591,50 @@ export default function DashboardScreen({
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showMoodReminderCard && (
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="mx-4 sm:mx-6 md:mx-8 mt-5"
+          >
+            <div className="hh-surface rounded-[28px] p-4 sm:p-5 border border-[#F4E7D8]/80 space-y-4 bg-gradient-to-br from-white via-[#FFFDF9] to-[#FFF4EA]">
+              <div className="space-y-1.5 text-left">
+                <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">After your check-in</span>
+                <h3 className="font-display font-black text-[#2B1D12] text-[18px] leading-tight">HopeHeart reminder for you today</h3>
+                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">You don’t have to talk right now. Do one small thing that reminds you of yourself.</p>
+                <p className="text-[12.5px] text-[#B95825] font-display font-black leading-relaxed">{getMoodReminderLine(currentMood)}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
+                {reminderActions.map((item) => (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={item.action}
+                    className="min-h-[104px] rounded-[22px] bg-white/80 hover:bg-[#FFF8F2] border border-orange-100/80 shadow-3xs p-3 text-left cursor-pointer transition-all active:scale-[0.98] flex flex-col gap-2"
+                  >
+                    <span className="text-[24px] leading-none">{item.icon}</span>
+                    <span className="font-display font-black text-[#2B1D12] text-[12.5px] leading-tight">{item.title}</span>
+                    <span className="text-[11px] text-gray-500 font-semibold leading-relaxed">{item.text}</span>
+                  </button>
+                ))}
+              </div>
+
+              {selectedReminderPanel && (
+                <div className="rounded-[22px] bg-[#FFF8F2] border border-orange-100/80 p-3.5 text-left space-y-1.5">
+                  <h4 className="font-display font-black text-[#2B1D12] text-[13.5px] leading-tight">{selectedReminderPanel.title}</h4>
+                  <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">{selectedReminderPanel.message}</p>
+                </div>
+              )}
+
+              <p className="text-[11px] text-gray-400 font-bold leading-relaxed text-center">HopeHeart provides emotional support only. It does not diagnose, treat, prescribe, or replace professional medical care.</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Calm lower Home cards */}
       <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 pb-24 sm:pb-8 flex-1">
