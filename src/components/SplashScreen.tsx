@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import Mascot from './Mascot';
+import { BrandWordmark } from './Logo';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -75,8 +76,8 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
           </div>
 
           <div className="space-y-4 sm:space-y-5">
-            <h1 className="font-heading text-[44px] sm:text-[62px] md:text-[72px] font-extrabold leading-none tracking-tight text-[#2B1D12] drop-shadow-[0_8px_18px_rgba(43,29,18,0.12)]">
-              HopeHeart <span className="text-[#FF7527]">🧡</span>
+            <h1 className="drop-shadow-[0_8px_18px_rgba(43,29,18,0.12)]">
+              <BrandWordmark size="text-[44px] sm:text-[62px] md:text-[72px]" />
             </h1>
 
             <div className="mx-auto flex w-full max-w-xs items-center justify-center gap-3 sm:max-w-sm">
