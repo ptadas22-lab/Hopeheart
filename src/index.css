@@ -55,3 +55,13 @@
   border-bottom: 1px solid rgba(255, 180, 120, 0.22) !important;
   backdrop-filter: blur(16px) !important;
 }
+
+/* MVP cleanup: avoid duplicate Profile entry points in the header/profile screen. */
+button[title="Safe Profile Settings"] {
+  display: none !important;
+}
+
+/* The global footer already shows Terms, Privacy, and Disclaimer. Hide the duplicate footer inside Profile. */
+footer.text-center.space-y-3.px-2.pb-2 {
+  display: none !important;
+}
