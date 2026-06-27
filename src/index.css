@@ -1,19 +1,37 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@800&family=Quicksand:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-heading: "Nunito", sans-serif;
-  --font-subheading: "Quicksand", sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-subheading: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
+  html,
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+
   body {
     background-color: #f1ede4;
     color: #1e1e1a;
   }
+}
+
+/* Force one consistent HopeHeart font across all screen-level font utility classes. */
+.font-sans,
+.font-display,
+.font-heading,
+.font-subheading,
+.font-mono {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 /* Custom Scrollbar styles */
