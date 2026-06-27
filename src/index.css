@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-subheading: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-subheading: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -16,7 +16,7 @@
   input,
   textarea,
   select {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
   }
 
   body {
@@ -31,7 +31,7 @@
 .font-heading,
 .font-subheading,
 .font-mono {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Nunito Sans", ui-sans-serif, system-ui, sans-serif !important;
 }
 
 /* Custom Scrollbar styles */
