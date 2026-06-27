@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import Mascot from './Mascot';
 import { MascotSitting } from './Logo';
 import { MoodConfig } from '../types';
 
@@ -24,7 +23,6 @@ export default function HopeBuddyChatScreen({
   onBack,
   userName,
   selectedMood,
-  onNavigateTo,
   onOpenCrisisScreen,
   onOpenModerationBlock,
 }: HopeBuddyChatScreenProps) {
@@ -43,13 +41,6 @@ export default function HopeBuddyChatScreen({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
-
-  const quickActionChips = [
-    "I feel anxious",
-    "I feel lonely",
-    "I need someone to listen",
-    "Help me slow down"
-  ];
 
   const generateBuddyResponse = (userText: string, moodId: string): string => {
     const text = userText.toLowerCase();
@@ -73,7 +64,6 @@ export default function HopeBuddyChatScreen({
       return "I care about your safety deeply. While I'm here to offer emotional companionship, if you need urgent care, please check our Safety section or contact your local emergency support immediately.";
     }
 
-    // Default responses based on checked-in mood
     switch (moodId) {
       case 'anxious':
         return "I hear the worry in your words. It is okay if things feel scattered right now. Focus on the ground beneath you, and let's go slowly.";
@@ -91,7 +81,6 @@ export default function HopeBuddyChatScreen({
 
     const lower = text.toLowerCase();
 
-    // High-risk trigger check
     const highRiskPhrases = ['suicide', 'kill myself', 'harm myself', 'end my life', 'immediate danger'];
     if (highRiskPhrases.some(phrase => lower.includes(phrase))) {
       if (onOpenCrisisScreen) {
@@ -100,7 +89,6 @@ export default function HopeBuddyChatScreen({
       }
     }
 
-    // Unsafe advice checks
     const unsafePhrases = [
       'take this medicine', 'increase dosage', 'stop medication',
       'you are cured', 'you have this diagnosis', 'self-harm encouragement',
@@ -124,7 +112,7 @@ export default function HopeBuddyChatScreen({
     const userMsg: Message = {
       id: 'user-' + Date.now(),
       sender: 'user',
-      text: text,
+      text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -132,7 +120,6 @@ export default function HopeBuddyChatScreen({
     setInputText('');
     setIsTyping(true);
 
-    // Simulate buddy response with a slight delay
     setTimeout(() => {
       const buddyReply = generateBuddyResponse(text, selectedMood.id);
       const buddyMsg: Message = {
@@ -157,7 +144,6 @@ export default function HopeBuddyChatScreen({
     }
 
     const compiledReflection = userTexts.join('\n\n');
-    
     const currentRefs = JSON.parse(localStorage.getItem('hopeheart_saved_reflections') || '[]');
     const newRef = {
       id: 'ref-' + Date.now(),
@@ -165,7 +151,6 @@ export default function HopeBuddyChatScreen({
       created_at: new Date().toISOString()
     };
     localStorage.setItem('hopeheart_saved_reflections', JSON.stringify([newRef, ...currentRefs]));
-    
     alert("✓ Reflection saved safely in your private local journal!");
   };
 
@@ -176,69 +161,77 @@ export default function HopeBuddyChatScreen({
 
   return (
     <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full my-auto">
-      {/* Header bar */}
-      <div className="flex items-center justify-between py-3.5 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
+      <div className="flex items-center justify-between py-4 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20 shadow-xs">
         <button 
           onClick={onBack}
           type="button"
-          className="px-3.5 py-2 flex items-center gap-1 bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] font-display font-black text-[12.5px] cursor-pointer"
+          className="px-4 py-2.5 flex items-center gap-1.5 bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] font-display font-black text-[13px] cursor-pointer"
         >
           <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
           Back
         </button>
-        <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
-          HopeBuddy Chat
+        <span className="font-display font-extrabold text-[#2B1D12] text-[20px] uppercase tracking-tight leading-tight text-center">
+          HopeBuddy<br className="sm:hidden" /> Chat
         </span>
         <button
           onClick={handleSaveReflection}
           type="button"
-          className="px-3.5 py-2 flex items-center gap-1 bg-amber-50 hover:bg-amber-100 border border-amber-255 rounded-full text-[#FF7527] font-display font-black text-[12px] cursor-pointer"
+          className="px-4 py-2.5 flex items-center gap-1 bg-amber-50 hover:bg-amber-100 border border-[#FF7527] rounded-full text-[#FF7527] font-display font-black text-[12.5px] cursor-pointer"
         >
           💾 Save Reflection
         </button>
       </div>
 
-      {/* Main chat viewport */}
-      <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 flex flex-col justify-between space-y-4">
-        
-        {/* Messages List Area */}
-        <div className="flex-1 bg-white border border-[#EDE9DE] rounded-[32px] p-4.5 md:p-6 shadow-xs flex flex-col justify-between min-h-[350px] md:min-h-[420px] overflow-hidden">
-          
-          {/* Scrollable box */}
-          <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin max-h-[320px] md:max-h-[380px]">
+      <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6 flex flex-col justify-between space-y-5">
+        <div className="flex-1 bg-white border border-[#EDE9DE] rounded-[36px] p-7 md:p-9 shadow-xs flex flex-col justify-between min-h-[460px] md:min-h-[560px] overflow-hidden">
+          <div className="flex-1 overflow-y-auto space-y-7 pr-1 scrollbar-thin max-h-[420px] md:max-h-[520px]">
             <AnimatePresence initial={false}>
-              {messages.map((msg) => {
+              {messages.map((msg, index) => {
                 const isBuddy = msg.sender === 'buddy';
                 return (
-                  <motion.div
-                    key={msg.id}
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                    className={`flex gap-3 max-w-[85%] ${isBuddy ? 'self-start' : 'self-end flex-row-reverse'}`}
-                  >
-                    {isBuddy && (
-                      <div className="w-8 h-8 rounded-full bg-[#FAF7F0] border border-gray-100 flex items-center justify-center p-0.5 shrink-0 overflow-hidden self-end">
-                        <MascotSitting size={26} />
+                  <React.Fragment key={msg.id}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                      className={`flex gap-4 max-w-[88%] ${isBuddy ? 'self-start' : 'self-end flex-row-reverse ml-auto'}`}
+                    >
+                      {isBuddy && (
+                        <div className="w-11 h-11 rounded-full bg-[#FAF7F0] border border-gray-100 flex items-center justify-center p-1 shrink-0 overflow-hidden self-end">
+                          <MascotSitting size={34} />
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <div
+                          className={`px-6 py-5 text-[16px] sm:text-[17px] font-semibold leading-relaxed ${
+                            isBuddy 
+                              ? 'bg-[#FAF7F0] text-gray-800 rounded-[28px] rounded-bl-xs' 
+                              : 'bg-[#FFF2EA] text-gray-850 rounded-[28px] rounded-br-xs'
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                        <span className={`text-[11px] font-mono text-gray-400 block px-2 ${isBuddy ? 'text-left' : 'text-right'}`}>
+                          {msg.timestamp}
+                        </span>
+                      </div>
+                    </motion.div>
+
+                    {index === 0 && (
+                      <div className="py-12 flex flex-col items-center justify-center gap-4 text-center text-gray-400">
+                        <div className="w-full flex items-center gap-5">
+                          <span className="h-px bg-gray-100 flex-1" />
+                          <span className="text-[#FF7527] text-[24px]">♡</span>
+                          <span className="h-px bg-gray-100 flex-1" />
+                        </div>
+                        <p className="text-[14px] sm:text-[15px] font-semibold text-gray-400">
+                          Take your time. I’m here whenever you’re ready.
+                        </p>
                       </div>
                     )}
-                    <div className="space-y-1">
-                      <div
-                        className={`px-4 py-3 text-[13px] sm:text-[13.5px] font-semibold leading-relaxed ${
-                          isBuddy 
-                            ? 'bg-[#FAF7F0] text-gray-800 rounded-[20px] rounded-bl-xs' 
-                            : 'bg-[#FFF2EA] text-gray-850 rounded-[20px] rounded-br-xs'
-                        }`}
-                      >
-                        {msg.text}
-                      </div>
-                      <span className={`text-[9.5px] font-mono text-gray-400 block px-1.5 ${isBuddy ? 'text-left' : 'text-right'}`}>
-                        {msg.timestamp}
-                      </span>
-                    </div>
-                  </motion.div>
+                  </React.Fragment>
                 );
               })}
 
@@ -247,12 +240,12 @@ export default function HopeBuddyChatScreen({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex gap-3 max-w-[85%] self-start"
+                  className="flex gap-4 max-w-[88%] self-start"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#FAF7F0] border border-gray-100 flex items-center justify-center p-0.5 shrink-0 overflow-hidden self-end">
-                    <MascotSitting size={26} />
+                  <div className="w-11 h-11 rounded-full bg-[#FAF7F0] border border-gray-100 flex items-center justify-center p-1 shrink-0 overflow-hidden self-end">
+                    <MascotSitting size={34} />
                   </div>
-                  <div className="bg-[#FAF7F0] text-gray-400 px-4 py-2.5 rounded-[20px] rounded-bl-xs text-[13px] font-bold flex items-center gap-1">
+                  <div className="bg-[#FAF7F0] text-gray-400 px-5 py-3 rounded-[24px] rounded-bl-xs text-[13px] font-bold flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
                     <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -262,57 +255,35 @@ export default function HopeBuddyChatScreen({
             </AnimatePresence>
             <div ref={messagesEndRef} />
           </div>
-
-          {/* Quick action chips selection */}
-          <div className="pt-4 border-t border-gray-100 space-y-2">
-            <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-              Quick expressions
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {quickActionChips.map((chip, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSend(chip)}
-                  type="button"
-                  className="px-3 py-1.5 bg-[#FCFAF5] hover:bg-[#FFF2EA] hover:text-[#FF7527] border border-[#ECE6D9] hover:border-[#FF7527]/30 rounded-full text-[11.5px] font-extrabold text-gray-650 cursor-pointer transition-all active:scale-95"
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Input box Form */}
-        <form onSubmit={handleSubmitForm} className="flex gap-2.5 items-center bg-white border border-[#EDE9DE] p-2.5 rounded-2.5xl shadow-2xs">
+        <form onSubmit={handleSubmitForm} className="flex gap-3 items-center bg-white border border-[#EDE9DE] p-3 rounded-2.5xl shadow-2xs">
           <input
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type a message to HopeBuddy..."
-            className="flex-1 bg-[#FCFAF5] border border-[#ECE6D9] rounded-xl px-4 py-3 text-[13px] font-semibold text-gray-700 focus:outline-none focus:border-[#FF7527]/40 placeholder-gray-450"
+            placeholder="Type a message to HopeBuddy"
+            className="flex-1 bg-[#FCFAF5] border border-[#ECE6D9] rounded-xl px-5 py-4 text-[15px] font-semibold text-gray-700 focus:outline-none focus:border-[#FF7527]/40 placeholder-gray-450"
           />
           <button
             type="submit"
-            className="w-11 h-11 rounded-xl bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
+            className="w-14 h-14 rounded-xl bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center transition-all cursor-pointer shrink-0 active:scale-95 shadow-xs"
             title="Send Message"
           >
-            <svg className="w-4.5 h-4.5 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
             </svg>
           </button>
         </form>
 
-        {/* Bottom Safety Disclaimer */}
-        <div className="text-center pt-1.5 space-y-1.5 max-w-md mx-auto">
-          <p className="text-[10px] text-gray-400 font-semibold leading-relaxed">
+        <div className="bg-white/80 border border-[#EDE9DE] rounded-[28px] p-5 text-center space-y-3 max-w-2xl mx-auto">
+          <p className="text-[12px] text-gray-400 font-semibold leading-relaxed">
             HopeHeart provides emotional support, peer listening, and resources. It does not provide medical diagnosis, prescriptions, therapy, emergency care, or crisis intervention.
           </p>
-          <p className="text-[10px] text-[#FF7527] font-bold leading-relaxed italic">
+          <p className="text-[12px] text-[#FF7527] font-bold leading-relaxed italic">
             HopeBuddy can help you reflect and find support options, but it is not a therapist, doctor, or emergency responder.
           </p>
         </div>
-
       </div>
     </div>
   );
