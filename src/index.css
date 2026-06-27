@@ -19,10 +19,77 @@
     font-family: "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
   }
 
-  body {
-    background-color: #f1ede4;
-    color: #1e1e1a;
+  html {
+    min-height: 100%;
+    background: #fff7ec;
   }
+
+  body {
+    min-height: 100vh;
+    color: #1e1e1a;
+    background:
+      radial-gradient(circle at 8% 12%, rgba(255, 167, 143, 0.42) 0 16%, transparent 34%),
+      radial-gradient(circle at 88% 7%, rgba(255, 199, 219, 0.56) 0 15%, transparent 34%),
+      radial-gradient(circle at 96% 72%, rgba(205, 176, 241, 0.44) 0 18%, transparent 36%),
+      radial-gradient(circle at 0% 92%, rgba(255, 155, 144, 0.45) 0 18%, transparent 38%),
+      radial-gradient(circle at 50% 45%, rgba(255, 255, 249, 0.94) 0 34%, rgba(255, 246, 224, 0.7) 57%, transparent 78%),
+      linear-gradient(150deg, #fff3e4 0%, #fff9ef 42%, #ffe1d7 70%, #f2d9ff 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+}
+
+#root {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 6% 29%, rgba(255, 180, 145, 0.22) 0 5%, transparent 13%),
+    radial-gradient(circle at 78% 9%, rgba(255, 255, 255, 0.42) 0 4%, transparent 10%),
+    radial-gradient(circle at 85% 83%, rgba(255, 255, 255, 0.36) 0 7%, transparent 15%),
+    radial-gradient(circle at 12% 85%, rgba(255, 213, 176, 0.34) 0 9%, transparent 20%),
+    radial-gradient(circle at 95% 26%, rgba(255, 209, 184, 0.18) 0 7%, transparent 16%);
+}
+
+#root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.62) 1.2px, transparent 1.6px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1.4px);
+  background-size: 13px 13px, 15px 15px;
+  background-position: 0 0, 100% 100%;
+  mask-image:
+    linear-gradient(90deg, #000 0 14%, transparent 28% 72%, #000 86% 100%),
+    linear-gradient(180deg, #000 0 12%, transparent 26% 74%, #000 88% 100%);
+  -webkit-mask-image:
+    linear-gradient(90deg, #000 0 14%, transparent 28% 72%, #000 86% 100%),
+    linear-gradient(180deg, #000 0 12%, transparent 26% 74%, #000 88% 100%);
+}
+
+#root::after {
+  content: "♡";
+  position: fixed;
+  left: 5vw;
+  top: 57vh;
+  pointer-events: none;
+  z-index: 0;
+  color: rgba(255, 126, 118, 0.18);
+  font-size: 34px;
+  line-height: 1;
+  text-shadow:
+    17vw -39vh 0 rgba(255, 126, 118, 0.13),
+    67vw -49vh 0 rgba(255, 255, 255, 0.5),
+    84vw -8vh 0 rgba(255, 255, 255, 0.35),
+    68vw 28vh 0 rgba(255, 255, 255, 0.42),
+    -1vw 29vh 0 rgba(255, 126, 118, 0.2);
+}
+
+#root > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Force one consistent HopeHeart font across all screen-level font utility classes. */
