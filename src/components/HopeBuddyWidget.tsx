@@ -166,7 +166,7 @@ export default function HopeBuddyWidget({
                   Want to capture how you’re doing today?
                 </p>
                 <p className="text-[10px] text-gray-450 font-bold px-2 leading-normal italic">
-                  HopeBuddy can help you reflect and find support options, but it is not a therapist, doctor, or emergency responder.
+                  HopeBuddy can help you reflect privately. It is not a therapist, doctor, or emergency responder.
                 </p>
               </div>
 
@@ -189,17 +189,7 @@ export default function HopeBuddyWidget({
                   type="button"
                   className="w-full py-2.5 bg-[#1E1E1A] hover:bg-black text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 shadow-xs text-center"
                 >
-                  💬 Talk with HopeBuddy
-                </button>
-                <button
-                  onClick={() => {
-                    onNavigateTo('safe-listener');
-                    setIsMinimized(true);
-                  }}
-                  type="button"
-                  className="w-full py-2.5 bg-white hover:bg-[#FCFAF5] border border-gray-250 text-gray-755 rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
-                >
-                  🤝 Find Support
+                  💬 Chat with HopeBuddy
                 </button>
               </div>
             </div>
