@@ -438,7 +438,100 @@ export default function DashboardScreen({
           <div className="absolute -bottom-16 -left-12 w-40 h-40 bg-[#F8C8DC]/25 rounded-full blur-2xl" />
           <div className="relative space-y-4 max-w-xl mx-auto">
             <div className="space-y-2">
-              <span className="text-[30px] block">🌤️</span>
+              <div className="relative w-28 h-20 mx-auto mb-2 shrink-0">
+                <svg className="w-full h-full select-none" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="sun-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                      <stop offset="0%" stopColor="#FFF4D4" />
+                      <stop offset="50%" stopColor="#FFB072" />
+                      <stop offset="100%" stopColor="#FF7B54" />
+                    </radialGradient>
+                    <radialGradient id="sun-glow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FFE0C2" stopOpacity="0.6" />
+                      <stop offset="60%" stopColor="#FFD2AC" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#FFFDF9" stopOpacity="0" />
+                    </radialGradient>
+                    <radialGradient id="heart-glow-grad" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FF8B8B" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#FF8B8B" stopOpacity="0" />
+                    </radialGradient>
+                    <linearGradient id="cloud-grad-left" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="100%" stopColor="#FFF0E5" />
+                    </linearGradient>
+                    <linearGradient id="cloud-grad-right" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="100%" stopColor="#FFEAEA" />
+                    </linearGradient>
+                  </defs>
+                  <style>
+                    {`
+                      .sunrise-group {
+                        transform-origin: 60px 52px;
+                        animation: breathe 4.5s ease-in-out infinite;
+                      }
+                      .heart-glow {
+                        transform-origin: 60px 42px;
+                        animation: heartPulse 4.5s ease-in-out infinite;
+                      }
+                      .cloud-l {
+                        transform-origin: 32px 50px;
+                        animation: floatL 7s ease-in-out infinite;
+                      }
+                      .cloud-r {
+                        transform-origin: 88px 46px;
+                        animation: floatR 8s ease-in-out infinite;
+                      }
+                      @keyframes breathe {
+                        0%, 100% {
+                          transform: scale(0.96);
+                        }
+                        50% {
+                          transform: scale(1.04);
+                        }
+                      }
+                      @keyframes heartPulse {
+                        0%, 100% {
+                          transform: scale(0.9);
+                          opacity: 0.4;
+                        }
+                        50% {
+                          transform: scale(1.25);
+                          opacity: 0.95;
+                        }
+                      }
+                      @keyframes floatL {
+                        0%, 100% {
+                          transform: translate(0px, 0px);
+                        }
+                        50% {
+                          transform: translate(-3px, -1px);
+                        }
+                      }
+                      @keyframes floatR {
+                        0%, 100% {
+                          transform: translate(0px, 0px);
+                        }
+                        50% {
+                          transform: translate(3px, 1.5px);
+                        }
+                      }
+                      @media (prefers-reduced-motion: reduce) {
+                        .sunrise-group, .heart-glow, .cloud-l, .cloud-r {
+                          animation: none !important;
+                          transform: none !important;
+                        }
+                      }
+                    `}
+                  </style>
+                  <circle className="sunrise-group" cx="60" cy="52" r="30" fill="url(#sun-glow)" />
+                  <circle className="sunrise-group" cx="60" cy="52" r="18" fill="url(#sun-gradient)" />
+                  <circle className="heart-glow" cx="60" cy="42" r="10" fill="url(#heart-glow-grad)" />
+                  <path className="sunrise-group" d="M60 47.5 C 58.2 45.2, 55.5 45.2, 55.5 42.5 C 55.5 40.2, 58.0 40.2, 60 42.0 C 62.0 40.2, 64.5 40.2, 64.5 42.5 C 64.5 45.2, 61.8 45.2, 60 47.5 Z" fill="#FF5E5B" />
+                  <path className="cloud-l" d="M 20,54 h 22 a 5,5 0 0,0 4.5,-7 a 6,6 0 0,0 -10.5,-3 a 5,5 0 0,0 -8,-1 a 5,5 0 0,0 -4,5 a 4,4 0 0,0 -4,6 Z" fill="url(#cloud-grad-left)" opacity="0.95" />
+                  <path className="cloud-r" d="M 76,50 h 18 a 4,4 0 0,0 3.6,-5.6 a 5,5 0 0,0 -8.8,-2.4 a 4,4 0 0,0 -6.4,-0.8 a 4,4 0 0,0 -3.2,4 a 3.2,3.2 0 0,0 -3.2,4.8 Z" fill="url(#cloud-grad-right)" opacity="0.9" />
+                </svg>
+              </div>
               <h1 className="font-display font-black text-[#2B1D12] text-[24px] sm:text-[29px] leading-tight">How is your heart today?</h1>
               <p className="text-[12.5px] sm:text-[13px] text-gray-500 font-semibold leading-relaxed">No need to explain. Just check in with yourself.</p>
             </div>
