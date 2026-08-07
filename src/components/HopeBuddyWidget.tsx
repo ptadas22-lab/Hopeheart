@@ -64,7 +64,7 @@ export default function HopeBuddyWidget({
     return { right: 24, bottom: isMobileInitial ? 90 : 24 };
   });
 
-  // Track viewport changes
+  // Track viewport changes & perform initial bounds check
   useEffect(() => {
     const handleResize = () => {
       const isMobileNow = window.innerWidth < 640;
@@ -82,6 +82,9 @@ export default function HopeBuddyWidget({
       });
     };
 
+    // Perform bounds check immediately on mount
+    handleResize();
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobile]);
@@ -96,16 +99,15 @@ export default function HopeBuddyWidget({
         activeEl.getAttribute('contenteditable') === 'true'
       )) {
         setIsKeyboardOpen(true);
+      } else {
+        setIsKeyboardOpen(false);
       }
     };
-    const handleBlur = () => {
-      setIsKeyboardOpen(false);
-    };
     document.addEventListener('focusin', handleFocus);
-    document.addEventListener('focusout', handleBlur);
+    document.addEventListener('focusout', handleFocus);
     return () => {
       document.removeEventListener('focusin', handleFocus);
-      document.removeEventListener('focusout', handleBlur);
+      document.removeEventListener('focusout', handleFocus);
     };
   }, []);
 
@@ -354,7 +356,7 @@ export default function HopeBuddyWidget({
       {/* Floating Mascot Bubble - position: fixed relative to viewport */}
       <div
         className={`fixed z-40 flex items-center pointer-events-none transition-all duration-300 ${
-          isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-1 scale-100'
+          isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-100 scale-100'
         }`}
         style={{
           right: `${position.right}px`,
