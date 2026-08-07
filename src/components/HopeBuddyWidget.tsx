@@ -211,8 +211,11 @@ export default function HopeBuddyWidget({
   // Click Handler fallback
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // Only trigger if we were not dragging the companion around
-    if (dragDistance.current > 5) {
+    const distance = dragDistance.current;
+    dragDistance.current = 0; // Reset immediately
+    
+    // Only trigger if we were not dragging the companion around (threshold 8px)
+    if (distance >= 8) {
       return;
     }
     handleMascotTap();
