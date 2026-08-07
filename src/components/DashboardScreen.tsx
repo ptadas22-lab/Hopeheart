@@ -127,6 +127,35 @@ function getDailySupportiveMessage(): string {
     return SUPPORTIVE_MESSAGES[day % SUPPORTIVE_MESSAGES.length];
   }
 }
+
+const MOOD_OPTIONS = [
+  { emoji: '😊', label: 'Calm' },
+  { emoji: '😌', label: 'Peaceful' },
+  { emoji: '🙂', label: 'Okay' },
+  { emoji: '😔', label: 'Low' },
+  { emoji: '😟', label: 'Anxious' },
+  { emoji: '😴', label: 'Tired' },
+  { emoji: '😤', label: 'Overwhelmed' },
+  { emoji: '😢', label: 'Sad' },
+  { emoji: '😠', label: 'Frustrated' },
+  { emoji: '😶', label: 'Numb' },
+  { emoji: '❤️', label: 'Hopeful' }
+];
+
+const SUPPORTIVE_CAPTIONS: Record<string, string> = {
+  Calm: "It's good to notice peaceful moments.",
+  Peaceful: "It's good to notice peaceful moments.",
+  Okay: "It is okay to have quiet, ordinary days.",
+  Low: "Thank you for checking in.",
+  Anxious: "You're not alone in this feeling.",
+  Tired: "Rest is an important part of healing.",
+  Overwhelmed: "Take things one small breath at a time.",
+  Sad: "Your feelings are valid and allowed to be here.",
+  Frustrated: "It's okay to feel upset. Be gentle with yourself.",
+  Numb: "No pressure to feel anything else right now.",
+  Hopeful: "Hold onto this feeling."
+};
+
 export default function DashboardScreen({
   userName,
   selectedMood,
@@ -145,13 +174,14 @@ export default function DashboardScreen({
   const [showToast, setShowToast] = useState(true);
   const [showReminder, setShowReminder] = useState(true);
   const [dismissedReminder, setDismissedReminder] = useState(false);
-  const [currentMood, setCurrentMood] = useState(selectedMood.id);
+  const [currentMood, setCurrentMood] = useState<string>("");
   const [isSavingHomeCheckIn, setIsSavingHomeCheckIn] = useState(false);
   const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
   const [showMoodReminderCard, setShowMoodReminderCard] = useState(hasCheckedInToday);
   const [selectedReminderPanel, setSelectedReminderPanel] = useState<{ title: string; message: string } | null>(null);
   const [dailyMessage] = useState(getDailySupportiveMessage);
+  const isFirstRender = useRef(true);
 
   const getGreetingName = () => {
     if (!userName) return 'Friend';
@@ -166,21 +196,14 @@ export default function DashboardScreen({
   const greetingName = getGreetingName();
 
   const getHomeMoodLabel = (moodId: string) => {
-    const moodLabels: Record<string, string> = {
-      calm: 'Calm',
-      sad: 'Low',
-      low: 'Low',
-      anxious: 'Anxious',
-      tired: 'Tired'
-    };
-
-    return moodLabels[moodId] || 'Calm';
+    return moodId || 'Calm';
   };
 
   const getMoodReminderLine = (moodId: string) => {
-    if (moodId === 'anxious') return 'First, help your body feel a little safer.';
-    if (moodId === 'sad' || moodId === 'low') return 'Start with one small thing that still feels like you.';
-    if (moodId === 'tired') return 'Choose something easy. Rest counts too.';
+    const lower = moodId.toLowerCase();
+    if (lower === 'anxious') return 'First, help your body feel a little safer.';
+    if (lower === 'sad' || lower === 'low') return 'Start with one small thing that still feels like you.';
+    if (lower === 'tired') return 'Choose something easy. Rest counts too.';
     return 'Save this calm moment or explore gently.';
   };
 
@@ -385,7 +408,27 @@ export default function DashboardScreen({
 
   // Sync state if selected mood changes externally
   useEffect(() => {
-    setCurrentMood(selectedMood.id);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const map: Record<string, string> = {
+      calm: 'Calm',
+      peaceful: 'Peaceful',
+      okay: 'Okay',
+      low: 'Low',
+      sad: 'Sad',
+      anxious: 'Anxious',
+      tired: 'Tired',
+      overwhelmed: 'Overwhelmed',
+      frustrated: 'Frustrated',
+      numb: 'Numb',
+      hopeful: 'Hopeful'
+    };
+    const mapped = map[selectedMood.id.toLowerCase()];
+    if (mapped) {
+      setCurrentMood(mapped);
+    }
   }, [selectedMood.id]);
 
   return (
@@ -678,41 +721,71 @@ export default function DashboardScreen({
             </div>
             <span className="text-[12px] text-gray-400 font-bold">Private to you</span>
           </div>
-          <div className="grid grid-cols-4 gap-2">
-            {[
-              { id: 'calm', label: 'Calm', emoji: '😊' },
-              { id: 'sad', label: 'Low', emoji: '😔' },
-              { id: 'anxious', label: 'Anxious', emoji: '😰' },
-              { id: 'tired', label: 'Tired', emoji: '😴' }
-            ].map((mood) => {
-              const isSelected = currentMood === mood.id;
+          <style>
+            {`
+              .mood-button {
+                transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                            box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                            border-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                            background-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+              }
+              .mood-button:active {
+                transform: scale(0.95);
+              }
+              .mood-button-selected {
+                transform: scale(1.06);
+                box-shadow: 0 4px 14px rgba(249, 115, 22, 0.18);
+              }
+              @media (prefers-reduced-motion: reduce) {
+                .mood-button {
+                  transition: none !important;
+                  transform: none !important;
+                }
+                .mood-button-selected {
+                  transform: none !important;
+                  box-shadow: none !important;
+                }
+              }
+            `}
+          </style>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+            {MOOD_OPTIONS.map((mood) => {
+              const isSelected = currentMood === mood.label;
               return (
                 <button
-                  key={mood.id}
+                  key={mood.label}
                   onClick={() => {
-                    setCurrentMood(mood.id);
+                    setCurrentMood(mood.label);
                     setHomeCheckInStatus(null);
                     setShowMoodReminderCard(false);
                     setSelectedReminderPanel(null);
                   }}
                   type="button"
-                  className={`py-2 px-1 border rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
+                  aria-pressed={isSelected}
+                  className={`py-3 px-2 border rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer mood-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7527] focus-visible:ring-offset-2 ${
                     isSelected
-                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold shadow-3xs'
-                      : 'border-gray-150 bg-[#FCFBF8] text-gray-500 hover:border-gray-300'
+                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold mood-button-selected'
+                      : 'border-[#F1E7D8] bg-[#FFFDF9] text-gray-600 hover:border-orange-200 hover:bg-[#FFFDF9]/80'
                   }`}
                 >
-                  <span className="text-[20px]">{mood.emoji}</span>
-                  <span className="text-[10px] font-bold">{mood.label}</span>
+                  <span className="text-[24px] filter drop-shadow-sm select-none" role="img" aria-label={mood.label}>{mood.emoji}</span>
+                  <span className="text-[11px] font-display font-black tracking-tight">{mood.label}</span>
                 </button>
               );
             })}
           </div>
+          {currentMood && SUPPORTIVE_CAPTIONS[currentMood] && (
+            <div className="py-1 text-center transition-all duration-200">
+              <p className="text-[12.5px] text-[#B95825] font-semibold italic">
+                "{SUPPORTIVE_CAPTIONS[currentMood]}"
+              </p>
+            </div>
+          )}
           <button
             onClick={handleSaveHomeCheckIn}
             type="button"
-            disabled={isSavingHomeCheckIn}
-            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-300 disabled:cursor-not-allowed"
+            disabled={!currentMood || isSavingHomeCheckIn}
+            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
           >
             {isSavingHomeCheckIn ? 'Saving…' : 'Save check-in'}
           </button>
