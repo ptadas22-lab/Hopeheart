@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { supabase } from '../lib/supabaseClient';
 
 export default function WhatsAppRemindersConfig() {

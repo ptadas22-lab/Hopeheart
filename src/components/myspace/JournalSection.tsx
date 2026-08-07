@@ -253,7 +253,7 @@ export default function JournalSection({
 
         {filtered.length === 0 && (
           <div className="text-center py-8 text-gray-400 font-semibold text-[13px]">
-            {searchQuery ? 'No matching journal entries found.' : 'Your journal is empty. Write your first reflection.'}
+            {searchQuery ? 'No matching journal entries found.' : 'No journal entries yet.'}
           </div>
         )}
       </div>

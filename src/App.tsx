@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId, MoodConfig, DoctorQuestion } from './types';
 import { supabase, saveSafeRulesConsentBackend } from './lib/supabaseClient';
@@ -139,6 +139,24 @@ const EN_DIARY_WISDOM = [
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<ScreenId>(ScreenId.Splash);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('hopeheart_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
   const [selectedMoodId, setSelectedMoodId] = useState<string>(() => {
     return localStorage.getItem('hopeheart_mood') || 'calm';
   });
@@ -1054,6 +1072,13 @@ export default function App() {
       */}
       <div className="w-full sm:max-w-[760px] md:max-w-[880px] lg:max-w-[1100px] min-h-screen sm:min-h-[640px] sm:h-[min(780px,88vh)] bg-transparent rounded-none sm:rounded-[28px] shadow-none sm:shadow-lg border-0 sm:border border-gray-200/50 relative flex flex-col overflow-hidden">
         
+        {/* Offline Warning Banner */}
+        {isOffline && (
+          <div className="bg-amber-500 text-white text-[12.5px] font-display font-black py-2 px-4 text-center z-50 animate-in slide-in-from-top duration-300 flex items-center justify-center gap-2 select-none shrink-0 shadow-xs border-b border-amber-600/30">
+            <span>📶</span> You are working offline. Your changes are saved safely on this device.
+          </div>
+        )}
+
         {/* Dynamic Premium Background Layer */}
         <AppBackground currentScreen={currentScreen} />
 

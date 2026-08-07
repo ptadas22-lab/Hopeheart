@@ -21,7 +21,18 @@ export default function FavoritesSection({
   onSelectExercise,
   onToggleFavorite
 }: FavoritesSectionProps) {
-  if (favorites.length === 0) return null;
+  if (favorites.length === 0) {
+    return (
+      <div className="space-y-3.5 select-none text-left">
+        <h3 className="font-display font-black text-[#2B1D12] text-[16px] uppercase tracking-tight flex items-center gap-1.5">
+          <span>❤️</span> Bookmarks
+        </h3>
+        <div className="text-center py-8 text-gray-400 font-semibold text-[13px] border border-dashed border-gray-200 rounded-[22px] bg-white/40">
+          No favorite resources yet.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3.5 select-none text-left">

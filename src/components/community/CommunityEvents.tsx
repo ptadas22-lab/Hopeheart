@@ -18,6 +18,7 @@ const EVENTS: EventItem[] = [
 
 export default function CommunityEvents() {
   const [registeredIds, setRegisteredIds] = useState<string[]>([]);
+  const [events] = useState<EventItem[]>(EVENTS);
 
   const handleRegister = (id: string, title: string) => {
     setRegisteredIds((prev) => {
@@ -34,48 +35,54 @@ export default function CommunityEvents() {
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {EVENTS.map((event) => {
-          const registered = registeredIds.includes(event.id);
-          return (
-            <div
-              key={event.id}
-              className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 text-left shadow-3xs flex flex-col justify-between min-h-[148px] hover:border-[#FFB27A]/35 transition-all"
-            >
-              <div className="flex gap-3.5">
-                <span className="w-10 h-10 rounded-xl bg-orange-50/50 border border-orange-100 flex items-center justify-center text-[20px] shrink-0 select-none">
-                  {event.icon}
-                </span>
-                <div className="space-y-0.5 min-w-0">
-                  <span className="block font-display font-black text-[#2B1D12] text-[14.5px]">
-                    {event.title}
+        {events.length === 0 ? (
+          <div className="col-span-1 sm:col-span-2 text-center py-8 text-gray-400 font-semibold text-[13px] border border-dashed border-gray-200 rounded-[24px] bg-white/40">
+            No community events available.
+          </div>
+        ) : (
+          events.map((event) => {
+            const registered = registeredIds.includes(event.id);
+            return (
+              <div
+                key={event.id}
+                className="bg-white border border-[#EDE9DE] rounded-[24px] p-5 text-left shadow-3xs flex flex-col justify-between min-h-[148px] hover:border-[#FFB27A]/35 transition-all"
+              >
+                <div className="flex gap-3.5">
+                  <span className="w-10 h-10 rounded-xl bg-orange-50/50 border border-orange-100 flex items-center justify-center text-[20px] shrink-0 select-none">
+                    {event.icon}
                   </span>
-                  <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
-                    {event.date} • {event.time}
-                  </p>
+                  <div className="space-y-0.5 min-w-0">
+                    <span className="block font-display font-black text-[#2B1D12] text-[14.5px]">
+                      {event.title}
+                    </span>
+                    <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                      {event.date} • {event.time}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-gray-50 mt-3 flex items-center justify-between">
+                  <span className="text-[11.5px] text-gray-400 font-bold">
+                    📍 {event.location}
+                  </span>
+                  
+                  <button
+                    onClick={() => handleRegister(event.id, event.title)}
+                    disabled={registered}
+                    type="button"
+                    className={`py-1.5 px-3.5 rounded-xl text-[11px] font-display font-black cursor-pointer transition-all active:scale-95 border ${
+                      registered
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                        : 'bg-[#FF7527] border-[#FF7527] text-white hover:bg-[#E96630]'
+                    }`}
+                  >
+                    {registered ? '✓ Registered' : 'Register'}
+                  </button>
                 </div>
               </div>
-
-              <div className="pt-3 border-t border-gray-50 mt-3 flex items-center justify-between">
-                <span className="text-[11.5px] text-gray-400 font-bold">
-                  📍 {event.location}
-                </span>
-                
-                <button
-                  onClick={() => handleRegister(event.id, event.title)}
-                  disabled={registered}
-                  type="button"
-                  className={`py-1.5 px-3.5 rounded-xl text-[11px] font-display font-black cursor-pointer transition-all active:scale-95 border ${
-                    registered
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                      : 'bg-[#FF7527] border-[#FF7527] text-white hover:bg-[#E96630]'
-                  }`}
-                >
-                  {registered ? '✓ Registered' : 'Register'}
-                </button>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

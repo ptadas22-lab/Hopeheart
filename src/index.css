@@ -150,3 +150,55 @@ button[title="Safe Profile Settings"] {
 footer.text-center.space-y-3.px-2.pb-2 {
   display: none !important;
 }
+
+/* ====================================================
+   MICROINTERACTIONS & TRANSITIONS
+   ==================================================== */
+.active-scale {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.active-scale:active {
+  transform: scale(0.96);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(80, 45, 20, 0.03);
+}
+
+/* ====================================================
+   ACCESSIBILITY: PREFERS REDUCED MOTION
+   ==================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
+  }
+}
+
+/* ====================================================
+   APPEARANCE THEME CUSTOMIZATIONS
+   ==================================================== */
+html[data-theme="sepia"] {
+  filter: sepia(0.25) contrast(0.95);
+  background-color: #f4ecd8 !important;
+}
+
+html[data-theme="dark"] {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
+html[data-theme="dark"] img,
+html[data-theme="dark"] video,
+html[data-theme="dark"] iframe,
+html[data-theme="dark"] [role="img"],
+html[data-theme="dark"] .no-invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+

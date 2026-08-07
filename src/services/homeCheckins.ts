@@ -13,7 +13,7 @@ interface SaveHomeMoodCheckInResult {
   error?: string;
 }
 
-const HOME_CHECKIN_SOURCE = 'home_check_in';
+const HOME_CHECKIN_SOURCE = 'home_check_in' as const;
 
 /**
  * Supabase table needed when backend is enabled:

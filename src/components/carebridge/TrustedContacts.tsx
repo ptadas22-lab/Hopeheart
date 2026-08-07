@@ -242,7 +242,7 @@ export default function TrustedContacts({
 
         {contacts.length === 0 && !showAddForm && (
           <div className="col-span-1 sm:col-span-2 text-center py-8 text-gray-400 font-semibold text-[13px]">
-            Your circle is empty. Add trusted friends or family members to get started.
+            No trusted contacts yet.
           </div>
         )}
       </div>
