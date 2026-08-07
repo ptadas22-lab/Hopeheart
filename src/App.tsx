@@ -1282,6 +1282,7 @@ export default function App() {
           onMoodSelected={handleMoodSelected}
           onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
           onShareCheckIn={() => setShowShareModal(true)}
+          currentScreen={currentScreen}
         />
       )}
 
