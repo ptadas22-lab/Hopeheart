@@ -127,7 +127,6 @@ function getDailySupportiveMessage(): string {
     return SUPPORTIVE_MESSAGES[day % SUPPORTIVE_MESSAGES.length];
   }
 }
-
 export default function DashboardScreen({
   userName,
   selectedMood,
