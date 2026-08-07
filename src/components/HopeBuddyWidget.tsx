@@ -165,7 +165,7 @@ export default function HopeBuddyWidget({
 
   // Drag Pointer Handlers
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+    // Note: Do not preventDefault on pointerdown to keep tap/click event routing intact
     setIsDragging(true);
     dragDistance.current = 0;
     dragStart.current = {
@@ -206,11 +206,16 @@ export default function HopeBuddyWidget({
     } catch (err) {}
 
     localStorage.setItem('hopebuddy_bubble_position', JSON.stringify(position));
+  };
 
-    // Tap detected
-    if (dragDistance.current < 6) {
-      handleMascotTap();
+  // Click Handler fallback
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    // Only trigger if we were not dragging the companion around
+    if (dragDistance.current > 5) {
+      return;
     }
+    handleMascotTap();
   };
 
   // Map mood selection to companion expression
@@ -343,7 +348,7 @@ export default function HopeBuddyWidget({
         </div>
       )}
 
-      {/* Floating Mascot Bubble */}
+      {/* Floating Mascot Bubble - position: fixed relative to viewport */}
       <div
         className={`fixed z-40 flex items-center pointer-events-none transition-all duration-300 ${
           isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-1 scale-100'
@@ -387,6 +392,7 @@ export default function HopeBuddyWidget({
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onClick={handleButtonClick}
           type="button"
           className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg border border-gray-800 relative pointer-events-auto cursor-grab active:cursor-grabbing overflow-hidden buddy-floating-btn"
           title="Interact with HopeBuddy"
