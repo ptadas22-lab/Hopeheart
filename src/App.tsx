@@ -905,6 +905,13 @@ export default function App() {
           />
         );
 
+      case ScreenId.CareBridge:
+        return (
+          <CareBridgeScreen
+            onBack={() => setCurrentScreen(ScreenId.Home)}
+          />
+        );
+
       case ScreenId.FeelGood:
         return (
           <FeelGoodScreen

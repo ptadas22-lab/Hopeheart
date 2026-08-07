@@ -32,7 +32,8 @@ export enum ScreenId {
   About = 'about',
   MedicalDisclaimer = 'medical-disclaimer',
   Financials = 'financials',
-  CustomerSupport = 'customer-support'
+  CustomerSupport = 'customer-support',
+  CareBridge = 'care-bridge'
 }
 
 export interface MoodConfig {

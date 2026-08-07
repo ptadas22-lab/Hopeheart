@@ -406,6 +406,7 @@ export default function ProfileUtilityScreen({
                 <h4 className="font-display font-black text-[#10213D] text-[18px]">Tools & Support</h4>
                 <div className="rounded-2xl overflow-hidden border border-orange-100/70 bg-white/70 divide-y divide-orange-100/70">
                   {[
+                    { icon: '🌉', label: 'CareBridge Circle', action: () => onNavigateTo?.(ScreenId.CareBridge) },
                     { icon: '🛡️', label: 'Privacy & Safety', action: () => setSubStage('privacy') },
                     { icon: '📖', label: 'Saved Resources', action: () => onNavigateTo?.(ScreenId.DoctorSuggestions) },
                     { icon: '🎧', label: 'Customer Support', action: () => onNavigateTo?.(ScreenId.CustomerSupport) },

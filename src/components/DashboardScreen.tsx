@@ -1203,6 +1203,7 @@ export default function DashboardScreen({
           </div>
           <div className="divide-y divide-orange-100/60">
             {[
+              { icon: '🌉', title: 'CareBridge Circle', text: 'Connect trusted people privately to your journey.', action: () => onNavigateTo(ScreenId.CareBridge) },
               { icon: '🛟', title: 'Customer Support', text: 'Reach out if you need help using HopeHeart.', action: () => onNavigateTo(ScreenId.CustomerSupport) },
               { icon: '🛡️', title: 'Safety Guide', text: 'Know what HopeHeart can and cannot do.', action: () => onNavigateTo(ScreenId.AISafety) },
               { icon: '📚', title: 'Comfort Resources', text: 'Read gentle support when you feel ready.', action: () => onNavigateTo(ScreenId.DoctorSuggestions) },
