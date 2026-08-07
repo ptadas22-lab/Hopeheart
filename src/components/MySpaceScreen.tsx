@@ -1,66 +1,37 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenId } from '../types';
 import { saveDiaryEntry, saveMemoryEntry, saveRememberMeDetails } from '../services/mySpaceData';
+
+// Modular Wellness Sanctuary subcomponents
+import PrivateLockCard from './myspace/PrivateLockCard';
+import JourneyOverview from './myspace/JourneyOverview';
+import JournalSection, { JournalEntry } from './myspace/JournalSection';
+import MoodTimeline from './myspace/MoodTimeline';
+import GratitudeSection from './myspace/GratitudeSection';
+import MemoriesSection, { MemoryEntry } from './myspace/MemoriesSection';
+import AchievementsSection from './myspace/AchievementsSection';
+import ReflectionCard from './myspace/ReflectionCard';
 
 interface MySpaceScreenProps {
   onBack: () => void;
   onNavigateTo: (screenId: ScreenId) => void;
 }
 
-interface DiaryEntry {
-  id: string;
-  title?: string;
-  mood?: string;
-  text: string;
-  savedAt: string;
-}
-
-interface MemoryEntry {
-  id: string;
-  title: string;
-  story: string;
-  type: string;
-  dateOrAge?: string;
-  people?: string;
-  place?: string;
-  feeling?: string;
-  whyItMatters?: string;
-  savedAt: string;
-}
-
-const loadLocalArray = <T,>(key: string): T[] => {
+const loadLocalArray = <T,>(key: string, fallbackKey?: string): T[] => {
   try {
-    return JSON.parse(localStorage.getItem(key) || '[]');
+    const saved = localStorage.getItem(key);
+    if (saved) return JSON.parse(saved);
+    if (fallbackKey) {
+      const fallbackSaved = localStorage.getItem(fallbackKey);
+      if (fallbackSaved) return JSON.parse(fallbackSaved);
+    }
+    return [];
   } catch {
     return [];
   }
 };
 
-const diaryFeelings = [
-  { label: 'Calm', icon: '🌿' },
-  { label: 'Heavy', icon: '☁️' },
-  { label: 'Lonely', icon: '🧍' },
-  { label: 'Anxious', icon: '🌀' },
-  { label: 'Hopeful', icon: '☀️' }
-];
-
-const diaryNeeds = [
-  { label: 'Just save this', icon: '🔖' },
-  { label: 'Need comfort', icon: '💗' },
-  { label: 'Need to talk', icon: '💬' },
-  { label: 'Need quiet', icon: '🌿' }
-];
-
-const memoryTypes = [
-  { label: 'Small win', icon: '🏆' },
-  { label: 'Kind moment', icon: '💗' },
-  { label: 'Peaceful moment', icon: '🌿' },
-  { label: 'Someone helped me', icon: '👥' },
-  { label: 'I felt connected', icon: '💛' },
-  { label: 'I made it through', icon: '⛰️' }
-];
-
-const comfortOptions = [
+const COMFORT_OPTIONS = [
   { label: 'Music', icon: '🎵' },
   { label: 'Prayer', icon: '🙏' },
   { label: 'Walking', icon: '👟' },
@@ -75,88 +46,108 @@ const comfortOptions = [
   { label: 'Favourite food', icon: '🍰' }
 ];
 
-function Chip({ icon, label, selected, onClick, className = '' }: { icon: string; label: string; selected: boolean; onClick: () => void; className?: string }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`min-h-[52px] rounded-2xl border px-3.5 py-2.5 flex items-center justify-center gap-2 text-[13px] font-display font-black transition-all cursor-pointer active:scale-[0.98] ${
-        selected
-          ? 'bg-[#FF7527] border-[#FF7527] text-white shadow-[0_8px_18px_rgba(255,117,39,0.22)]'
-          : 'bg-white/85 border-orange-100 text-[#223049] hover:border-[#FFB27A] hover:bg-[#FFF8F2]'
-      } ${className}`}
-    >
-      <span className="text-[20px] leading-none">{icon}</span>
-      <span className="leading-tight">{label}</span>
-    </button>
-  );
-}
-
-function StatusMessage({ type, message }: { type?: 'success' | 'error'; message?: string }) {
-  if (!message) return null;
-
-  return (
-    <p role="status" className={`text-[12px] font-bold text-center ${type === 'success' ? 'text-emerald-700' : 'text-red-600'}`}>
-      {message}
-    </p>
-  );
-}
-
 export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenProps) {
-  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>(() => loadLocalArray<DiaryEntry>('hopeheart_private_diary'));
-  const [memories, setMemories] = useState<MemoryEntry[]>(() => loadLocalArray<MemoryEntry>('hopeheart_positive_memories'));
+  // Diary / Journal logs
+  const [diaryEntries, setDiaryEntries] = useState<JournalEntry[]>(() =>
+    loadLocalArray<JournalEntry>('hopeheart_journal', 'hopeheart_private_diary')
+  );
 
-  const [diaryFeeling, setDiaryFeeling] = useState('Hopeful');
-  const [diaryNeed, setDiaryNeed] = useState('Just save this');
-  const [diaryNote, setDiaryNote] = useState('');
-  const [memoryType, setMemoryType] = useState('Small win');
-  const [memoryNote, setMemoryNote] = useState('');
+  // Memories logs
+  const [memories, setMemories] = useState<MemoryEntry[]>(() =>
+    loadLocalArray<MemoryEntry>('hopeheart_memories', 'hopeheart_positive_memories')
+  );
+
+  // Counts for achievements
+  const [checkinCount, setCheckinCount] = useState(0);
+  const [gratitudeCount, setGratitudeCount] = useState(0);
+  const [favoriteCount, setFavoriteCount] = useState(0);
+
+  // Remember Me / Comfort States (Preserved legacy features)
+  const [showComfortPanel, setShowComfortPanel] = useState(false);
   const [selectedComforts, setSelectedComforts] = useState<string[]>([]);
   const [customComfort, setCustomComfort] = useState('');
-
-  const [diarySaveState, setDiarySaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
-  const [memorySaveState, setMemorySaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
   const [rememberSaveState, setRememberSaveState] = useState<{ loading: boolean; type?: 'success' | 'error'; message?: string }>({ loading: false });
 
-  const saveDiary = async () => {
-    if (diarySaveState.loading) return;
+  // Load metrics from local storage
+  useEffect(() => {
+    // Check-in count
+    try {
+      const historyStr = localStorage.getItem('hopeheart_mood_history');
+      if (historyStr) {
+        const history = JSON.parse(historyStr);
+        setCheckinCount(history.length);
+      } else {
+        const legacyCheckinCount = localStorage.getItem('hopeheart_checkin_count');
+        if (legacyCheckinCount) {
+          setCheckinCount(parseInt(legacyCheckinCount, 10));
+        }
+      }
+    } catch (e) {}
 
-    setDiarySaveState({ loading: true });
-    const diaryText = [`Feeling: ${diaryFeeling}`, `Need: ${diaryNeed}`, diaryNote.trim() ? `Note: ${diaryNote.trim()}` : 'Note:'].join('\n');
-    const result = await saveDiaryEntry({
-      title: `Today I feel ${diaryFeeling}`,
-      moodText: diaryFeeling,
+    // Gratitude count
+    try {
+      const gratitudeStr = localStorage.getItem('hopeheart_gratitude');
+      if (gratitudeStr) {
+        setGratitudeCount(JSON.parse(gratitudeStr).length);
+      }
+    } catch (e) {}
+
+    // Favorites count
+    try {
+      const favoritesStr = localStorage.getItem('hopeheart_favorite_resources');
+      if (favoritesStr) {
+        setFavoriteCount(JSON.parse(favoritesStr).length);
+      }
+    } catch (e) {}
+
+    // Comforts loading
+    const savedComfortText = localStorage.getItem('hopeheart_remember_comfort_activity') || '';
+    if (savedComfortText) {
+      const split = savedComfortText.split(', ').filter(Boolean);
+      setSelectedComforts(split);
+    }
+    const savedCustomComfort = localStorage.getItem('hopeheart_remember_survival_memory') || '';
+    setCustomComfort(savedCustomComfort);
+  }, []);
+
+  const handleAddJournal = async (entry: Omit<JournalEntry, 'id' | 'date'>) => {
+    // 1. Backend sync
+    const diaryText = [`Feeling: ${entry.mood}`, `Tags: ${entry.tags.join(', ')}`, entry.text].join('\n');
+    await saveDiaryEntry({
+      title: entry.title,
+      moodText: entry.mood,
       diaryText
     });
 
-    if (!result.ok) {
-      setDiarySaveState({ loading: false, type: 'error', message: "Couldn’t save right now. Please try again." });
-      return;
-    }
-
-    const entry = {
-      id: Date.now().toString(),
-      title: `Today I feel ${diaryFeeling}`,
-      mood: diaryFeeling,
-      text: diaryText,
-      savedAt: new Date().toISOString()
+    // 2. Update local state
+    const newEntry: JournalEntry = {
+      id: 'j-' + Date.now(),
+      title: entry.title,
+      date: new Date().toISOString(),
+      mood: entry.mood,
+      text: entry.text,
+      tags: entry.tags
     };
-    const updated = [entry, ...diaryEntries];
+
+    const updated = [newEntry, ...diaryEntries];
     setDiaryEntries(updated);
-    localStorage.setItem('hopeheart_private_diary', JSON.stringify(updated));
-    setDiaryNote('');
-    setDiarySaveState({ loading: false, type: 'success', message: 'Your private diary entry is saved safely.' });
+    localStorage.setItem('hopeheart_journal', JSON.stringify(updated));
+    localStorage.setItem('hopeheart_private_diary', JSON.stringify(updated)); // Legacy support
   };
 
-  const saveMemory = async () => {
-    if (memorySaveState.loading) return;
+  const handleDeleteJournal = (id: string) => {
+    const updated = diaryEntries.filter((entry) => entry.id !== id);
+    setDiaryEntries(updated);
+    localStorage.setItem('hopeheart_journal', JSON.stringify(updated));
+    localStorage.setItem('hopeheart_private_diary', JSON.stringify(updated));
+  };
 
-    setMemorySaveState({ loading: true });
-    const memoryText = memoryNote.trim() || memoryType;
-    const result = await saveMemoryEntry({
-      memoryTitle: memoryType,
-      smallGoodMoment: memoryType,
-      memoryText,
+  const handleAddMemory = async (entry: Omit<MemoryEntry, 'id' | 'savedAt'>) => {
+    // 1. Backend sync
+    await saveMemoryEntry({
+      memoryTitle: entry.title,
+      smallGoodMoment: entry.type,
+      memoryText: entry.story,
       dateOrAge: '',
       people: '',
       place: '',
@@ -164,28 +155,34 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
       whyMemoryMatters: ''
     });
 
-    if (!result.ok) {
-      setMemorySaveState({ loading: false, type: 'error', message: "Couldn’t save right now. Please try again." });
-      return;
-    }
-
-    const entry = {
-      id: Date.now().toString(),
-      title: memoryType,
-      story: memoryText,
-      type: memoryType,
+    // 2. Update local state
+    const newEntry: MemoryEntry = {
+      id: 'm-' + Date.now(),
+      title: entry.title,
+      story: entry.story,
+      type: entry.type,
+      emoji: entry.emoji,
       savedAt: new Date().toISOString()
     };
-    const updated = [entry, ...memories];
+
+    const updated = [newEntry, ...memories];
     setMemories(updated);
+    localStorage.setItem('hopeheart_memories', JSON.stringify(updated));
+    localStorage.setItem('hopeheart_positive_memories', JSON.stringify(updated)); // Legacy support
+  };
+
+  const handleDeleteMemory = (id: string) => {
+    const updated = memories.filter((entry) => entry.id !== id);
+    setMemories(updated);
+    localStorage.setItem('hopeheart_memories', JSON.stringify(updated));
     localStorage.setItem('hopeheart_positive_memories', JSON.stringify(updated));
-    setMemoryNote('');
-    setMemorySaveState({ loading: false, type: 'success', message: 'Your memory is saved safely.' });
   };
 
   const toggleComfort = (label: string) => {
     setRememberSaveState({ loading: false });
-    setSelectedComforts((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
+    setSelectedComforts((current) =>
+      current.includes(label) ? current.filter((item) => item !== label) : [...current, label]
+    );
   };
 
   const saveRememberMe = async () => {
@@ -221,122 +218,163 @@ export default function MySpaceScreen({ onBack, onNavigateTo }: MySpaceScreenPro
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full">
+    <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full animate-in fade-in duration-300">
+      {/* Header */}
       <div className="flex items-center justify-between py-3.5 px-5 hh-header-surface sticky top-0 z-20">
-        <button onClick={onBack} type="button" className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer transition-all active:scale-95 shadow-3xs">
-          <svg className="w-5 h-5 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+        <button
+          onClick={onBack}
+          type="button"
+          className="w-10 h-10 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer transition-all active:scale-95 shadow-3xs"
+          aria-label="Back to dashboard"
+        >
+          <svg className="w-5 h-5 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
         </button>
-        <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">My Space</span>
+        <span className="font-display font-extrabold text-[#2B1D12] text-[16px] uppercase tracking-tight">
+          My Space
+        </span>
         <span className="text-[20px] select-none">🌼</span>
       </div>
 
-      <div className="flex-1 max-w-[680px] mx-auto w-full p-4 md:p-6 pb-28 sm:pb-10 space-y-4">
-        <div className="hh-hero-surface rounded-[30px] p-5 sm:p-6 text-left overflow-hidden relative border border-orange-100/70 shadow-[0_14px_34px_rgba(181,111,45,0.11)]">
-          <div className="absolute -top-12 -right-8 w-36 h-36 bg-[#FFB98A]/20 rounded-full blur-2xl" />
+      <div className="flex-1 max-w-4xl mx-auto w-full p-4 md:p-6 pb-28 sm:pb-10 space-y-6">
+        {/* Hero Welcome banner */}
+        <div className="hh-hero-surface rounded-[30px] p-6 text-left overflow-hidden relative border border-orange-100/70 shadow-3xs">
+          <div className="absolute -top-12 -right-8 w-36 h-36 bg-[#FFB98A]/20 rounded-full blur-2xl animate-pulse" />
           <div className="absolute bottom-0 right-20 w-28 h-28 bg-[#F8C8DC]/20 rounded-full blur-2xl" />
-          <div className="relative grid grid-cols-[1fr_132px] gap-3 items-center">
-            <div className="space-y-3">
-              <h2 className="font-display font-black text-[#2B1D12] text-[27px] sm:text-[32px] leading-tight">Private space for you</h2>
-              <p className="text-[15px] sm:text-[17px] text-[#334155] font-semibold leading-relaxed">A gentle place to save how you feel, small moments, and the things that help.</p>
+          <div className="relative grid grid-cols-1 sm:grid-cols-[1fr_132px] gap-3 items-center">
+            <div className="space-y-2">
+              <h2 className="font-display font-black text-[#2B1D12] text-[26px] sm:text-[30px] leading-tight">
+                Private Healing Space
+              </h2>
+              <p className="text-[14px] sm:text-[15px] text-[#334155] font-semibold leading-relaxed">
+                A gentle place to reflect on your journey, write thoughts, and remember the small moments.
+              </p>
             </div>
-            <div className="justify-self-end relative w-[124px] h-[124px] rounded-[26px] bg-white/50 border border-white/70 flex items-center justify-center shadow-3xs">
-              <span className="absolute left-1 bottom-5 text-[26px]">🌿</span>
-              <span className="absolute right-1 top-4 text-[18px]">✨</span>
-              <span className="absolute right-2 bottom-5 text-[18px]">✨</span>
-              <div className="w-[82px] h-[98px] rounded-2xl bg-gradient-to-br from-[#FFD46B] to-[#FF9D45] border border-orange-200 shadow-sm flex items-center justify-center text-[34px] rotate-[-2deg]">🔒</div>
+            <div className="justify-self-center sm:justify-self-end relative w-24 h-24 rounded-[22px] bg-white/50 border border-white/70 flex items-center justify-center shadow-3xs">
+              <span className="absolute left-1 bottom-3 text-[22px]">🌿</span>
+              <span className="absolute right-1 top-2 text-[14px]">✨</span>
+              <span className="text-[44px] rotate-[-2deg]">🔒</span>
             </div>
           </div>
         </div>
 
-        <section className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-orange-100/70 shadow-3xs">
-          <div className="flex items-start gap-3">
-            <span className="w-12 h-12 rounded-2xl bg-[#FFF8F2] border border-orange-100 flex items-center justify-center text-[24px] shrink-0">📓</span>
-            <div className="space-y-1">
-              <h3 className="font-display font-black text-gray-900 text-[22px] leading-tight">Private Diary</h3>
-              <p className="text-[14px] text-gray-500 font-semibold leading-relaxed">Save what today feels like. No need to explain.</p>
-            </div>
-          </div>
+        {/* Section 1: Journey Stats Overview */}
+        <JourneyOverview
+          checkinCount={checkinCount}
+          journalCount={diaryEntries.length}
+          favoriteCount={favoriteCount}
+        />
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-            {diaryFeelings.map((feeling) => (
-              <Chip key={feeling.label} icon={feeling.icon} label={feeling.label} selected={diaryFeeling === feeling.label} onClick={() => { setDiaryFeeling(feeling.label); setDiarySaveState({ loading: false }); }} />
-            ))}
-          </div>
+        {/* Section 7: Local Weekly Reflection Insights */}
+        <ReflectionCard />
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {diaryNeeds.map((need) => (
-              <Chip key={need.label} icon={need.icon} label={need.label} selected={diaryNeed === need.label} onClick={() => { setDiaryNeed(need.label); setDiarySaveState({ loading: false }); }} />
-            ))}
-          </div>
+        {/* Section 8: Privacy Statement locker card */}
+        <PrivateLockCard />
 
-          <label className="bg-white/85 border border-orange-100 rounded-2xl px-3.5 py-3 flex items-center gap-2.5">
-            <span className="text-[18px] text-gray-400">✎</span>
-            <input value={diaryNote} onChange={(e) => { setDiaryNote(e.target.value); setDiarySaveState({ loading: false }); }} placeholder="One line if you want…" className="w-full bg-transparent text-[14px] font-semibold text-gray-700 placeholder:text-gray-400 outline-none" />
-          </label>
+        {/* Section 2: Private Diary Section */}
+        <JournalSection
+          entries={diaryEntries}
+          onAddEntry={handleAddJournal}
+          onDeleteEntry={handleDeleteJournal}
+        />
 
-          <button onClick={saveDiary} type="button" disabled={diarySaveState.loading} className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[16px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{diarySaveState.loading ? 'Saving…' : 'Save my check-in'}</button>
-          <StatusMessage type={diarySaveState.type} message={diarySaveState.message} />
-          <p className="text-[12px] text-gray-500 font-bold text-center">🔒 Only you can see this</p>
-        </section>
+        {/* Section 3: Chronological Mood Timeline */}
+        <MoodTimeline journals={diaryEntries} />
 
-        <section className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-orange-100/70 shadow-3xs">
-          <div className="flex items-start gap-3">
-            <span className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[24px] shrink-0">🖼️</span>
-            <div className="space-y-1">
-              <h3 className="font-display font-black text-gray-900 text-[22px] leading-tight">Memories</h3>
-              <p className="text-[14px] text-gray-500 font-semibold leading-relaxed">Keep small moments that matter.</p>
-            </div>
-          </div>
+        {/* Section 4: Daily Gratitude Prompts */}
+        <GratitudeSection />
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {memoryTypes.map((memory) => (
-              <Chip key={memory.label} icon={memory.icon} label={memory.label} selected={memoryType === memory.label} onClick={() => { setMemoryType(memory.label); setMemorySaveState({ loading: false }); }} />
-            ))}
-          </div>
+        {/* Section 5: Scrapbook positive memories */}
+        <MemoriesSection
+          memories={memories}
+          onAddMemory={handleAddMemory}
+          onDeleteMemory={handleDeleteMemory}
+        />
 
-          <label className="bg-white/85 border border-orange-100 rounded-2xl px-3.5 py-3 flex items-center gap-2.5">
-            <span className="text-[18px] text-gray-400">✎</span>
-            <input value={memoryNote} onChange={(e) => { setMemoryNote(e.target.value); setMemorySaveState({ loading: false }); }} placeholder="One line about this memory…" className="w-full bg-transparent text-[14px] font-semibold text-gray-700 placeholder:text-gray-400 outline-none" />
-          </label>
+        {/* Section 6: Quiet Milestones Achievements */}
+        <AchievementsSection
+          checkinCount={checkinCount}
+          journalCount={diaryEntries.length}
+          gratitudeCount={gratitudeCount}
+          favoriteCount={favoriteCount}
+        />
 
-          <button onClick={saveMemory} type="button" disabled={memorySaveState.loading} className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[16px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{memorySaveState.loading ? 'Saving…' : 'Save memory'}</button>
-          <StatusMessage type={memorySaveState.type} message={memorySaveState.message} />
-        </section>
-
-        <section className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-4 border border-orange-100/70 shadow-3xs">
-          <div className="flex items-start gap-3">
-            <span className="w-12 h-12 rounded-2xl bg-[#FFF8E8] border border-orange-100 flex items-center justify-center text-[24px] shrink-0">⭐</span>
-            <div className="space-y-1">
-              <h3 className="font-display font-black text-gray-900 text-[22px] leading-tight">Remember Me</h3>
-              <p className="text-[14px] text-gray-500 font-semibold leading-relaxed">Tap what helps you feel safe.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            {comfortOptions.map((comfort) => (
-              <Chip key={comfort.label} icon={comfort.icon} label={comfort.label} selected={selectedComforts.includes(comfort.label)} onClick={() => toggleComfort(comfort.label)} />
-            ))}
-          </div>
-
-          <label className="bg-white/85 border border-orange-100 rounded-2xl px-3.5 py-3 flex items-center gap-2.5">
-            <span className="text-[18px] text-gray-400">✎</span>
-            <input value={customComfort} onChange={(e) => { setCustomComfort(e.target.value); setRememberSaveState({ loading: false }); }} placeholder="Add your own comfort reminder…" className="w-full bg-transparent text-[14px] font-semibold text-gray-700 placeholder:text-gray-400 outline-none" />
-          </label>
-
-          <button onClick={saveRememberMe} type="button" disabled={rememberSaveState.loading} className="w-full py-3.5 bg-[#FF7527] hover:bg-[#E55D13] text-white rounded-2xl text-[16px] font-display font-black cursor-pointer transition-all active:scale-[0.99] disabled:bg-gray-300 disabled:cursor-not-allowed">{rememberSaveState.loading ? 'Saving…' : 'Save Remember Me'}</button>
-          <StatusMessage type={rememberSaveState.type} message={rememberSaveState.message} />
-        </section>
-
-        <button onClick={() => onNavigateTo(ScreenId.DoctorSuggestions)} type="button" className="w-full bg-white/90 hover:bg-[#FFF8F2] border border-orange-100 rounded-[26px] p-4 text-left cursor-pointer transition-all flex items-center justify-between gap-3 shadow-3xs">
-          <span className="flex items-center gap-3">
-            <span className="w-14 h-14 rounded-2xl bg-[#FFF8E8] border border-orange-100 flex items-center justify-center text-[28px]">📖</span>
-            <span>
-              <span className="block text-[18px] text-gray-900 font-display font-black">Open Gentle Resources</span>
-              <span className="block text-[13px] text-gray-500 font-semibold leading-relaxed">Explore calming and supportive resources.</span>
+        {/* Collapsible Legacy Comfort Activity Strategy Selector */}
+        <div className="border border-[#EDE9DE]/75 bg-white/80 rounded-[24px] overflow-hidden text-left">
+          <button
+            onClick={() => setShowComfortPanel(!showComfortPanel)}
+            type="button"
+            className="w-full p-4 flex items-center justify-between font-display font-black text-[#2B1D12] text-[14.5px] cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <span>☕</span> Things that Comfort Me
             </span>
-          </span>
-          <span className="text-[#2B1D12] font-black text-[26px]">›</span>
-        </button>
+            <span className="text-gray-400 font-bold text-[14px]">
+              {showComfortPanel ? '−' : '+'}
+            </span>
+          </button>
+
+          {showComfortPanel && (
+            <div className="p-4 border-t border-gray-150 space-y-4 bg-transparent animate-in fade-in duration-200">
+              <div className="space-y-1">
+                <span className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                  Select Calming Activities
+                </span>
+                <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+                  Choose the comfort options that help ground you during challenging check-ins.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {COMFORT_OPTIONS.map((item) => {
+                  const isSelected = selectedComforts.includes(item.label);
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => toggleComfort(item.label)}
+                      className={`p-2.5 border rounded-xl text-[12px] font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95 ${
+                        isSelected
+                          ? 'bg-[#FF7527] border-[#FF7527] text-white'
+                          : 'bg-white border-gray-200 text-[#2B1D12] hover:bg-[#FFF8F2]'
+                      }`}
+                    >
+                      <span className="text-[16px]">{item.icon}</span>
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[11px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                  A survival memory or note to my future self:
+                </label>
+                <input
+                  type="text"
+                  value={customComfort}
+                  onChange={(e) => setCustomComfort(e.target.value)}
+                  placeholder="e.g. Remember to breathe, this passes..."
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-[13px] bg-[#FCFCFA] font-semibold focus:outline-none focus:border-[#FF7527]"
+                />
+              </div>
+
+              <button
+                onClick={saveRememberMe}
+                type="button"
+                className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-display font-black cursor-pointer transition-all active:scale-95"
+              >
+                Save Calming Settings
+              </button>
+              {rememberSaveState.message && (
+                <p className={`text-[12px] font-bold text-center ${rememberSaveState.type === 'success' ? 'text-emerald-700' : 'text-red-600'}`}>
+                  {rememberSaveState.message}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
