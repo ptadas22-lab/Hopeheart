@@ -156,6 +156,271 @@ const SUPPORTIVE_CAPTIONS: Record<string, string> = {
   Hopeful: "Hold onto this feeling."
 };
 
+interface SupportCardConfig {
+  title: string;
+  message: string;
+  primaryButton: {
+    label: string;
+    action: (onNavigateTo: (screenId: string) => void, onClose: () => void) => void;
+  };
+  secondaryButton?: {
+    label: string;
+    action: (onNavigateTo: (screenId: string) => void, onClose: () => void) => void;
+  };
+  emoji: string;
+}
+
+const SUPPORT_CARDS_DATA: Record<string, SupportCardConfig> = {
+  Calm: {
+    emoji: '😊',
+    title: "You're doing well today 🌼",
+    message: "Take a moment to appreciate this peaceful feeling. Small moments of calm matter.",
+    primaryButton: {
+      label: "Continue",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Peaceful: {
+    emoji: '😌',
+    title: "Peace is worth protecting 🌿",
+    message: "You deserve moments like this. Carry this feeling with you today.",
+    primaryButton: {
+      label: "Continue",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Okay: {
+    emoji: '🙂',
+    title: "One step at a time 💛",
+    message: "Not every day needs to be extraordinary. Showing up is enough.",
+    primaryButton: {
+      label: "Continue",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Low: {
+    emoji: '😔',
+    title: "Thank you for checking in 🌱",
+    message: "Would writing one small thought help you today?",
+    primaryButton: {
+      label: "Write Journal",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.MySpace);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Maybe Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Anxious: {
+    emoji: '😟',
+    title: "Let's slow down together 🌬",
+    message: "Would a two-minute breathing exercise help?",
+    primaryButton: {
+      label: "Start Breathing",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.FeelGood);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Skip",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Tired: {
+    emoji: '😴',
+    title: "Rest is productive too ☁️",
+    message: "Your body and mind deserve kindness.",
+    primaryButton: {
+      label: "Take a Break",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.FeelGood);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Maybe Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Overwhelmed: {
+    emoji: '😤',
+    title: "You don't have to carry everything alone 🤍",
+    message: "Focus on just one small thing right now.",
+    primaryButton: {
+      label: "Grounding Exercise",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.FeelGood);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Sad: {
+    emoji: '😢',
+    title: "You're not alone 💛",
+    message: "It's okay to feel this way.",
+    primaryButton: {
+      label: "Comfort Resources",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.DoctorSuggestions);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Frustrated: {
+    emoji: '😠',
+    title: "Take one slow breath 🌿",
+    message: "Strong feelings will pass.",
+    primaryButton: {
+      label: "Breathing Exercise",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.FeelGood);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Numb: {
+    emoji: '😶',
+    title: "Thank you for being here 🌼",
+    message: "Sometimes simply checking in is enough.",
+    primaryButton: {
+      label: "Gentle Reflection",
+      action: (onNavigateTo, onClose) => {
+        onNavigateTo(ScreenId.MySpace);
+        onClose();
+      }
+    },
+    secondaryButton: {
+      label: "Later",
+      action: (_, onClose) => onClose()
+    }
+  },
+  Hopeful: {
+    emoji: '❤️',
+    title: "Hold onto this feeling ✨",
+    message: "Hope grows stronger when we notice it.",
+    primaryButton: {
+      label: "Continue",
+      action: (_, onClose) => onClose()
+    }
+  }
+};
+
+interface SupportJourneyCardProps {
+  mood: string;
+  onClose: () => void;
+  onNavigateTo: (screenId: string) => void;
+}
+
+function SupportJourneyCard({ mood, onClose, onNavigateTo }: SupportJourneyCardProps) {
+  const config = SUPPORT_CARDS_DATA[mood];
+  if (!config) return null;
+
+  return (
+    <div className="journey-card-animate flex flex-col items-center text-center space-y-4 p-5 rounded-[28px] bg-gradient-to-br from-[#FFFDF9] to-[#FFF3EA] border border-[#F4E7D8]/80 shadow-3xs relative overflow-hidden w-full">
+      <style>
+        {`
+          @keyframes journeyFadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(12px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .journey-card-animate {
+            animation: journeyFadeIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+          .btn-hover-scale {
+            transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), 
+                        box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1), 
+                        background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .btn-hover-scale:hover {
+            transform: translateY(-1.5px);
+          }
+          .btn-hover-scale:active {
+            transform: scale(0.97);
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .journey-card-animate {
+              animation: none !important;
+              transform: none !important;
+            }
+            .btn-hover-scale {
+              transition: none !important;
+              transform: none !important;
+            }
+          }
+        `}
+      </style>
+      {/* Background soft glowing blur */}
+      <div className="absolute -top-10 -right-10 w-24 h-24 bg-orange-100/40 rounded-full blur-xl pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-rose-100/40 rounded-full blur-xl pointer-events-none" />
+
+      {/* Close button at top corner */}
+      <button
+        onClick={onClose}
+        type="button"
+        className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/80 border border-gray-150 text-gray-500 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center text-[10px] font-black cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7527]"
+        aria-label="Close support card"
+      >
+        ✕
+      </button>
+
+      {/* Emoji bubble */}
+      <div className="w-14 h-14 rounded-full bg-white border border-[#F1E7D8] flex items-center justify-center text-[28px] shadow-3xs select-none">
+        {config.emoji}
+      </div>
+
+      <div className="space-y-1.5 max-w-md">
+        <h3 className="font-display font-black text-[#2B1D12] text-[17px] leading-snug">
+          {config.title}
+        </h3>
+        <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+          {config.message}
+        </p>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full max-w-xs pt-1">
+        {config.secondaryButton && (
+          <button
+            onClick={() => config.secondaryButton!.action(onNavigateTo, onClose)}
+            type="button"
+            className="w-full sm:w-auto flex-1 px-4 py-2 bg-white/80 hover:bg-white border border-[#F6CBB0] text-[#B95825] rounded-xl text-[12px] font-display font-black cursor-pointer btn-hover-scale focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7527]"
+          >
+            {config.secondaryButton.label}
+          </button>
+        )}
+        <button
+          onClick={() => config.primaryButton.action(onNavigateTo, onClose)}
+          type="button"
+          className="w-full sm:w-auto flex-1 px-4 py-2.5 bg-[#FF7527] hover:bg-[#E96630] text-white rounded-xl text-[12px] font-display font-black cursor-pointer btn-hover-scale focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white shadow-3xs"
+        >
+          {config.primaryButton.label}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardScreen({
   userName,
   selectedMood,
@@ -182,6 +447,7 @@ export default function DashboardScreen({
   const [selectedReminderPanel, setSelectedReminderPanel] = useState<{ title: string; message: string } | null>(null);
   const [dailyMessage] = useState(getDailySupportiveMessage);
   const isFirstRender = useRef(true);
+  const [savedMoodSupport, setSavedMoodSupport] = useState<string | null>(null);
 
   const getGreetingName = () => {
     if (!userName) return 'Friend';
@@ -223,6 +489,7 @@ export default function DashboardScreen({
     }
 
     setHomeCheckInStatus({ type: 'success', message: 'Your check-in is saved safely.' });
+    setSavedMoodSupport(currentMood);
     setShowMoodReminderCard(true);
     setSelectedReminderPanel(null);
 
@@ -713,93 +980,104 @@ export default function DashboardScreen({
 
       {/* Hidden anchor card for detailed mood check-in */}
       <div id="hopebuddy-checkin-card" className="mx-4 sm:mx-6 md:mx-8 mt-5">
-        <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-[#F4E7D8]/80">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Private mood check-in</span>
-              <h3 className="font-display font-black text-gray-800 text-[15px] leading-tight">Choose the closest feeling.</h3>
+        {savedMoodSupport ? (
+          <SupportJourneyCard 
+            mood={savedMoodSupport} 
+            onClose={() => {
+              setSavedMoodSupport(null);
+              setCurrentMood("");
+            }} 
+            onNavigateTo={onNavigateTo}
+          />
+        ) : (
+          <div className="hh-surface rounded-[28px] p-4 sm:p-5 space-y-3 border border-[#F4E7D8]/80">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <span className="text-[10px] font-mono font-black text-[#FF7527] uppercase tracking-wider block">Private mood check-in</span>
+                <h3 className="font-display font-black text-gray-800 text-[15px] leading-tight">Choose the closest feeling.</h3>
+              </div>
+              <span className="text-[12px] text-gray-400 font-bold">Private to you</span>
             </div>
-            <span className="text-[12px] text-gray-400 font-bold">Private to you</span>
-          </div>
-          <style>
-            {`
-              .mood-button {
-                transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
-                            box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
-                            border-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
-                            background-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
-              }
-              .mood-button:active {
-                transform: scale(0.95);
-              }
-              .mood-button-selected {
-                transform: scale(1.06);
-                box-shadow: 0 4px 14px rgba(249, 115, 22, 0.18);
-              }
-              @media (prefers-reduced-motion: reduce) {
+            <style>
+              {`
                 .mood-button {
-                  transition: none !important;
-                  transform: none !important;
+                  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                              box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                              border-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1), 
+                              background-color 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .mood-button:active {
+                  transform: scale(0.95);
                 }
                 .mood-button-selected {
-                  transform: none !important;
-                  box-shadow: none !important;
+                  transform: scale(1.06);
+                  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.18);
                 }
-              }
-            `}
-          </style>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-            {MOOD_OPTIONS.map((mood) => {
-              const isSelected = currentMood === mood.label;
-              return (
-                <button
-                  key={mood.label}
-                  onClick={() => {
-                    setCurrentMood(mood.label);
-                    setHomeCheckInStatus(null);
-                    setShowMoodReminderCard(false);
-                    setSelectedReminderPanel(null);
-                  }}
-                  type="button"
-                  aria-pressed={isSelected}
-                  className={`py-3 px-2 border rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer mood-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7527] focus-visible:ring-offset-2 ${
-                    isSelected
-                      ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold mood-button-selected'
-                      : 'border-[#F1E7D8] bg-[#FFFDF9] text-gray-600 hover:border-orange-200 hover:bg-[#FFFDF9]/80'
-                  }`}
-                >
-                  <span className="text-[24px] filter drop-shadow-sm select-none" role="img" aria-label={mood.label}>{mood.emoji}</span>
-                  <span className="text-[11px] font-display font-black tracking-tight">{mood.label}</span>
-                </button>
-              );
-            })}
-          </div>
-          {currentMood && SUPPORTIVE_CAPTIONS[currentMood] && (
-            <div className="py-1 text-center transition-all duration-200">
-              <p className="text-[12.5px] text-[#B95825] font-semibold italic">
-                "{SUPPORTIVE_CAPTIONS[currentMood]}"
-              </p>
+                @media (prefers-reduced-motion: reduce) {
+                  .mood-button {
+                    transition: none !important;
+                    transform: none !important;
+                  }
+                  .mood-button-selected {
+                    transform: none !important;
+                    box-shadow: none !important;
+                  }
+                }
+              `}
+            </style>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+              {MOOD_OPTIONS.map((mood) => {
+                const isSelected = currentMood === mood.label;
+                return (
+                  <button
+                    key={mood.label}
+                    onClick={() => {
+                      setCurrentMood(mood.label);
+                      setHomeCheckInStatus(null);
+                      setShowMoodReminderCard(false);
+                      setSelectedReminderPanel(null);
+                    }}
+                    type="button"
+                    aria-pressed={isSelected}
+                    className={`py-3 px-2 border rounded-2xl flex flex-col items-center justify-center gap-1 cursor-pointer mood-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7527] focus-visible:ring-offset-2 ${
+                      isSelected
+                        ? 'border-[#FF7527] bg-[#FFF2EA] text-[#FF7527] font-bold mood-button-selected'
+                        : 'border-[#F1E7D8] bg-[#FFFDF9] text-gray-600 hover:border-orange-200 hover:bg-[#FFFDF9]/80'
+                    }`}
+                  >
+                    <span className="text-[24px] filter drop-shadow-sm select-none" role="img" aria-label={mood.label}>{mood.emoji}</span>
+                    <span className="text-[11px] font-display font-black tracking-tight">{mood.label}</span>
+                  </button>
+                );
+              })}
             </div>
-          )}
-          <button
-            onClick={handleSaveHomeCheckIn}
-            type="button"
-            disabled={!currentMood || isSavingHomeCheckIn}
-            className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
-          >
-            {isSavingHomeCheckIn ? 'Saving…' : 'Save check-in'}
-          </button>
-          {homeCheckInStatus && (
-            <p
-              role="status"
-              className={`text-[11.5px] font-bold leading-relaxed text-center ${
-                homeCheckInStatus.type === 'success' ? 'text-emerald-700' : 'text-red-600'
-              }`}
+            {currentMood && SUPPORTIVE_CAPTIONS[currentMood] && (
+              <div className="py-1 text-center transition-all duration-200">
+                <p className="text-[12.5px] text-[#B95825] font-semibold italic">
+                  "{SUPPORTIVE_CAPTIONS[currentMood]}"
+                </p>
+              </div>
+            )}
+            <button
+              onClick={handleSaveHomeCheckIn}
+              type="button"
+              disabled={!currentMood || isSavingHomeCheckIn}
+              className="w-full py-2.5 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[12.5px] font-bold cursor-pointer transition-all active:scale-95 shadow-xs disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
-              {homeCheckInStatus.message}
-            </p>
-          )}
-        </div>
+              {isSavingHomeCheckIn ? 'Saving…' : 'Save check-in'}
+            </button>
+            {homeCheckInStatus && (
+              <p
+                role="status"
+                className={`text-[11.5px] font-bold leading-relaxed text-center ${
+                  homeCheckInStatus.type === 'success' ? 'text-emerald-700' : 'text-red-600'
+                }`}
+              >
+                {homeCheckInStatus.message}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <AnimatePresence>
