@@ -83,11 +83,14 @@ export default function HopeBuddyWidget({
       const isMobileNow = window.innerWidth < 640;
       setIsMobile(isMobileNow);
       
+      const bubbleSize = 56;
+      const maxRight = window.innerWidth - bubbleSize - 24;
+      const maxBottom = window.innerHeight - bubbleSize - 24;
       const minBottom = isMobileNow ? 90 : 24;
 
       setPosition(prev => {
-        const nextBottom = Math.max(minBottom, prev.bottom);
-        const nextRight = Math.max(24, prev.right);
+        const nextBottom = Math.max(minBottom, Math.min(maxBottom, prev.bottom));
+        const nextRight = Math.max(24, Math.min(maxRight, prev.right));
         return { right: nextRight, bottom: nextBottom };
       });
     };
@@ -195,14 +198,10 @@ export default function HopeBuddyWidget({
 
     dragDistance.current = Math.sqrt(dx * dx + dy * dy);
 
-    // Dynamic parent bounds check for absolute containment
-    const parentEl = e.currentTarget.offsetParent;
-    const parentWidth = parentEl ? parentEl.clientWidth : window.innerWidth;
-    const parentHeight = parentEl ? parentEl.clientHeight : window.innerHeight;
-
+    // Bounds check relative to window viewport (since it is fixed positioning)
     const bubbleSize = 56;
-    const maxRight = parentWidth - bubbleSize - 24;
-    const maxBottom = parentHeight - bubbleSize - 24;
+    const maxRight = window.innerWidth - bubbleSize - 24;
+    const maxBottom = window.innerHeight - bubbleSize - 24;
     const minBottom = isMobile ? 90 : 24;
 
     const newRight = Math.max(24, Math.min(maxRight, dragStart.current.posRight - dx));
@@ -280,13 +279,13 @@ export default function HopeBuddyWidget({
         }
       ` }} />
 
-      {/* Expanded Menu Sheet - position: absolute relative to parent */}
+      {/* Expanded Menu Sheet - position: fixed relative to viewport */}
       {!isMinimized && (
         <div
           style={
             isMobile
               ? {
-                  position: 'absolute',
+                  position: 'fixed',
                   bottom: '86px',
                   left: '5vw',
                   width: '90vw',
@@ -295,7 +294,7 @@ export default function HopeBuddyWidget({
                   transition: 'opacity 200ms ease, transform 200ms ease'
                 }
               : {
-                  position: 'absolute',
+                  position: 'fixed',
                   right: `${position.right}px`,
                   bottom: `${position.bottom + 64}px`,
                   width: '300px',
@@ -357,9 +356,9 @@ export default function HopeBuddyWidget({
         </div>
       )}
 
-      {/* Floating Mascot Bubble - position: absolute relative to parent */}
+      {/* Floating Mascot Bubble - position: fixed relative to viewport */}
       <div
-        className={`absolute z-40 flex items-center pointer-events-none transition-all duration-300 ${
+        className={`fixed z-40 flex items-center pointer-events-none transition-all duration-300 ${
           isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-1 scale-100'
         }`}
         style={{
