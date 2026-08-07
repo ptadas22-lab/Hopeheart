@@ -20,22 +20,10 @@ const SUPPORTIVE_SENTENCES = [
   "Thank you for checking in."
 ];
 
-const getScreenMessage = (screenId: string): string => {
-  const cleanId = screenId.toLowerCase();
-  if (cleanId === 'home') return "How are you feeling today?";
-  if (cleanId === 'my-space') return "Your progress matters.";
-  if (cleanId === 'feel-good') return "Write whatever feels right.";
-  if (cleanId === 'doctor-suggestions' || cleanId === 'resources') return "Take your time.";
-  if (cleanId === 'community' || cleanId === 'support-rooms') return "You're among kind people.";
-  if (cleanId === 'privacy-settings' || cleanId === 'profile') return "You're in control.";
-  return "How are you feeling today?";
-};
-
 export default function HopeBuddyWidget({
   selectedMood,
   onNavigateTo,
   onShareCheckIn,
-  currentScreen = 'home',
 }: HopeBuddyWidgetProps) {
   const [isMinimized, setIsMinimized] = useState<boolean>(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
@@ -45,18 +33,17 @@ export default function HopeBuddyWidget({
   const dragDistance = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  // Dynamic status triggers
+  // Visibility states
   const [isScrolling, setIsScrolling] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [reaction, setReaction] = useState<string | null>(null);
 
-  // Speech bubble state
-  const [speechText, setSpeechText] = useState("");
-  const [showSpeechBubble, setShowSpeechBubble] = useState(true);
-  const [isTappedMsg, setIsTappedMsg] = useState(false);
+  // Popup state
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
   
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const tappedTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const dismissTimerRef = useRef<NodeJS.Timeout | null>(null);
   const reactionTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Position of mascot bubble relative to bottom-right (24px margin default)
@@ -153,26 +140,26 @@ export default function HopeBuddyWidget({
     }
   }, [selectedMood]);
 
-  // Context message synchronization
+  // Cleanup timers on unmount
   useEffect(() => {
-    if (!isTappedMsg) {
-      setSpeechText(getScreenMessage(currentScreen));
-      setShowSpeechBubble(true);
-    }
-  }, [currentScreen, isTappedMsg]);
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      if (dismissTimerRef.current) clearTimeout(dismissTimerRef.current);
+      if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
+    };
+  }, []);
 
-  // Mascot tap handler
+  // Mascot tap handler: Display supportive message for 3s
   const handleMascotTap = () => {
     const randMsg = SUPPORTIVE_SENTENCES[Math.floor(Math.random() * SUPPORTIVE_SENTENCES.length)];
-    setSpeechText(randMsg);
-    setIsTappedMsg(true);
-    setShowSpeechBubble(true);
+    setPopupMessage(randMsg);
+    setShowPopup(true);
 
-    if (tappedTimerRef.current) {
-      clearTimeout(tappedTimerRef.current);
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current);
     }
-    tappedTimerRef.current = setTimeout(() => {
-      setIsTappedMsg(false);
+    dismissTimerRef.current = setTimeout(() => {
+      setShowPopup(false);
     }, 3000);
   };
 
@@ -263,8 +250,8 @@ export default function HopeBuddyWidget({
           transform-origin: bottom right;
         }
         @keyframes bubbleFadeIn {
-          from { opacity: 0; transform: scale(0.9) translateX(5px); }
-          to { opacity: 1; transform: scale(1) translateX(0); }
+          from { opacity: 0; transform: translate(-50%, 5px) scale(0.9); }
+          to { opacity: 1; transform: translate(-50%, 0) scale(1); }
         }
         @keyframes hand-wave-indicator {
           0%, 100% { transform: rotate(0deg); }
@@ -356,7 +343,7 @@ export default function HopeBuddyWidget({
         </div>
       )}
 
-      {/* Floating Mascot Bubble - position: fixed relative to viewport */}
+      {/* Floating Mascot Bubble */}
       <div
         className={`fixed z-40 flex items-center pointer-events-none transition-all duration-300 ${
           isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-1 scale-100'
@@ -368,24 +355,31 @@ export default function HopeBuddyWidget({
           height: '56px',
         }}
       >
-        {/* Speech Bubble Context helper */}
-        {showSpeechBubble && isMinimized && (
+        {/* Supportive Sentence Popup above Mascot */}
+        {showPopup && (
           <div 
-            className="absolute right-16 bottom-2 bg-[#FFFDF9] border border-[#F1E7D8] text-[#2B1D12] px-3 py-2 rounded-2xl shadow-sm text-[12px] font-bold whitespace-nowrap select-none pointer-events-auto speech-bubble-animate flex items-center gap-2"
-            style={{ transformOrigin: 'right center' }}
+            className="absolute bottom-16 bg-[#FFFDF9] border border-[#F1E7D8] text-[#2B1D12] px-3.5 py-2 rounded-2xl shadow-md text-[12px] font-bold whitespace-nowrap select-none pointer-events-auto speech-bubble-animate flex items-center gap-2"
+            style={{ 
+              left: '50%',
+              transform: 'translateX(-50%)',
+              transformOrigin: 'bottom center',
+              zIndex: 50
+            }}
           >
-            <span>{speechText}</span>
+            <span>{popupMessage}</span>
             <button 
               onClick={(e) => {
                 e.stopPropagation();
                 setIsMinimized(false);
+                setShowPopup(false);
               }}
               type="button"
-              className="text-[10px] bg-orange-100 hover:bg-orange-200 text-[#FF7527] px-1.5 py-0.5 rounded-md font-black cursor-pointer transition-all active:scale-95 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#FF7527]"
+              className="text-[10px] bg-orange-100 hover:bg-orange-200 text-[#FF7527] px-1.5 py-0.5 rounded-md font-black cursor-pointer transition-all active:scale-95 focus-visible:outline-none"
             >
               Menu
             </button>
-            <div className="absolute right-[-6px] top-1/2 transform -translate-y-1/2 w-2 h-2 bg-[#FFFDF9] border-r border-b border-[#F1E7D8] rotate-[-45deg]" />
+            {/* Small down-pointing arrow */}
+            <div className="absolute bottom-[-5px] left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#FFFDF9] border-r border-b border-[#F1E7D8] rotate-[45deg]" />
           </div>
         )}
 
