@@ -59,7 +59,7 @@ export default function HopeBuddyWidget({
   const tappedTimerRef = useRef<NodeJS.Timeout | null>(null);
   const reactionTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Position of mascot bubble relative to bottom-right
+  // Position of mascot bubble relative to bottom-right (24px margin default)
   const [position, setPosition] = useState(() => {
     const isMobileInitial = window.innerWidth < 640;
     const saved = localStorage.getItem('hopebuddy_bubble_position');
@@ -74,7 +74,7 @@ export default function HopeBuddyWidget({
         }
       } catch (e) {}
     }
-    return { right: 20, bottom: isMobileInitial ? 90 : 20 };
+    return { right: 24, bottom: isMobileInitial ? 90 : 24 };
   });
 
   // Track viewport changes
@@ -83,14 +83,11 @@ export default function HopeBuddyWidget({
       const isMobileNow = window.innerWidth < 640;
       setIsMobile(isMobileNow);
       
-      const bubbleSize = 56;
-      const maxRight = window.innerWidth - bubbleSize - 20;
-      const maxBottom = window.innerHeight - bubbleSize - 20;
-      const minBottom = isMobileNow ? 90 : 20;
+      const minBottom = isMobileNow ? 90 : 24;
 
       setPosition(prev => {
-        const nextBottom = Math.max(minBottom, Math.min(maxBottom, prev.bottom));
-        const nextRight = Math.max(20, Math.min(maxRight, prev.right));
+        const nextBottom = Math.max(minBottom, prev.bottom);
+        const nextRight = Math.max(24, prev.right);
         return { right: nextRight, bottom: nextBottom };
       });
     };
@@ -198,12 +195,17 @@ export default function HopeBuddyWidget({
 
     dragDistance.current = Math.sqrt(dx * dx + dy * dy);
 
-    const bubbleSize = 56;
-    const maxRight = window.innerWidth - bubbleSize - 20;
-    const maxBottom = window.innerHeight - bubbleSize - 20;
-    const minBottom = isMobile ? 90 : 20;
+    // Dynamic parent bounds check for absolute containment
+    const parentEl = e.currentTarget.offsetParent;
+    const parentWidth = parentEl ? parentEl.clientWidth : window.innerWidth;
+    const parentHeight = parentEl ? parentEl.clientHeight : window.innerHeight;
 
-    const newRight = Math.max(20, Math.min(maxRight, dragStart.current.posRight - dx));
+    const bubbleSize = 56;
+    const maxRight = parentWidth - bubbleSize - 24;
+    const maxBottom = parentHeight - bubbleSize - 24;
+    const minBottom = isMobile ? 90 : 24;
+
+    const newRight = Math.max(24, Math.min(maxRight, dragStart.current.posRight - dx));
     const newBottom = Math.max(minBottom, Math.min(maxBottom, dragStart.current.posBottom - dy));
 
     setPosition({ right: newRight, bottom: newBottom });
@@ -278,13 +280,13 @@ export default function HopeBuddyWidget({
         }
       ` }} />
 
-      {/* Expanded Menu Sheet */}
+      {/* Expanded Menu Sheet - position: absolute relative to parent */}
       {!isMinimized && (
         <div
           style={
             isMobile
               ? {
-                  position: 'fixed',
+                  position: 'absolute',
                   bottom: '86px',
                   left: '5vw',
                   width: '90vw',
@@ -293,7 +295,7 @@ export default function HopeBuddyWidget({
                   transition: 'opacity 200ms ease, transform 200ms ease'
                 }
               : {
-                  position: 'fixed',
+                  position: 'absolute',
                   right: `${position.right}px`,
                   bottom: `${position.bottom + 64}px`,
                   width: '300px',
@@ -355,9 +357,9 @@ export default function HopeBuddyWidget({
         </div>
       )}
 
-      {/* Floating Mascot Bubble */}
+      {/* Floating Mascot Bubble - position: absolute relative to parent */}
       <div
-        className={`fixed z-40 flex items-center pointer-events-none transition-all duration-300 ${
+        className={`absolute z-40 flex items-center pointer-events-none transition-all duration-300 ${
           isScrolling || isKeyboardOpen ? 'opacity-0 scale-90 translate-y-3' : 'opacity-1 scale-100'
         }`}
         style={{
@@ -393,10 +395,7 @@ export default function HopeBuddyWidget({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           type="button"
-          className={`w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg border border-gray-800 relative pointer-events-auto cursor-grab active:cursor-grabbing overflow-hidden buddy-floating-btn`}
-          style={{
-            transform: isDragging ? 'scale(1.06)' : 'none',
-          }}
+          className="w-14 h-14 rounded-full bg-[#1E1E1A] hover:bg-black text-white flex items-center justify-center shadow-lg border border-gray-800 relative pointer-events-auto cursor-grab active:cursor-grabbing overflow-hidden buddy-floating-btn"
           title="Interact with HopeBuddy"
         >
           {/* Mascot face */}

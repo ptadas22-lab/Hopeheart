@@ -1246,6 +1246,16 @@ export default function App() {
           </nav>
         )}
 
+        {showNavChannels && currentScreen !== ScreenId.HopeBuddyChat && (
+          <HopeBuddyWidget 
+            selectedMood={selectedMood}
+            moodConfigs={MOOD_CONFIGS}
+            onMoodSelected={handleMoodSelected}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+            onShareCheckIn={() => setShowShareModal(true)}
+            currentScreen={currentScreen}
+          />
+        )}
       </div>
 
       {/* GLOBAL MODERATION & CRISIS ALERT MODALS POPUPS */}
@@ -1275,16 +1285,6 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-      {showNavChannels && currentScreen !== ScreenId.HopeBuddyChat && (
-        <HopeBuddyWidget 
-          selectedMood={selectedMood}
-          moodConfigs={MOOD_CONFIGS}
-          onMoodSelected={handleMoodSelected}
-          onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
-          onShareCheckIn={() => setShowShareModal(true)}
-          currentScreen={currentScreen}
-        />
-      )}
 
       {/* Share Card Modal Overlay */}
       {/* Share Card Modal Overlay */}
