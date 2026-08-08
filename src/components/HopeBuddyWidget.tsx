@@ -242,40 +242,6 @@ export default function HopeBuddyWidget({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
-        .buddy-floating-btn {
-          transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 150ms ease;
-        }
-        .buddy-floating-btn:hover {
-          transform: scale(1.05);
-        }
-        .buddy-floating-btn:active {
-          transform: scale(0.94);
-        }
-        .speech-bubble-animate {
-          animation: bubbleFadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .anim-hand-wave-indicator {
-          animation: hand-wave-indicator 2.2s ease-in-out infinite;
-          transform-origin: bottom right;
-        }
-        @keyframes bubbleFadeIn {
-          from { opacity: 0; transform: translate(-50%, 5px) scale(0.9); }
-          to { opacity: 1; transform: translate(-50%, 0) scale(1); }
-        }
-        @keyframes hand-wave-indicator {
-          0%, 100% { transform: rotate(0deg); }
-          50% { transform: rotate(15deg); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .buddy-floating-btn, .speech-bubble-animate, .anim-hand-wave-indicator {
-            animation: none !important;
-            transform: none !important;
-            transition: none !important;
-          }
-        }
-      ` }} />
-
       {/* Expanded Menu Sheet - position: fixed relative to viewport */}
       {!isMinimized && (
         <div

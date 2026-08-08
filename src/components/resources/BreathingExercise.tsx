@@ -78,63 +78,6 @@ export default function BreathingExercise({ onComplete }: BreathingExerciseProps
 
   return (
     <div className="w-full text-center space-y-6 select-none p-5 bg-[#FFFDF9] border border-[#F1E7D8]/80 rounded-[28px]">
-      <style dangerouslySetInnerHTML={{ __html: `
-        .breath-ring-container {
-          position: relative;
-          width: 140px;
-          height: 140px;
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .breath-outer-ring {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          background: rgba(255, 117, 39, 0.08);
-          border: 1px solid rgba(255, 117, 39, 0.2);
-          transition: transform 4000ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .breath-inner-circle {
-          position: absolute;
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #FF7527, #FFA26B);
-          box-shadow: 0 8px 24px rgba(255, 117, 39, 0.25);
-          transition: transform 4000ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Scaling rules mapped to cycle phases */
-        .breath-inhale .breath-outer-ring {
-          transform: scale(1.15);
-        }
-        .breath-inhale .breath-inner-circle {
-          transform: scale(1.6);
-        }
-        .breath-hold .breath-outer-ring {
-          transform: scale(1.15);
-        }
-        .breath-hold .breath-inner-circle {
-          transform: scale(1.6);
-        }
-        .breath-exhale .breath-outer-ring {
-          transform: scale(0.9);
-        }
-        .breath-exhale .breath-inner-circle {
-          transform: scale(1);
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .breath-outer-ring, .breath-inner-circle {
-            transition: none !important;
-            transform: none !important;
-          }
-        }
-      ` }} />
-
       <div className="space-y-1">
         <h4 className="font-display font-black text-[#2B1D12] text-[17px]">
           🌬 Deep Breathing Exercise

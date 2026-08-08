@@ -71,16 +71,6 @@ export default function BreakTimer({ onComplete }: BreakTimerProps) {
 
   return (
     <div className="w-full text-center space-y-5 select-none p-5 bg-[#FFFDF9] border border-[#F1E7D8]/80 rounded-[28px]">
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes timer-pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.04); }
-        }
-        .timer-finished-anim {
-          animation: timer-pulse 1.2s ease-in-out infinite;
-        }
-      ` }} />
-
       <div className="space-y-1">
         <h4 className="font-display font-black text-[#2B1D12] text-[17px]">
           ☕ Take a Short Break
