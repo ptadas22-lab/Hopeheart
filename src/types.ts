@@ -3,6 +3,8 @@ export enum ScreenId {
   Welcome = 'welcome',
   Login = 'login',
   ProfileSetup = 'profile-setup',
+  OnboardingMood = 'onboarding-mood',
+  OnboardingComfort = 'onboarding-comfort',
   Home = 'home',
   FeelGood = 'feel-good',
   Mood = 'mood',

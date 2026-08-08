@@ -4,6 +4,7 @@ import { MascotSitting } from './Logo';
 
 interface ProfileSetupScreenProps {
   initialNickname: string;
+  onBack?: () => void;
   onComplete: (details: {
     nickname: string;
     ageGroup: string;
@@ -12,7 +13,7 @@ interface ProfileSetupScreenProps {
   }) => void;
 }
 
-export default function ProfileSetupScreen({ initialNickname, onComplete }: ProfileSetupScreenProps) {
+export default function ProfileSetupScreen({ initialNickname, onBack, onComplete }: ProfileSetupScreenProps) {
   const [currentStep, setCurrentStep] = useState(0);
   
   // Profile state answers
@@ -316,6 +317,16 @@ export default function ProfileSetupScreen({ initialNickname, onComplete }: Prof
           <button 
             type="button"
             onClick={() => setCurrentStep(prev => prev - 1)}
+            className="w-9 h-9 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
+          >
+            <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+        ) : onBack ? (
+          <button 
+            type="button"
+            onClick={onBack}
             className="w-9 h-9 flex items-center justify-center bg-white border border-[#E9E4D9] rounded-full hover:bg-gray-50 text-[#2B1D12] cursor-pointer"
           >
             <svg className="w-4 h-4 stroke-current" fill="none" strokeWidth="2.5" viewBox="0 0 24 24">

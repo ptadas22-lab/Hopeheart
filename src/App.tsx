@@ -7,7 +7,8 @@ import { supabase, saveSafeRulesConsentBackend } from './lib/supabaseClient';
 import SplashScreen from './components/SplashScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import LoginScreen from './components/LoginScreen';
-// import ProfileSetupScreen from './components/ProfileSetupScreen';
+import ProfileSetupScreen from './components/ProfileSetupScreen';
+import PersonalizedComfortScreen from './components/onboarding/PersonalizedComfortScreen';
 import DashboardScreen from './components/DashboardScreen';
 import FeelGoodScreen from './components/FeelGoodScreen';
 import MoodScreen from './components/MoodScreen';
@@ -822,16 +823,84 @@ export default function App() {
           <LoginScreen 
             onLoginSuccess={(nick) => {
               setUserName(nick);
-              setCurrentScreen(ScreenId.Home);
+              const onboardingDone = localStorage.getItem('hopeheart_onboarding_completed') === 'true';
+              if (onboardingDone) {
+                setCurrentScreen(ScreenId.Home);
+              } else {
+                setCurrentScreen(ScreenId.OnboardingMood);
+              }
             }}
             onNavigateTo={(scr) => setCurrentScreen(scr)}
           />
         );
 
+      case ScreenId.OnboardingMood:
+        return (
+          <div className="flex flex-col min-h-full bg-transparent font-sans select-none w-full my-auto animate-in fade-in duration-300">
+            <div className="flex items-center justify-between py-4 px-5 border-b border-[#E9E4D9] bg-white sticky top-0 z-20">
+              <span className="font-display font-extrabold text-[#2B1D12] text-[18px] uppercase tracking-tight text-center w-full">
+                How are you feeling right now?
+              </span>
+            </div>
+            <div className="flex-1 max-w-md mx-auto w-full p-6 space-y-6">
+              <p className="text-[13.5px] text-gray-500 font-semibold text-center leading-relaxed">
+                Select a mood that matches your current state. We will use this locally to suggest gentle comfort paths.
+              </p>
+              <div className="grid grid-cols-2 gap-3.5">
+                {MOOD_CONFIGS.map((moodOption) => (
+                  <button
+                    key={moodOption.id}
+                    type="button"
+                    onClick={() => {
+                      handleMoodSelected(moodOption.id);
+                      setCurrentScreen(ScreenId.ProfileSetup);
+                    }}
+                    className="p-4 bg-white border border-[#EDE9DE] rounded-[24px] hover:border-[#FFB27A]/40 hover:bg-orange-50/10 transition-all active-scale cursor-pointer flex flex-col items-center justify-center gap-2 text-center"
+                  >
+                    <span className="text-[32px]">{moodOption.emoji}</span>
+                    <span className="text-[13.5px] font-display font-black text-gray-800">
+                      {moodOption.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
       case ScreenId.ProfileSetup:
-        // Disabled onboarding step, redirects to Home
-        setCurrentScreen(ScreenId.Home);
-        return null;
+        return (
+          <ProfileSetupScreen
+            initialNickname={userName}
+            onBack={() => setCurrentScreen(ScreenId.OnboardingMood)}
+            onComplete={(details) => {
+              setUserName(details.nickname);
+              setCurrentScreen(ScreenId.OnboardingComfort);
+            }}
+          />
+        );
+
+      case ScreenId.OnboardingComfort:
+        const comfortActiveMood = MOOD_CONFIGS.find(m => m.id === selectedMoodId) || MOOD_CONFIGS[0];
+        return (
+          <PersonalizedComfortScreen
+            mood={comfortActiveMood}
+            onBack={() => setCurrentScreen(ScreenId.ProfileSetup)}
+            onNavigateTo={(scr) => setCurrentScreen(scr as ScreenId)}
+            onCompleteOnboarding={(choice) => {
+              localStorage.setItem('hopeheart_onboarding_community_choice', choice);
+              localStorage.setItem('hopeheart_onboarding_completed', 'true');
+              
+              if (choice === 'explore') {
+                setCurrentScreen(ScreenId.Community);
+              } else if (choice === 'connect') {
+                setCurrentScreen(ScreenId.SafeListener);
+              } else {
+                setCurrentScreen(ScreenId.Home);
+              }
+            }}
+          />
+        );
 
       case ScreenId.Home:
         const todayStr = new Date().toISOString().split('T')[0];
@@ -1059,7 +1128,9 @@ export default function App() {
   const showNavChannels = currentScreen !== ScreenId.Splash &&
                           currentScreen !== ScreenId.Welcome &&
                           currentScreen !== ScreenId.Login &&
-                          currentScreen !== ScreenId.ProfileSetup;
+                          currentScreen !== ScreenId.ProfileSetup &&
+                          currentScreen !== ScreenId.OnboardingMood &&
+                          currentScreen !== ScreenId.OnboardingComfort;
 
   return (
     <div className="min-h-screen w-full bg-[#FAF6EE] sm:bg-[#F5EFE4] text-[#1E1E1A] font-sans flex flex-col items-center justify-center p-0 sm:p-4 md:p-6 bg-[radial-gradient(#EADFC9_1.2px,transparent_1.2px)] [background-size:16px_16px] antialiased">
