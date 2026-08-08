@@ -43,9 +43,13 @@ function ScrollResetWatcher() {
   return null;
 }
 
+import ErrorBoundary from './components/ErrorBoundary.tsx';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ScrollResetWatcher />
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );

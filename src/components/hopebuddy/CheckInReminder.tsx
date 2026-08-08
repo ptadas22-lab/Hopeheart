@@ -5,6 +5,8 @@ export interface ReminderPrefs {
   remindJournal: boolean;
   remindBreathing: boolean;
   remindGratitude: boolean;
+  crisisHotline?: string;
+  emergencyNumber?: string;
 }
 
 interface CheckInReminderProps {
@@ -16,7 +18,7 @@ export default function CheckInReminder({
   preferences,
   onChangePreferences
 }: CheckInReminderProps) {
-  const handleToggle = (key: keyof ReminderPrefs) => {
+  const handleToggle = (key: keyof Omit<ReminderPrefs, 'crisisHotline' | 'emergencyNumber'>) => {
     const next = {
       ...preferences,
       [key]: !preferences[key]
@@ -24,14 +26,22 @@ export default function CheckInReminder({
     onChangePreferences(next);
   };
 
+  const handleTextChange = (key: 'crisisHotline' | 'emergencyNumber', value: string) => {
+    const next = {
+      ...preferences,
+      [key]: value
+    };
+    onChangePreferences(next);
+  };
+
   return (
-    <div className="space-y-4 text-left select-none animate-in fade-in duration-200">
+    <div className="space-y-5 text-left select-none animate-in fade-in duration-200">
       <div className="space-y-1">
         <h3 className="font-display font-black text-[#2B1D12] text-[16px] uppercase tracking-tight border-b border-gray-150 pb-2">
           Self-Care Reminders
         </h3>
         <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
-          Enable optional reminders to help you maintain gentle daily habits. rems are saved strictly on this device.
+          Enable optional reminders to help you maintain gentle daily habits. Data is saved strictly on this device.
         </p>
       </div>
 
@@ -126,6 +136,45 @@ export default function CheckInReminder({
               preferences.remindGratitude ? 'translate-x-5' : 'translate-x-0'
             }`} />
           </button>
+        </div>
+      </div>
+
+      <div className="space-y-1">
+        <h3 className="font-display font-black text-[#2B1D12] text-[16px] uppercase tracking-tight border-b border-gray-150 pb-2">
+          Safety Hotline Configurations
+        </h3>
+        <p className="text-[12.5px] text-gray-500 font-semibold leading-relaxed">
+          Localize or customize the emergency resources shown during safety prompts.
+        </p>
+      </div>
+
+      <div className="bg-white border border-[#EDE9DE] rounded-[24px] p-5.5 space-y-4 shadow-3xs">
+        <div className="space-y-1">
+          <label htmlFor="crisis-hotline-input" className="text-[13px] font-black text-gray-800 block">
+            📞 Crisis Hotline Number / Name
+          </label>
+          <input
+            id="crisis-hotline-input"
+            type="text"
+            value={preferences.crisisHotline || '988'}
+            onChange={(e) => handleTextChange('crisisHotline', e.target.value)}
+            className="w-full px-3.5 py-2.5 bg-[#FAF7F0]/30 border border-gray-200 rounded-xl text-[13px] font-semibold text-gray-700 focus:outline-none focus:border-[#FF7527]"
+            placeholder="988 (Available 24/7)"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="emergency-number-input" className="text-[13px] font-black text-gray-800 block">
+            🏥 Emergency Services Number
+          </label>
+          <input
+            id="emergency-number-input"
+            type="text"
+            value={preferences.emergencyNumber || '911'}
+            onChange={(e) => handleTextChange('emergencyNumber', e.target.value)}
+            className="w-full px-3.5 py-2.5 bg-[#FAF7F0]/30 border border-gray-200 rounded-xl text-[13px] font-semibold text-gray-700 focus:outline-none focus:border-[#FF7527]"
+            placeholder="911"
+          />
         </div>
       </div>
     </div>

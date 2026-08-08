@@ -514,8 +514,8 @@ export default function HopeBuddyChatScreen({
               I hear that you're going through a very difficult time. While I am here to act as a quiet, supportive companion, I am not a crisis service. Your safety is what matters most.
             </p>
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-3.5 text-left text-[12px] text-amber-900 font-semibold space-y-1.5">
-              <div>📞 <strong>National Crisis Lifeline:</strong> Call or text 988 (Available 24/7, free, confidential)</div>
-              <div>🏥 <strong>Emergency Services:</strong> Dial 911 (or your local emergency number)</div>
+              <div>📞 <strong>National Crisis Lifeline:</strong> Call or text {reminderPrefs.crisisHotline || '988'}</div>
+              <div>🏥 <strong>Emergency Services:</strong> Dial {reminderPrefs.emergencyNumber || '911'}</div>
             </div>
             <div className="grid grid-cols-2 gap-2.5 pt-2">
               <button
