@@ -559,6 +559,40 @@ export default function App() {
 
   // Handle post-OAuth redirect sessions & consent saving
   useEffect(() => {
+    // Isolated reviewer seeding via URL query parameter ?review=maya or ?reviewer=maya
+    const urlParams = new URLSearchParams(window.location.search);
+    const isReviewer = urlParams.get('review') === 'maya' || urlParams.get('reviewer') === 'maya';
+    
+    if (isReviewer) {
+      const seeded = localStorage.getItem('hopeheart_seeded_maya');
+      if (!seeded) {
+        localStorage.setItem('hopeheart_guest_session_id', 'guest_reviewer_maya');
+        localStorage.setItem('hopeheart_profile_nickname', 'Maya');
+        localStorage.setItem('hopeheart_profile_display_name', 'Maya');
+        localStorage.setItem('hopeheart_profile_completed', 'true');
+        localStorage.setItem('hopeheart_profile_basic_completed', 'true');
+        localStorage.setItem('hopeheart_profile_ageGroup', '25–34');
+        localStorage.setItem('hopeheart_profile_age_group', '25–34');
+        localStorage.setItem('hopeheart_profile_gender', 'Prefer not to say');
+        localStorage.setItem('hopeheart_profile_profession', 'Working Professional');
+        localStorage.setItem('hopeheart_profile_language', 'English');
+        localStorage.setItem('hopeheart_profile_support_interest', '🌱 General Support');
+        localStorage.setItem('hopeheart_profile_supportInterest', '🌱 General Emotional Support');
+        localStorage.setItem('hopeheart_profile_best_quality', 'Gentle and practical');
+        localStorage.setItem('hopeheart_profile_nature', 'Mindfulness & Creative');
+        localStorage.setItem('hopeheart_profile_vibe', '🦊');
+        localStorage.setItem('hopeheart_profile_avatar', '🦊');
+        localStorage.setItem('hopeheart_onboarding_completed', 'true');
+        localStorage.setItem('hopeheart_safe_rules_accepted', 'true');
+        localStorage.setItem('hopeheart_safe_rules_accepted_at', new Date().toISOString());
+        localStorage.setItem('hopeheart_seeded_maya', 'true');
+        
+        setUserName('Maya');
+        setIsProfileCompleted(true);
+        setCurrentScreen(ScreenId.Home);
+      }
+    }
+
     const parseAuthSession = async (session: any) => {
       if (session?.user) {
         const pendingMethod = localStorage.getItem('hopeheart_pending_entry_method');
