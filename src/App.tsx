@@ -591,6 +591,48 @@ export default function App() {
         setIsProfileCompleted(true);
         setCurrentScreen(ScreenId.Home);
       }
+
+      const seededMoods = localStorage.getItem('hopeheart_seeded_maya_moods');
+      if (!seededMoods) {
+        const moodsToSeed = [
+          { moodId: 'calm', moodLabel: 'Calm', emoji: '😊', note: 'Feeling peaceful today and taking things slowly.' },
+          { moodId: 'hopeful', moodLabel: 'Hopeful', emoji: '🌤️', note: 'Had a small moment today that made me smile.' },
+          { moodId: 'tired', moodLabel: 'Tired', emoji: '😴', note: 'Feeling low on energy and need a little rest.' },
+          { moodId: 'anxious', moodLabel: 'Anxious', emoji: '😰', note: 'There are several things on my mind today.' },
+          { moodId: 'lonely', moodLabel: 'Lonely', emoji: '🥺', note: 'Feeling a little disconnected today.' },
+          { moodId: 'anxious', moodLabel: 'Anxious', emoji: '😰', note: 'My mind has been running through too many things.' },
+          { moodId: 'calm', moodLabel: 'Calm', emoji: '😊', note: 'Nothing major today. Just taking the day as it comes.' },
+          { moodId: 'sad', moodLabel: 'Sad', emoji: '😔', note: 'Today feels a little heavier than usual.' },
+          { moodId: 'calm', moodLabel: 'Calm', emoji: '😊', note: 'Taking some quiet time for myself.' },
+          { moodId: 'hopeful', moodLabel: 'Hopeful', emoji: '🌤️', note: "Things aren't perfect, but I feel hopeful about tomorrow." }
+        ];
+
+        const historyList = moodsToSeed.map((item, idx) => {
+          const daysAgo = 9 - idx;
+          const dateStr = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          return {
+            id: `h-maya-${idx}`,
+            date: dateStr,
+            mood: item.moodLabel,
+            emoji: item.emoji,
+            message: item.note
+          };
+        });
+
+        localStorage.setItem('hopeheart_mood_history', JSON.stringify(historyList));
+        localStorage.setItem('hopeheart_checkin_count', '10');
+        
+        // Latest check-in values
+        const latest = historyList[9];
+        localStorage.setItem('hopeheart_mood', 'hopeful');
+        localStorage.setItem('hopeheart_last_checkin_mood', 'Hopeful');
+        localStorage.setItem('hopeheart_last_checkin_date', latest.date);
+        
+        setSelectedMoodId('hopeful');
+        setPreviousMood('Calm');
+        
+        localStorage.setItem('hopeheart_seeded_maya_moods', 'true');
+      }
     }
 
     const parseAuthSession = async (session: any) => {
