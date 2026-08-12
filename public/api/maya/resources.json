@@ -1,0 +1,143 @@
+{
+  "resources": [
+    {
+      "id": "managing-anxiety",
+      "title": "Managing Anxiety",
+      "type": "article",
+      "description": "Learn to slow down racing thoughts and center yourself.",
+      "moods": [
+        "anxious",
+        "overwhelmed"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "coping-stress",
+      "title": "Coping with Stress",
+      "type": "article",
+      "description": "Empathetic strategies to manage daily pressure.",
+      "moods": [
+        "low",
+        "sad",
+        "tired",
+        "hurt",
+        "need-support"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "better-sleep",
+      "title": "Better Sleep",
+      "type": "article",
+      "description": "Calming wind-down rituals for restful nights.",
+      "moods": [
+        "tired",
+        "low"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "emotional-awareness",
+      "title": "Emotional Awareness",
+      "type": "article",
+      "description": "Notice and validate your feelings without judgment.",
+      "moods": [
+        "okay",
+        "sad",
+        "lonely",
+        "need-support"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "self-compassion",
+      "title": "Self Compassion",
+      "type": "article",
+      "description": "Be kind to yourself in times of change and difficulty.",
+      "moods": [
+        "hopeful",
+        "low",
+        "sad",
+        "hurt",
+        "lonely"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "healthy-habits",
+      "title": "Building Healthy Habits",
+      "type": "article",
+      "description": "Small, incremental steps to build lasting daily routines.",
+      "moods": [
+        "hopeful",
+        "calm",
+        "okay",
+        "need-support"
+      ],
+      "category": "article",
+      "screen": "DoctorSuggestions"
+    },
+    {
+      "id": "breathing",
+      "title": "Breathing Exercise",
+      "type": "exercise",
+      "description": "Inhale, hold, exhale to center yourself.",
+      "moods": [
+        "anxious",
+        "overwhelmed",
+        "hurt",
+        "need-support"
+      ],
+      "category": "exercise",
+      "screen": "Breathing"
+    },
+    {
+      "id": "grounding",
+      "title": "Grounding (5-4-3-2-1)",
+      "type": "exercise",
+      "description": "Connect with your immediate surroundings.",
+      "moods": [
+        "anxious",
+        "overwhelmed",
+        "lonely"
+      ],
+      "category": "exercise",
+      "screen": "Grounding"
+    },
+    {
+      "id": "break-timer",
+      "title": "Take a Short Break",
+      "type": "exercise",
+      "description": "Take 1, 3, or 5 minutes just to pause.",
+      "moods": [
+        "calm",
+        "okay",
+        "low",
+        "overwhelmed",
+        "tired",
+        "hurt"
+      ],
+      "category": "exercise",
+      "screen": "BreakTimer"
+    },
+    {
+      "id": "calm-sounds",
+      "title": "Calm Sounds",
+      "type": "exercise",
+      "description": "Listen to ambient, relaxing soundscapes.",
+      "moods": [
+        "hopeful",
+        "calm",
+        "tired",
+        "lonely"
+      ],
+      "category": "exercise",
+      "screen": "CalmSounds"
+    }
+  ]
+}

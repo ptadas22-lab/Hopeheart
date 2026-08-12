@@ -1,0 +1,21 @@
+{
+  "id": "emotional-awareness",
+  "title": "Emotional Awareness",
+  "type": "article",
+  "description": "Notice and validate your feelings without judgment.",
+  "moods": [
+    "okay",
+    "sad",
+    "lonely",
+    "need-support"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "2 min read",
+  "icon": "🧠",
+  "color": "bg-purple-100 text-purple-700",
+  "content": [
+    "Emotional awareness is the simple yet profound practice of noticing what you are feeling as it happens.",
+    "Instead of trying to change or fix a heavy mood, try simply naming it: 'I feel tired,' 'I feel low,' or 'I feel anxious.' Naming the feeling shifts your brain's response from reactive to observational. It reminds you that you are the observer, not the emotion itself.",
+    "All emotions are temporary visitors. They arrive, stay for a while, and eventually depart. You do not need to push them away. Let them flow through you like clouds passing in a wide, calm sky."
+  ]
+}

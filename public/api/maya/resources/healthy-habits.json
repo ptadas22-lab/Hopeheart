@@ -1,0 +1,21 @@
+{
+  "id": "healthy-habits",
+  "title": "Building Healthy Habits",
+  "type": "article",
+  "description": "Small, incremental steps to build lasting daily routines.",
+  "moods": [
+    "hopeful",
+    "calm",
+    "okay",
+    "need-support"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "5 min read",
+  "icon": "🌞",
+  "color": "bg-orange-100 text-orange-700",
+  "content": [
+    "Routines and habits anchor our days, providing a sense of stability and control during chaotic times.",
+    "The secret to building lasting habits is starting incredibly small. Do not try to overhaul your entire life in one day. Focus on micro-habits: drink one glass of water on waking, do two minutes of stretching, or write down one positive thought before bed.",
+    "Stack your new habit on top of an existing routine (e.g. 'After I make my morning tea, I will take three deep breaths'). Over time, these small actions compound, creating a solid foundation of daily well-being."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "self-compassion",
+  "title": "Self Compassion",
+  "type": "article",
+  "description": "Be kind to yourself in times of change and difficulty.",
+  "moods": [
+    "hopeful",
+    "low",
+    "sad",
+    "hurt",
+    "lonely"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "3 min read",
+  "icon": "❤️",
+  "color": "bg-rose-100 text-rose-700",
+  "content": [
+    "Self-compassion means treating yourself with the same warmth, care, and understanding that you would offer to a dear friend who is going through a hard time.",
+    "When we make mistakes or feel low, we often default to self-criticism. We tell ourselves we should be stronger or doing better. But healing requires kindness, not criticism. The next time things feel hard, say to yourself: 'This is a moment of struggle. I am doing my best, and that is enough.'",
+    "You do not have to be perfect to be worthy of love and comfort. Breathe in comfort, and breathe out self-judgment."
+  ]
+}

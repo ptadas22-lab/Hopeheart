@@ -1,0 +1,14 @@
+{
+  "id": "breathing",
+  "title": "Breathing Exercise",
+  "type": "exercise",
+  "description": "Inhale, hold, exhale to center yourself.",
+  "moods": [
+    "anxious",
+    "overwhelmed",
+    "hurt",
+    "need-support"
+  ],
+  "screen": "Breathing",
+  "icon": "🌬"
+}

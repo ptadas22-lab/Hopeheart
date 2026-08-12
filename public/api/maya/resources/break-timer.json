@@ -1,0 +1,16 @@
+{
+  "id": "break-timer",
+  "title": "Take a Short Break",
+  "type": "exercise",
+  "description": "Take 1, 3, or 5 minutes just to pause.",
+  "moods": [
+    "calm",
+    "okay",
+    "low",
+    "overwhelmed",
+    "tired",
+    "hurt"
+  ],
+  "screen": "BreakTimer",
+  "icon": "☕"
+}

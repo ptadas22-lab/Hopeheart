@@ -1,0 +1,19 @@
+{
+  "id": "better-sleep",
+  "title": "Better Sleep",
+  "type": "article",
+  "description": "Calming wind-down rituals for restful nights.",
+  "moods": [
+    "tired",
+    "low"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "3 min read",
+  "icon": "😴",
+  "color": "bg-indigo-100 text-indigo-700",
+  "content": [
+    "Sleep is the ultimate form of physical and emotional recovery. However, drifting off can be difficult when our brains are still processing the day.",
+    "Create a clear border between day and night. Try to put away screens at least 30 minutes before sleep, as blue light signals to your brain that it is still daytime. Instead, engage in quiet activities like reading a book, listening to soft ambient sounds, or writing down tomorrow's list on paper.",
+    "If you find yourself lying awake with racing thoughts, do not force yourself to sleep. Instead, focus entirely on breathing out slowly. Exhaling activates the parasympathetic nervous system, easing your heart rate and preparing your body for rest."
+  ]
+}

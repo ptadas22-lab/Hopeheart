@@ -1,5 +1,6 @@
 import React from 'react';
 import { MoodConfig } from '../../types';
+import { RECOMMENDATIONS_MAP } from '../../services/maya/resourcesData';
 
 interface RecommendedResourcesProps {
   selectedMood: MoodConfig;
@@ -14,64 +15,6 @@ interface RecommendationItem {
   icon: string;
   description: string;
 }
-
-const RECOMMENDATIONS_MAP: Record<string, RecommendationItem[]> = {
-  hopeful: [
-    { id: 'self-compassion', title: 'Self Compassion', type: 'article', icon: '❤️', description: 'Be kind to yourself in times of change.' },
-    { id: 'healthy-habits', title: 'Healthy Habits', type: 'article', icon: '🌞', description: 'Small steps to build lasting daily routines.' },
-    { id: 'calm-sounds', title: 'Calm Sounds', type: 'exercise', icon: '🎵', description: 'Listen to ambient, relaxing soundscapes.' }
-  ],
-  calm: [
-    { id: 'healthy-habits', title: 'Healthy Habits', type: 'article', icon: '🌞', description: 'Small steps to build lasting daily routines.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' },
-    { id: 'calm-sounds', title: 'Calm Sounds', type: 'exercise', icon: '🎵', description: 'Listen to ambient, relaxing soundscapes.' }
-  ],
-  okay: [
-    { id: 'emotional-awareness', title: 'Emotional Awareness', type: 'article', icon: '🧠', description: 'Notice and validate your feelings.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' },
-    { id: 'healthy-habits', title: 'Healthy Habits', type: 'article', icon: '🌞', description: 'Small steps to build lasting daily routines.' }
-  ],
-  low: [
-    { id: 'self-compassion', title: 'Self Compassion', type: 'article', icon: '❤️', description: 'Be kind to yourself in times of change.' },
-    { id: 'coping-stress', title: 'Coping with Stress', type: 'article', icon: '🌱', description: 'Empathetic strategies to manage daily pressure.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' }
-  ],
-  anxious: [
-    { id: 'breathing', title: 'Breathing Exercise', type: 'exercise', icon: '🌬', description: 'Inhale, hold, exhale to center yourself.' },
-    { id: 'grounding', title: 'Grounding (5-4-3-2-1)', type: 'exercise', icon: '🧘', description: 'Connect with your immediate surroundings.' },
-    { id: 'managing-anxiety', title: 'Managing Anxiety', type: 'article', icon: '💛', description: 'Learn to slow down racing thoughts.' }
-  ],
-  overwhelmed: [
-    { id: 'grounding', title: 'Grounding (5-4-3-2-1)', type: 'exercise', icon: '🧘', description: 'Connect with your immediate surroundings.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' },
-    { id: 'breathing', title: 'Breathing Exercise', type: 'exercise', icon: '🌬', description: 'Inhale, hold, exhale to center yourself.' }
-  ],
-  sad: [
-    { id: 'self-compassion', title: 'Self Compassion', type: 'article', icon: '❤️', description: 'Be kind to yourself in times of change.' },
-    { id: 'coping-stress', title: 'Coping with Stress', type: 'article', icon: '🌱', description: 'Empathetic strategies to manage daily pressure.' },
-    { id: 'emotional-awareness', title: 'Emotional Awareness', type: 'article', icon: '🧠', description: 'Notice and validate your feelings without judgment.' }
-  ],
-  tired: [
-    { id: 'better-sleep', title: 'Better Sleep', type: 'article', icon: '😴', description: 'Calming wind-down rituals for restful nights.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' },
-    { id: 'calm-sounds', title: 'Calm Sounds', type: 'exercise', icon: '🎵', description: 'Listen to ambient, relaxing soundscapes.' }
-  ],
-  hurt: [
-    { id: 'self-compassion', title: 'Self Compassion', type: 'article', icon: '❤️', description: 'Be kind to yourself in times of change.' },
-    { id: 'coping-stress', title: 'Coping with Stress', type: 'article', icon: '🌱', description: 'Empathetic strategies to manage daily pressure.' },
-    { id: 'break-timer', title: 'Take a Short Break', type: 'exercise', icon: '☕', description: 'Take 1, 3, or 5 minutes just to pause.' }
-  ],
-  lonely: [
-    { id: 'self-compassion', title: 'Self Compassion', type: 'article', icon: '❤️', description: 'Be kind to yourself in times of change.' },
-    { id: 'emotional-awareness', title: 'Emotional Awareness', type: 'article', icon: '🧠', description: 'Notice and validate your feelings without judgment.' },
-    { id: 'calm-sounds', title: 'Calm Sounds', type: 'exercise', icon: '🎵', description: 'Listen to ambient, relaxing soundscapes.' }
-  ],
-  'need-support': [
-    { id: 'coping-stress', title: 'Coping with Stress', type: 'article', icon: '🌱', description: 'Empathetic strategies to manage daily pressure.' },
-    { id: 'emotional-awareness', title: 'Emotional Awareness', type: 'article', icon: '🧠', description: 'Notice and validate your feelings without judgment.' },
-    { id: 'breathing', title: 'Breathing Exercise', type: 'exercise', icon: '🌬', description: 'Inhale, hold, exhale to center yourself.' }
-  ]
-};
 
 export default function RecommendedResources({
   selectedMood,

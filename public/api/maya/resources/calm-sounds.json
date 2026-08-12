@@ -1,0 +1,14 @@
+{
+  "id": "calm-sounds",
+  "title": "Calm Sounds",
+  "type": "exercise",
+  "description": "Listen to ambient, relaxing soundscapes.",
+  "moods": [
+    "hopeful",
+    "calm",
+    "tired",
+    "lonely"
+  ],
+  "screen": "CalmSounds",
+  "icon": "🎵"
+}

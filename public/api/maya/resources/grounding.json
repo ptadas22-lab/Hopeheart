@@ -1,0 +1,13 @@
+{
+  "id": "grounding",
+  "title": "Grounding (5-4-3-2-1)",
+  "type": "exercise",
+  "description": "Connect with your immediate surroundings.",
+  "moods": [
+    "anxious",
+    "overwhelmed",
+    "lonely"
+  ],
+  "screen": "Grounding",
+  "icon": "🧘"
+}

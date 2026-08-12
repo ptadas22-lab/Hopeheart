@@ -1,0 +1,19 @@
+{
+  "id": "managing-anxiety",
+  "title": "Managing Anxiety",
+  "type": "article",
+  "description": "Learn to slow down racing thoughts and center yourself.",
+  "moods": [
+    "anxious",
+    "overwhelmed"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "3 min read",
+  "icon": "💛",
+  "color": "bg-amber-100 text-amber-700",
+  "content": [
+    "Anxiety is a natural defense mechanism that sometimes becomes overly sensitive. When your system senses danger—even if it is just a stressful email or a busy room—it goes into high alert.",
+    "When you notice racing thoughts, a pounding chest, or shallow breaths, remind yourself: 'My body is trying to protect me, but I am safe right now.' Resisting anxiety often makes it feel stronger. Instead, try to sit with the physical sensations and let them peak and fade naturally.",
+    "You don't need to fix your feelings or solve your worries right this second. Drop your shoulders, unclamp your jaw, and take three slow, long exhalations. Your body knows how to calm itself if you give it time."
+  ]
+}

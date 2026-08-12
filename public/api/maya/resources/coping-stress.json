@@ -1,0 +1,22 @@
+{
+  "id": "coping-stress",
+  "title": "Coping with Stress",
+  "type": "article",
+  "description": "Empathetic strategies to manage daily pressure.",
+  "moods": [
+    "low",
+    "sad",
+    "tired",
+    "hurt",
+    "need-support"
+  ],
+  "screen": "DoctorSuggestions",
+  "readTime": "4 min read",
+  "icon": "🌱",
+  "color": "bg-emerald-100 text-emerald-700",
+  "content": [
+    "Stress occurs when the demands placed on us exceed our capacity to handle them. Over time, chronic stress can leave us feeling depleted and disconnected.",
+    "Coping with stress begins with a simple question: 'What can wait?' Often, we carry invisible weights that do not belong to today. Make a list of everything on your mind, then cross off everything that does not require immediate attention.",
+    "Give yourself permission to do less. Step away from your tasks, stretch your body, and take a short walk. Productive rest is not earned—it is a basic human need. You are allowed to take up space without performing."
+  ]
+}
