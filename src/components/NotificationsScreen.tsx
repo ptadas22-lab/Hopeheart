@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import WhatsAppRemindersConfig from './WhatsAppRemindersConfig';
+import { WELLNESS_NOTIFICATIONS } from '../utils/wellnessFlow';
 
 interface NotificationsScreenProps {
   onBack: () => void;
@@ -44,67 +45,37 @@ export default function NotificationsScreen({ onBack, previousMood, onNavigateTo
     localStorage.setItem('hopeheart_daily_brief_enabled', String(next));
   };
 
-  const dailyCards: DailyCard[] = [
-    {
-      id: 'yesterday-mood',
-      icon: '🌤️',
-      title: 'Yesterday mood reflection',
-      body: previousMood
-        ? `Yesterday/last check-in you felt ${previousMood}. Today, start with one gentle check-in before you choose what to do next.`
-        : `Your last saved mood is ${currentMood}. Check in today so HopeHeart can understand what kind of comfort may help.`,
-      time: 'Morning brief',
-      action: 'Check in now',
-      screenId: 'home',
-      tone: 'from-[#FFF7E8] to-[#FFFDF8]'
-    },
-    {
-      id: 'memory-reminder',
-      icon: '📸',
-      title: 'Memory reminder',
-      body: `Remember something kind from today. ${lastMemory}`,
-      time: 'Daily memory',
-      action: 'Open My Space',
-      screenId: 'my-space',
-      tone: 'from-[#F8F0FF] to-[#FFFDF8]'
-    },
-    {
-      id: 'next-step',
-      icon: '🧡',
-      title: 'What is coming next',
-      body: 'After check-in, HopeHeart will suggest one small comfort action first — food, music, memory, circles, or chat only if you want.',
-      time: 'Next step',
-      action: 'Go Home',
-      screenId: 'home',
-      tone: 'from-[#FFF0EA] to-[#FFFDF8]'
-    },
-    {
-      id: 'community',
-      icon: '🤝',
-      title: 'Community nudge',
-      body: 'Quiet circles are available when you want people around you without pressure to share everything.',
-      time: 'Community idea',
-      action: 'Explore Community',
-      screenId: 'community',
-      tone: 'from-[#EEF8F0] to-[#FFFDF8]'
-    },
-    {
-      id: 'resource-idea',
-      icon: '🌼',
-      title: 'Beautiful resource idea',
-      body: 'Try one gentle resource today: a breathing note, a saved care question, a comforting article, or a simple grounding idea.',
-      time: 'Resource idea',
-      action: 'Open Resources',
-      screenId: 'doctor-suggestions',
-      tone: 'from-[#EAF4FF] to-[#FFFDF8]'
-    }
-  ];
+  const dailyCards: DailyCard[] = WELLNESS_NOTIFICATIONS.map((n) => {
+    let icon = '🌼';
+    if (n.category === 'challenge') icon = '🌱';
+    if (n.category === 'break') icon = '☕';
+    if (n.category === 'article') icon = '📚';
+    if (n.category === 'enjoyment') icon = '🎬';
+    if (n.category === 'sleep') icon = '🌙';
+
+    let tone = 'from-[#FFFDF9] to-[#FFFDF8]';
+    if (n.category === 'challenge') tone = 'from-[#EEF8F0] to-[#FFFDF8]';
+    if (n.category === 'break') tone = 'from-[#FFF0EA] to-[#FFFDF8]';
+    if (n.category === 'article') tone = 'from-[#EAF4FF] to-[#FFFDF8]';
+    if (n.category === 'sleep') tone = 'from-[#F8F0FF] to-[#FFFDF8]';
+
+    return {
+      id: n.id,
+      icon,
+      title: n.title,
+      body: n.message,
+      time: n.window.charAt(0).toUpperCase() + n.window.slice(1),
+      action: n.actionLabel || 'Explore',
+      screenId: n.targetScreenId,
+      tone
+    };
+  });
 
   const visibleCards = dailyCards.filter((card) => {
-    if (card.id === 'yesterday-mood') return notifyMood;
-    if (card.id === 'memory-reminder') return notifyMemories;
-    if (card.id === 'next-step') return notifyNextStep;
-    if (card.id === 'community') return notifyCommunity;
-    if (card.id === 'resource-idea') return notifyResources;
+    if (card.id.startsWith('m-')) return notifyMood;
+    if (card.id.startsWith('a-')) return notifyNextStep;
+    if (card.id.startsWith('e-')) return notifyResources;
+    if (card.id.startsWith('n-')) return notifyMemories;
     return true;
   });
 

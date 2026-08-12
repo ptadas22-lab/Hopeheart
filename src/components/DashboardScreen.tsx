@@ -4,6 +4,7 @@ import Mascot from './Mascot';
 import { MoodConfig, ScreenId } from '../types';
 import { MascotFace } from './Logo';
 import { saveHomeMoodCheckIn } from '../services/homeCheckins';
+import { getActiveNotification } from '../utils/wellnessFlow';
 
 interface DashboardScreenProps {
   userName: string;
@@ -443,6 +444,32 @@ export default function DashboardScreen({
   const [isSavingHomeCheckIn, setIsSavingHomeCheckIn] = useState(false);
   const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
+
+  const [activeNudge, setActiveNudge] = useState<any>(null);
+
+  useEffect(() => {
+    const moodId = selectedMood?.id || 'calm';
+    const nudge = getActiveNotification(moodId);
+    
+    const dismissedDate = localStorage.getItem('hopeheart_nudge_dismissed_date');
+    const dismissedId = localStorage.getItem('hopeheart_nudge_dismissed_id');
+    const todayStr = new Date().toISOString().split('T')[0];
+    
+    if (dismissedDate === todayStr && dismissedId === nudge.id) {
+      setActiveNudge(null);
+    } else {
+      setActiveNudge(nudge);
+    }
+  }, [selectedMood]);
+
+  const handleDismissNudge = () => {
+    if (activeNudge) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      localStorage.setItem('hopeheart_nudge_dismissed_date', todayStr);
+      localStorage.setItem('hopeheart_nudge_dismissed_id', activeNudge.id);
+      setActiveNudge(null);
+    }
+  };
   const [showMoodReminderCard, setShowMoodReminderCard] = useState(hasCheckedInToday);
   const [selectedReminderPanel, setSelectedReminderPanel] = useState<{ title: string; message: string } | null>(null);
   const [dailyMessage] = useState(getDailySupportiveMessage);
@@ -740,6 +767,44 @@ export default function DashboardScreen({
           </div>
         </div>
       </div>
+
+      {activeNudge && (
+        <div className="mx-4 sm:mx-6 md:mx-8 mt-5 animate-in slide-in-from-top duration-300">
+          <div className="bg-gradient-to-br from-[#FFFDF9] via-[#FFF8F2] to-[#FFF0E8] border border-orange-100 rounded-[28px] p-5 shadow-3xs relative flex items-start gap-4 select-none">
+            <span className="w-12 h-12 rounded-2xl bg-white border border-[#F1E7D8] flex items-center justify-center text-[24px] shrink-0 shadow-3xs">
+              {activeNudge.category === 'challenge' && '🌱'}
+              {activeNudge.category === 'break' && '☕'}
+              {activeNudge.category === 'article' && '📚'}
+              {activeNudge.category === 'enjoyment' && '🎬'}
+              {activeNudge.category === 'sleep' && '🌙'}
+              {activeNudge.category === 'general' && '🌼'}
+            </span>
+            <div className="space-y-1.5 flex-1 relative pr-6">
+              <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
+                {activeNudge.title}
+              </span>
+              <h4 className="font-display font-black text-[#2B1D12] text-[14.5px] leading-snug">
+                {activeNudge.message}
+              </h4>
+              <button
+                onClick={() => onNavigateTo(activeNudge.targetScreenId)}
+                type="button"
+                className="mt-2 py-1.5 px-4 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[11px] font-display font-black cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5 inline-block"
+              >
+                {activeNudge.actionLabel || 'Go Now'}
+              </button>
+            </div>
+            <button
+              onClick={handleDismissNudge}
+              type="button"
+              className="w-7 h-7 rounded-full bg-white/70 hover:bg-white border border-gray-150 text-gray-500 hover:text-gray-700 flex items-center justify-center text-[10px] font-black cursor-pointer absolute top-3 right-3 shadow-3xs"
+              aria-label="Dismiss recommendation"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main soft mood card */}
       <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
