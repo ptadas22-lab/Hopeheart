@@ -18,8 +18,6 @@ interface Message {
 }
 
 export default function SupportPopup({ isOpen, onClose, activeCategory, onNavigateTo }: SupportPopupProps) {
-  if (!isOpen) return null;
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -27,19 +25,19 @@ export default function SupportPopup({ isOpen, onClose, activeCategory, onNaviga
 
   // Initialize conversations on open
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !activeCategory) return;
 
     const mood = activeCategory.toLowerCase();
     let welcomeText = "I'm glad you checked in today. Want to take a small moment for your well-being?";
 
     if (mood === 'anxious' || mood === 'overwhelmed') {
-      welcomeText = "I see you're feeling anxious today. You don't have to handle everything at once. Would you like to take a small moment together? 🌱";
+      welcomeText = "I see you're feeling anxious today. You don't have to handle everything at once. Would you like to take a small moment together?";
     } else if (mood === 'sad' || mood === 'hurt' || mood === 'lonely' || mood === 'need-support') {
-      welcomeText = "I'm glad you checked in with me. You don't have to carry everything alone. Would you like to talk? ❤️";
+      welcomeText = "I'm glad you checked in with me. You don't have to carry everything alone. Would you like to talk?";
     } else if (mood === 'hopeful' || mood === 'calm' || mood === 'happy') {
       welcomeText = "I'm glad you're feeling good today! 🌱 Want to do something small to keep that feeling going?";
     } else if (mood === 'tired' || mood === 'low') {
-      welcomeText = "Sounds like you might need a little gentleness today. Want to take one small moment for yourself? 🛌";
+      welcomeText = "Sounds like you might need a little gentleness today. Want to take one small moment for yourself?";
     }
 
     setMessages([
@@ -54,8 +52,12 @@ export default function SupportPopup({ isOpen, onClose, activeCategory, onNaviga
 
   // Scroll to bottom on new messages
   useEffect(() => {
+    if (!isOpen) return;
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+  }, [messages, isTyping, isOpen]);
+
+  // Return null ONLY after all hooks are evaluated to comply with Rules of Hooks
+  if (!isOpen) return null;
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
