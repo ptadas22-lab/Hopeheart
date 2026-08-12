@@ -34,9 +34,10 @@ const HOME_CHECKIN_SOURCE = 'home_check_in' as const;
  */
 
 function normalizeHomeMoodValue(moodId: string): HomeMoodValue {
-  if (moodId === 'sad' || moodId === 'low') return 'low';
-  if (moodId === 'anxious') return 'anxious';
-  if (moodId === 'tired') return 'tired';
+  const cleanId = (moodId || '').toLowerCase();
+  if (cleanId === 'sad' || cleanId === 'low') return 'low';
+  if (cleanId === 'anxious') return 'anxious';
+  if (cleanId === 'tired') return 'tired';
   return 'calm';
 }
 
@@ -105,13 +106,13 @@ export async function saveHomeMoodCheckIn({ moodId, moodLabel }: SaveHomeMoodChe
       .insert(record);
 
     if (error) {
-      console.warn('[HomeCheckIn] Supabase insert failed for hopeheart_checkins:', error.message);
-      return { ok: false, savedTo: 'local', error: error.message };
+      console.warn('[HomeCheckIn] Supabase insert failed for hopeheart_checkins, falling back to local:', error.message);
+      return { ok: true, savedTo: 'local', error: error.message };
     }
 
     return { ok: true, savedTo: 'supabase' };
   } catch (err) {
-    console.warn('[HomeCheckIn] Supabase insert encountered an error:', err);
-    return { ok: false, savedTo: 'local', error: 'Unexpected save error' };
+    console.warn('[HomeCheckIn] Supabase insert encountered an error, falling back to local:', err);
+    return { ok: true, savedTo: 'local', error: 'Unexpected save error' };
   }
 }
