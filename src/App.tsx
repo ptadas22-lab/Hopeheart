@@ -342,16 +342,8 @@ export default function App() {
       }
     }
 
-    // Trigger popup based on mood category
-    let popupCat = 'general-support';
-    if (moodId === 'anxious' || moodId === 'overwhelmed') {
-      popupCat = 'anxiety';
-    } else if (moodId === 'sad' || moodId === 'hurt' || moodId === 'lonely' || moodId === 'tired' || moodId === 'low') {
-      popupCat = 'emotional-support';
-    } else if (moodId === 'hopeful' || moodId === 'calm' || moodId === 'need-support') {
-      popupCat = 'general-support';
-    }
-    openSupportPopup(popupCat);
+    // Trigger popup based on raw selected moodId
+    openSupportPopup(moodId);
   };
 
   const handleNameChange = async (newName: string) => {
@@ -385,13 +377,6 @@ export default function App() {
   const [popupCategory, setPopupCategory] = useState<string>('general');
 
   const openSupportPopup = (category: string) => {
-    console.log("Support popup dismissed date:", localStorage.getItem("hopeheart_support_popup_dismissed_date"));
-    const dismissedDate = localStorage.getItem('hopeheart_support_popup_dismissed_date');
-    const todayDateStr = new Date().toISOString().split('T')[0];
-    if (dismissedDate === todayDateStr) {
-      console.log("[Popup] Support popup suppressed today per user preference.");
-      return;
-    }
     setPopupCategory(category);
     setShowSupportPopup(true);
   };
