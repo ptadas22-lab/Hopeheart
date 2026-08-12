@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MascotSitting } from './Logo';
 import { MoodConfig, ScreenId } from '../types';
+import { sendMessageToMaya } from '../services/maya/mayaService';
 
 // Importing subcomponents
 import ConversationStarter from './hopebuddy/ConversationStarter';
@@ -46,14 +47,33 @@ export default function HopeBuddyChatScreen({
   const [activeTab, setActiveTab] = useState<'chat' | 'history' | 'wellness'>('chat');
 
   // Active chat state
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome-msg',
-      sender: 'buddy',
-      text: `Hi ${userName}, I’m here with you. You can share what feels safe to share.`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const moodId = selectedMood?.id || 'calm';
+    let welcomeText = `Hi ${userName}, I’m Maya. I’m here to listen and walk alongside you. How are you holding up?`;
+    
+    if (moodId === 'anxious') {
+      welcomeText = `Hi ${userName}, I hear that you're feeling anxious. You don't have to figure everything out at once. We can take one small step together. 🌱`;
+    } else if (moodId === 'sad') {
+      welcomeText = `Hi ${userName}, I hear that you're feeling sad. It is completely okay to feel low. I'm right here to support you without any judgment. ❤️`;
+    } else if (moodId === 'tired') {
+      welcomeText = `Hi ${userName}, I see you're feeling tired. You've been holding on so strongly. I'm happy to keep you quiet company while you rest. 🛌`;
+    } else if (moodId === 'lonely') {
+      welcomeText = `Hi ${userName}, I see you checked in as lonely today. I'm sitting right here with you. You don't have to carry this alone. 🌙`;
+    } else if (moodId === 'hurt') {
+      welcomeText = `Hi ${userName}, I hear that you're feeling hurt. Let's take things slowly and find a little comfort together.`;
     }
-  ]);
+
+    setMessages([
+      {
+        id: 'welcome-msg',
+        sender: 'buddy',
+        text: welcomeText,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+    ]);
+  }, [selectedMood, userName]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -97,41 +117,7 @@ export default function HopeBuddyChatScreen({
     }
   }, [messages, isTyping, activeTab]);
 
-  const generateBuddyResponse = (userText: string, moodId: string): string => {
-    const text = userText.toLowerCase();
-    
-    if (text.includes('hello') || text.includes('hi') || text.includes('hey')) {
-      return `Hello, ${userName}! I'm so glad we can chat today. I'm right here beside you. How are you holding up?`;
-    }
-    if (text.includes('exam') || text.includes('test') || text.includes('study') || text.includes('school') || text.includes('work') || text.includes('job') || text.includes('stress')) {
-      return "That sounds like a lot to carry. Remember, you're allowed to take a step back and breathe. Your worth isn't defined by how much you produce. Let's take a slow pause together.";
-    }
-    if (text.includes('sad') || text.includes('lonely') || text.includes('cry') || text.includes('depress') || text.includes('alone')) {
-      return "I hear you, and it's completely okay to feel sad or lonely. I'm sitting right here with you. Even if we're just resting in silence, you don't have to carry this alone.";
-    }
-    if (text.includes('anxious') || text.includes('panic') || text.includes('worry') || text.includes('scared') || text.includes('breath') || text.includes('slow down')) {
-      return "Let's take a slow, deep breath together. Inhale gently for four seconds... hold it... and exhale slowly. You are in a safe space, and we can take this one minute at a time.";
-    }
-    if (text.includes('thank') || text.includes('thanks') || text.includes('good') || text.includes('great') || text.includes('happy')) {
-      return "I'm so glad to hear that! Knowing we can share this warm connection makes my day. I'm always here when you need a quiet companion.";
-    }
-    if (text.includes('help') || text.includes('hurt') || text.includes('pain') || text.includes('suicide') || text.includes('kill') || text.includes('emergency')) {
-      return "I care about your safety deeply. While I'm here to offer emotional companionship, if you need urgent care, please check our Safety section or contact your local emergency support immediately.";
-    }
-
-    switch (moodId) {
-      case 'anxious':
-        return "I hear the worry in your words. It is okay if things feel scattered right now. Focus on the ground beneath you, and let's go slowly.";
-      case 'tired':
-        return "You've been holding on so strongly. Please let yourself rest now. I'm happy to keep you company while you recharge.";
-      case 'sad':
-        return "Thank you for sharing your heart with me. I'm listening, and I'm here to support you without any judgment.";
-      default:
-        return "Thank you for sharing that with me. I'm here to listen, support, and walk beside you. What's on your mind next?";
-    }
-  };
-
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
     const lower = text.toLowerCase();
@@ -169,21 +155,40 @@ export default function HopeBuddyChatScreen({
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages(prev => [...prev, userMsg]);
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      const buddyReply = generateBuddyResponse(text, selectedMood.id);
+    try {
+      const history: StoredMessage[] = nextMessages.map(m => ({
+        id: m.id,
+        sender: m.sender,
+        text: m.text,
+        timestamp: m.timestamp
+      }));
+
+      const response = await sendMessageToMaya(text, selectedMood.id, history);
+
       const buddyMsg: Message = {
         id: 'buddy-' + Date.now(),
         sender: 'buddy',
-        text: buddyReply,
+        text: response.responseText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, buddyMsg]);
+    } catch (e) {
+      console.error('[Maya] Error in conversation:', e);
+      const errorMsg: Message = {
+        id: 'buddy-error-' + Date.now(),
+        sender: 'buddy',
+        text: "I'm having a quiet moment right now. Let's try chatting again in a second.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   const handleSelectStarter = (starterText: string) => {
@@ -321,10 +326,15 @@ export default function HopeBuddyChatScreen({
           </svg>
           Back
         </button>
-        <span className="font-display font-extrabold text-[#2B1D12] text-[18px] uppercase tracking-tight text-center">
-          HopeBuddy Companion
-        </span>
-        <span className="text-[22px]">🦊</span>
+        <div className="text-center flex-1">
+          <span className="font-display font-extrabold text-[#2B1D12] text-[18px] uppercase tracking-tight block">
+            Maya 🌱
+          </span>
+          <span className="text-[10px] text-gray-500 font-semibold block leading-tight">
+            Your wellness companion
+          </span>
+        </div>
+        <span className="text-[22px]">🌱</span>
       </div>
 
       {/* Tab Switcher */}
@@ -438,6 +448,24 @@ export default function HopeBuddyChatScreen({
                   )}
                 </AnimatePresence>
                 <div ref={messagesEndRef} />
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap gap-2 mb-3 pt-3 border-t border-gray-100">
+                {[
+                  { text: 'Help me calm down', emoji: '🌬️' },
+                  { text: 'I want to talk', emoji: '💬' },
+                  { text: 'Give me something to do', emoji: '🌱' }
+                ].map((act) => (
+                  <button
+                    key={act.text}
+                    onClick={() => handleSend(act.text)}
+                    type="button"
+                    className="py-1.5 px-3 bg-orange-50/40 hover:bg-orange-50 border border-orange-100/60 rounded-full text-[12px] font-semibold text-gray-700 cursor-pointer transition-all active:scale-95 flex items-center gap-1.5"
+                  >
+                    <span>{act.emoji}</span> {act.text}
+                  </button>
+                ))}
               </div>
 
               {/* Chat Send Form */}
