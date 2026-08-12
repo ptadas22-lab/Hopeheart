@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import WhatsAppRemindersConfig from './WhatsAppRemindersConfig';
 import { WELLNESS_NOTIFICATIONS } from '../utils/wellnessFlow';
+import { getOrComputeNextAction } from '../services/maya/mayaAgent';
 
 interface NotificationsScreenProps {
   onBack: () => void;
@@ -45,31 +46,49 @@ export default function NotificationsScreen({ onBack, previousMood, onNavigateTo
     localStorage.setItem('hopeheart_daily_brief_enabled', String(next));
   };
 
-  const dailyCards: DailyCard[] = WELLNESS_NOTIFICATIONS.map((n) => {
-    let icon = '🌼';
-    if (n.category === 'challenge') icon = '🌱';
-    if (n.category === 'break') icon = '☕';
-    if (n.category === 'article') icon = '📚';
-    if (n.category === 'enjoyment') icon = '🎬';
-    if (n.category === 'sleep') icon = '🌙';
+  const nextAction = getOrComputeNextAction();
 
-    let tone = 'from-[#FFFDF9] to-[#FFFDF8]';
-    if (n.category === 'challenge') tone = 'from-[#EEF8F0] to-[#FFFDF8]';
-    if (n.category === 'break') tone = 'from-[#FFF0EA] to-[#FFFDF8]';
-    if (n.category === 'article') tone = 'from-[#EAF4FF] to-[#FFFDF8]';
-    if (n.category === 'sleep') tone = 'from-[#F8F0FF] to-[#FFFDF8]';
+  const dailyCards: DailyCard[] = [
+    {
+      id: 'maya-nudge',
+      icon: '🌱',
+      title: "Maya's Gentle Nudge",
+      body: nextAction.description,
+      time: 'Now',
+      action: nextAction.title,
+      screenId: nextAction.type === 'challenge' || nextAction.type === 'article' || nextAction.type === 'sleep'
+        ? 'doctor-suggestions'
+        : nextAction.type === 'community'
+          ? 'community'
+          : 'feel-good',
+      tone: 'from-[#FFFDF9] via-[#FFF8F2] to-[#FFF0E8] border border-orange-100/50'
+    },
+    ...WELLNESS_NOTIFICATIONS.map((n) => {
+      let icon = '🌼';
+      if (n.category === 'challenge') icon = '🌱';
+      if (n.category === 'break') icon = '☕';
+      if (n.category === 'article') icon = '📚';
+      if (n.category === 'enjoyment') icon = '🎬';
+      if (n.category === 'sleep') icon = '🌙';
 
-    return {
-      id: n.id,
-      icon,
-      title: n.title,
-      body: n.message,
-      time: n.window.charAt(0).toUpperCase() + n.window.slice(1),
-      action: n.actionLabel || 'Explore',
-      screenId: n.targetScreenId,
-      tone
-    };
-  });
+      let tone = 'from-[#FFFDF9] to-[#FFFDF8]';
+      if (n.category === 'challenge') tone = 'from-[#EEF8F0] to-[#FFFDF8]';
+      if (n.category === 'break') tone = 'from-[#FFF0EA] to-[#FFFDF8]';
+      if (n.category === 'article') tone = 'from-[#EAF4FF] to-[#FFFDF8]';
+      if (n.category === 'sleep') tone = 'from-[#F8F0FF] to-[#FFFDF8]';
+
+      return {
+        id: n.id,
+        icon,
+        title: n.title,
+        body: n.message,
+        time: n.window.charAt(0).toUpperCase() + n.window.slice(1),
+        action: n.actionLabel || 'Explore',
+        screenId: n.targetScreenId,
+        tone
+      };
+    })
+  ];
 
   const visibleCards = dailyCards.filter((card) => {
     if (card.id.startsWith('m-')) return notifyMood;

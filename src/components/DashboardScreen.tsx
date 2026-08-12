@@ -4,7 +4,7 @@ import Mascot from './Mascot';
 import { MoodConfig, ScreenId } from '../types';
 import { MascotFace } from './Logo';
 import { saveHomeMoodCheckIn } from '../services/homeCheckins';
-import { getActiveNotification } from '../utils/wellnessFlow';
+import { getOrComputeNextAction, completeAction, skipAction, loadMayaDailyState } from '../services/maya/mayaAgent';
 
 interface DashboardScreenProps {
   userName: string;
@@ -445,30 +445,41 @@ export default function DashboardScreen({
   const [homeCheckInStatus, setHomeCheckInStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [showShortcutSheet, setShowShortcutSheet] = useState(false);
 
-  const [activeNudge, setActiveNudge] = useState<any>(null);
+  const [mayaAction, setMayaAction] = useState<any>(null);
+  const [mayaState, setMayaState] = useState<any>(null);
+  const [completionFeedback, setCompletionFeedback] = useState<string | null>(null);
 
   useEffect(() => {
-    const moodId = selectedMood?.id || 'calm';
-    const nudge = getActiveNotification(moodId);
-    
-    const dismissedDate = localStorage.getItem('hopeheart_nudge_dismissed_date');
-    const dismissedId = localStorage.getItem('hopeheart_nudge_dismissed_id');
-    const todayStr = new Date().toISOString().split('T')[0];
-    
-    if (dismissedDate === todayStr && dismissedId === nudge.id) {
-      setActiveNudge(null);
-    } else {
-      setActiveNudge(nudge);
-    }
+    const nextAct = getOrComputeNextAction();
+    const st = loadMayaDailyState();
+    setMayaAction(nextAct);
+    setMayaState(st);
   }, [selectedMood]);
 
-  const handleDismissNudge = () => {
-    if (activeNudge) {
-      const todayStr = new Date().toISOString().split('T')[0];
-      localStorage.setItem('hopeheart_nudge_dismissed_date', todayStr);
-      localStorage.setItem('hopeheart_nudge_dismissed_id', activeNudge.id);
-      setActiveNudge(null);
-    }
+  const handleCompleteMayaAction = (id: string) => {
+    const nextAct = completeAction(id);
+    const st = loadMayaDailyState();
+    
+    const feedbacks = [
+      "Nice. One small step done. 🌱",
+      "Good job taking a moment for yourself.",
+      "That's enough for now. I'll help you with the next step later."
+    ];
+    const randMsg = feedbacks[Math.floor(Math.random() * feedbacks.length)];
+    setCompletionFeedback(randMsg);
+    setMayaState(st);
+    
+    setTimeout(() => {
+      setCompletionFeedback(null);
+      setMayaAction(nextAct);
+    }, 3000);
+  };
+
+  const handleSkipMayaAction = (id: string) => {
+    const nextAct = skipAction(id);
+    const st = loadMayaDailyState();
+    setMayaAction(nextAct);
+    setMayaState(st);
   };
   const [showMoodReminderCard, setShowMoodReminderCard] = useState(hasCheckedInToday);
   const [selectedReminderPanel, setSelectedReminderPanel] = useState<{ title: string; message: string } | null>(null);
@@ -768,43 +779,98 @@ export default function DashboardScreen({
         </div>
       </div>
 
-      {activeNudge && (
-        <div className="mx-4 sm:mx-6 md:mx-8 mt-5 animate-in slide-in-from-top duration-300">
-          <div className="bg-gradient-to-br from-[#FFFDF9] via-[#FFF8F2] to-[#FFF0E8] border border-orange-100 rounded-[28px] p-5 shadow-3xs relative flex items-start gap-4 select-none">
-            <span className="w-12 h-12 rounded-2xl bg-white border border-[#F1E7D8] flex items-center justify-center text-[24px] shrink-0 shadow-3xs">
-              {activeNudge.category === 'challenge' && '🌱'}
-              {activeNudge.category === 'break' && '☕'}
-              {activeNudge.category === 'article' && '📚'}
-              {activeNudge.category === 'enjoyment' && '🎬'}
-              {activeNudge.category === 'sleep' && '🌙'}
-              {activeNudge.category === 'general' && '🌼'}
-            </span>
-            <div className="space-y-1.5 flex-1 relative pr-6">
-              <span className="text-[10px] font-mono font-extrabold text-[#FF7527] uppercase tracking-wider block">
-                {activeNudge.title}
+      {/* Maya Wellness Agent Card */}
+      <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
+        <div className="bg-gradient-to-br from-[#FFFDF9] via-[#FFF8F2] to-[#FFF0E8] border border-orange-100 rounded-[28px] p-5 shadow-3xs relative select-none">
+          <div className="flex items-center justify-between pb-3.5 border-b border-orange-100/50">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-display font-black text-[#2B1D12]">Maya 🌱</span>
+              <span className="bg-orange-100 text-[#FF7527] text-[10px] px-2 py-0.5 rounded-full font-mono font-extrabold">
+                Wellness Agent
               </span>
-              <h4 className="font-display font-black text-[#2B1D12] text-[14.5px] leading-snug">
-                {activeNudge.message}
-              </h4>
-              <button
-                onClick={() => onNavigateTo(activeNudge.targetScreenId)}
-                type="button"
-                className="mt-2 py-1.5 px-4 bg-[#2B1D12] hover:bg-black text-white rounded-xl text-[11px] font-display font-black cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5 inline-block"
-              >
-                {activeNudge.actionLabel || 'Go Now'}
-              </button>
             </div>
-            <button
-              onClick={handleDismissNudge}
-              type="button"
-              className="w-7 h-7 rounded-full bg-white/70 hover:bg-white border border-gray-150 text-gray-500 hover:text-gray-700 flex items-center justify-center text-[10px] font-black cursor-pointer absolute top-3 right-3 shadow-3xs"
-              aria-label="Dismiss recommendation"
-            >
-              ✕
-            </button>
+            {mayaState && (
+              <span className="text-[11px] font-mono font-extrabold text-gray-500 uppercase tracking-wider">
+                {mayaState.completedActionIds.length} of 4 today
+              </span>
+            )}
           </div>
+
+          {completionFeedback ? (
+            <div className="py-6 text-center space-y-2 animate-in fade-in duration-300">
+              <span className="text-[32px] block">🎉</span>
+              <p className="text-[14px] text-gray-700 font-bold text-center">
+                {completionFeedback}
+              </p>
+            </div>
+          ) : mayaAction ? (
+            <div className="pt-4 space-y-4">
+              <p className="text-[12.5px] text-gray-500 font-semibold italic">
+                "Here's your next small step."
+              </p>
+              
+              <div className="flex items-start gap-4">
+                <span className="w-12 h-12 rounded-2xl bg-white border border-[#F1E7D8] flex items-center justify-center text-[24px] shrink-0 shadow-3xs">
+                  {mayaAction.type === 'challenge' && '🥣'}
+                  {mayaAction.type === 'break_timer' && '☕'}
+                  {mayaAction.type === 'calm_sounds' && '🎵'}
+                  {mayaAction.type === 'article' && '📚'}
+                  {mayaAction.type === 'sleep' && '🌙'}
+                  {mayaAction.type === 'breathing' && '🌬️'}
+                  {mayaAction.type === 'community' && '🤝'}
+                  {mayaAction.type === 'rest' && '🛌'}
+                </span>
+                <div className="space-y-1 flex-1">
+                  <h4 className="font-display font-black text-[#2B1D12] text-[15px] leading-tight">
+                    {mayaAction.title}
+                  </h4>
+                  <p className="text-[12px] text-gray-500 font-semibold leading-relaxed">
+                    {mayaAction.description}
+                  </p>
+                  <p className="text-[11px] text-[#A05412] font-semibold leading-relaxed pt-1">
+                    Why: {mayaAction.reason}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  onClick={() => {
+                    let targetScreen = mayaAction.type === 'challenge' || mayaAction.type === 'article' || mayaAction.type === 'sleep'
+                      ? ScreenId.DoctorSuggestions
+                      : mayaAction.type === 'community'
+                        ? ScreenId.Community
+                        : ScreenId.FeelGood;
+                    onNavigateTo(targetScreen);
+                  }}
+                  type="button"
+                  className="flex-1 py-2 bg-[#FF7527] hover:bg-[#E96630] text-white rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  Start
+                </button>
+                <button
+                  onClick={() => handleCompleteMayaAction(mayaAction.id)}
+                  type="button"
+                  className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  Done
+                </button>
+                <button
+                  onClick={() => handleSkipMayaAction(mayaAction.id)}
+                  type="button"
+                  className="py-2 px-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 rounded-xl text-[12px] font-display font-black cursor-pointer transition-all active:scale-95 text-center"
+                >
+                  Not now
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-400 text-center py-4 text-[13px] font-semibold">
+              Maya is loading your path...
+            </p>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Main soft mood card */}
       <div className="mx-4 sm:mx-6 md:mx-8 mt-5">
